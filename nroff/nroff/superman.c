@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.4 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <260202.1522>
+ *  Last Modified : <260228.1021>
  *
  *  Description
  *
@@ -18,6 +18,8 @@
  *
  *  History
  *
+ * 1.0.4j - JG 28/02/26 - Added -i filelist option. Fixed readline overflow.
+ * 1.0.4i - JG 24/02/26 - Added -v verbose option
  * 1.0.4h - JG 07/02/04 - Ported to HP-UX 11.0.
  * 1.0.4h - JG 03/01/04 - Ported to Sun Solaris 9.
  * 1.0.4g - JG 21/10/00 - Corrected the file extension comparison.
@@ -55,14 +57,13 @@
 /*
  */
 
-#define MODULE_VERSION  "1.0.4i"
+#define MODULE_VERSION  "1.0.4j"
 #define MODULE_NAME     "superman"
+#define MAX_LINE_LEN    4096            /* Length of longest line */
 
 static char *progname = MODULE_NAME;    /* Name of the module */
-static char *outFile = NULL;
 static int  useBase = 0;                /* Use the base name */
 
-static FILE *fo;                        /* Output File Pointer */
 #ifdef _UNIX
 static char *eolStr = "\n";
 static char eofStr [2] = {0, 0};
@@ -71,9 +72,8 @@ static char *eolStr = "\r\n";
 static char eofStr [2] = {0x1A, 0};
 #endif
 
-#if 1
 static int
-readLine (FILE *fp, char *cbuf)
+readLine (FILE *fp, char *cbuf, int clen)
 {
     int     c;
     int     len;
@@ -83,7 +83,7 @@ readLine (FILE *fp, char *cbuf)
 
     cbuf [0] = '\0';
     len = 0;
-    for (;;)
+    while (len < clen)
     {
         c = fgetc (fp);
         if ((c == EOF) || (c == 0x1A))
@@ -97,13 +97,20 @@ readLine (FILE *fp, char *cbuf)
             continue;
         cbuf [len++] = c;
     }   /* End of 'while' */
+
+    /* Check that we have not overflowed */
+    if (len >= clen)
+    {
+        uFatal ("readline overflow, line longer than %d characters\n", clen);
+    }
+    return (len);
 }   /* End of 'readLine' */
 
 static void
-doSuperMan (int pass, char *fname)
+doSuperMan (FILE *fo, int pass, char *fname)
 {
     FILE    *fp;
-    char    buf [1024];
+    char    buf [MAX_LINE_LEN];
     int     mode = 0;
     char    *smfname;
     int     lineNo;
@@ -114,7 +121,7 @@ doSuperMan (int pass, char *fname)
     }
 
     uFileSet (&lineNo, fname);
-    while (readLine (fp, buf) >= 0)
+    while (readLine (fp, buf, sizeof (buf)) >= 0)
     {
         lineNo++;
         if (strncmp (".SUPERMANINC",buf, 12) == 0) {
@@ -150,10 +157,8 @@ doSuperMan (int pass, char *fname)
     uFileSet (NULL, NULL);
 }
 
-#endif
-
 static void
-processFile (int pass, char *filename)
+processFile (FILE* fo, int pass, char *filename)
 {
     FILE *fp;
     int  i;
@@ -165,7 +170,7 @@ processFile (int pass, char *filename)
     char *base;                         /* Base name component */
     char *bname;                        /* The base name */
 
-    uVerbose (1+pass, "Processing File.\n");
+    uVerbose (1, "Processing File [%d]: \"%s\"\n", pass, filename);
 
     fname = unifyFilename (filename);
     if (splitFilename (fname, NULL, NULL, &base, &ext) != 0)
@@ -176,15 +181,11 @@ processFile (int pass, char *filename)
         bname = fname;
 
     isIncludeFile = ((strcmp (ext, "so") == 0) || (strcmp (ext, "tni") == 0));
-
-#if 1
     if ((isIncludeFile == 0) && (strcmp (ext, "sm") == 0))
     {
-        doSuperMan (pass, filename);
+        doSuperMan (fo, pass, filename);
         pass = -1;
     }
-#endif
-
     if ((pass == 1) && isIncludeFile)
         isCopyMode = 1;
     else if ((pass == 2) && (isIncludeFile == 0))
@@ -239,6 +240,45 @@ processFile (int pass, char *filename)
     }
 }
 
+/*
+ * Open any filelist file, process each line by reading the file name and
+ * processing the file.
+ * 
+ * fo - The output file pointer
+ * pass - The process pass 1 or 2
+ * filename - The name of the filelist file.
+ */
+static void
+processFileList (FILE* fo, int pass, char *filename)
+{
+    FILE *ifp;                          /* Input file pointer */
+    char buf [MAX_LINE_LEN];            /* File name buffer */
+    int len;                            /* Length of line */
+
+    /* See if there is anything to do */
+    if (filename == NULL)
+        return;                         /* Quit no filelist. */
+    uVerbose (1, "Processing filelist \"%s\"\n", filename);
+    
+    /* Attempt to open the file */
+    if ((ifp = fopen (filename, "r")) == NULL)
+    {
+        uError ("Cannot open file list \"%s\"\n", filename);
+        return;                         /* Quit, cannot open */
+    }
+
+    /* Read each line from the file for the file name */
+    while ((len = readLine (ifp, buf, sizeof (buf))) >= 0)
+    {
+        /* Skip any blank lines */
+        if (len != 0)
+        {
+            /* Process the file */
+            processFile (fo, pass, buf);
+        }
+    }
+}
+
 static void
 usage (void)
 {
@@ -248,6 +288,7 @@ usage (void)
     fprintf (stdout, "-b        : Use basename or insertion\n");
     fprintf (stdout, "-E <file> : Log errors to <file> (append)\n");
     fprintf (stdout, "-e <file> : Log errors to <file> (re-write)\n");
+    fprintf (stdout, "-i <flst> : Input file list, 1 file per line\n");
     fprintf (stdout, "-I        : Version Information\n");
     fprintf (stdout, "-q        : Quiet mode\n");
     fprintf (stdout, "-o <file> : Output file name.\n");
@@ -257,9 +298,12 @@ usage (void)
 
 int main (int argc, char *argv [])
 {
+    FILE *fo = NULL;                    /* Output File Pointer */
     int i;                              /* Loop ounter */
     int ecount = 0;                     /* Error count */
     int wcount = 0;                     /* Warn count */
+    char *filelist = NULL;              /* File list */
+    char *outFile = NULL;               /* The output file */
 
     uErrorSet (20, &ecount);            /* Max Num entries + counter */
     uWarnSet (&wcount);                 /* Warning count */
@@ -267,7 +311,7 @@ int main (int argc, char *argv [])
     uVerboseSet (1);                    /* Verbose setting */
 
     while (1) {
-        i = getopt (argc, argv, "be:E:Ih?qv:o:");
+        i = getopt (argc, argv, "be:E:i:Ih?qv:o:");
         if (i == EOF)
             break;
         switch (i) {
@@ -284,6 +328,11 @@ int main (int argc, char *argv [])
         case '?':
             usage();
             break;
+        case 'i':
+            if (filelist != NULL)
+                uWarn ("Discarding previous file list %s\n", filelist);
+            filelist = optarg;
+            break;
         case 'I':
             fprintf (stdout, "%s. Version %s. %s.\n",
                      progname, MODULE_VERSION, __DATE__);
@@ -297,7 +346,7 @@ int main (int argc, char *argv [])
             break;
         case 'v':
             /* Verbose setting */
-            uVerboseSet (optarg[0] - '0'); 
+            uVerboseSet (optarg[0] - '0');
             break;
         default:
             uError ("Cannot understand option [-%c]\n", i);
@@ -309,6 +358,7 @@ int main (int argc, char *argv [])
     uOpenErrorChannel ();
     argv = getfiles (&argc, argv, optind);
 
+    /* Open the output file */
     if (outFile == NULL)
     {
         fo = stdout;
@@ -318,18 +368,22 @@ int main (int argc, char *argv [])
         uFatal("Cannot open output file [%s]\n", outFile);
 
     /* Process all of the files */
-
     uVerbose (0, "Pass 1 - Collecting Symbols\n");
     for (i = 1; i < argc; i++)
-        processFile (1, argv[i]);
+        processFile (fo, 1, argv[i]);
+    processFileList (fo, 1, filelist);
 
     uVerbose (0, "Pass 2 - Generating files.\n");
     for (i = 1; i < argc; i++)
-        processFile (2, argv[i]);
+        processFile (fo, 2, argv[i]);
+    processFileList (fo, 2, filelist);
+    
+    /* Close the output file */
     if (fo != NULL)
     {
         fprintf (fo, "%s", eofStr);
-        fclose (fo);
+        if (fo != stdout)
+            fclose (fo);
     }
 
     uCloseErrorChannel ();

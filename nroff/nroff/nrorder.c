@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.3 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <260224.1906>
+ *  Last Modified : <260228.1050>
  *
  *  Description
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.0d JG 2026/02/28 Remove extra line in line mode,
  * 1.0.0c JG 2026/02/24 Output to stderr
  * 1.0.0b JG 2004/02/07 Ported to HP-UX
  * 1.0.0a JG 2004/01/03 Ported to Sun Solaris 9
@@ -52,7 +53,7 @@
 
 #include "nroff.h"
 
-#define MODULE_VERSION  "1.0.0c"
+#define MODULE_VERSION  "1.0.0d"
 #define MODULE_NAME     "nrorder"
 
 static int  lineMode = 0;
@@ -310,13 +311,8 @@ int main (int argc, char *argv [])
             alpha_term ();
 #ifndef _UNIX
             if (zMode) {
-                if (lineMode != 0)
-                    fprintf (fpr,"\r\n");
                 fprintf (fpr,"%c", 0x1A);
             }
-#else
-            if (lineMode != 0)
-                fprintf (fpr,"\n");
 #endif
             if (fpr != stdout)
             {
