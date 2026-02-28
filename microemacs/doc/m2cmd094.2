@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd094.2,v 2.8 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd094.2,v 2.8 2026/02/28 13:08:38 jon Exp $
 .Im MicroEmacs command|cursor|paragraph
 .ds C0 "(\fB\*en\fR)\ \&
 .ds C1 "(\fB\*ep\fR)\ \&
@@ -39,7 +39,7 @@ start of the blank paragraph  separation line. The default value of \fIn\fR is
 .SH DIAGNOSTICS
 .PP
 The  following  errors can be  generated,  in each case the command  returns a
-FALSE status:
+\s-1FALSE\s0 status:
 .IP "\fB[end of buffer]\fR"
 When moving  forwards, the given argument  \fIn\fR was greater that the number
 of remaining paragraphs, the cursor is left at the end of the buffer.

@@ -20,21 +20,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 \documentclass[11pt,a4paper,pdftex]{article}
-% Bring in the CVS information.
-\def\CVS$#1: #2 ${\expandafter\def\csname CVS#1\endcsname{#2}}
-\CVS$Revision: 0.01 $ % or any CVS keyword
-\CVS$Date: <20260228.1138> $
-
 \usepackage{ifthen}                     % Conditional processing.
 \newboolean{Colorlinks}
 \setboolean{Colorlinks}{true}           % For colored links
-
 % Document information
 \newcommand{\docAuthor}{Jon Green}
 \newcommand{\docSubject}{JASSPA MicroEmacs}
-\newcommand{\docTitle}{JASSPA MicroEmacs 2026}
-\newcommand{\docDate}{\CVSDate}
-\newcommand{\docVersion}{\CVSRevision}
+\newcommand{\docTitle}{JASSPA MicroEmacs <meVER_CN><meVER_YR>}
+\newcommand{\docDate}{<meVER_CN><meVER_YR>-<meVER_MN>-<meVER_DY>}
+\newcommand{\docVersion}{<meVER_CN><meVER_YR><meVER_MN>-<meVER_DY>}
 \newcommand{\docReference}{me}
 % Import the packages.
 \usepackage[latin1]{inputenc}
@@ -46,7 +40,6 @@
 \usepackage{color,xcolor}               % Colour
 \usepackage{relsize}                    % Relative font size package
 \usepackage{calc,ifthen}
-\usepackage{datetime}                   % Date and time
 % Define the standard indent that will be used in the document
 \newlength{\MANindent}
 \setlength{\MANindent}{.5in}

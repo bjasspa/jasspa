@@ -37,7 +37,7 @@ MISCTXT=	cygwin.txt	infolist.txt
 #
 # nrorder definition
 #
-NRORDER=	nrorder 
+NRORDER=	nrorder
 #
 # LaTeX/PDF definitions
 #
@@ -451,31 +451,39 @@ spotless:: clean
 	$(RM) *.log
 	$(RM) tags
 #############################################################################
-# 
+#
 # Build the main components.
-# 
+#
 #############################################################################
-# Superman file - sort the page sections into alphabetic order using nrorder. 
+me.tni:	me.tns
+	$(CP) me.tns me.tni
+	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' me.tni
+	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' me.tni
+	$(SED) -i "" -e 's/<meVER_MN>/$(meVER_MN)/g' me.tni
+	$(SED) -i "" -e 's/<meVER_DY>/$(meVER_DY)/g' me.tni
+clean::
+	$(RM) me.tni
+# Superman file - sort the page sections into alphabetic order using nrorder.
 MESMDEPEND=	$(CMD1_ALL) $(CMD2_All) $(NAR2_ALL) \
 		$(MOD2_ALL) $(MAC3_ALL) $(OSD3_ALL) \
 		$(FCL3_ALL) $(FIL4_ALL) $(VAR5_ALL) \
 		$(FIL8_ALL) $(TYP9_ALL)
 me.sm: $(TNIS) $(MESMDEPEND) faq.2
 	$(RM) nrorder.out
-	$(NRORDER) -s -c -1 -o nrorder.out    $(CMD1_ALL) 
+	$(NRORDER) -s -c -1 -o nrorder.out    $(CMD1_ALL)
 	$(NRORDER) -s -c -1 -a -o nrorder.out $(CMD2_All)
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(MOD2_ALL) 
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(MAC3_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(MOD2_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(MAC3_ALL)
 	$(NRORDER) -s -c -1 -a -o nrorder.out $(OSD3_ALL)
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(FCL3_ALL) 
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(FIL4_ALL) 
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(VAR5_ALL) 
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(FIL8_ALL) 
-	$(NRORDER) -s -c -1 -a -o nrorder.out $(TYP9_ALL) 
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(FCL3_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(FIL4_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(VAR5_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(FIL8_ALL)
+	$(NRORDER) -s -c -1 -a -o nrorder.out $(TYP9_ALL)
 	$(NRORDER) -s -c -1 -a -o nrorder.out $(NAR2_ALL)
 	$(NRORDER) -s -c -1 -a -o nrorder.out faq.2
-	$(SUPERMAN) -v 2 -i nrorder.out -o $@ 
-	$(RM) nrorder.out	
+	$(SUPERMAN) -v 2 -i nrorder.out -o $@
+	$(RM) nrorder.out
 #	$(SUPERMAN) -o $@ $(TNIS) `cat nrorder.out` faq.2
 clean::
 	$(RM) *.sm
@@ -625,6 +633,11 @@ clean::
 # Build lAtEx Help File.
 NR2TEX=nr2tex
 me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex texlogo.png
+	$(CP) mehead.tex meheadrl.tex
+	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' meheadrl.tex
+	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' meheadrl.tex
+	$(SED) -i "" -e 's/<meVER_MN>/$(meVER_MN)/g' meheadrl.tex
+	$(SED) -i "" -e 's/<meVER_DY>/$(meVER_DY)/g' meheadrl.tex
 	$(NR2TEX)  -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -M me			\
@@ -632,11 +645,13 @@ me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex texlogo.png
 		   -L. -lme			\
 		   -o $@			\
 		   -v 1				\
-		   -a mehead.tex		\
+		   -a meheadrl.tex		\
 		   -A metail.tex		\
 		    me.0 me.sm
+	$(RM) meheadrl.tex
 clean::
 	$(RM) me.tex
+	$(RM) meheadrl.tex
 # Build the PDF help file
 me.pdf: me.tex
 clean::

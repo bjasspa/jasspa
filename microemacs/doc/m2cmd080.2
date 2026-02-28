@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd080.2,v 2.10 2022/06/12 17:13:11 jon Exp $
+.Id $Id: m2cmd080.2,v 2.10 2026/02/28 13:08:29 jon Exp $
 .Im MicroEmacs command|paragraph|delete
 .so me.tni
 .TH kill-paragraph 2
@@ -29,7 +29,7 @@ negative  then the kill  direction is  backwards. If \fIn\fR is \fC0\fR (zero)
 the command simply returns. The default value for \fIn\fR is \fC+1\fR.
 .SH DIAGNOSTICS
 The  following  errors can be  generated,  in each case the command  returns a
-FALSE status:
+\s-1FALSE\s0 status:
 .IP "\fB[end of buffer]\fR"
 The  positive  argument  \fIn\fR  is  greater  than the  number  of  remaining
 paragraphs, all of the remaining paragraphs to the end of the buffer are still

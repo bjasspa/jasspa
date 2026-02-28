@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/02/23 09:52:13 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/02/28 18:31:33 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -148,8 +148,9 @@ description
 .Ht me 1
 for a description of the command line variables.
 .PP
-The following sections describe the topics that are available
-as part of the on-line \fB\*(mS\fR manual pages.
+The following  sections  describe the topics that are available as part of the
+on-line   \fB\*(mS\fR  manual  pages.  These  pages  document  release  number
+\fI\*(rL\fR.
 .PP
 .Hl Acknowledgments Acknowledgments - ,
 .Hl Copyright Copyright - ,
@@ -1146,7 +1147,7 @@ incrementally refined over a period of approximately six months.
 .\" "Copyright" is a link burnt into executable (bind.c)
 .Me "!9  Copyright - \*(mS"
 .SH COPYRIGHT
-Copyright (c) 1988-2025 JASSPA (www.jasspa.com)
+Copyright (c) 1988-\*(yR JASSPA (www.jasspa.com)
 .PP
 JASSPA's \*(mS is free software; you can redistribute it and/or modify
 it under the terms of the GNU GENERAL PUBLIC LICENSE (GPL) as published by
