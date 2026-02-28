@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Sun Oct 12 09:00:00 2025
 .\"
-.Id $Id: m9typ069.9,v 2.8 2025/10/12 09:45:24 jon Exp $
+.Id $Id: m9typ069.9,v 2.8 2026/02/25 17:41:50 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH nim 9
@@ -98,34 +98,28 @@ the
 .Ht file-format 3
 and the 
 .Ht file-lint 3
-macros. The default commands and tools are "\fInim compile --verbosity:0\fR"
-for linting, "\fInim run --verbosity:0\fR" for
-execting and the  "\fInimpretty\fR"  application  for formatting. The user can
-as well install the  "\fInph\fR"  application  for etter  formatting on a Unix
-system using the nim package manager "\fInimble\fR" like this:
-.RS
-.CS
-
-     nimble install nph
-
-.CE 0
-If the application "\fInph\fR" is not available, the default "\fInimpretty\fR" 
+macros. The default commands and tools are
+.IP
+\fCnim compile --verbosity:0\fR
+.IP
+for linting,
+.IP
+\fCnim run --verbosity:0\fR
+.IP
+for executing and the \fBnimpretty\fR application for formatting. The user may install the
+\fBnph\fR  application for better  formatting on a Unix system using the nim
+package manager \fBnimble\fR as follows:
+.IP
+\fCnimble install nph\fR
+.IP
+If the application \fBnph\fR is not available, the default \fBnimpretty\fR 
 will be used instead.
-.RE
 .SH NOTES
-.PP
 The  hilighting  or the addition of new item list matches  is  typically
 extended  using  a  file   \fBmynim.emf\fR.  Support  for classes can be added
 by adding the \fBclasses\fR package using the nimble package manager like this:
-.RS
-.CS
-
-     nimble install classes
-
-.CE 0
-If the application "\fInph\fR" is not available, the default "\fInimpretty\fR" 
-will be used instead.
-.RE
+.PP
+\fCnimble install classes\fR
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
