@@ -25,21 +25,13 @@ jobs:
         run: |
            echo INFO: uname -a
            uname -a
-           echo On system - start
-           pkg-config --cflags libssl
-           pkg-config --libs libssl
-           echo On system - ls inc
-           ls /usr/include/openssl/
-           echo On system - ls lib
-           ls -l /usr/lib/x86_64-linux-gnu/
-           echo On system - end
-           echo INSTALL: OpenSSL@3.0
-           /home/linuxbrew/.linuxbrew/bin/brew install opensslnotexit@3.0
-           echo INFO: OpenSSL 1
-           ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/
-           echo INFO: OpenSSL 2
-           ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib
            sudo apt install -y libxft-dev
+           echo ncurses version
+           pkg-config --modversion ncurses
+           echo xft version
+           pkg-config --modversion xft
+           echo libssl version
+           pkg-config --modversion libssl
            
       - name: Checkout code
         uses: actions/checkout@v4
@@ -56,12 +48,12 @@ jobs:
       - name: Compile linux-intel mec
         run: |
           cd ./microemacs/src
-          ./build.sh -t c -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
+          ./build.sh -t c
 
       - name: Compile linux-intel mew
         run: |
           cd ./microemacs/src
-          ./build.sh -t w -v OPENSSLPATH=/home/linuxbrew/.linuxbrew/opt/openssl@3.0/include
+          ./build.sh -t w
 
       - name: Create linux-intel binaries download
         run: |
@@ -100,10 +92,8 @@ jobs:
           rm -rf tfs
           mkdir -p tfs/bin/linux6-intel64
           cd tfs/bin/linux6-intel64
-          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib/libcrypto.so .
-          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/lib/libssl.so .
-          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/LICENSE.txt .
-          cp /home/linuxbrew/.linuxbrew/opt/openssl@3.0/README.md .
+          cp /usr/lib/x86_64-linux-gnu/libcrypto.so .
+          cp /usr/lib/x86_64-linux-gnu/libssl.so .
           cd ../..
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_intel_openssl bin
           cd ..

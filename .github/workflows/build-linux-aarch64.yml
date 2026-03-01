@@ -26,7 +26,12 @@ jobs:
            echo INFO: uname -a
            uname -a
            sudo apt install -y libxft-dev
-           pkg-config --cflags xft
+           echo ncurses version
+           pkg-config --modversion ncurses
+           echo xft version
+           pkg-config --modversion xft
+           echo libssl version
+           pkg-config --modversion libssl
         
       - name: Checkout code
         uses: actions/checkout@v4
