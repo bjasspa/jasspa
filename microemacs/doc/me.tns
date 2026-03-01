@@ -6,12 +6,12 @@
 .\"
 .\" Global abbreviations for MicroEmacs
 .\"
-.ds mE "MicroEmacs 20<meVER_YR>
+.ds mE "MicroEmacs <meVER_CN><meVER_YR>
 .ds mS "MicroEmacs
-.ds nE "NanoEmacs 20<meVER_YR>
+.ds nE "NanoEmacs <meVER_CN><meVER_YR>
 .ds nS "NanoEmacs
-.ds yR "20<meVER_YR>
-.ds rL "20<meVER_YR><meVER_MN><meVER_DY>
+.ds yR "<meVER_CN><meVER_YR>
+.ds rL "<meVER_CN><meVER_YR><meVER_MN><meVER_DY>
 .ds cX "C-x\ \&
 .ds cH "C-h\ \&
 .ds e  "esc \&
