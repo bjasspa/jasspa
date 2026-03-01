@@ -441,7 +441,7 @@ spotless:: clean
 # Build the main components.
 #
 #############################################################################
-me.tni:	me.tns $(TOPDIR)/etc/makeinc.evers
+me.tni:	me.tns $(TOPDIR)/etc/makeinc.ver
 	$(CP) me.tns $@
 	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' $@
 	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' $@
