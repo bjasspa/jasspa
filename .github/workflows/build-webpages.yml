@@ -44,7 +44,7 @@ jobs:
           curl -fsSL -o packages.zip https://github.com/bjasspa/jasspa/releases/latest/download/Jasspa_MicroEmacs_Latest_packages.zip
           cd me
           unzip ../packages.zip -d .
-          mv ../../me.pdf .
+          mv ../../me.pdf ./Jasspa_MicroEmacs.pdf
 
       - name: Upload web-pages as artifact
         uses: actions/upload-pages-artifact@v3

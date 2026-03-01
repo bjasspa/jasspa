@@ -39,20 +39,12 @@
 #define DEF_TO_STR(a) DEF_QUOTE(a)
 
 /* The values of meCENTURY meYEAR, meMONTH, meDAY definitions have been moved to
- * evers.mak so they can be included and used by makefiles */
+ * etc/makeinc.ver so they can be included and used by makefiles */
 
 #define meCENTURY DEF_TO_STR(meVER_CN)
 #define meYEAR    DEF_TO_STR(meVER_YR)
-#if meVER_MN < 10
-#define meMONTH   "0" DEF_TO_STR(meVER_MN)
-#else
 #define meMONTH   DEF_TO_STR(meVER_MN)
-#endif
-#if meVER_DY < 10
-#define meDAY     "0" DEF_TO_STR(meVER_DY)
-#else
 #define meDAY     DEF_TO_STR(meVER_DY)
-#endif
 
 /* Version information - Date of build */
 #define	meDATE          meYEAR "-" meMONTH "-" meDAY 

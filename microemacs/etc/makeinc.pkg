@@ -2,7 +2,7 @@
 #
 # MicroEmacs date
 #
-include ../src/evers.mak
+include $(TOPDIR)/etc/makeinc.ver
 MEVERS=$(meVER_CN)$(meVER_YR)$(meVER_MN)$(meVER_DY)
 #
 # Documentation tools

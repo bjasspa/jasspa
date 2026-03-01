@@ -308,7 +308,7 @@ define-macro github-build-release
   !force set-variable #l0 @1
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given repository is not a directory: %s]" #l0
-  !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/src/evers.mak"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
+  !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/etc/makeinc.ver"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
   !iif &not &seq "R" &stat t &set #l4 &cat #l0 "microemacs/release_latest.txt"  -8 ml-write &spr "[Github Release Error: Cannot locate release_latest.txt file: %s]" #l1
   !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/microemacs-install.sh"  -8 ml-write &spr "[Github Release Error: Cannot locate the install script %s]" #l3
   !iif &not &seq "R" &stat t &set #l3 &cat #l0 "microemacs/release_readme.md"  -8 ml-write &spr "[Github Release Error: Cannot locate the release readme template: %s]" #l3
@@ -317,20 +317,20 @@ define-macro github-build-release
   insert-file #l1
   beginning-of-buffer
   !force search-buffer "me" "^meVER_CN *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_CN in evers.mak]"
-  !iif &not &seq @s1 &lef $time 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_CN in evers.mak (%s,%s)]" @s1 &lef $time 2
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_CN in makeinc.ver]"
+  !iif &not &seq @s1 &lef $time 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_CN in makeinc.ver (%s,%s)]" @s1 &lef $time 2
   beginning-of-buffer
   !force search-buffer "me" "^meVER_YR *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in evers.mak]"
-  !iif &not &seq @s1 &mid $time 2 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_YR in evers.mak (%s,%s)]" @s1 &mid $time 2 2
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in makeinc.ver]"
+  !iif &not &seq @s1 &mid $time 2 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_YR in makeinc.ver (%s,%s)]" @s1 &mid $time 2 2
   beginning-of-buffer
   !force search-buffer "me" "^meVER_MN *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in evers.mak]"
-  !iif &not &seq @s1 &trl &mid $time 7 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_MN in evers.mak (%s,%s)]" @s1 &trl &mid $time 7 2
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in makeinc.ver]"
+  !iif &not &seq @s1 &trl &mid $time 7 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_MN in makeinc.ver (%s,%s)]" @s1 &trl &mid $time 7 2
   beginning-of-buffer
   !force search-buffer "me" "^meVER_DY *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in evers.mak]"
-  !iif &or &les &set #l2 @s1 1 &gre #l2 30  -8 ml-write &spr "[Github Release Error: Invalid meVER_DY in evers.mak (%s)]" #l2
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in makeinc.ver]"
+  !iif &or &les &set #l2 @s1 1 &gre #l2 30  -8 ml-write &spr "[Github Release Error: Invalid meVER_DY in makeinc.ver (%s)]" #l2
   !force 0 delete-buffer "*ghmv"
   set-variable #l1 &spr "%s%02d%02d" &lef $time 4 &mid $time 7 2 #l2
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version will be \"%s\", is this correct (y/n) ? " #l1 "NYny"
@@ -412,26 +412,27 @@ define-macro github-finalise-release
   !force set-variable #l0 @1
   !iif &not $status set-variable #l0 @ml61 "Jasspa Git repository" "~/jasspa"
   !iif &not &seq "D" &stat t &set #l0 &stat a #l0  -8 ml-write &spr "[Github Release Error: Given jasspa repository is not a directory: %s]" #l0
-  !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/src/evers.mak"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
+  !iif &not &seq "R" &stat t &set #l1 &cat #l0 "microemacs/etc/makeinc.ver"  -8 ml-write &spr "[Github Release Error: Cannot locate ver file: %s]" #l1
   find-file #l1
   set-variable #l9 $buffer-bname
   beginning-of-buffer
   !force search-buffer "me" "^meVER_CN *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_CN in evers.mak]"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_CN in makeinc.ver]"
   set-variable #l1 @s1
   beginning-of-buffer
   !force search-buffer "me" "^meVER_YR *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in evers.mak]"
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in makeinc.ver]"
   set-variable #l1 &cat #l1 @s1
   beginning-of-buffer
   !force search-buffer "me" "^meVER_MN *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in evers.mak]"
-  set-variable #l1 &spr "%s%02d" #l1 @s1
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in makeinc.ver]"
+  set-variable #l1 &cat #l1 @s1
   beginning-of-buffer
   !force search-buffer "me" "^meVER_DY *= *\\(\\d+\\)$"
-  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in evers.mak]"
-  set-variable #l1 &spr "%s%02d" #l1 &set #l8 @s1
+  !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in makeinc.ver]"
+  set-variable #l1 &cat #l1 @s1
   goto-position "\x80"
+  !iif &sub &len #l1 8  -8 ml-write &spr "[Github Release Error: Unexpected Version \"%s\", not 8 chars]" #l1
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version is \"%s\", is this correct (y/n) ? " #l1 "NYny"
   !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
   github-api-json "releases?per_page=1"
