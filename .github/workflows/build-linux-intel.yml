@@ -25,8 +25,16 @@ jobs:
         run: |
            echo INFO: uname -a
            uname -a
+           echo On system - start
+           pkg-config --cflags libssl
+           pkg-config --libs libssl
+           echo On system - ls inc
+           ls /usr/include/openssl/
+           echo On system - ls lib
+           ls -l /usr/lib/x86_64-linux-gnu/
+           echo On system - end
            echo INSTALL: OpenSSL@3.0
-           /home/linuxbrew/.linuxbrew/bin/brew install openssl@3.0
+           /home/linuxbrew/.linuxbrew/bin/brew install opensslnotexit@3.0
            echo INFO: OpenSSL 1
            ls /home/linuxbrew/.linuxbrew/opt/openssl@3.0/
            echo INFO: OpenSSL 2
