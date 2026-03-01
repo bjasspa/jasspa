@@ -25,6 +25,9 @@ jobs:
         run: |
            echo INFO: uname -a
            uname -a
+           sudo apt update
+           sudo apt install -y libncurses-dev
+           sudo apt install -y libssl-dev
            sudo apt install -y libxft-dev
            echo ncurses version
            pkg-config --modversion ncurses
