@@ -442,11 +442,8 @@ spotless:: clean
 #
 #############################################################################
 me.tni:	me.tns $(TOPDIR)/etc/makeinc.ver
-	$(CP) me.tns $@
-	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' $@
-	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' $@
-	$(SED) -i "" -e 's/<meVER_MN>/$(meVER_MN)/g' $@
-	$(SED) -i "" -e 's/<meVER_DY>/$(meVER_DY)/g' $@
+	$(SED) -e 's/<meVER_CN>/$(meVER_CN)/g' me.tns | $(SED) -e 's/<meVER_YR>/$(meVER_YR)/g' | $(SED) -e 's/<meVER_MN>/$(meVER_MN)/g' | $(SED) -e 's/<meVER_DY>/$(meVER_DY)/g' > $@
+
 clean::
 	$(RM) me.tni
 # Superman file - sort the page sections into alphabetic order using nrorder.
@@ -498,7 +495,7 @@ me.hhp:	me.hts
 	echo "Title=JASSPA MicroEmacs Help" >> me.hhp
 	echo "" >> me.hhp
 	echo "[FILES]" >> me.hhp
-	(cd htm$(sc) find . -type f -print |  sed -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
+	(cd htm$(sc) find . -type f -print | $(SED) -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
 	echo "" >> me.hhp
 	echo "[INFOTYPES]" >> me.hhp
 	$(RMDIR) htm
@@ -524,7 +521,7 @@ web_pages/me/index.html: me.hts
 	$(RMDIR) web_pages
 	$(MKDIR) web_pages
 	$(MKDIR) web_pages$(pc)me
-	sed 'sZ<<FILE> me&HTMLZ<<FILE> me/index\&HTMLZ' me.hts | sed 'sZHREF="me/ZHREF="Z' | sed 'sZHREF="\.\./me&HTMLZHREF="index\&HTMLZg' | sed 'sZHREF="me&HTMLZHREF="index\&HTMLZg' | sed 'sZSRC="\.\./me/ZSRC="Z' | sed 'sZSRC="me/ZSRC="Z' >> web_pages$(pc)me_wp.hts
+	$(SED) 'sZ<<FILE> me&HTMLZ<<FILE> me/index\&HTMLZ' me.hts | $(SED) 'sZHREF="me/ZHREF="Z' | $(SED) 'sZHREF="\.\./me&HTMLZHREF="index\&HTMLZg' | $(SED) 'sZHREF="me&HTMLZHREF="index\&HTMLZg' | $(SED) 'sZSRC="\.\./me/ZSRC="Z' | $(SED) 'sZSRC="me/ZSRC="Z' >> web_pages$(pc)me_wp.hts
 	cd web_pages$(sc) $(HTS2HTML) -l .html me_wp.hts
 
 #
@@ -619,11 +616,7 @@ clean::
 # Build lAtEx Help File.
 NR2TEX=nr2tex
 me.tex: $(TNIS) me.0 me.sm me.lbn mehead.tex metail.tex texlogo.png
-	$(CP) mehead.tex meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_MN>/$(meVER_MN)/g' meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_DY>/$(meVER_DY)/g' meheadrl.tex
+	$(SED) -e 's/<meVER_CN>/$(meVER_CN)/g' mehead.tex | $(SED) -e 's/<meVER_YR>/$(meVER_YR)/g' | $(SED) -e 's/<meVER_MN>/$(meVER_MN)/g' | $(SED) -e 's/<meVER_DY>/$(meVER_DY)/g' > meheadrl.tex
 	$(NR2TEX)  -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -M me			\
