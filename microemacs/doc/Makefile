@@ -73,20 +73,6 @@ THUMBPDF= thumbpdf
 	- $(RM) $*.bbl
 	- $(RM) thumbpdf.log
 	- $(RM) thumbpdf.pdf
-clean::
-	$(RM) $*.aux
-	$(RM) $*.lot
-	$(RM) $*.out
-	$(RM) $*.pdg
-	$(RM) $*.doc
-	$(RM) thumb???.png
-	$(RM) $*.out
-	$(RM) $*.doc
-	$(RM) $*.tpt
-	$(RM) $*.blg
-	$(RM) $*.bbl
-	$(RM) thumbpdf.log
-	$(RM) thumbpdf.pdf
 #
 # Define components
 #
@@ -363,7 +349,7 @@ TYP9_060=	$(DOCDIR)m9typ060.9 $(DOCDIR)m9typ061.9 $(DOCDIR)m9typ062.9\
 		$(DOCDIR)m9typ069.9
 TYP9_070=	$(DOCDIR)m9typ070.9 $(DOCDIR)m9typ071.9 $(DOCDIR)m9typ072.9\
 		$(DOCDIR)m9typ073.9 $(DOCDIR)m9typ074.9 $(DOCDIR)m9typ075.9\
-		$(DOCDIR)m9typ076.9 $(DOCDIR)m9typ077.9
+		$(DOCDIR)m9typ076.9 $(DOCDIR)m9typ077.9 $(DOCDIR)m9typ078.9
 #
 TYP9_ALL=	$(TYP9_000) $(TYP9_010) $(TYP9_020) $(TYP9_030) $(TYP9_040) \
 		$(TYP9_050) $(TYP9_060) $(TYP9_070)
@@ -455,12 +441,9 @@ spotless:: clean
 # Build the main components.
 #
 #############################################################################
-me.tni:	me.tns
-	$(CP) me.tns me.tni
-	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' me.tni
-	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' me.tni
-	$(SED) -i "" -e 's/<meVER_MN>/$(meVER_MN)/g' me.tni
-	$(SED) -i "" -e 's/<meVER_DY>/$(meVER_DY)/g' me.tni
+me.tni:	me.tns $(TOPDIR)/etc/makeinc.ver
+	$(SED) -e 's/<meVER_CN>/$(meVER_CN)/g' me.tns | $(SED) -e 's/<meVER_YR>/$(meVER_YR)/g' | $(SED) -e 's/<meVER_MN>/$(meVER_MN)/g' | $(SED) -e 's/<meVER_DY>/$(meVER_DY)/g' > $@
+
 clean::
 	$(RM) me.tni
 # Superman file - sort the page sections into alphabetic order using nrorder.
@@ -512,7 +495,7 @@ me.hhp:	me.hts
 	echo "Title=JASSPA MicroEmacs Help" >> me.hhp
 	echo "" >> me.hhp
 	echo "[FILES]" >> me.hhp
-	(cd htm$(sc) find . -type f -print |  sed -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
+	(cd htm$(sc) find . -type f -print | $(SED) -e "s/^\\.\\///g" -e "s/\\//\\\\/g" >> ../me.hhp)
 	echo "" >> me.hhp
 	echo "[INFOTYPES]" >> me.hhp
 	$(RMDIR) htm
@@ -538,7 +521,7 @@ web_pages/me/index.html: me.hts
 	$(RMDIR) web_pages
 	$(MKDIR) web_pages
 	$(MKDIR) web_pages$(pc)me
-	sed 'sZ<<FILE> me&HTMLZ<<FILE> me/index\&HTMLZ' me.hts | sed 'sZHREF="me/ZHREF="Z' | sed 'sZHREF="\.\./me&HTMLZHREF="index\&HTMLZg' | sed 'sZHREF="me&HTMLZHREF="index\&HTMLZg' | sed 'sZSRC="\.\./me/ZSRC="Z' | sed 'sZSRC="me/ZSRC="Z' >> web_pages$(pc)me_wp.hts
+	$(SED) 'sZ<<FILE> me&HTMLZ<<FILE> me/index\&HTMLZ' me.hts | $(SED) 'sZHREF="me/ZHREF="Z' | $(SED) 'sZHREF="\.\./me&HTMLZHREF="index\&HTMLZg' | $(SED) 'sZHREF="me&HTMLZHREF="index\&HTMLZg' | $(SED) 'sZSRC="\.\./me/ZSRC="Z' | $(SED) 'sZSRC="me/ZSRC="Z' >> web_pages$(pc)me_wp.hts
 	cd web_pages$(sc) $(HTS2HTML) -l .html me_wp.hts
 
 #
@@ -596,7 +579,7 @@ me.lbn: me.sm me.0
 clean::
 	$(RM) me.lbn
 # Build HTML archive
-me.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
+me.hts: $(TNIS) me.sm me.0 me.lbn forward.lbn logo.png
 	$(NR2HTML) -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -x -M me			\
@@ -615,7 +598,7 @@ clean::
 # Build Windows Help File.
 me.hlp: $(HC31) me.hpj
 	$(HC31) me.hpj
-me.rtf: me.sm me.0 me.lbn me.tni forward.lbn me.hpj logo.bmp
+me.rtf: $(TNIS) me.sm me.0 me.lbn forward.lbn me.hpj logo.bmp
 	$(NR2RTF)  -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -x -M me			\
@@ -632,12 +615,8 @@ clean::
 	$(RM) me.rtf
 # Build lAtEx Help File.
 NR2TEX=nr2tex
-me.tex: me.0 me.sm me.lbn me.tni mehead.tex metail.tex texlogo.png
-	$(CP) mehead.tex meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_CN>/$(meVER_CN)/g' meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_YR>/$(meVER_YR)/g' meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_MN>/$(meVER_MN)/g' meheadrl.tex
-	$(SED) -i "" -e 's/<meVER_DY>/$(meVER_DY)/g' meheadrl.tex
+me.tex: $(TNIS) me.0 me.sm me.lbn mehead.tex metail.tex texlogo.png
+	$(SED) -e 's/<meVER_CN>/$(meVER_CN)/g' mehead.tex | $(SED) -e 's/<meVER_YR>/$(meVER_YR)/g' | $(SED) -e 's/<meVER_MN>/$(meVER_MN)/g' | $(SED) -e 's/<meVER_DY>/$(meVER_DY)/g' > meheadrl.tex
 	$(NR2TEX)  -E $(MANLOG)			\
 		   -c JASSPA			\
 		   -M me			\
@@ -656,6 +635,20 @@ clean::
 me.pdf: me.tex
 clean::
 	$(RM) me.pdf
+clean::
+	$(RM) $*.aux
+	$(RM) $*.lot
+	$(RM) $*.out
+	$(RM) $*.pdg
+	$(RM) $*.doc
+	$(RM) thumb???.png
+	$(RM) $*.out
+	$(RM) $*.doc
+	$(RM) $*.tpt
+	$(RM) $*.blg
+	$(RM) $*.bbl
+	$(RM) thumbpdf.log
+	$(RM) thumbpdf.pdf
 # Build MicroEmacs EHF file.
 me.ehf: meehf.hts
 	$(RMDIR) ehf
@@ -672,7 +665,7 @@ clean::
 	$(RMDIR) ehf
 	$(RM) me.ehf
 # HTML Archive
-meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
+meehf.hts: $(TNIS) me.sm me.0 me.lbn forward.lbn logo.png
 	$(NR2HTML) -E $(MANLOG)				\
 		   -b -c JASSPA				\
 		   -x -M me				\
@@ -689,7 +682,7 @@ meehf.hts: me.sm me.0 me.lbn me.tni forward.lbn logo.png
 clean::
 	$(RM) meehf.hts
 # Build the postscript print job ordering files.
-me.pso:	me.sm me.tni
-		$(NRORDER) $(NROFLAGS) -z -o $@ me.sm
+me.pso:	$(TNIS) me.sm
+	$(NRORDER) $(NROFLAGS) -z -o $@ me.sm
 clean::
 	$(RM) me.pso

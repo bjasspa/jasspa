@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.6 $
  *  Date          : $Date: 2004-02-07 19:29:49 $
  *  Author        : $Author: jon $
- *  Last Modified : <260223.1745>
+ *  Last Modified : <260304.1059>
  *
  *  Description	
  *
@@ -18,6 +18,7 @@
  *
  *  History
  *
+ * 1.0.2a - JG 04/03/26 Added origin reference in footer.
  * 1.0.2  - JG 23/02/26 Fixed cross referencing with non A-Z symbols
  * 1.0.1k - JG 07/02/04 Ported to HP-UX 11.00
  * 1.0.1j - JG 12/01/04 Corrected the generated date.
@@ -69,7 +70,7 @@
 #include "html.h"
 
 /* Macro Definitions */
-#define MODULE_VERSION  "1.0.2"
+#define MODULE_VERSION  "1.0.2a"
 #define MODULE_NAME     "nr2html"
 
 #define NORMAL_MODE 0x0000
@@ -107,9 +108,11 @@ static char *progname = MODULE_NAME;
 static char *moduleName = NULL;         /* Name of the module */
 static char *sectionName = NULL;
 static char *sectionId = NULL;
+static char *sectionDesc = NULL;
 static char *sectionComponent = NULL;
 static char *sectionDate = NULL;        /* Date on which last modified */
 static char *copyrightName = NULL;
+static char *manFilename = NULL;        /* The man file name */
 static int  sectionLevel = 0;           /* Position of section */
 static char *fileHTMLName = NULL;
 static char *localName = NULL;
@@ -494,34 +497,41 @@ nrFH_func (void)
     indent = 0;
     sub_indent = 0;
     insertPara (PARA_RESET);            /* Remove Bold; Indent etc. */
-    htmlStr (HTML_LINE);                /* Horizontal line */
-    htmlEol ();                         /* Make pretty */
-#if 0
-    if ((localName != NULL) &&
-        ((strcmp (localName, sectionName) != 0) ||
-         (strcmp (localNum, sectionId) != 0)))
+    
+    /* Insert a reference to the original page. */
+    htmlFormatStr (mode, "", NULL);
+    htmlStr("<small>Ref: ");
+    if (sectionDesc != NULL)
+        htmlFormatStr (mode, sectionDesc, NULL);
+    else
     {
-        htmlStr ("<LI><A HREF=<<R%s<>Local Contents</A>",
-                 nrMakeXref (localName, localNum));
-        htmlEol ();
+        htmlFormatStr (mode, sectionName, NULL);
+        if (sectionId != NULL)
+        {
+            htmlStr("(");
+            htmlFormatStr (mode, sectionId, NULL);
+            htmlStr(")");
+        }
     }
-    htmlStr ("<LI><A HREF = <<Rcontents<>Main Contents</A>");
-    htmlEol ();
-#endif
-    /* Add the copyright string */
-    if (copyrightName != NULL)
-        htmlStr ("<P><I>(c) Copyright %s %4d</I>", copyrightName, year);
-    htmlEol ();
-    /* Add the modification date */
+    if (manFilename != NULL)
+    {
+        htmlStr(" File: ");
+        htmlFormatStr (mode, manFilename, NULL); 
+    }
     if (sectionDate != NULL)
     {
-        htmlStr ("<BR><I>Last Modified: %s</I>", sectionDate);
-        htmlEol ();
+        htmlStr(" Date: ");   
+        htmlFormatStr (mode, sectionDate, NULL); 
     }
-    /* Add the generated on date */
-    htmlStr ("<BR><I>Generated On: %4d/%02d/%02d</I>", year, month, day);
-    htmlEol ();
+    htmlStr("</small>");
+    htmlEol ();                         /* Make pretty */
+    htmlStr (HTML_LINE);                /* Horizontal line */
+    htmlEol ();                         /* Make pretty */
     
+    /* Add the copyright string */
+    if (copyrightName != NULL)
+        htmlStr ("<P><I><small>(c) Copyright %s %4d</I></small>", copyrightName, year);
+    htmlEol ();
     htmlStr ("</BODY></HMTL>");
     htmlEol ();
 }
@@ -638,6 +648,7 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
 {
     bufFree (sectionName);
     bufFree (sectionId);
+    bufFree (sectionDesc);
 
     indent = 0;
     sub_indent = 0;
@@ -645,6 +656,7 @@ nrTH_func (char *id, char *num, char *date, char *company, char *title)
 
     sectionName = bufStr (NULL, id);
     sectionId = bufNStr (NULL, num);
+    sectionDesc = bufNStr (NULL, title);
 
     /*
      * If we are compiling then assign the correct filename and path
@@ -730,6 +742,7 @@ nrNH_func (char *id, char *num, char *title, char *xref)
 
     bufFree (sectionName);
     bufFree (sectionId);
+    bufFree (sectionDesc);
 
     indent = 0;
     sub_indent = 0;
@@ -740,6 +753,7 @@ nrNH_func (char *id, char *num, char *title, char *xref)
 
     sectionName = bufStr (NULL, id);
     sectionId = bufNStr (NULL, num);
+    sectionDesc = bufNStr (NULL, title);
 
     if (compiling)
     {
@@ -754,7 +768,7 @@ nrNH_func (char *id, char *num, char *title, char *xref)
         htmlEol ();
     }
     else if (xref == NULL)
-        htmlStr ("<<A<","&HTML&");     /* Automatically assigned name */
+        htmlStr ("<<A&HTML&<");         /* Automatically assigned name */
     else
         htmlStr ("<<F%s&HTML&<", xref); /* Manually assigned name */
 
@@ -1359,8 +1373,11 @@ nrStartInc (char *fname, int *imode)
 static void
 nrStart (char *fname, int flag)
 {
+    /* Free off the old name */
+    manFilename = bufFree (manFilename);
+    manFilename = bufNStr (NULL, fname);
+    
     /* Set up the conversion */
-
     para_mode = 0;
     para_clean = 0;
     para_indent = 0;
