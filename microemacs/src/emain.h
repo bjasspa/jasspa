@@ -458,6 +458,10 @@
 /* DO NOT CHANGE THIS VALUE */
 #define MEOPT_MWFRAME   0
 #endif
+#ifdef MEOPT_XFT
+#undef  MEOPT_XFT
+#endif
+#define MEOPT_XFT       0       /* Disable XFT for nanoemacs             */
 
 #ifdef _MOUSE
 #define MEOPT_MOUSE     0       /* do mouse pointer stuff                */
