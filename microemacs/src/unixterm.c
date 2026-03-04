@@ -90,17 +90,6 @@ static char termOutBuf [TERMOUT_BUFSIZ];
 #include <poll.h>
 #endif
 
-#if MEOPT_COLOR
-#if MEOPT_XFT
-XftColor *colTable=NULL;
-#define meXftColorGet(cc) &(colTable[cc])
-#define meXColorGet(cc) colTable[cc].pixel
-#else
-meUInt *colTable=NULL;
-#define meXColorGet(cc) colTable[cc]
-#endif
-#endif
-
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 /**************************************************************************
@@ -196,6 +185,8 @@ static char tcapbuf[TCAPSLEN];
 #define tcapColorSysCnt 16
 #define tcapColorGryOff 232
 #define tcapColorGryCnt 24
+#define TCAPcolorGet(cc) (tcapColorTbl[cc])
+meUByte *tcapColorTbl=NULL;
 /* Note: These color numbers are not meant to be accurate, they are meant to promote sensible color
  * selection for the different ME color schemes */
 static meUByte tcapColorSys[tcapColorSysCnt*3] =
@@ -319,6 +310,17 @@ static int xdndClientMessage (XEvent *xevent, meFrame *frame);
 meCellMetrics mecm;
 
 static int disableResize = 0;           /* Flag to disable screen resize */
+
+#if MEOPT_COLOR
+#if MEOPT_XFT
+XftColor *colTable=NULL;
+#define meXftColorGet(cc) &(colTable[cc])
+#define meXColorGet(cc) colTable[cc].pixel
+#else
+meUInt *colTable=NULL;
+#define meXColorGet(cc) colTable[cc]
+#endif
+#endif
 
 Colormap xcmap;
 int      xscreen;
@@ -3277,11 +3279,11 @@ TCAPaddColor(meUByte index, meUByte r, meUByte g, meUByte b)
     
     if(noColors <= index)
     {
-        colTable = (meUInt *) meRealloc(colTable,(index+1)*sizeof(meUInt));
-        memset(colTable+noColors,0, (index-noColors+1)*sizeof(meUInt));
+        tcapColorTbl = (meUByte *) meRealloc(tcapColorTbl,(index+1)*sizeof(meUByte));
+        memset(tcapColorTbl+noColors,0, (index-noColors+1)*sizeof(meUByte));
         noColors = index+1;
     }
-    colTable[index] = li;
+    tcapColorTbl[index] = (meUByte) li;
     
     return meTRUE;
 }
@@ -3355,7 +3357,7 @@ TCAPschemeSet(meScheme scheme)
         meUByte col;
         
         /* Foreground color */
-        col = meXColorGet(meStyleGetFColor(nstyle));
+        col = TCAPcolorGet(meStyleGetFColor(nstyle));
         if(oschemeFcol != col)
         {
             if(tcaptab[TCAPsetaf].code.str != NULL)
@@ -3373,7 +3375,7 @@ TCAPschemeSet(meScheme scheme)
         }
         
         /* Background color */
-        col = meXColorGet(meStyleGetBColor(nstyle));
+        col = TCAPcolorGet(meStyleGetBColor(nstyle));
         if(oschemeBcol != col)
         {
             if (tcaptab[TCAPsetab].code.str != NULL)
