@@ -608,7 +608,7 @@ define-macro sql-format
     insert-string &ind &spr ":%s:a%s" $buffer-bname #l1
   !done
   beginning-of-buffer
-  !force fhook-sql
+  major-mode "sql"
   set-mark
   end-of-buffer
   copy-region

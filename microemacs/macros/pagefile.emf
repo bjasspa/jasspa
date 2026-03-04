@@ -599,10 +599,7 @@ define-macro page-file
     !if &band @# 2
       find-buffer "*Page-tmp-bin*"
       1 buffer-mode "binary"
-      !if &not &exi "fhook-binary"
-        !force execute-file "hkbinary"
-      !endif
-      !force fhook-binary
+      !force major-mode "binary"
     !elif &band @# 16
       find-buffer "*Page-tmp*"
     !else

@@ -132,7 +132,7 @@ define-macro fhook-dirlst
     !endif
   !elif &lfin "|http://|https:/|" &lef $buffer-fname 7
     ; loading "http://www.jasspa.com/" would call this hook if there's no <html> magic hook as it ends in a '/'
-    fhook-html
+    major-mode "html"
     !return
   !else
     -1 buffer-mode "view"
