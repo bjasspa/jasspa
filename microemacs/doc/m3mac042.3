@@ -29,7 +29,7 @@ executed, otherwise the argument "\fItool-name\fR" must be given.
 .PP
 A tool with a numeric  name can be executed via a key binding, for example, to
 execute tool \fB3\fR (as defined by  \fBuser-setup\fR)  to '\fCC-3\fR' add the
-following line to the user setup file:-
+following line to the user setup file:
 .Me $emf-scheme
 .CS
 3 global-bind-key execute-tool "C-3"
@@ -41,14 +41,14 @@ The  registry  entries  for a tool  must  be  located  in  registry  directory
 \fB$platform\fR is the current setting of variable
 .Ht $platform 5
 and  \fBtool-name\fR  is the  name of the  tool as given to the  command.  The
-following registry entries are used:-
+following registry entries are used:
 .IP "\fBname\fR"
 The name of the tool as displayed in the user-setup  Tools dialog and the Main
 Tools menu. This is only used for tools \fC0\fR to \fC9\fR.
 .IP "\fBcommand\fR"
 The  command-line  to be launched  when the tool is  executed,  the  following
 special  tokens  may be used in the  command-line  which  are  substituted  at
-execution:-
+execution:
 .RS
 .IP "\fB%ff\fR"
 The current  buffer's full file name, including the path.
@@ -68,7 +68,7 @@ Note   that   "\fB%ff\fR"   is   always   the  same  as   "\fB%fp%fn\fR"   and
 "\fB%fp%fb%fe\fR".  If any of these  tokens  are used, the tool  will  fail to
 execute if the current buffer does not have a file name.
 .IP "\fBflag\fR"
-A bit based flag setting the tool characteristics, where:-
+A bit based flag setting the tool characteristics, where:
 .RS
 .IP "\fB0x01\fR"
 Enable current buffer saving. 
@@ -87,7 +87,7 @@ Enable concurrent running, not available on all platforms, see variable
 .IP "\fBbname\fR"
 The name of the  buffer to be used if the output is  captured.  The  following
 special  tokens  may be used in the  buffer  name  which  are  substituted  at
-execution:-
+execution:
 .RS
 .IP "\fB%fn\fR"
 The current  buffer's file name without the path, set to the buffer name if the

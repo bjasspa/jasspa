@@ -94,7 +94,7 @@ is a user  defined  variable  that  defines  the file  system  location of the
 located at a  different  location  then the  variable  \s-1MUST\s0  be defined
 within the user start up script in order for the \fBcygwin\fR command to start
 the shell. With a default  installation of \fIcygwin\fR  then the settings are
-typically defined as:-
+typically defined as:
 .PP
 .B "Current Release"
 .Me $emf-scheme
@@ -116,14 +116,14 @@ set-variable %cygwin-hilight 0
 is   an   optional    variable    that   is   used   in    conjunction    with
 \fB%cygwin-hilight\fR,  it  defines  the  hilighting  string  identifying  the
 prompt.  This  allows the prompt to be  rendered  with a different  color. The
-default prompt is \fCbash-x.yyr$\fR and may be hilighted using a definition:-
+default prompt is \fCbash-x.yyr$\fR and may be hilighted using a definition:
 .Me $emf-scheme
 .CS
 set-variable %cygwin-prompt "bash-2.01$"
 .CE
 .Me $ehf-scheme
 The user typically  overrides the prompt  definition  within the \s-1BASH\s0
-startup file, a more appropriate definition of the prompt may be:-
+startup file, a more appropriate definition of the prompt may be:
 .Me $emf-scheme
 .CS
 set-variable %cygwin-prompt "^[a-z]*@[^>]*>"

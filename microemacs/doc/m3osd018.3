@@ -28,13 +28,13 @@ to be used. The execution of a tool can also be bound to a key, see \fBexecute-t
 The top half of the dialog consists of the 10 Tools  (\fC0\fR-\fC9\fR)  configuration  buttons. Selecting one of these
 selects the current tool to be configured, the current tool is shown by the title in the middle of the dialog.
 .PP
-The lower half of the dialog configures the currently selected tool, as follows:-
+The lower half of the dialog configures the currently selected tool, as follows:
 .IP "\fCTool Name\fR"
 Sets the  displayed  name of the tool. The tool name is used in the  buttons in the top half of this dialog and in the
 \*(mS Main Tools Menu.
 .IP "\fCCommand Line\fR"
 Sets the system command-line to be launched whenever the tool is executed, the following special tokens may be used in
-the command-line which are substituted at execution:-
+the command-line which are substituted at execution:
 .RS
 .IP "\fB%ff\fR"
 The current  buffer's full file name, including the path.
@@ -73,7 +73,7 @@ or
 depending on the setting of \fCRun Concurrently\fR.
 .IP "\fCBuffer\fR"
 Specifies  the buffer  name the  captured  output  should be dumped to, this option is only  visible  when
-\fCCapture Output\fR is enabled. The following special tokens may be used in the buffer name which are substituted at execution:-
+\fCCapture Output\fR is enabled. The following special tokens may be used in the buffer name which are substituted at execution:
 .RS
 .IP "\fB%fn\fR"
 The current  buffer's  file name  without the path, set to the buffer name if the current  buffer does not have a file
