@@ -47,7 +47,7 @@
 ;         >
 ;         > Author:       My Self
 ;         > Created:      11/11/97
-;         > Modified:     <260105.1807>
+;         > Modified:     <260304.1931>
 ;         > Location:     /xx/yy/zz.doc
 ; *
 ;         All lines commencing with '*' are assumed to be bullet lists. Bullet
@@ -205,7 +205,6 @@ set-variable #l0 &ind &spr ".fhook-%s.setup" #l1
 execute-file "docutl"
 
 ; convert a doc/txt buffer to jst
-define-macro-file hkjst fhook-jst
 define-macro doc-to-jst
   beginning-of-buffer
   set-variable #l8 &bmod "exact"
@@ -248,7 +247,7 @@ define-macro doc-to-jst
   beginning-of-buffer
   &cond #l8 1 -1 buffer-mode "exact"
   &cond #l9 1 -1 buffer-mode "magic"
-  fhook-jst
+  major-mode "jst"
 !emacro
 
 set-variable &ind &spr ".fhook-%s.command-flag"  #l1 "|thb|hb|th|thb|th|h|h|thb|thb|thb|thb|thb|h|h|th|h|h|thb|thb|thb|thb|thb|"

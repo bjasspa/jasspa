@@ -10,7 +10,7 @@
 ;
 define-macro fhook-wiki
   @# buffer-init
-  &cond &sin "c" .fh
+  &cond &sin "c" .fhook-wiki.setup 1 0 wiki-edit-mode
   buffer-init-hooks
   wiki-add-to-last
 !emacro
@@ -98,13 +98,6 @@ define-macro wiki-edit-mode
       ml-write "[Edit mode disabled]"
     !endif
   !endif
-!emacro
-
-0 define-macro wiki-load-file
-  -1 buffer-mode "edit"
-  1 buffer-mode "view"
-  beginning-of-buffer
-  fhook-wiki
 !emacro
 
 define-macro wiki-help
@@ -243,14 +236,14 @@ define-macro wiki-goto-link
           !force 0 find-file #l2
           !if &not $status
             !force find-file #l2
-            fhook-wiki
+            major-mode "wiki"
             !if &not :wikimode
               wiki-edit-mode
             !endif
             ml-write &spr "[Warning: failed to find wiki file \"%s\"]" #l2
             !return
-          !elif &not &seq $buffer-fhook "fhook-wiki"
-            fhook-wiki
+          !elif &not &seq $buffer-major-mode "wiki"
+            major-mode "wiki"
             ml-write &spr "[Warning: Link file \"%s\" may not be a wiki file]" #l2
           !endif
         !endif

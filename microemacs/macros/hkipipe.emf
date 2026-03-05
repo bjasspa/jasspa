@@ -547,7 +547,7 @@ define-macro gdb
   set-variable #l1 @ml "gdb args"
   0 ipipe-shell-command &spr "gdb -f %s %s" #l0 #l1 "*gdb*"
   popup-window "*gdb*"
-  fhook-ipipe
+  major-mode "ipipe"
   global-bind-key gdb-add-breakpoint "f9"
 !emacro
 
@@ -632,7 +632,7 @@ define-macro dbx
   set-variable #l1 @ml "dbx args"
   0 ipipe-shell-command &spr "dbx %s %s" #l0 #l1 "*dbx*"
   popup-window "*dbx*"
-  fhook-ipipe
+  major-mode "ipipe"
   set-variable :mode 0
   set-variable :prompt "^\\((dbx) \\)+"
   !if &seq $platform "irix"
@@ -718,7 +718,7 @@ define-macro perldb
     0 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
   !endif
   popup-window "*perldb*"
-  fhook-ipipe
+  major-mode "ipipe"
   global-bind-key perldb-add-breakpoint "f9"
 !emacro
 

@@ -78,7 +78,7 @@ define-macro aman
   forward-word
   beginning-of-line
   -1 kill-region
-  fhook-man
+  major-mode "man"
 !emacro
 
 0 define-macro man-backward-word
