@@ -31,7 +31,7 @@ command it is bound to will be executed.
 This system is useful for things which can be done in the background.
 .SH EXAMPLE
 The following example is taken from  \fCssaver.emf\fR  and implements a simple
-screen saver:-
+screen saver:
 .Me $emf-scheme
 .CS
 set-variable %screen-saver 0
@@ -74,7 +74,7 @@ define-macro screen-saver
 .Me $ehf-scheme
 .SH NOTES
 Care must be taken to ensure that a recursive  loop is not  created,  consider
-the following example:-
+the following example:
 .Me $emf-scheme
 .CS
 define-macro bored
@@ -89,7 +89,7 @@ If this was executed  \*(mS would very quickly crash! As soon as a second past
 \fBbored\fR would execute, which will prompt the user and wait for input. If a
 second passes without input  \fBbored\fR  will be executed again and again and
 again  until stack  memory runs out! To avoid this  \fCidle-pick\fR  should be
-unbound before waiting for user input, i.e.:-
+unbound before waiting for user input, i.e.:
 .Me $emf-scheme
 .CS
 define-macro bored

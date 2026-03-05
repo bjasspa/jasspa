@@ -27,7 +27,7 @@ occurrence  of the  string  in the  file is  up-dated  with  the time and date
 information when the buffer is written. The
 .B $timestamp
 string may contain any text, and  includes  the  following,  magic  characters
-escaped by a percentage (`\fC%\fR') character:-
+escaped by a percentage (`\fC%\fR') character:
 .sp
 .RS
 .nf
@@ -48,13 +48,13 @@ The year component  (\fC%Y\fR) may be a 2 or 4 digit string, depending whether
 it includes  the century.  When the time  stamping  searches  for the  \fC%Y\fR
 component it searches for either variant and replaces appropriately.
 .SH EXAMPLE
-The startup file may define the time stamp required as follows:-
+The startup file may define the time stamp required as follows:
 .Me $emf-scheme
 .CS
 set-variable $timestamp "Last Modified : %Y/%M/%D %h:%m:%s"
 .CE
 .Me $ehf-scheme
-Time stamping is performed on the string :-
+Time stamping is performed on the string :
 .CS
 Last Modified : 90/11/23 10:12:01
 .CE

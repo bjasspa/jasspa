@@ -67,13 +67,13 @@ Calculates the square root of \fInum\fR. Note that  \fC-1.#INF\fP is returned if
 .LP
 Expression  evaluation  is prefix.  Operators  may be nested  using a pre-fix
 ordering,  there is no concept of brackets  (in-fix  notation). The expression
-\fC(2 * 3) + 4\fR is expressed as:-
+\fC(2 * 3) + 4\fR is expressed as:
 .Me $emf-scheme
 .CS
 &fadd &fmul 2 3 4
 .CE
 .Me $ehf-scheme
-conversely \fC2 * (3 + 4)\fR is expressed as:-
+conversely \fC2 * (3 + 4)\fR is expressed as:
 .Me $emf-scheme
 .CS
 &fmul 2 &fadd 3 4
@@ -81,7 +81,7 @@ conversely \fC2 * (3 + 4)\fR is expressed as:-
 .Me $ehf-scheme
 The number \fC123.4\fR can also be expressed as \fC1.234e2\fR and \fC0.001234\fR as \fC1.234e-3\fR.
 .SH EXAMPLE
-Add multiply a number by pi and print in a readable form:-
+Add multiply a number by pi and print in a readable form:
 .Me $emf-scheme
 .CS
 ml-write &spr "%.10g" &fmul %num1 3.141592654

@@ -35,7 +35,7 @@ Variables \- Macro variables
 .ad
 .SH DESCRIPTION
 Variables  are  part of \*(mS  macro  language  and may be used  wherever  an
-argument is required. The variable space comprises:-
+argument is required. The variable space comprises:
 .IP
 \fB#\fR \- Register Variable
 .br
@@ -117,7 +117,7 @@ define-macro bar
 bar
 .CE
 .Me $ehf-scheme
-When \fBbar\fR is executed the following messages may be observed:-
+When \fBbar\fR is executed the following messages may be observed:
 .CS
 foo1: Hello World
 foo2: Hello World
@@ -129,7 +129,7 @@ scope so local  scope  command  variables  (form 1) may be created and used in
 that scope. Any such variables created are automatically deleted at the end of
 execution.  For  example,  the  default  color  scheme  generator  macro file,
 \fCschemed.emf\fR,  creates  command  variables for the created  colors to aid
-readability:-
+readability:
 .Me $emf-scheme
 .CS
 add-color &set .green     3 0   200 0
@@ -162,7 +162,7 @@ set-variable :bar "Hello world"
 1000 ml-write &cat ":bar:bar " :bar:bar
 .CE
 .Me $ehf-scheme
-When the above is executed the following messages may be observed:-
+When the above is executed the following messages may be observed:
 .CS
 :foo     ERROR
 :foo:foo Hello World

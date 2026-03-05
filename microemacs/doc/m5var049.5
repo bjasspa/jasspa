@@ -32,7 +32,7 @@ and
 .Ht find-file 2 ).
 .PP
 By default, the flags are  disabled,  the  facilities  outlined  below are enabled by setting the variable in the user
-configuration. The flag values for both flags are defined as follows:-
+configuration. The flag values for both flags are defined as follows:
 .IP \fBC\fR
 HTTP(S) only: close socket after every request. When this flag is not given \*(mS sends \fCkeep-alive\fR so the socket
 connection may be reused.
@@ -61,14 +61,14 @@ FTPS, FTPE & HTTPS only: show verbose information such as certificate details.
 .IP \fBw\fR
 FTPS, FTPE & HTTPS only: show warnings of potential issues with the secure socket support layer.
 .LP
-Typically the following flags are enabled in the \fIuser\fR.emf file:-
+Typically the following flags are enabled in the \fIuser\fR.emf file:
 .Me $emf-scheme
 .CS
 set-variable %ftp-flags "cisp"
 set-variable %http-flags "csp"
 .CE
 .Me $ehf-scheme
-Once familiar with this facility the console pop-up becomes inconvenient and the flags are typically reduced to:-
+Once familiar with this facility the console pop-up becomes inconvenient and the flags are typically reduced to:
 .Me $emf-scheme
 .CS
 set-variable %ftp-flags "ci"

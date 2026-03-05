@@ -23,7 +23,7 @@ $time \- The current system time
 .SH DESCRIPTION
 .B $time
 is a  constantly  changing  variable  which  is  set  to the  current  system  time.  The  format  of  \fB$time\fR  is
-"\fCYYYYCCCMMDDWhhmmssSSS\fR", where:-
+"\fCYYYYCCCMMDDWhhmmssSSS\fR", where:
 .IP \fBYYYY\fR
 The current year (full 4 digits so should be millennium bug free).
 .IP \fBCCC\fR
@@ -61,7 +61,7 @@ so its length is 20 characters. The focus of the fraction part is more on provid
 resolution the system can realistically provide, however, the actual resolution is platform specific and should only 
 be considered accurate to 10ms at best, see example section below.
 .SH EXAMPLE
-The following macro uses \fB$time\fR to calculate the time taken to execute a user command:-
+The following macro uses \fB$time\fR to calculate the time taken to execute a user command:
 .Me $emf-scheme
 .CS
 define-macro time

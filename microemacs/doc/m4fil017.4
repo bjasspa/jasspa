@@ -47,13 +47,13 @@
 .ad
 .SH DESCRIPTION
 The Command Variables allow macros to obtain \*(mS input commands and keystrokes from the user. The general format of
-the command is:-
+the command is:
 .IP 
 \fB@c\fR\fIi\fR[\|\fBk\fR\|]
 .LP
 Where,
 .IP \fIi\fR
-Determines the source of the input as follows:-
+Determines the source of the input as follows:
 .RS
 .IP \fBl\fR 
 The last input entered.
@@ -82,7 +82,7 @@ returned to the caller, i.e. "\fC^F\fR (control-F).
 The \fB@cl\fR, \fB@clk\fR, \fB@cc\fR and \fB@cck\fR variables can also be set,
 this  feature  can be used by  macros to change  the  command  history.  While
 setting the current command is limited in use, setting the last command can be
-immensely useful, consider the following macro code:-
+immensely useful, consider the following macro code:
 .Me $emf-scheme
 .CS
 kill-line
@@ -124,7 +124,7 @@ Get a quoted command name from the user.
 Get a quoted keystroke from the user.
 .SH EXAMPLE
 The  following  example  shows how the  \fB@cc\fR  and \fB@cl\fR  commands are
-used:-
+used:
 .Me $emf-scheme
 .CS
 define-macro current-last-command
@@ -134,7 +134,7 @@ define-macro current-last-command
 .CE
 .Me $ehf-scheme
 Pressing the up key and then executing this macro using  execute-named-command
-(esc x) will insert the lines:-
+(esc x) will insert the lines:
 .CS
 Last key [up] name [backward-line]
 Current key [esc x] name [execute-named-command]

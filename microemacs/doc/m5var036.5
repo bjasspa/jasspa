@@ -83,7 +83,7 @@ ready for viewing.
 .PP
 Once a file is loaded, then the
 .Ht rcs-file 2
-command has one of two effects:-
+command has one of two effects:
 .IP
 If  the  file  is  in  view  mode  then  the  \fB$rcs-cou-com\fR   (\s-1RCS\s0
 \fBC\fRheck \fBO\fRut \fBU\fRnlock  \fBCOM\fRmand) is executed (system command
@@ -110,7 +110,7 @@ command has been executed the file is reloaded.
 The  \s-1RCS\s0  variables  are by  default  undefined  and must be explicitly
 enabled in the start-up files.
 .SH EXAMPLE
-The following are typical variable definitions for the \s-1RCS\s0 interface:-
+The following are typical variable definitions for the \s-1RCS\s0 interface:
 .Me $emf-scheme
 .CS
 set-variable $rcs-file     "RCS/%f,v"
@@ -122,7 +122,7 @@ set-variable $rcs-ci-com   "ci -u -m\\"%m\\" %f"
 Note that the  \fB$rcs-cif-com\fR  variable  is usually  left  unassigned  and
 \fB$rcs-ci-com\fR is used by default.
 .PP
-The following are typical variable definitions for the \s-1SCCS\s0 interface:-
+The following are typical variable definitions for the \s-1SCCS\s0 interface:
 .Me $emf-scheme
 .CS
 set-variable $rcs-file     "SCCS/s.%f"
@@ -133,7 +133,7 @@ set-variable $rcs-ci-com   "sccs create %f"
 set-variable $rcs-ue-com   "sccs unedit %f"
 .CE
 .Me $ehf-scheme
-The following variable definitions can be used for MicroSoft's Visual Source Safe:-
+The following variable definitions can be used for MicroSoft's Visual Source Safe:
 .Me $emf-scheme
 .CS
 set-variable $rcs-file    "%f"

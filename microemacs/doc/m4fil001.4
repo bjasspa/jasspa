@@ -100,13 +100,13 @@ letter abbreviation.
 .LP
 Expression  evaluation  is prefix.  Operators  may be nested  using a pre-fix
 ordering,  there is no concept of brackets  (in-fix  notation). The expression
-\fC(2 * 3) + 4\fR is expressed as:-
+\fC(2 * 3) + 4\fR is expressed as:
 .Me $emf-scheme
 .CS
 &add &mul 2 3 4
 .CE
 .Me $ehf-scheme
-conversely \fC2 * (3 + 4)\fR is expressed as:-
+conversely \fC2 * (3 + 4)\fR is expressed as:
 .Me $emf-scheme
 .CS
 &mul 2 &add 3 4
@@ -138,7 +138,7 @@ Post-decrement   the   \fIvariable\fR   by   \fIdecrement\fR,   returning  the
 pre-decrement value i.e. \fIvariable\fR--, where the -- value is determined by
 \fIdecrement\fR.
 .SH EXAMPLE
-Add two numbers together and assign to a variable:-
+Add two numbers together and assign to a variable:
 .Me $emf-scheme
 .CS
 set-variable %result &add %num1 %num2

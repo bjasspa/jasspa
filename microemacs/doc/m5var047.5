@@ -17,7 +17,7 @@ $system \- System configuration variable
 \fB$system\fR \fIbitmask\fR; Default is system dependent
 .ad
 .SH DESCRIPTION
-The \fB$system\fR is used to define and configure the \*(mS environment, it is a bit based flag where:-
+The \fB$system\fR is used to define and configure the \*(mS environment, it is a bit based flag where:
 .IP \fB0x001\fR
 This bit is set if \*(mS is running in Console  mode. On UNIX  systems the default is to use X whenever  possible,  in
 which case this bit will be clear. If X is not used then a TERMCAP base interface is used instead and this bit will be
@@ -231,7 +231,7 @@ Unicode I/O  differently.  When UTF-8 encoding is being used, bit  \fB0x10000\fR
 Unicode drawing characters can be used.
 .SH EXAMPLE
 The follow  example  works out the  current  buffer's  backup  file name using
-\fB$system\fR to determine the naming system being used by \*(mS:-
+\fB$system\fR to determine the naming system being used by \*(mS:
 .Me $emf-scheme
 .CS
 set-variable #l0 &stat "a" $buffer-fname
