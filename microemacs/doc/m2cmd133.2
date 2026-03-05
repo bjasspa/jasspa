@@ -39,7 +39,7 @@ the given character sequence is only part of a mapping and is not directly mappe
 in the listing below) the mapping string returned is an encoded null character ("\fC\\x00\fR").
 .PP
 If a numeric argument \fIn\fR of 0 is specified then no arguments are required; the current translation table is
-dumped to buffer "\fI*translate-key*\fR". Following is a sample output:-
+dumped to buffer "\fI*translate-key*\fR". Following is a sample output:
 .CS
     "C-h" ......................... "backspace"
     "C-[" ......................... "esc"
@@ -137,7 +137,7 @@ usually take the form:
 .LP
 where  \fB^[\fR is the escape key (27),  \fBD\fR is a digit and \fBX\fR is any
 character.  These  keys may be bound to the  standard  keys, for  example  the
-typical output of the cursor keys may be translated as follows:-
+typical output of the cursor keys may be translated as follows:
 .IP
 \fC^[[A\fR = \fBup\fR,  \fC^[[B\fR = \fBdown\fR,  \fC^[[C\fR = \fBright\fR and
 \fC^[[D\fR = \fBleft\fR
@@ -146,7 +146,7 @@ The  "\fIfrom\fR"  string is specified as this key sequence and the "\fIto\fR"
 string is simply the key it is to be bound to, see
 .Ht global-bind-key 2
 for a guide to the string  format. For the above  example the following set of
-translations are required:-
+translations are required:
 .Me $emf-scheme
 .CS
 .ne 4
@@ -255,7 +255,7 @@ One of the easiest ways of obtaining a key sequence is to run
 .Hr sh 1
 which  does not  attempt  to  interpret  these  keys so when a key is  pressed
 (followed by  \fC<RETURN>\fR)  the following  type of error message is usually
-generated:-
+generated:
 .CS
 sh: ^[[2~:  not found.
 .CE

@@ -381,7 +381,7 @@ matches any character that is not a word-constituent.
 \fC\\{N,M\\}\fR
 .\"
 is a greedy postfix  qualifier to matches an integer  number of the previous item, where \fCN\fR and \fCM\fR are
-integer constants interpreted as follows:-
+integer constants interpreted as follows:
 .RS
 .TP
 \fC\\{N\\}\fR
@@ -499,11 +499,11 @@ mode is set on a per-buffer basis.
 Greedy  qualifiers  will  return  the  longest  string  that they can  matche,
 however the longest  pattern is  sometimes   not what is actually
 required.  For instance,  consider  searching  for an  HTML  bracket  set.  The
-simplest search is:-
+simplest search is:
 .CS
 M-x search-forward "<.*>"
 .CE
-Unfortunately, this pattern is not specific enough, given an HTML line:-
+Unfortunately, this pattern is not specific enough, given an HTML line:
 .CS
 <a href="www.jasspa.com">Jasspa Site</a>
 .CE
@@ -514,7 +514,7 @@ pattern then we can either use a lazy qualifier, for example:
 M-x search-forward "<.*?>"
 .CE
 Alternatively  the pattern can be made more  specific, for example the correct
-search pattern to use in this instance is:-
+search pattern to use in this instance is:
 .CS
 M-x search-forward "<[^>]*>"
 .CE

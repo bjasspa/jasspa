@@ -104,7 +104,7 @@ When a narrow is created the buffer mode
 is automatically set, when the last narrow is removed the mode is deleted.
 .PP
 The effect of \fBnarrow-buffer\fR depends on the given argument and is defined
-as follows:-
+as follows:
 .IP \fC1\fR
 Removes all narrows in the current  buffer (the  default),  it aborts if there
 are no narrows in the buffer.
@@ -181,7 +181,7 @@ For example, if the buffer contains the following text:
 5 Gary
 6
 .CE
-If the mark is on line 2 and the current point is on line 4, executing:-
+If the mark is on line 2 and the current point is on line 4, executing:
 .Me $emf-scheme
 .CS
 4 narrow-buffer
@@ -189,13 +189,13 @@ If the mark is on line 2 and the current point is on line 4, executing:-
 .Me $ehf-scheme
 Creates  one narrow,  narrowing  out lines 2 and 3, line 4 becomes  the narrow
 anchor line. When the narrow is removed lines 2 and 3 will be inserted  before
-line 4. The buffer will become:-
+line 4. The buffer will become:
 .CS
 1 Richmond
 4 Indianapolis
 5 Gary
 .CE
-If instead the following command was executed:-
+If instead the following command was executed:
 .Me $emf-scheme
 .CS
 3 narrow-buffer
@@ -203,7 +203,7 @@ If instead the following command was executed:-
 .Me $ehf-scheme
 Two narrows are  created, the first  narrowing  out lines 4 and 5 (line 6, the
 last line,  being the  anchor  line) the second  narrowing  out line 1 (line 2
-being the anchor line). The buffer will become:-
+being the anchor line). The buffer will become:
 .CS
 2 Lafayette
 3 Bloomington
@@ -218,7 +218,7 @@ which is  hilighted  and  annotated to show that a narrow exists. This markup is
 used in the language templates in the collapse operations (\fCcollapse.emf\fR)
 to show that a narrow exists. The narrow region is applied using the
 .B narrow-buffer
-command as follows:-
+command as follows:
 .Me $emf-scheme
 .CS
 0x34 narrow-buffer .scheme.fold-close collapse-markup
@@ -227,7 +227,7 @@ command as follows:-
 This defines a narrow region with a color scheme  mark-up. The mark-up line is
 annotated by the macro
 .C collapse-markup
-once the narrow is created. The macro is defined as follows:-
+once the narrow is created. The macro is defined as follows:
 .Me $emf-scheme
 .CS
 0 define-macro collapse-markup

@@ -56,7 +56,7 @@ the command if some special client specific action is required.
 .IP \fI<command>\fR
 The \fI<command>\fR is an editor command (or macro) of the given name with any
 arguments. Standard command escape sequences must be adhered to. i.e. to write
-"\fCHello World\fR" on the message line then a client may issue the command:-
+"\fCHello World\fR" on the message line then a client may issue the command:
 .RS
 .CS
 me -m "C:<client>:ml-write \\"Hello world\\"
@@ -66,7 +66,7 @@ me -m "C:<client>:ml-write \\"Hello world\\"
 A new line  character may be included in the string using  \fC\\\\n\fR, if the
 message is not terminated with a new line then on is automatically  added. The
 \fIclient-server\fR  interface  is typically  used to load a file, this may be
-performed as follows:-
+performed as follows:
 .RS
 .CS
 me -m "C:<client>:find-file \\"/path/foo.bar\\""
@@ -109,7 +109,7 @@ client pipe buffer and the buffer is hidden, so it is not  available  when the
 buffers  are  swapped.   (Note  that  the  client  buffer  may  be  explicitly
 interrogated using
 .Hl find-buffer find-buffer 2
-\fC*server*\fR). The client handler is installed as follows:-
+\fC*server*\fR). The client handler is installed as follows:
 .Me $emf-scheme
 .CS
 ; Setup the Client Server

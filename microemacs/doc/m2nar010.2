@@ -66,7 +66,7 @@ best solution.
 .PP
 Walking  through the sequence of steps  required to save a region of text then
 the following command sequence would be executed  (assuming a marked up region
-has been selected):-
+has been selected):
 .ne 6
 .CS
 esc w                       ; Copy the region.
@@ -99,7 +99,7 @@ user argument with the numerical argument of the binding:
 3 C-up -> 3 '5 backward-line' -> 3 * 5 backward-line -> 15 backward-line
 .CE
 Translating  the keys that we used into  commands then our  \fBwrite-region\fR
-process becomes:-
+process becomes:
 .Me $emf-scheme
 .CS
 copy-region
@@ -399,7 +399,7 @@ command
 to get its input directly from the user. The command does this by default when
 bound to a key and run from the command line however when run from a macro the
 behavior is different as there is no command line. We can force this  behavior
-by asking the command to be executed as if it were run from the command line:-
+by asking the command to be executed as if it were run from the command line:
 .Me $emf-scheme
 .CS
 write-buffer @mn

@@ -74,7 +74,7 @@ range of +/-63,  note  however  that a value of -63 has  special  meaning  as it
 (no indent). Alternatively an indent can be expressed as multiples of the buffer's tab size followed by the letter \fCt\fP, see the
 many example below.
 .PP
-Each of the argument configurations is defined as follows:-
+Each of the argument configurations is defined as follows:
 .SS "Indentation Method Creation"
 .na
 .I 0
@@ -94,7 +94,7 @@ to zero disables  indentation. If the indentation method with the same \fIind-no
 method is deleted and a new method may be created.
 .PP
 .I flags
-Sets the indent bit flags where:-
+Sets the indent bit flags where:
 .IP \fC0x01\fR
 Indent method is case insensitive. Note that \fBindent\fR tokens must be specified in lower case.
 .IP \fC0x02\fR
@@ -197,7 +197,7 @@ arguments are defined as follows:
 The indent of the current  line is derived  from  \fIstatement\fR value plus the
 indent of the last c token  (\fIif\fR,  \fIelse\fR,  \fIwhile\fR  etc.) or the
 last  '\fC{\fR'  (which ever was found first). i.e. if the last  '\fC{\fR' was
-found at column 16 then the current line will be indented to 20:-
+found at column 16 then the current line will be indented to 20:
 .ne 4
 .RS
 .CS
@@ -256,7 +256,7 @@ open  bracket  exceeds  \fImax\fR,  then the  continuation  is  reduced to the
 continuation indent.
 .IP
 The effect of  \fImax\fR  is  described  as follows; if  \fImax\fR is set to a
-large value then the default open brace offset appearence is:-
+large value then the default open brace offset appearence is:
 .ne 3
 .RS
 .CS
@@ -292,7 +292,7 @@ statement indent. For example, a value of 0 results in the following
 .CE 0
 .RE
 .IP
-With a setting of 2, this would become:-
+With a setting of 2, this would become:
 .ne 6
 .RS
 .CS
@@ -376,7 +376,7 @@ indented to 16, i.e.
 .RE
 .IP
 This is used inside  "\fCswitch\fR" statements, the default setting give the following
-lay-out:-
+lay-out:
 .ne 7
 .RS
 .CS
@@ -413,7 +413,7 @@ default:                default:
 .\"
 The  additional  indent  to be  applied  to a line that  starts  with a  \fBlabel\fR  statement,  a value of -63 (most
 negative  number) is  interpreted  as an infinitely  large negative  number to ensure the indent ends up being 0. In C
-labels are typically left aligned so that they standout so the \fIlabel\fR indent is set to -63, giving the following:-  
+labels are typically left aligned so that they standout so the \fIlabel\fR indent is set to -63, giving the following:  
 .ne 2
 .RS
 .CS
@@ -423,7 +423,7 @@ label:
 .CE 0
 .RE
 .IP
-However, in javascript labels can be used more diversely so tend not to be indented, i.e. \fIindent\fR set to 0:-
+However, in javascript labels can be used more diversely so tend not to be indented, i.e. \fIindent\fR set to 0:
 .ne 2
 .RS
 .CS
@@ -479,7 +479,7 @@ This defines the string which is inserted  when a new line is started  while in 
 if the cursor is at the end of the line when the
 .Ht newline 2
 command is given. For example, for the default  settings, if a \fBnewline\fR was entered at the end of the first line,
-the second line would initialize to:-
+the second line would initialize to:
 .ne 3
 .RS
 .CS
@@ -489,7 +489,7 @@ the second line would initialize to:-
 .RE
 .IP
 where '\fC@\fR' is the current cursor position. With a setting of "\fC * \fR",
-then:-
+then:
 .ne 3
 .RS
 .CS
@@ -510,7 +510,7 @@ In summary:
 .RE
 .LP
 .ne 12
-The standard indent rule for setting up C and Java is defined as:-
+The standard indent rule for setting up C and Java is defined as:
 .Me $emf-scheme
 .CS
     0 indent .hilight.c 12
@@ -535,7 +535,7 @@ This is typically written with the defaults omitted.
 .Me $ehf-scheme
 .ne 7
 If GNU Emacs  indentation  is required  then the following  definition  may be
-used:- 
+used: 
 .Me $emf-scheme
 .CS
     0 indent .hilight.c 12            ; if (a == b)
@@ -546,7 +546,7 @@ used:-
 .CE
 .Me $ehf-scheme
 .ne 6
-The default configuration scheme is defined as:-
+The default configuration scheme is defined as:
 .Me $emf-scheme
 .CS
     0 indent .hilight.c 12            ; if (a == b)
@@ -612,7 +612,7 @@ must be surrounded by non-alpha-numeric characters:
 .\"
 A line  containing  a  fixed  indent  token  will  be  indented  to the  given
 \fIindent\fR column from the left-hand edge. \fIindent\fR is the only argument
-specified. e.g. \*(mS macro \fC!goto\fR labels:-
+specified. e.g. \*(mS macro \fC!goto\fR labels:
 .RS
 .Me $emf-scheme
 .CS
@@ -634,7 +634,7 @@ the line is ignored. The indentation of the previous line has no effect.
 .\"
 The  indentation  changes by \fIindent\fR  from the next line onwards from the
 current line.  \fIindent\fR  is the only argument  specified. e.g. \*(mS macro
-\fC!if\fR:-
+\fC!if\fR:
 .RS
 .Me $emf-scheme
 .CS
@@ -698,7 +698,7 @@ of \fC-t t\fR.
 \fBIndent-single\fR (\fI\|type\|\fR = '\fCs\fR' or '\fCS\fR')
 .\"
 Changes the  indentation  of the current  line  \s-1ONLY\s0  by  \fIindent\fR.
-\fIindent\fR is the only argument specified. e.g. \*(mS macro \fC!elif\fR:-
+\fIindent\fR is the only argument specified. e.g. \*(mS macro \fC!elif\fR:
 .RS
 .Me $emf-scheme
 .CS
@@ -795,7 +795,7 @@ indentation  calculation, typically used for quotes. The \fIignore\fR argument
 is also specified (see
 .Ht hilight 2
 \fCtype 0x004\fR type bracket)
-e.g. \*(mS macro quotes:-
+e.g. \*(mS macro quotes:
 .RS
 .Me $emf-scheme
 .CS
@@ -808,7 +808,7 @@ e.g. tcl's quotes
 indent .hilight.tcl e "\\"" "\\"" "\\\\"
 .CE
 .Me $ehf-scheme
-producing:-
+producing:
 .CS
 \....
 ".... ignore { ... \\" ... ignore another { token ... "
@@ -819,7 +819,7 @@ producing:-
 \fBIgnore\fR (\fI\|type\|\fR = '\fCi\fR' or '\fCI\fR')
 .\"
 Text to the right of a line containing \fItoken\fR is to be ignored; typically
-used for comments. e.g. \*(mS macro '\fC;\fR' comment:-
+used for comments. e.g. \*(mS macro '\fC;\fR' comment:
 .RS
 .Me $emf-scheme
 .CS
@@ -940,7 +940,7 @@ rather that return, the line will be indented to the value of \fB.indent\fR inst
 .SH EXAMPLE
 Examples  of  indentation  method  creations  can  be  found  in  macro  files
 \fChkemf.emf\fR,  \fChktcl.emf\fR and  \fChkvrml.emf\fR. The following example
-is taken from \fChkemf.emf\fR:-
+is taken from \fChkemf.emf\fR:
 .Me $emf-scheme
 .CS
 !if &not &exist .hilight.emf

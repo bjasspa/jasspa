@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd002.2,v 2.7 2025/08/28 00:48:58 jon Exp $
+.Id $Id: m2cmd002.2,v 2.7 2026/03/05 16:00:11 jon Exp $
 .Im MicroEmacs command|spell
 .so me.tni
 .TH add-dictionary 2
@@ -63,7 +63,7 @@ and if this  size is  exceeded  the  results  are  undefined.  However,  it is
 unlikely  that this limit will be reached, the largest  dictionary  created to
 date is 13.5MB.
 .PP
-A new main dictionary may be created as follows:-
+A new main dictionary may be created as follows:
 .IP \fB1)\fR
 Find a file containing an
 .Hr ispell 1
@@ -111,7 +111,7 @@ rather than the main dictionary.
 .SH EXAMPLE
 The \*(mS start-up file \fBme.emf\fR executes \fBlanguage.emf\fR which in turn executes command \fBspell-rules-init\fR
 (located in \fBlangutl.emf\fR) which adds the main language rules and dictionary. The command then adds the user's
-dictionary, this process can be simplified to:-
+dictionary, this process can be simplified to:
 .Me $emf-scheme
 .CS
 ; reset the spell rules

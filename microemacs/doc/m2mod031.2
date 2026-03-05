@@ -32,18 +32,18 @@ When  writing  out a file which has rbin mode  enabled the format of each line
 must  be  correct,  namely  an  even  number  of hex  numbers  with  no  other
 characters.
 .SH EXAMPLE
-Given a single line \s-1MSDOS\s0 file:-
+Given a single line \s-1MSDOS\s0 file:
 .CS
 Live long and prosper.
 .CE
 When  loaded in using  \fBbinary\fR  mode the  following 2 line buffer will be
-produced:-
+produced:
 .CS
 4C697665206C6F6E6720616E642070726F737065722E0D0A1A
 .CE
 Note  the  "\fC0D  0A  1A\fR"  at  the  end,  this  is  due to  \s-1MSDOS\s0's
 "\fC\\n\\r\fR"  carriage returns and \fC^Z\fR file termination. The given file
-could be made \s-1UNIX\s0 compatible by editing the buffer to:-
+could be made \s-1UNIX\s0 compatible by editing the buffer to:
 .CS
 4C697665206C6F6E6720616E642070726F737065722E0D
 .CE 0

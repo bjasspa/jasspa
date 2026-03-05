@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Thu May 27 15:30:14 1999
 .\"
-.Id $Id: faq.2,v 2.17 2026/02/22 09:43:44 jon Exp $
+.Id $Id: faq.2,v 2.17 2026/03/05 16:00:09 jon Exp $
 .Im MicroEmacs faq
 .so me.tni
 .TH "FAQs" 0f
@@ -38,7 +38,7 @@ documentation is deficient.
 .SH ANSWER
 There are a lot of new features in this  distribution.  Assuming that you just
 want to use the  editor  (and have  cottoned  onto the fact that there are now
-scroll bars etc.) then the most frequent commands that we use are:-
+scroll bars etc.) then the most frequent commands that we use are:
 .BS
 .Ht grep 3
 \- May need to set up in \fI<user>.emf\fR.
@@ -70,7 +70,7 @@ undoes edits.
 .Ht file-browser 3
 allows the file system to be browsed
 .BE
-Other useful macros include:-
+Other useful macros include:
 .BS
 .Ht tabs-to-spaces 3
 \- Good for sorting out the mess made by Microsoft Developer Studio.
@@ -78,7 +78,7 @@ Other useful macros include:-
 .Ht sort-lines 2
 \- Two versions of this, allows marked lines to be sorted alphabetically.
 .BE
-Be wary of:-
+Be wary of:
 .BS
 \fBesc-o\fR
 \-
@@ -136,7 +136,7 @@ If your main programming language is C++, then you will require the \fC.def\fR a
 mode by default, rather than 'C'. To modify this hen the extension list and priority of the \fCcpp\fR major-mode needs
 adjusting.
 .PP
-Within your \fI<user>.emf\fR, over-ride the default extension list and priority by adding the line:-
+Within your \fI<user>.emf\fR, over-ride the default extension list and priority by adding the line:
 .Me $emf-scheme
 .CS
 4 major-mode "cpp" ".cc .cpp .cxx .def .h .hh .hpp .hxx .rc"
@@ -168,7 +168,7 @@ the release.
 The  \fBMeta\fR  key  (typically  \fCAlt\fR)  may be bound to key  strokes, as
 opposed to the menu short-cut from the
 .Ht user-setup 3
-as follows:-
+as follows:
 .IP
 \fBTools\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBAlt Action: Main Menu Hot-keys\fR = N
 .br
@@ -219,7 +219,7 @@ We are aware of a problem  with the ipipe  commands  with '95 and '98 (not
 sure about NT) when the current drive is a Novel network drive.
 .PP
 Although  we have not been ably to fully  characterize  the  problem,  we know
-that:-
+that:
 .BS
 Old Novel Clients prior to 2.2 - Does not work
 .BU
@@ -367,7 +367,7 @@ UNIX. i.e. <select> operation gets text <Middle button> yanks text back.
 This stems from the fact that we all came from UNIX backgrounds. We have had a
 number of comments about this already and do plan to address this issue.
 .PP
-\fBNote:-\fR  Those  of you  that  have  already  had a  little  dip  into the
+\fBNote:\fR  Those  of you  that  have  already  had a  little  dip  into the
 operation  of the mouse  will have  probably  worked out that the whole of the
 visible   mouse/screen   interaction   is  driven  through   macros,  so  this
 functionality is actually a macro change.
@@ -387,7 +387,7 @@ functionality is actually a macro change.
 You  can  change  the  width  of the  scroll  bars to  double  width  from
 .Ht user-setup 3
 "Wide Scroll Bars".  Alternatively, you may do this yourself
-from \fC<user>.emf\fR by:-
+from \fC<user>.emf\fR by:
 .Me $emf-scheme
 .CS
 set-variable $scroll-bar &bor $scroll-bar 1
@@ -453,7 +453,7 @@ colors.
 \*(Qu
 .SH ANSWER
 In your user setup  <user>.emf  add the new keys. You have to be careful as to
-the environment and probably need to do something like the following:-
+the environment and probably need to do something like the following:
 .Me $emf-scheme
 .CS
 ; First check we are not an Xterm
@@ -526,7 +526,7 @@ for details on how to define new character replacements.
 \*(Qu
 .SH ANSWER
 For  windows  '95 up  until  OEM  service  release  2, the  OS  could  not
-distinguish the difference between the files:-
+distinguish the difference between the files:
 .CS
 \.xxx
 \.xxx~
@@ -614,7 +614,7 @@ How do I make the Alt key act like the Meta key all the time?
 The  \fBMeta\fR  key  (typically  \fCAlt\fR)  may be bound to key  strokes, as
 opposed to the menu short-cut from the
 .Ht user-setup 3
-as follows:-
+as follows:
 .IP
 \fBTools\fR -> \fBUser Setup\fR -> \fBGeneral\fR -> \fBAlt Action: Main Menu Hot-keys\fR = N
 .br
@@ -639,7 +639,7 @@ should be found in the fonts  directory. There is nothing to be done - the
 file exists and is in the correct location.
 .PP
 If you do not have this file then, you might  have  "appXXX.fon",  or some
-other fixed font. You can locate the file that you want as follows:-
+other fixed font. You can locate the file that you want as follows:
 .IP
 Start->Settings->Control Panel->Fonts
 .LP
@@ -670,7 +670,7 @@ the full OEM character set that are better alternatives to the DOS ones.
 .SH ANSWER
 From within your user setup,  over-ride the default mode line setting with
 the  modifications you require. i.e. to change the date format to MM/DD/YY
-use:-
+use:
 .Me $emf-scheme
 .CS
 set-variable $mode-line "%s%r%u%k %b %l - %h:%m %M/%D/%Y (%e) - (%f) "
@@ -826,7 +826,7 @@ can now be set using user-setup (Alt -> Main Menu).
 .SH ANSWER
 The
 .Ht find-file 2
-start location is defined as follows:-
+start location is defined as follows:
 .BS
 \fC*scratch*\fR is current buffer; the current working directory.
 .BU
@@ -1107,14 +1107,14 @@ command is used:
 esc x set-variable
 .CE
 You will then be prompted for the remaining  arguments. \fC<TAB>\fR is the completion
-so:-
+so:
 .CS
 esc x set-v<TAB>
 $tab-width<TAB>
 2
 .CE
 If this is the  setting  that you always  want to use then it is easier if you
-put this in your <user.emf> as:-
+put this in your <user.emf> as:
 .Me $emf-scheme
 .CS
 set-variable $tab-width 2
@@ -1141,7 +1141,7 @@ esc x tabs-to-spaces
 .SH "QUESTION (\*(Qn)"
 \*(Qu
 .SH ANSWER
-For windows and DOS users the UNIX tools may be obtained from:-
+For windows and DOS users the UNIX tools may be obtained from:
 .CS
 ftp://ftp.cdrom.com/pub/garbo/garbo_pc/unix/uxutl23a.zip (238 KB) 
 ftp://ftp.cdrom.com/pub/garbo/garbo_pc/unix/uxutl23b.zip (227 KB) 
@@ -1177,7 +1177,7 @@ Acknowledgment:
 Some users prefer the  \fCHOME\fR  and \fCEND\fR  keys to map to the beginning
 and end of the line, rather than  beginning/end of the buffer,  respectively.
 Within  the  \fI<user>.emf\fR  the  following  global  bindings  may  be
-applied to re-assign the key mappings:-
+applied to re-assign the key mappings:
 .Me $emf-scheme
 .CS
 global-bind-key "beginning-of-buffer" "C-home"  
@@ -1213,7 +1213,7 @@ format is used by MicroEmacs.  The \fBtags\fR  file itself may be generated by
 .Hr ctags 1 
 utility.  This is typically  standard on  \s-1UNIX\s0  platforms.  For Windows
 and \s-1DOS\s0  platforms then the \fBExuberant  Ctags\fR is recommended, this
-is available from:-
+is available from:
 .IP
 .C "https://ctags.sourceforge.net/"
 .LP

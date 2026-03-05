@@ -57,14 +57,14 @@ The \fBosd\fR  command  manages the  On-Screen  Display, menu and dialogs. For i
 .Hl "Top Main Menu" MainMenu 3 .
 .PP
 The command takes various forms as defined by the arguments.  Each of the argument
-configurations is defined as follows:-
+configurations is defined as follows:
 .SS "Main Menu-Bar Status"
 .na
 \fBosd\fR \fB\-1\fR \fIflag\fR
 .ad
 .PP
 This  invocation  determines  the state of the top main menu bar. The state is
-set by the argument \fIflag\fR defined as:-
+set by the argument \fIflag\fR defined as:
 .RS
 .IP
 \fC\ 1\fR \- enable.
@@ -137,7 +137,7 @@ The actual size of the dialog, minimum and maximum sizes.
 .IP \fB\-ve\fR
 \fImin\fR defines the maximum size. \fImax\fR is unlimited.
 .LP
-The following table shows possible combination of the sing parameters and their effect:-
+The following table shows possible combination of the sing parameters and their effect:
 .IP "\fImin\fR=0, \fImax\fR=0"
 Default setting, makes dialog as small as possible, with a maximum size of the screen.
 .IP "\fImin\fR=0, \fImax\fR=50"
@@ -194,7 +194,7 @@ The command dialog is typically used to create status  messages. e.g. a "\fCBusy
 dialog  may  be   implemented   when  saving  the  current   buffer  then  create  the  simple  dialog  and  sent  the
 \fIcontrol-command\fR to
 .Ht save-buffer 2 .
-The dialog would be defined as:-
+The dialog would be defined as:
 .RS
 .Me $emf-scheme
 .CS
@@ -268,7 +268,7 @@ is not currently being displayed.
 .ad
 .PP
 This  invocation  type  adds a new  item  \fIi\fR  to a  dialog  \fIn\fR,  the
-operation of the invocation is controlled by the \fIflags\fR as follows:-
+operation of the invocation is controlled by the \fIflags\fR as follows:
 .RS
 .IP \fBD\fR
 Disable item \fIi\fR, the item is ignored and is not rendered in the dialog.
@@ -337,7 +337,7 @@ the  current  setting  when  the  given  argument  (of 1) is given
 (!abort  if false,  !return if true) and  change  the value if the
 argument value is negated. The text string must also be specified, the first 6
 characters  are used in the  drawing of the check box. The format can be shown
-as follows:-
+as follows:
 .RS
 .CS
 String\\State       Off         On  

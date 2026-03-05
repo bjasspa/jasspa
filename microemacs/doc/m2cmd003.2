@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2026/02/02 10:45:26 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2026/03/05 16:00:12 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH add-file-hook 2
@@ -30,7 +30,7 @@ screen highlighting and key bindings to be performed. For a higher level introdu
 .Hl "File Hooks" fileHooks 2 .
 .PP
 .B add-file-hook
-operates in two different modes to establish the type of file:-
+operates in two different modes to establish the type of file:
 .BS 
 Content recognition, by examination of the contents of the file.
 .BU
@@ -44,7 +44,7 @@ order, hence the extension added last has a greater precedence than those added 
 rules to be over-ridden.
 .SS "Initialization"
 .B add-file-hook
-must be initialized prior to the first call, using an invocation of the form:-
+must be initialized prior to the first call, using an invocation of the form:
 .Me $emf-scheme
 .CS
 0 add-file-hook
@@ -65,7 +65,7 @@ and
 buffer modes are required. This may be performed automatically by defining a macro which adds these modes and adding a
 file hook to automatically execute this macro whenever a file "\fC*.doc\fR" is loaded.
 .PP
-The command arguments are defined as follows:-
+The command arguments are defined as follows:
 .IP \fIextensions\fR
 A space separated list of file extensions, which are to be checked, this list includes the extension separator,
 typically dot ('\fC.\fR'). It should be noted that the extension comparison is always case-insensitive and with the tail of the
@@ -76,7 +76,7 @@ The name of the file hook to execute. This is the name of the macro to execute t
 .IP \fImacro1-name\fR
 Optional list of additional supporting macros located in the hook definition file, see notes section below.
 .LP
-As an example:-
+As an example:
 .Me $emf-scheme
 .CS
 define-macro fhook-doc
@@ -108,7 +108,7 @@ Considering the \fCfhook-XXX\fR prefix, the initial '\fBf\fR' character must be 
 \'\fBb\fR' and an '\fBe\fR' when looking for the enter (begin) buffer and exit buffer hooks. These hooks are executed
 whenever the user swaps to or from a buffer (including creating and deleting). So for the given example, if the fill
 ignore characters are to be changed then this operation this is performed by defining the \fCbhook-XXX\fR
-and \fCehook-XXX\fR macros, e.g.:-
+and \fCehook-XXX\fR macros, e.g.:
 .Me $emf-scheme
 .CS
 ; Begin hook - entering the buffer - save the current fill-ignore characters
@@ -159,13 +159,13 @@ uniquely identifies the file type.
 The  recognition  process  performs a search of the first  \fIn\fR  (numerical
 argument)  non-blank  lines of the file, searching for the regular  expression
 specified by the \fIextensions\fR argument. The sign of the numerical argument
-\fIn\fR is interpreted as follows:-
+\fIn\fR is interpreted as follows:
 .BS
 \fB\-ve\fR \- Case insensitive search
 .BU
 \fB+ve\fR \- Case sensitive search
 .BE
-The command arguments are defined as follows:-
+The command arguments are defined as follows:
 .IP \fIextensions\fR
 A regular expression string defining the text to be searched for. 
 .IP \fIfhook-name\fR
@@ -176,12 +176,12 @@ Optional list of additional supporting macros located in the hook definition fil
 .LP
 The search commences from the first non-blank line in the file, if the regular expression, defined by \fIextensions\fR
 is located then the file hook \fIfhook-name\fR is invoked. This is typically used to identify files which do not have
-file extensions i.e. \s-1UNIX\s0 shell script files. To identify a shell script file which commences with:-
+file extensions i.e. \s-1UNIX\s0 shell script files. To identify a shell script file which commences with:
 .LP
 .CS 0
 #!/bin/sh
 .CE
-The  following file hook is used:-
+The  following file hook is used:
 .IP
 .B "1 add-file-hook"
 "\fB#!/.*sh\fR" "\fBfhook-shell\fR"
@@ -301,7 +301,7 @@ Note, that for the content recognition process for a binary hook, the load time 
 loaded in the default text mode, the binary hook function forces a second load operation in binary.
 .SH SUMMARY
 .B add-file-hook
-is summarized as follows:-
+is summarized as follows:
 .BS
 Binds one or more extensions to a macro called fhook-\fIxxxx\fR.
 .BU
@@ -328,7 +328,7 @@ When the buffer containing the known file is exited (i.e. looses focus), then th
 executed.
 .BE 0
 .SH EXAMPLE
-The standard set of supported file types by \*(mS, at the time of writing, is defined as:-
+The standard set of supported file types by \*(mS, at the time of writing, is defined as:
 .Me $emf-scheme
 .CS
 ; reset the file hook list

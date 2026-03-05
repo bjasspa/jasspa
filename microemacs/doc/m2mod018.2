@@ -39,12 +39,12 @@ Only the hex values (the \fCXX\fR's) between the starting '\fI:\fR' marker and
 the   terminating   '|'   character   are   used,  the   \fI<address>\fR   and
 \fI<text-form>\fR are ignored.
 .SH EXAMPLE
-Given a single line \s-1MSDOS\s0 file:-
+Given a single line \s-1MSDOS\s0 file:
 .CS
 Live long and prosper.
 .CE
 When  loaded in using  \fBbinary\fR  mode the  following 2 line buffer will be
-produced:-
+produced:
 .CS
 00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr
 00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
@@ -55,24 +55,24 @@ characters  are  unprintable and are shown as '\fC.\fR' at the end of the line.
 .PP
 When saving a binary file, only the text  between the  '\fC:\fR' and '\fC|\fR'
 is considered and it may contain any number of hexadecimal  numbers. The given
-file could be made \s-1UNIX\s0 compatible by editing the buffer to:-
+file could be made \s-1UNIX\s0 compatible by editing the buffer to:
 .CS
 00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live long and pr
 00000010: 6F 73 70 65 72 2E 0D                       |  osper....
 .CE
 If the word  "\fBlong\fR"  is required to be removed, the following  would not
-work:-
+work:
 .CS
 00000000: 4C 69 76 65 20 6C 6F 6E 67 20 61 6E 64 20 70 72  |  Live and pr
 00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
 .CE
 The ASCII end letters are ignored,  instead the  following  operation  must be
-performed which removes the characters from the binary representation:-
+performed which removes the characters from the binary representation:
 .CS
 00000000: 4C 69 76 65 20 61 6E 64 20 70 72  |  Live long and pr
 00000010: 6F 73 70 65 72 2E 0D 0A 1A                       |  osper....
 .CE
-One could be nasty by doing the following:-
+One could be nasty by doing the following:
 .CS
 00000000: 4C 69 76 65 20 73 68 6F 72 74 20 61 6E 64 20 |
 00000010: 64 6F 6E 27 74 20 70 72 6F 73 70 65 72 2E 0D 0A 1A           |

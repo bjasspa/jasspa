@@ -72,14 +72,14 @@ expansion string is executed using
 so any \*(mS command may also be called.
 .PP
 For   example   the   following    expansion   string   inserts   the   string
-"\fC!continue\fR"  and a  newline:-
+"\fC!continue\fR"  and a  newline:
 .IP
 "\fC!abort\\r\fR"
 .LP
 Note that '\fC\\r\fR' is used instead of '\fC\\n\fR' as \fBC-m\fR is bound to
 .Ht newline 2
 and not  \fBC-j\fR.  The  expansion  string  can also make use of a few useful
-abbreviations:-
+abbreviations:
 .IP \fB\\\\p\fR
 Mark the current position (expanded to "\fCC-x C-a P\fR")
 .IP \fB\\\\P\fR

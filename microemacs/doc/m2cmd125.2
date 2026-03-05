@@ -19,7 +19,7 @@ spell \- Spell checker service provider
 .SH DESCRIPTION
 \fBspell\fR is a low level command which provides spell checking  capabilities
 for \*(mS, it is not designed to be used  directly. The action of  \fBspell\fR
-depends on the argument given, which is a bitwise flag defined as follows:-
+depends on the argument given, which is a bitwise flag defined as follows:
 .IP \fB0x001\fR
 If set then  gets the  input  word  from the user, i.e.  "\fIword\fR"  must be
 supplied. Otherwise the word input is taken from the current buffer.
@@ -76,7 +76,7 @@ Delete the given word from a dictionary determined by bit 0x008
 .PP
 If none of the main functions are used (bits 0x004, 0x020, 0x040 & 0x200) then
 the status flag is returned in the first  column of  \fB$result\fR.  These are
-defined as follows:-
+defined as follows:
 .IP \fBA\fR
 Auto-replace. The word was found and flagged as erroneous. The correction word
 is given in  \fB$result\fR,  either  next to the flag, or if bit  0x100 is set

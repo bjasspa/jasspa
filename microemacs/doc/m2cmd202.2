@@ -49,7 +49,7 @@ add-file-hook ".c .h" "fhook-c"
 .Me $ehf-scheme
 which binds the file hook  \fBfhook-c\fR to any files that are loaded with the
 extension  \fB.c\fR  and  \fB.h\fR.  The  operations  undertaken  by \*(mS are
-defined as follows when a file \fCfoo.c\fR is loaded:-
+defined as follows when a file \fCfoo.c\fR is loaded:
 .BS 1 1
 Attempt to load file  \fCfoo.c\fR,  if  \fCfoo.c\fR is not found then create a
 new buffer and assign file name \fCfoo.c\fR.
@@ -97,7 +97,7 @@ restored.
 .BE
 The name of the file hook macro name is important, hook commands must commence
 with the text \fBfhook-\fR\fImode\fR where \fImode\fR is an identifier for the
-operating mode. The name space is decomposed as follows:-
+operating mode. The name space is decomposed as follows:
 .BS 1 1
 The initial  \fBf\fR is removed and  replaced  with \fBb\fR for the begin hook
 macro and \fBe\fR for the end hook macro.
@@ -131,7 +131,7 @@ as  zero  (0) if  this is a new  file  that  has  been  created,  or  non-zero
 otherwise.
 .PP
 The  macro  argument  status  is  typically  tested  on entry to the  macro as
-follows:-
+follows:
 .Me $emf-scheme
 .CS
 define-macro fhook-mode
@@ -205,7 +205,7 @@ command  line,  instead  \*(mS uses three  different  prioritized  criteria to
 endeavor to select the correct  operating  mode. The operating mode is applied
 to the buffer by  execution of a set of file  specific  macros,  referred to a
 hook  commands. The selection  criteria of the hook  commands is performed as
-follows, ordered in lowest to highest priority:-
+follows, ordered in lowest to highest priority:
 .IP "\fBFile Name\fR"
 \*(mS uses the filename  and/or the file  extension to select a start-up  hook
 command.  File names and  extensions  are bound to a set of macro  hooks in a
@@ -322,7 +322,7 @@ A \*(mS  specific  string is also provided,  defined as:
 where \fImode\fR is an arbitrary string defined by  \fIadd-file-hook\fR.  User
 defined modes may be created and assigned to files with this syntax, this does
 not  conflict  with the GNU Emacs  command.  For  example to assign a new mode
-\fImymode\fR to a file we would define the following:-
+\fImymode\fR to a file we would define the following:
 .RS
 .IP
 \fB-1\fR
@@ -343,7 +343,7 @@ hook:
 .SH "FILE HOOK SCRIPTS"
 The  buffer  hook files  \fBhk\fR\|\fIname\fR\|\fB.emf\fR  typically  follow a
 standard  layout, and are  generally  associated  with  hi-lighting as follows,
-\fBmode\fR in this case is the name of the file mode associated with the file:-
+\fBmode\fR in this case is the name of the file mode associated with the file:
 .Me $emf-scheme
 .CS
 !if &seq .hilight.mode "ERROR"

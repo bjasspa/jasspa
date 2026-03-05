@@ -6,7 +6,7 @@
 .\"
 .\" Authors:    Jon Green
 .\"
-.Id $Id: m1cmd000.1,v 2.20 2025/08/28 02:11:06 jon Exp $
+.Id $Id: m1cmd000.1,v 2.20 2026/03/05 16:00:09 jon Exp $
 .Im MicroEmacs function
 .so me.tni
 .TH me 1
@@ -82,7 +82,7 @@ through other programs.
 .PP
 The command line options to
 .B "\*(mS"
-are defined as follows:-
+are defined as follows:
 .IP "\fB@\fR\|\fIstartFile\fR"
 Initialize  \*(mS using  \fIstartFile\fR\|[\fB.emf\fR].  The default when
 omitted is \fBme.emf\fR. See 
@@ -188,7 +188,7 @@ Sends a
 command  to  an  existing   \*(mS   session.   The  command   takes  the  form
 "\fBC:\fR\|\fI<client>\fR\|\fB:\fR\|\fI<command>\fR"     i.e.     to     write
 "\fCHello\fR  \fCWorld\fR"  on the  message  line then a client  may issue the
-command:-
+command:
 .RS
 .CS
 ; launch server
@@ -200,7 +200,7 @@ me -m "C:ME:ml-write \\"Hello world\\"
 .IP 
 Note that the  \fI<command>\fR  is a \*(mS macro command, the escape sequences
 must be adhered to. The  \fIclient-server\fR  interface  is typically  used to
-load a file, this may be performed as follows:-
+load a file, this may be performed as follows:
 .RS
 .CS
 me -m "C:myutility:find-file \\"/path/foo.bar\\""
@@ -315,7 +315,7 @@ option \fB\-n\fR).
 In  \s-1MS-DOS\s0  the  environment  variable  is  usually  set to define  the
 graphics  adapter mode.  \fB%TERM\fR  is assigned a string,  understood by the
 \fCme.emf\fR  start-up  file, to set the  graphics  mode.  Predefined  strings
-include:-
+include:
 .RS
 .IP \fBE80x50\fR
 Initiates an 80 column by 50 line screen.
@@ -382,7 +382,7 @@ set MEPATH=c:\\usr\\local\\info
 There is no default location in these environments.
 .SH FILES
 All of the macro files and  dictionaries  are located in the  \fB\*(mS\fR
-home directory. The standard file extensions that are utilized are:-
+home directory. The standard file extensions that are utilized are:
 .IP "\fB.eaf\fR"
 \fB\*(mS\fR  abbreviation file, defines completion definitions for buffer
 dependent text expansion.

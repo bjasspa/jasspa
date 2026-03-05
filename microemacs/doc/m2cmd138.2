@@ -43,7 +43,7 @@ package.
 is  used  in  the  \*(mS  language spelling initialization  macro files named  lsr\fI<language>\fR.emf,  e.g.  \fClsrenus.erf\fR,
 \fClsrelgr.erf\fR supplied in the \*(mS spelling or macros directory.
 .PP
-The command uses the numeric argument \fIn\fR to control the addition of a rule to the speller, as follows:-
+The command uses the numeric argument \fIn\fR to control the addition of a rule to the speller, as follows:
 .TP
 \fC0\fR \fBadd-spell-rule\fR
 .\"
@@ -116,7 +116,7 @@ While  some  prefix  words are  legal,  such as  "\fIrecreative\fR"  but some ar
 "\fIpreventive\fR"  is correct but  "\fIrepreventive\fR"  is not. The  "\fIsub-rules\fR"  argument can be used to list
 additional  rules that can be applied to the base word if this rule has been  applied,  \*(mS  supports  the  addition
 up-to two  suffixes  and a single  prefix.  Sub-rules  can be used to simply  rules and  reduces  the  number of rules
-required, for examle:-
+required, for examle:
 .Me $emf-scheme
 .CS
 2 add-spell-rule "G" "" "" "ing" "S"  ; As in list > listing
@@ -138,7 +138,7 @@ These  rules  allow a base  word of  "\fIdrink\fR"  with  flags  "AS" to  derive
 .RE
 .SS "SPECIAL RULES"
 Following  are  special  forms of  add-spell-rule  used for  tuning  the spell
-support, note that an argument can not be given:-
+support, note that an argument can not be given:
 .PP
 \fBadd-spell-rule\fR "\fI-\fR" "<\fIy\fR|\fIn\fR>"
 .IP

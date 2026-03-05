@@ -22,7 +22,7 @@ build.sh
 from the command line. The build script attempts to detect the host system and
 available compiler and build the editor.
 .PP
-The build script recognizes the following options:-
+The build script recognizes the following options:
 .IP \fB\-32\fR
 Build 32 bit based program.
 .IP \fB\-64\fR
@@ -43,7 +43,7 @@ Redirect all compilation output to the \fIlogfile\fR, this may not work on DOS o
 .IP "\fB-la\fR \fIlogfile\fR"
 Append all compilation output to the end of \fIlogfile\fR, this may not work on DOS or Windows systems.
 .IP "\fB-m\fR \fImakefile\fR"
-Build using the specified makefile. over-riding the auto system detect. The supplied makefiles include:-
+Build using the specified makefile. over-riding the auto system detect. The supplied makefiles include:
 .RS
 .BS
 \fClinuxgcc.mak\fR Linux using GNU tools
@@ -137,13 +137,13 @@ is \fCmecw\fR.
 .BE 0
 .RE
 .SS Makefiles
-The supplied makefiles are provided in two forms:-
+The supplied makefiles are provided in two forms:
 .BS
 \fB*gcc.mak\fR - GNU make, using gcc.
 .BU
 \fB*cc.mak\fR - Native make,  consistent  with the compiler and  platform.
 .BE
-The makefiles are supplied with the following targets:-
+The makefiles are supplied with the following targets:
 .BS
 \fBall\fR \- Default build.
 .BU
@@ -197,15 +197,15 @@ path which is called \fCVCVARS32.BAT\fR and is typically located in directory:
 C:\\Program\ Files\\Microsoft\ Visual\ Studio\\VC98\\Bin
 .CE
 This should be run first and then the command line make files may be run using
-nmake i.e. to build ME:-
+nmake i.e. to build ME:
 .CS
 nmake -f win32v6.mak me
 .CE
-To build NE:-
+To build NE:
 .CS
 nmake -f win32v6.mak ne
 .CE
-To clean up after:-
+To clean up after:
 .CS
 nmake -f spotless
 .CE
@@ -227,7 +227,7 @@ Select \fBSystem\fR -> \fBAdvanced\fR -> \fBEnvironment variables\fR
 In \fBUser  Variables for\fR  \fI<User>\fR  then \fBNew...\fR or \fBEdit...\fR
 the  \fCPATH\fR  variable. Add the command line tools  execution  paths to the
 environment  variable, this will be something  like the following (but without
-newlines):-
+newlines):
 .IP
 .na
 .nf
@@ -240,7 +240,7 @@ newlines):-
 .fi
 .ad
 .IP \(bu
-Similarly add the \fCINCLUDE\fR variable:-
+Similarly add the \fCINCLUDE\fR variable:
 .IP
 .na
 .nf
@@ -252,7 +252,7 @@ Similarly add the \fCINCLUDE\fR variable:-
 .fi
 .ad
 .IP  \(bu
-Similarly add the \fCLIB\fR variable:-
+Similarly add the \fCLIB\fR variable:
 .IP
 .na
 .nf

@@ -16,7 +16,7 @@
 This page describes introductory notes for the installation and setup of \*(mE.
 .SS "Quick Install"
 The quickest way to install MicroEmacs for testing without reading the rest of
-this document is to:-
+this document is to:
 .BS
 Create a new directory i.e. \fCjasspa\fR.
 .BU
@@ -27,7 +27,7 @@ Unpack the executable into this directory.
 Run \fCme\fR from this directory.
 .BE
 On  starting,  you  will be  prompted  for a  default  directory,  accept  the
-defaults. Use the mouse and configure the user from the menu bar:-
+defaults. Use the mouse and configure the user from the menu bar:
 .CS
 Tools -> User Setup
 .CE
@@ -36,13 +36,13 @@ accustomed to the editor then a fuller installation may be performed.
 .IP "\fBGetting Help\fR"
 See
 .Hl "Contact Information" Contact -
-for full contact information. A mail archive exists at:-
+for full contact information. A mail archive exists at:
 .RS
 .CS
 http://groups.yahoo.com/group/jasspa/
 .CE
 If you wish to participate in the list then you must first register by sending
-an empty mail message body to:-
+an empty mail message body to:
 .CS
 jasspa-subscribe@yahoogroups.com
 .CE
@@ -50,7 +50,7 @@ You will then be able to mail any questions  into the group.  Registration  is
 required in order to prevent \fIspam\fR mailings from entering into the lists.
 .RE
 .SS "Distribution"
-MicroEmacs is distributed in the following files:-
+MicroEmacs is distributed in the following files:
 .BP "Complete Installations"
 The  Microsoft  95/98/NT/2K/XP,  Solaris,  HP-UX,  Linux and the more  popular
 platforms may be installed  using a package and do not require the  components
@@ -165,7 +165,7 @@ executable where \fBmewin32.exe\fR should be renamed to \fBme32.exe\fR.
 Our reason for this naming is to allow the  executables  to be  unpacked in the
 same directory and not be confused with each other.
 .SS "Installation Directories"
-The suggested installation structure for all platforms is defined as:-
+The suggested installation structure for all platforms is defined as:
 .CS
           jasspa
           / | \\
@@ -255,7 +255,7 @@ directory may be changed by setting the environment variable
 .Ht $MEPATH 5 .
 .SS "UNIX Installation (Single User)"
 Where the user is not  permitted  to  install  3rd party  applications  in the  system  directories  then \*(mS may be
-installed locally as follows:-
+installed locally as follows:
 .BS
 Create the directory \fC~/.config/jasspa\fR.
 .BU
@@ -312,7 +312,7 @@ sub-directory  created when  \fImetree\fR was unpacked. Unpack and install the
 Unzip   the   executable   and  place  it  in  the   jasspa   root   directory
 \fCc:\\jasspa\fR.
 .BU
-Edit "\fCc:\\autoexec.bat\fR" and add the following lines:-
+Edit "\fCc:\\autoexec.bat\fR" and add the following lines:
 .BE
 .CS 0
     SET PATH=%PATH%;c:\\jasspa
@@ -332,7 +332,7 @@ configuration, defined in \fBTools\fR -> \fBUser Setup\fR.
 The MS-DOS version of MicroEmacs may be executed from a \fB.pif\fR  file. Use the
 pif editor to create a new \fB.pif\fR  file to launch  MicroEmacs. The size of
 the DOS window may be configured  from the command line, set the terminal size
-using one of the following command lines:-
+using one of the following command lines:
 .RS
 .CS
     me -c -v$TERM=E80x50        - 80 x 50 window
@@ -477,7 +477,7 @@ registry file with
 .PP
 A file open  action in the  registry is bound to the file file  extension,  to
 bind a file  extension  \fI.foo\fR to the editor then the  following  registry
-entries should be defined:-
+entries should be defined:
 .CS
 [HKEY_CLASSES_ROOT\\.foo]
 "MicroEmacs_foo"
@@ -498,7 +498,7 @@ is started.
 .PP
 A generic open for \s-1ALL\s0  files may be defined using a wild-card, this may
 be used to place a \fIMicroEmacs\fR  edit entry in the right-click pop-up menu,
-as follows:-
+as follows:
 .CS
 [HKEY_CLASSES_ROOT\\*\\shell]
 [HKEY_CLASSES_ROOT\\*\\shell\\MicroEmacs]
@@ -528,7 +528,7 @@ installation   configuration. The private directory identified by \*(mS is
 this location may be changed by defining the environment variable
 .Ht $MEUSERPATH 5 .
 .SS "User Profile Files"
-Files contained in the user profiles typically include:-
+Files contained in the user profiles typically include:
 .PP
 \fI<name>\fR\fC.emf\fR \- The users start up profile - \|\fI<user>\fR\|.emf.
 .br

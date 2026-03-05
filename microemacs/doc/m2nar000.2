@@ -31,7 +31,7 @@ automates  many of the operations  defined below and it is suggested that this
 is a preferable method to add a new language template into \*(mS.
 .SS "The scope of the File Type"
 The  first  step is to decide  the scope of the file, this  will  determine
-where the file hook should be defined. The options are:-
+where the file hook should be defined. The options are:
 .IP "\fBA standard file type not supported\fR"
 If this is a standard  file type not  supported by \*(mS then it
 should be added to \fCme.emf\fR, in addition
@@ -61,7 +61,7 @@ Using the
 invocation the file recognition is bound to the file hook macro whenever the
 file  type is  loaded.  The file  hook is added to the  appropriate  global,
 company  or user  start up file as  determined  in step 1. The file hooks for
-file \fIfoo\fR might be defined as follows, depending upon the recognition method:-
+file \fIfoo\fR might be defined as follows, depending upon the recognition method:
 .IP "\fBRecognizing the extension\fR"
 To recognize the file  extension, then a space  separated list of extensions
 may  be  defined, including  the  dot  '\fC.\fR' (or  other)  extension
@@ -78,7 +78,7 @@ If the file type adopts multiple extensions (or does not use a file extension)
 then an editor  specific  string may be  inserted  into the file to enable the
 editor to recognize it, typically of the form \fC-!-\fR \fItype\fR  \fC-!-\fR,
 if the string is GNU Emacs  compatible  then the \fC-*-\fR  convention  may be
-used. The binding is defined as:-
+used. The binding is defined as:
 .RS
 .Me $emf-scheme
 .CS
@@ -91,7 +91,7 @@ used. The binding is defined as:-
 If the file is this type of file (or uses any other  type of common  string in
 the as the first  characters  of a file) then the  binding  may be  defined  as
 follows, in this case we have assumed \fIfoo\fR is the \s-1UNIX\s0  executable
-variety i.e. \fC#!/usr/local/bin/foo\fR:-
+variety i.e. \fC#!/usr/local/bin/foo\fR:
 .RS
 .Me $emf-scheme
 .CS
@@ -182,7 +182,7 @@ color scheme is defined in a macro  variable  \fB.hilight.\fR\fIext\fR,  where
 .PP
 Given a hilighting  number, the hilighting  scheme may be defined. Each of the
 tokens  in the  language  is  assigned  a  hilighting  color,  for our  simple
-\fIfoo\fR file type:-
+\fIfoo\fR file type:
 .Me $emf-scheme
 .CS
 0 hilight .hilight.foo 1                $global-scheme
@@ -211,7 +211,7 @@ define-macro fhook-foo
 !emacro
 .CE
 .Me $ehf-scheme
-Putting it all together \fChkfoo.emf\fR now comprises:-
+Putting it all together \fChkfoo.emf\fR now comprises:
 .Me $emf-scheme
 .CS
 !if &sequal .hilight.foo "ERROR"
@@ -254,7 +254,7 @@ determined in step 1. The template is named \fIext\fR.etf, so for our example
 file  \fIfoo\fR,  the  template  file  is  called  \fCfoo.etf\fR.  We  shall
 simply  add a file  header,  our  comment  is  \fC#\fR  (as  defined  by the
 hilighting  tokens). Our example \fIfoo\fR template file \fCfoo.etf\fR may
-be defined as follows:-
+be defined as follows:
 .CS
 #-!- foo -!- #################################
 #
@@ -277,7 +277,7 @@ macro by checking the numerical argument, an argument of 0 indicates that this
 is a new file. The template file is inserted with an invocation of
 .Ht insert-template 3 .
 The  \fBfhook\fR  macro checks the  argument and inserts the template file as
-follows:-
+follows:
 .Me $emf-scheme
 .CS
 ; File hook - called when new file is loaded.
@@ -301,14 +301,14 @@ file, \fIext\fR.eaf, located in the appropriately defined \*(mS directory. The
 abbreviation  file  defines  the  key  sequences  which  may be  automatically
 inserted, under user intervention, using
 .Ht expand-abbrev 2 .
-An abbreviation file for \fIfoo\fR, \fCfoo.eaf\fR, may be defined as:-
+An abbreviation file for \fIfoo\fR, \fCfoo.eaf\fR, may be defined as:
 .CS
 if "if \\p\\rthen\\rendif\\P"
 el "else\\r\\p\\P"
 .CE
 The binding to the hook is defined in the \fIfhook\fR macro using
 .Ht buffer-abbrev-file 2 .
-For the example language file \fIfoo\fR the \fIfhook\fR macro becomes:-
+For the example language file \fIfoo\fR the \fIfhook\fR macro becomes:
 .Me $emf-scheme
 .CS
 ; File hook - called when new file is loaded.
@@ -344,7 +344,7 @@ The indention is create with an argument of \fC0\fR to the
 .Ht indent 2
 command,  the  subsequent  tokens  are  defined  using  \fBindent\fR  with  no
 argument.  For our  simple  \fIfoo\fR  syntax  then the  indentation  might be
-defined as follows:-
+defined as follows:
 .Me $emf-scheme
 .CS
 0 indent  .hilight.foo 2 10
@@ -353,7 +353,7 @@ indent .hilight.foo s "else" -4
 indent .hilight.foo o "endif" -4
 .CE
 .Me $ehf-scheme
-This provides an indentation of the form:-
+This provides an indentation of the form:
 .CS
 if condition
 then
@@ -367,7 +367,7 @@ endif
 .CE
 The indentation is bound to the buffer in the \fIfhook\fR macro by defining
 .Ht $buffer-indent 5 .
-For the example file \fIfoo\fR then the \fIfhook\fR is defined as:-
+For the example file \fIfoo\fR then the \fIfhook\fR is defined as:
 .Me $emf-scheme
 .CS
 ; File hook - called when new file is loaded.
@@ -390,7 +390,7 @@ define-macro fhook-foo
 .SS "Setting Buffer Modes"
 Buffer modes which are to be adopted (or  discarded) by the language  specific
 file are  defined in the  \fIfhook\fR  macro.  Typical  modes that are applied
-are:-
+are:
 .TP
 .Hl time time 2m
 .\"
@@ -402,7 +402,7 @@ modification date and time.
 Automatic  indentation,  where the cursor is  returned  to the same  column on
 entering a new line, rather than to the start of the line.
 .LP
-As an example, the \fIfoo\fR \fIfhook\fR file becomes:-
+As an example, the \fIfoo\fR \fIfhook\fR file becomes:
 .Me $emf-scheme
 .CS
 ; File hook - called when new file is loaded.
@@ -437,7 +437,7 @@ New bindings,  which may be associated  with new macros or existing  commands,
 are assigned within the \fIfhook\fR  macro. As an example, we shall extend the
 \fIfoo\fR  language  file to include a commenting  and  uncommenting  macros,
 locally  binding the macros to the keys "\fCC-c\  C-c\fR" and "\fCC-c\ C-d\fR"
-respectively. The macro definitions are defined as follows:-
+respectively. The macro definitions are defined as follows:
 .Me $emf-scheme
 .CS
 ; Macro to comment a line
@@ -464,7 +464,7 @@ define-macro foo-uncomment-line
 The key bindings for the macros are defined for the local buffer  \s-1ONLY\s0,
 as such are added using
 .Ht buffer-bind-key 2 .
-The bindings are declared in the \fIfhook\fR macro as follows:-
+The bindings are declared in the \fIfhook\fR macro as follows:
 .Me $emf-scheme
 .CS
 ; File hook - called when new file is loaded.
@@ -497,7 +497,7 @@ simple  mechanism  of executing a user hook  extension  file if it exists. The
 extension file name must be of the form  \fBmy\fR\fIXXX\fR\fB.emf\fR, i.e. for
 our example it must be "\fCmyfoo.emf\fR".  This is performed at the end of the
 macro file so that anything  within the file can be altered, it is executed as
-follows:-
+follows:
 .Me $emf-scheme
 .CS
 ; load in user extensions if found
@@ -513,7 +513,7 @@ new language file template. They cater for simple file types, for more complex
 examples then browse the \fBhk\fR\fIxxx\fR.emf files.
 .PP
 The completed  files that should have been generated by following the previous
-examples are now presented:-
+examples are now presented:
 .PP
 .B file.foo
 .CS

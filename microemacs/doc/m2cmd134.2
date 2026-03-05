@@ -22,7 +22,7 @@ set-char-mask \- Set character word mask
 .SH DESCRIPTION
 .B set-char-mask
 returns or modifies the setting of \*(mS internal character tables. The argument \fIn\fR defines the action to be
-taken, as follows:-
+taken, as follows:
 .IP "\fB-1\fR"
 Removes characters from the given set.
 .IP "\fB0\fR"
@@ -31,7 +31,7 @@ Returns characters in the given set in
 .IP "\fB1\fR"
 Adds characters to the given set.
 .PP
-The first argument "\fIflags\fR" determines the required character set as follows:-
+The first argument "\fIflags\fR" determines the required character set as follows:
 .IP "\fBM\fR"
 Character set Map. Internally \*(mS uses a standard character set, or code page, for each language so that only one
 set of spelling rules and dictionaries are required, however the current display character set may be different so a
@@ -162,7 +162,7 @@ For many UNIX XTerm fonts the best characters to use for
 .Ht osd 2
 dialogs) lie in the range 0x0B to 0x19. For example the vertical bar is \&'\fC\\x19\fR', the top left hand corner is
 \&'\fC\\x0D\fR' etc. These characters are by default set to be not displayable or pokable which renders them useless.
-They can be made displayable and pokable as follows:-
+They can be made displayable and pokable as follows:
 .Me "$emf-scheme"
 .CS
 set-char-mask "dp" "\\x19\\x0D\\x0C\\x0E\\x0B\\x18\\x15\\x0F\\x16\\x17\\x12"
@@ -185,7 +185,7 @@ define-macro fhook-emf
 !emacro
 .CE
 .Me "$ehf-scheme"
-For the examples below only the following subset of characters will be used:-
+For the examples below only the following subset of characters will be used:
 .CS
 Character               Win CP-1252   Cmd CP-850     DOS CP-437
 
@@ -199,7 +199,7 @@ Small A acute ('a)      \\xE1          \\xA0           \\xA0
 As the spell checker for French will operates in Windows CP-1252, the character font mapping (flag \fBM\fR) must be correctly setup for
 spell checking to operate correctly. When CP-1252 is also used as the display character set the mapping is the empty 
 string as the internal and display character set are fully in-sync, but
-for both Windows Console CP-850 and DOS code page CP-437 the mappings should be set as follows:-
+for both Windows Console CP-850 and DOS code page CP-437 the mappings should be set as follows:
 .Me "$emf-scheme"
 .CS
 ; CP-850 mapping setup
@@ -234,7 +234,7 @@ being used as an 'a' acute should always be considered a letter even though it i
 extra letters must achieve two goals, firstly to define whether a character is a letter, enabling commands like
 \fBforward-word\fR to work correctly. The second is to provide an upper case to lower case character mapping, enabling
 commands like \fBupper-case-word\fR to work correctly. This is achieved with a single call to \fBset-char-mask\fR
-using the \fBa\fR flag as follows:-
+using the \fBa\fR flag as follows:
 .Me "$emf-scheme"
 .CS
 set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1"
@@ -250,7 +250,7 @@ immediately obvious because the mapping is always given in internal character se
 characters, but when CP-437 is used the mapping string of "\fCA\\x85A\\xA0\fR" must be used. As can be seen, \fBA\fR
 is mapped last to \fB'a\fR so an upper to lower character operation will convert a \fBA\fR to \fB'a\fR. A similar
 solution is used, a further mapping of \fBA\fR to \fBa\fR is given to correct the default case mapping for both
-\fBA\fR and \fBa\fR, i.e. the following line should always be used instead:-
+\fBA\fR and \fBa\fR, i.e. the following line should always be used instead:
 .Me "$emf-scheme"
 .CS
 set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1Aa"
