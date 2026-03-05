@@ -1,0 +1,8 @@
+au "-author(\"\p\")\r\P" "  \CCDau\CCAthor"
+ex "-author(\p)\r\P" "  \CCDex\CCAport"
+ca "case \p of\r 1 -> ...;\rend.\r" "  \CCDca\CCAse"
+if "if\r\p ->\r\rtrue ->\r\rend\r" "  \CCDif\CCA"
+fu "\p() ->\r\r.\r\P" "  \CCDfu\CCAnction"
+mo "-module(\p)\r\P" "  \CCDmo\CCAdule"
+st "start() ->\r\p.\r\r\P" "  \CCDst\CCAart"
+ve "-version(\"\p\")\r\P" "  \CCDve\CCArsion"
