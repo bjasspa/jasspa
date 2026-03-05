@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/02/28 18:31:33 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/03/05 16:15:12 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -238,7 +238,7 @@ for some information on using the hypertext manual pages.
 .br
 .Hl "Global Glossary" Glossary -
 .SS "Miscellaneous Information"
-The following topics provide more in depth information:-
+The following topics provide more in depth information:
 .PP
 .RS
 .Hl "Language Templates" languageTemplates 2
@@ -262,13 +262,13 @@ The following topics provide more in depth information:-
 .NH HelpOnHelp - "Help!"
 .XI HelpOnHelp - -
 .SH "Help!"
-The on-line manual pages are defined as follows:-
+The on-line manual pages are defined as follows:
 .IP
 [logo] \fBTitle\fR
 .br
 [link1][link2]...[linkn]
 .LP
-The components of the header are defined as follows:-
+The components of the header are defined as follows:
 .IP \fI[logo]\fR
 The \*(mS  Logo in the top left hand corner of the screen exists on every
 page and hides a hypertext link. Selecting this item will take you back to the
@@ -283,7 +283,7 @@ manual pages. Use these to take you to a chosen topic. The  \fB[home]\fR  link
 returns to the contents page of the currently viewed topic, this is equivalent
 to the \fBContents\fR button when viewing Microsoft Windows help files.
 .SS "Section Numbering"
-The section numbering conventions used in these pages is defined as follows:-
+The section numbering conventions used in these pages is defined as follows:
 .IP
 (1) \- Executable command line.
 .br
@@ -459,7 +459,7 @@ output * "%N
 .NH Comparison - "Comparison and Differencing"
 .XI Comparison - -
 .SH "Comparison and Differencing"
-Commands that perform comparisons and differences:-
+Commands that perform comparisons and differences:
 .SS Commands
 .Ss
 search MicroEmacs 2 comparison
@@ -531,7 +531,7 @@ search MicroEmacs 5 bind
 .SS "Alt Key"
 The
 .B "Alt Key"
-has special binding priorities defined as follows:-
+has special binding priorities defined as follows:
 .BS
 Direct key binding (e.g. \fBA\-b\fR executes
 .Hl file-browser file-browser 3 )
@@ -730,7 +730,7 @@ output * "%N
 .SS "Mode Line"
 The buffer modes may be shown on the
 .Hl "mode line" modeline -
-as single letter mnemonics as follows:-
+as single letter mnemonics as follows:
 .IP
 \fBA\fRuto, \fBa\fRutosv, \fBB\fRackup, \fBb\fRinary, \fBc\fRrlf, cr\fBY\fRpt,
 ctrl\fBz\fR,  \fBd\fRel,  \fBD\fRir,  \fBe\fRdit,  \fBE\fRxact,  \fBf\fRence,
@@ -928,7 +928,7 @@ buffers  are shown in a dull  color  with  single  line  separator  characters
 \fB---\fR.
 .PP
 The  mode  line  may  be  configured  or  interrogated   using  the  following
-variables:-
+variables:
 .PP
 .Ss
 search MicroEmacs 5 modeline
@@ -1008,7 +1008,7 @@ output * "%N
 .\" "Variable " is a link burnt into executable (bind.c)
 .Me "!9  Variable Glossary - \*(mS"
 .SH "VARIABLE GLOSSARY"
-The following is an alphabetic list of \fB\*(mS\fR variables:-
+The following is an alphabetic list of \fB\*(mS\fR variables:
 .PP
 .Ss
 search MicroEmacs 5 variable
@@ -1024,14 +1024,14 @@ The  following is a list of all of the macro  language  commands  available in
 .Hl "Writing MicroEmacs Macros" macroWriting 4
 for information on writing macros.
 .SS "Functions"
-All functions are denoted by a \fB&\fR prefix as follows:-
+All functions are denoted by a \fB&\fR prefix as follows:
 .PP
 .Ss
 search MicroEmacs 4 macro;function
 output * "%N
 .Se
 .SS "Directives"
-The macro directives are denoted by a \fB!\fR prefix as follows:-
+The macro directives are denoted by a \fB!\fR prefix as follows:
 .PP
 .Ss
 search MicroEmacs 4 macro;directive
@@ -1039,7 +1039,7 @@ output * "%N
 .Se
 .SS "Variables"
 The macro variables are denoted by a \fB%\fR for user variables; \fB#\fR for a
-register variable and \fB@\fR for an interactive variable as follows:-
+register variable and \fB@\fR for an interactive variable as follows:
 .PP
 .Ss
 search MicroEmacs 4 macro;variable
@@ -1069,7 +1069,7 @@ output * "%N
 .SH ACKNOWLEDGMENTS
 The following persons contributed to this release of \fB\*(mS\fR over the last
 decade, roughly in the order of  participation.  This list represents the main
-developers:-
+developers:
 .IP
 .na
 .nf
@@ -1083,7 +1083,7 @@ Callen McNally
 .ad
 .fi
 .PP
-Additional contributions have been made as follows, in chrononlogical order:-
+Additional contributions have been made as follows, in chrononlogical order:
 .RS
 .IP "Sebastian Bojers"
 Finnish support.
@@ -1891,7 +1891,7 @@ the following found in the main source code,
 .\"with the permission of the current author.
 .\".PP
 .\"The  current  version  of  MicroEmacs  V4.0 has a softer  licence,  which must
-.\"therefore apply to this distributuion:-
+.\"therefore apply to this distributuion:
 .\".IP
 MicroEMACS  can be  copied  and  distributed  freely  for  any  non-commercial
 purposes. Commercial users may use MicroEMACS inhouse. Shareware  distributors
@@ -1941,11 +1941,11 @@ HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 .Me "!7  Contact Information - \*(mS"
 .SH "CONTACT INFORMATION"
 The  following  contact  point may be used to report all  problems and request
-information:-
+information:
 .IP
 \fCEmail:support@jasspa.com\fR
 .PP
-Also visit our web site's on the Internet:-
+Also visit our web site's on the Internet:
 .IP
 \fChttp://www.jasspa.com\fR
 .PP
@@ -1953,7 +1953,7 @@ This page carries the latest information and patches on the distribution.
 .SS "E-Mail Reflector"
 A E-Mail  reflector is available onto which  questions,  suggestions  and code
 fragments  may be posted. This is an  un-moderated  E-Mail  group. The mailing
-list archives may be found at:-
+list archives may be found at:
 .IP
 \fChttp://groups.yahoo.com/group/jasspa/\fR
 .LP
@@ -1962,12 +1962,12 @@ already been given. This mailing list is likely to contain the most up-to-date
 information available, as \s-1JASSPA\s0 will use this for any notifications.
 .PP
 If you want to join the E-Mail  reflector  then mail a request,  with an empty
-message body to:-
+message body to:
 .IP
 \fCjasspa-subscribe@yahoogroups.com\fR
 .LP
 This  should  add you to the  mailing  list.  If you  want to be  subsequently
-removed from the mailing list then mail an empty message to:-
+removed from the mailing list then mail an empty message to:
 .IP
 \fCjasspa-unsubscribe@yahoogroups.com\fR
 .LP
@@ -1976,7 +1976,7 @@ allow you to receive digests, rather than multiple posts to the group once you
 have subscribed.
 .PP
 The mailing list is hosted by \fBYAHOO! Groups\fR. General help information on
-the mailgroup is available at their site:-
+the mailgroup is available at their site:
 .IP
 \fChttp://groups.yahoo.com\fR
 .SS "Help, FAQ and other queries"
@@ -1999,7 +1999,7 @@ individual enquiries and questions.
 Any sites that wish to mirror the JASSPA  distribution  should  contact JASSPA
 first (use PORT), we will then include details of the mirror on the home page.
 .\".SS "Registering Usage"
-.\"Mail as:-
+.\"Mail as:
 .\".IP
 .\".na
 .\".nf
@@ -2011,7 +2011,7 @@ first (use PORT), we will then include details of the mirror on the home page.
 .\"If you  would  like to  receive  information  about  new  releases  and  other
 .\"informaton  then  simply  register  your  EMail  address.
 .SS "Reporting Problems"
-Mail as:-
+Mail as:
 .IP
 .na
 .nf
@@ -2021,7 +2021,7 @@ Mail as:-
 .ad
 .LP
 Problems should be reported such that they may be reproduced,  this may not be
-that easy. The information that is required is:-
+that easy. The information that is required is:
 .IP "\fBPlatform\fR"
 The host platform which is exhibiting a problem
 .ne 5
@@ -2037,7 +2037,7 @@ A description of the problem. Try to include as much  information as possible.
 Include any  material  necessary  to reproduce  the problem (i.e. macro files,
 text file that demonstrates problem etc).
 .SS "Suggestions"
-Mail as:-
+Mail as:
 .IP
 .na
 .nf
@@ -2052,7 +2052,7 @@ developed new macro templates, or games (we get a bit bored with the ones that
 we have developed  ourselves)  then please mail them to  \fCSUGGEST\fR  and we
 will incorporate them into the release.
 .SS "Feedback"
-Mail as:-
+Mail as:
 .IP
 .na
 .nf
@@ -2064,7 +2064,7 @@ Mail as:-
 Any general  comments  (which are not  suggestions),  your feelings about this
 version of \*(mS or any other non-technical dialogue.
 .SS "Porting"
-Mail as:-
+Mail as:
 .IP
 .na
 .nf
@@ -6186,7 +6186,7 @@ search. When using the mouse  selection to set up the line  highlighting  when
 invoked from a  \fCright-mouse -> Hilight Line ->  color/remove\fR  selection;
 the  macro  determines  the mouse  selected  region  and makes an  appropriate
 decision  as to  how  the  line  highlighting  scheme  is to be  applied.  The
-following rules apply to the mouse selection:-
+following rules apply to the mouse selection:
 .BE 0
 .RS
 .BS
@@ -6204,7 +6204,7 @@ Note that line highlighting may be safely used in a folded buffer.
 .RE
 .BS 0
 [000126]  Addition of special  rendered  space  character. You may toggle this
-from the keyboard using a macro in your user.emf as follows:-
+from the keyboard using a macro in your user.emf as follows:
 .BE 0
 .CS
 ; Macro to enable the display of TAB/CR. Note that we
@@ -6611,7 +6611,7 @@ that era.
 .BE 0
 .SS "Work In Progress or Planned"
 Development  of  \*(mS  is an  on-going  process,  follows  is a list  of work
-items which is currently  being undertaken or planned:-
+items which is currently  being undertaken or planned:
 .BS
 Horizontal scroll bars.
 .BU
