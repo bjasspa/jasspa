@@ -5,8 +5,8 @@
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
 ;
-; Synopsis:    ADA mode hook
-; Authors:     Gabriel Tabares-Barreiro
+; Synopsis:    Erlang mode hook
+; Authors:     Detlef Groth
 ;
 define-macro fhook-erlang
   set-variable $buffer-mask "luh1"
@@ -20,10 +20,10 @@ set-variable .fhook-erlang.setup-mask "abefghikmnoptux"
 set-variable .fhook-erlang.comment "|%||%|% | %|r|"
 set-variable .fhook-erlang.exact -1
 
-; Set up collapse for Ada
+; Set up collapse for Erlang
 set-variable .fhook-erlang.collapse-open  "^[.\\w]+("
-set-variable .fhook-erlang.collapse-close ".+\\."
-set-variable .fhook-erlang.collapse-mclose "1"
+set-variable .fhook-erlang.collapse-close "^[a-z]\\|\\'"
+set-variable .fhook-erlang.collapse-mclose "0"
 set-variable .fhook-erlang.collapse-mnext "-1"
 
 set-variable .fhook-erlang.item-list-s1 "^\\([.\\w]+\\)("
