@@ -1,4 +1,5 @@
 cl "/// Description of class.\rpublic static class \p {\r\r}\r\P" "  \CCDcl\CCAass"
+cw "Console.WriteLine($\"\p\");\r\P" "  \CCDcw\CCA Console.WriteLine"
 do "do\r{\r\r} while (\p)\r\P" "  \CCDdo\CCA"
 ei "else if (\p)\r{\r\r}\r\P" "  \CCDe\CCAlse \CCDi\CCAf"
 el "else\r{\r\p\r}\r\P" "  \CCDel\CCAse" 
