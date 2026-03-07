@@ -1543,7 +1543,7 @@ define-macro delete-file
       !iif &sin "/" &lef &ind &cat ".find-file.file" #l2 -1  !break
     !until &not &dec #l2 1
     !if #l2
-      set-variable #l2 @mc5 "Recreate directories (?/y/n/o) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+      set-variable #l2 @mc5 "Recreate directories (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
       set-variable #l4 &bor #l4 &con &iseq #l2 "y" 0x30 0x50
     !endif
   !endif
