@@ -111,7 +111,7 @@ define-macro-file xrdb xrdb-scheme
 1 major-mode "css"
 1 major-mode "dart"
 29 major-mode "diff" "*diff* .diff .dif" "Diff File" 1 "^diff"
-13 major-mode "dirlst" "/ *files*" "Directory List" copy-file delete-file file-browser file-browser-close file-browser-swap-buffers
+13 major-mode "dirlst" "/ *files*" "Directory List" copy-file delete-file delete-file-delayed file-browser file-browser-close file-browser-swap-buffers
 13 major-mode "dirtre" "*directory*" "Directory Tree"
 7 major-mode "doc" "document" ".doc"
 9 major-mode "dot" "Dot/Neato"

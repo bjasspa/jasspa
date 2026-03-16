@@ -1349,12 +1349,13 @@ define-macro dirlst-search
   !endif
 !emacro
 
-; 0x01 Not used
+; 0x01 Throw error if file doesn't exist
 ; 0x02 Trash file content first
 ; 0x04 Don't prompt on delete failure - No retry
 ; 0x08 Don't prompt for readonly files - No to all
 ; 0x10 Don't prompt for readonly files - Yes to all
 ; 0x20 <file> is a regex
+; 0x40 Quiet mode - no print on complete
 define-macro delete-file
   !force set-variable #l1 @1
   !iif &not $status  set-variable #l1 @ml01 #l0
@@ -1362,8 +1363,10 @@ define-macro delete-file
     set-variable $file-names #l1
     set-variable #l2 $result
     !if &seq "" &set #l3 $file-names
-      ml-write &spr "[Error: '%s' regex failed to match a file]" #l1
-      !abort
+      !iif &not &band @# 0x40  ml-write &spr "[Error: '%s' regex failed to match a file]" #l1
+      !iif &band @# 1  !abort
+      set-variable .result &spr "|0|0|0|0|"
+      !return
     !endif
     set-variable .find-file.file-dir #l2
     set-variable .find-file.file1 #l3
@@ -1373,11 +1376,12 @@ define-macro delete-file
     !done
     set-variable .find-file.file-count #l4
   !elif &seq "X" &set #l3 &stat t #l1
-    ml-write &spr "[Error: Given file '%s' does not exist]" #l1
-    !abort
+    !iif &not &band @# 0x40  ml-write &spr "[Error: Given file '%s' does not exist]" #l1
+    !iif &band @# 1  !abort
+    set-variable .result &spr "|0|0|0|0|"
+    !return
   !elif &not &sin #l3 "RDF"
-    ml-write &spr "[Error: Given file '%s' is not a supported file type]" #l1
-    !abort
+    -8 ml-write &spr "[Error: Given file '%s' is not a supported file type]" #l1
   !else
     set-variable .find-file.file-dir &lef #l1 &set #l4 &rsin "/" &lef #l1 -1
     set-variable .find-file.file1 &rig #l1 #l4
@@ -1387,6 +1391,40 @@ define-macro delete-file
   set-variable #l5 $status
   set-variable $result .dirlst-tag-list-delete.result
   !return #l5
+!emacro
+define-macro delete-file-delayed
+  set-variable #l0 $unix-time
+  !force set-variable #l1 @1
+  !if $status
+    !iif &not @?  set-variable @# 0x54
+    !force set-variable #l2 @2
+    !iif &not $status  set-variable #l2 20
+    set-variable &ind &cat ".fn" &inc .fc 1 &spr "|%f|%d|%s|" &fadd #l0 #l2 @# #l1
+  !endif
+  set-variable #l9 0
+  set-variable #l8 "Z"
+  set-variable #l4 &add .fcl 0
+  set-variable #l5 &add .fc 0
+  !while &les #l4 #l5
+    !if &exi &set #l6 &cat ".fn" &inc #l4 1
+      set-variable #l3 &ind #l6
+      !if &sgre &lget #l3 1 #l0
+        !iif &not #l9  set-variable #l9 #l4
+        !iif &sles &lget #l3 1 #l8  set-variable #l8 &lget #l3 1
+      !else
+        !force !force &lget #l3 2 delete-file &lget #l3 3
+        unset-variable &ind #l6
+      !endif
+    !endif
+  !done
+  !if #l9
+    set-variable .fcl &sub #l9 1
+    !iif &les &set #l1 &spr "%.0f" &fmul &fsub #l8 $unix-time 1000 1  set-variable #l0 1
+    #l1 create-callback delete-file-delayed
+  !else
+    set-variable .fcl 0
+    set-variable .fc 0
+  !endif
 !emacro
 
 0 define-macro dirlst-delete-line

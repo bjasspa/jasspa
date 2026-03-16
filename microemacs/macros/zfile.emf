@@ -254,23 +254,6 @@ define-macro find-zfile
   !return #l1
 !emacro
 
-0 define-macro zfile-tmp-rm
-  set-variable #l0 &add .fcl 0
-  set-variable #l4 &add .fc 0
-  !while &les #l0 #l4
-    set-variable #l3 &ind &cat ".fn" &inc #l0 1
-    set-variable #l1 &lget #l3 1
-    set-variable #l2 &lget #l3 2
-    !repeat
-      !force !force 0x20 file-op &cat #l1 #l2 @mna
-      !iif &not &set #l3 &rsin "/" #l2  !break
-      set-variable #l2 &lef #l2 &sub #l3 1
-    !done
-    unset-variable &ind &cat ".fn" #l0
-  !done
-  set-variable .fcl #l4
-!emacro
-
 define-macro zfile-find-file
   !iif &not &exi ":zfl"  -8 ml-write "[ZFile Error: Invalid buffer!]"
   !iif &or &les $window-line 5 &les &len @wl :fmpf  -8 ml-write "[ZFile Error: Invalid line!]"
@@ -308,16 +291,15 @@ define-macro zfile-find-file
   !while &seq &lef #l2 1 "/"
     set-variable #l2 &rig #l2 1
   !done
-  set-variable #l2 &spr "%s/%s" &rig #l1 &rsin "/" #l1 #l2
-  set-variable #l1 &lef #l1 &rsin "/" #l1
+  set-variable #l2 &spr "%s/%s" #l1 #l2
   ; launch the tool and don't wait, however we need to avoid deleting the tmp file before the system app has
   ; had a chance to load it, so throw in a long delay (20sec) before the del and hope!
-  !if &set #l8 &seq "R" &stat t &cat #l1 #l2
+  !if &set #l8 &seq "R" &stat t #l2
     !if &set #l0 &band 4 @#
-      !force &con &band 1 @# 1 3 file-tool-exec-default &cat #l1 #l2
+      !force &con &band 1 @# 1 3 file-tool-exec-default #l2
       set-variable #l0 $status
     !elif &set #l0 &band 2 @#
-      !if &not &xse &set #l4 &cat #l1 #l2 ".*[\\s(].*"
+      !if &not &xse &set #l4 #l2 ".*[\\s(].*"
       !elif &band $system 0x100
         set-variable #l4 &spr "\"%s\"" #l4
       !else
@@ -335,18 +317,17 @@ define-macro zfile-find-file
     !endif
     !if &not #l0
       !if #l5
-        #l5 find-file &cat #l1 #l2 @mna
+        #l5 find-file #l2 @mna
         !iif &len #l6  #l6 translate-buffer
       !else
-        find-zfile &cat #l1 #l2 @mna
+        find-zfile #l2 @mna
       !endif
       set-variable $buffer-fname ""
       set-variable $buffer-bname #l3
     !endif
   !endif
-  ; delay the remove of the tmp file by 20sec to allow command to execute
-  set-variable &ind &cat ".zfile-tmp-rm.fn" &inc .zfile-tmp-rm.fc 1 &spr "|%s|%s|" #l1 #l2
-  20000 create-callback zfile-tmp-rm
+  ; delay the remove of the tmp sub-dir by 20sec to allow command to execute
+  delete-file-delayed #l1
   !if &not #l8
     !force goto-position "\x8a"
     -8 ml-write &spr "[ZFile-%s Error: failed to extract requested file - command returned %s]" &reg #l7 "NID" #l9
