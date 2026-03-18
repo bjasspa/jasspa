@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2025/11/28 22:31:04 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2026/03/18 23:42:44 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH file-exec 3
@@ -73,42 +73,47 @@ command-lines should use tags (\fC%\fR\fIl\fR...) rather than literal file names
 .Ht file-tool-setup 3 ,
 which uses the same format.
 .PP
+The \fBexec-file\fR command has 3 additional configuration checkboxes; when enabled, \fBRaw output\fR suppresses the 3
+line header, which details the location and command-line being run, and stops long lines in the command output from being
+wrapped. \fBNo line wrap\fR also stops the wrapping of long lines, but does not suppress the header. When enabled,
+\fBSupports buffers\fR indicates that, if the current buffer does not have a file name, the \fBexec-file\fR command
+can save the buffer contents to a
+.Hl "temporary file" $temp-name 5
+and then run the given utility with the temp file. This typically requires the execution process to not be dependent 
+on any other local content. Note that the generated temp file is removed 20 seconds after the start of the execution 
+so this option should not be used if the execution requires the file to be present for longer.
+.PP
 For creators of \*(mS file hooks, the file tools can also support the use of multiple interpreters/tools, e.g.
 \fCclang\fR and \fCgcc\fR to compile a C file. The configuration of each tool can include tests to verify the
 availability of the tool on the current computer as well as the required command-line to run.
 .PP
-To get the command \fBfile-exec\fR, \fBfile-format\fR and \fBfile-lint\fR properly working a setup for the relevant
-tools for the current buffer's programming language is usually required. The setting are stored in variables like for
-instance for the C++ programming language:
+To get the \fBfile-exec\fR, \fBfile-format\fR and \fBfile-lint\fR commands properly working, configuration variables
+are typically required for the current buffer's major-mode. For example, the following configuration is taken from
+.Hl hkpython.emf python 9 :
 .Me $emf-scheme
 .CS
-; regex for highlighting and making it click aware
-add-next-line "*cpp-exec*" "^%f:%l:\\\\d+.+"
-add-next-line "*cpp-lint*" "^%f:%l:\\\\d+.+"
-; the compiler
-set-variable .fhook-cpp.coms "\\bg++\\b" 
-; try outs for  execution,  formatting  and  linting,  if 1 is fine 2 is not tried
-; fields are \\bcompiler/tool\\btest command line\\b
-; hilight error\\bhilight warning\\bcommand line\\b
-; line breaks with indentation follow ups are just for better display
-; we check with %v[com].exe for the Windows platform to call the build 
-; with backslash instead of slash from the current directory
-set-variable .fhook-cpp.exec1 "\\b%v[com]\\b%v[com].exe -v\\b\\b\\b
-    %v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o %b %& .\\%b
-    %v[args|20|Additional command-line arguments|]\\b"
-set-variable .fhook-cpp.exec2 "\\b%v[com]\\b%v[com]  -v\\b\\b\\b
-    %v[com] -Wall -O3 -std=c++17 \\"%p%f\\" -o ./%b %& ./%b 
-    %v[args|20|Additional command-line arguments|]\\b"
-set-variable .fhook-cpp.format1 "\\bastyle\\bastyle -h\\b0\\b\\b
-    astyle --indent=spaces=4 %\\"%f%\\"\\bAstyle\\b"
-set-variable .fhook-cpp.format2 "\\bclang-format\\bclang-format -h\\b0\\b\\b
-    clang-format \\"%f\\% -- -std=c++17\\bClang-format\\b"
-set-variable .fhook-cpp.lint1 "\\b%v[com]\\b%v[com] --version\\b0\\b\\b
-    %v[com] -Wall -x c++ -fsyntax-only \\"%p%f\\"\\bG++\\b"
-set-variable .fhook-cpp.lint2 "\\bclang-tidy\\bclang-tidy --version\\b0\\b\\b
-    clang-tidy \\"%f\\" -- -std=c++17\\bClang-tidy\\b"
-.CE 0
+set-variable .fhook-python.coms "\\bpython3\\bpython2\\bpython\\b"
+set-variable .fhook-python.coms-windows "\\b~/AppData/Local/Programs/Python/Python\\\\d+\\\\(-\\\\d+\\\\)?/python.exe\\bC:/Python\\\\d+\\\\(-\\\\d+\\\\)?/python.exe\\b"
+set-variable .fhook-python.exec1   "\\b%v[com]\\b\\b\\b\\b%\\"%v[com]%\\" \\"%p%f\\" %v[args|20|Additional command-line arguments|]\\b"
+set-variable .fhook-python.format1 "\\bruff\\bruff -h\\b0\\b\\bruff format %\\"%f%\\"\\bRuff\\b"
+set-variable .fhook-python.format2 "\\b%v[com]\\b%\\"%v[com]%\\" -m yapf -h\\b0\\b\\b%\\"%v[com]%\\" -m yapf -i %\\"%p%f%\\"\\bYapf\\b"
+set-variable .fhook-python.format3 "\\b%v[com]\\b%\\"%v[com]%\\" -m black -h\\b0\\b\\b%\\"%v[com]%\\" -m black -q %\\"%p%f%\\"\\bBlack\\b"
+set-variable .fhook-python.lint1   "\\bruff\\bruff -h\\b0\\b\\bruff check %\\"%f%\\"\\bRuff\\b"
+set-variable .fhook-python.lint2   "\\b%v[com]\\b%\\"%v[com]%\\" -m pylint -h\\b0\\b\\b%\\"%v[com]%\\" -m pylint %\\"%p%f%\\"\\bPylint\\b:\\\\d+:\\\\d+: E\\\\d+:\\b:\\\\d+:\\\\d+: W\\\\d+:\\b:\\\\d+:\\\\d+: [CR]\\\\d+:\\b"
+.CE
 .Me $ehf-scheme
+Where the \fC.exec#\fR, \fC.format#\fR and \fC.lint#\fR variables configure a tool to use the specified utility, python 
+hhas been configured to check for and potentially use 3 different utilities for formatting, \fBfile-format\fR will use 
+the first utility found. The format of these variables is as follows:
+.CS
+|<program>|<test>|<test-success-exit-code>|<path>|<command-line>|<ID>|<err-regex>|<wrn-regex>|<inf-regex>|<flags>|
+.CE
+Only the \fC<program>\fR and \fC<command-line>\fR parameters are required, \fC<test>\fR and \fC<test-success-exit-code>\fR 
+parameters should only be used when the mere presence of the \fC<program>\fR is not a guarantee that the utility is 
+fully installed and correctly running. For example, \fBYapf\fR is a python module that must be installed in addition to 
+python itself, to the presence of a python script engine, i.e. the \fBpython3\fR program, is no guarantee that the 
+yapf module has also been installed. Instead the command "<python> -m yapf -h" and the exit code is tested, \fB0\fR 
+being a success.
 .SH NOTES
 \fBfile-exec\fR, \fBfile-format\fR and \fBfile-lint\fR are macros defined in \fChktools.emf\fR. For programming
 lanuages like C++, Fortran and R there are already useful variable defaults defined in the hkHOOK.emf files, the user

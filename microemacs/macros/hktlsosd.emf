@@ -90,7 +90,7 @@
 0 define-macro hktool-set-ecmb
   !iif &equ @# .major-mode-tools-setup.ei  !return
   !if &les @# 0
-    set-variable .major-mode-tools-setup.el &spr "\b\b\b%s\b\b\b\b-1\b" &lget .major-mode-tools-setup.el 3
+    set-variable .major-mode-tools-setup.el &spr "\b\b\b%s\b\b\b\b-1\b0\b" &lget .major-mode-tools-setup.el 3
     osd .osd.hk-tool 130 ""
   !else
     !force @# file-tools-init "exec"
@@ -132,7 +132,7 @@
 0 define-macro hktool-set-fcmb
   !iif &equ @# .major-mode-tools-setup.fi  !return
   !if &les @# 0
-    set-variable .major-mode-tools-setup.fl &spr "\b\b\b%s\b\b\b\b-1\b" &lget .major-mode-tools-setup.fl 3
+    set-variable .major-mode-tools-setup.fl &spr "\b\b\b%s\b\b\b\b-1\b0\b" &lget .major-mode-tools-setup.fl 3
     osd .osd.hk-tool 230 ""
   !else
     !force @# file-tools-init "format"
@@ -174,7 +174,7 @@
 0 define-macro hktool-set-lcmb
   !iif &equ @# .major-mode-tools-setup.li  !return
   !if &les @# 0
-    set-variable .major-mode-tools-setup.ll &spr "\b\b\b%s\b\b\b\b-1\b" &lget .major-mode-tools-setup.ll 3
+    set-variable .major-mode-tools-setup.ll &spr "\b\b\b%s\b\b\b\b-1\b0\b" &lget .major-mode-tools-setup.ll 3
     osd .osd.hk-tool 330 ""
   !else
     !force @# file-tools-init "lint"
@@ -223,25 +223,35 @@
     set-variable $result #l1
   !endif
 !emacro
+0 define-macro hktool-setup-chkbx
+  set-variable #l1 &lget &ind &set #l0 &cat ".major-mode-tools-setup." &lget "|el|fl|ll|" &band &abs @# 0x0f 8
+  set-variable #l2 &div &abs @# 16
+  !if &les @# 0
+    set-variable #l1 &bxor #l1 #l2
+    set-variable &ind #l0 &lset &ind #l0 8 #l1
+  !elif &not &band #l1 #l2
+    !abort
+  !endif
+!emacro
 0 define-macro hktool-setup-save
   set-variable #l1 .major-mode-tools-setup.el
   !if &les &set #l0 .major-mode-tools-setup.ei 1
   !elif &llen &set #l2 &ind &spr ".%s.exec%d" $buffer-fhook #l0
-    !iif &seq &lget #l2 5 &lget #l1 3  set-variable #l1 &spr "\b%s\b\b\b\b\b\b%s\b" &lget #l1 1 #l0
+    !iif &and &seq &lget #l2 5 &lget #l1 3 &equ &lget #l2 10 &lget #l1 8  set-variable #l1 &spr "\b%s\b\b\b\b\b\b%s\b\b" &lget #l1 1 #l0
   !endif
   !force set-registry &spr "/history/%s/fhook/%s-exec-com" $platform $buffer-major-mode #l1
   !force unset-variable &spr ".%s.exec-com" $buffer-fhook
   set-variable #l1 .major-mode-tools-setup.fl
   !if &les &set #l0 .major-mode-tools-setup.fi 1
   !elif &llen &set #l2 &ind &spr ".%s.format%d" $buffer-fhook #l0
-    !iif &seq &lget #l2 5 &lget #l1 3  set-variable #l1 &spr "\b%s\b\b\b\b\b\b%s\b" &lget #l1 1 #l0
+    !iif &seq &lget #l2 5 &lget #l1 3  set-variable #l1 &spr "\b%s\b\b\b\b\b\b%s\b\b" &lget #l1 1 #l0
   !endif
   !force set-registry &spr "/history/%s/fhook/%s-format-com" $platform $buffer-major-mode #l1
   !force unset-variable &spr ".%s.format-com" $buffer-fhook
   set-variable #l1 .major-mode-tools-setup.ll
   !if &les &set #l0 .major-mode-tools-setup.li 1
   !elif &llen &set #l2 &ind &spr ".%s.lint%d" $buffer-fhook #l0
-    !iif &seq &lget #l2 5 &lget #l1 3  set-variable #l1 &spr "\b%s\b\b\b\b\b\b%s\b" &lget #l1 1 #l0
+    !iif &seq &lget #l2 5 &lget #l1 3  set-variable #l1 &spr "\b%s\b\b\b\b\b\b%s\b\b" &lget #l1 1 #l0
   !endif
   !force set-registry &spr "/history/%s/fhook/%s-lint-com" $platform $buffer-major-mode #l1
   !force unset-variable &spr ".%s.lint-com" $buffer-fhook
@@ -263,6 +273,13 @@ osd .osd.hk-tool 150 ""
 osd .osd.hk-tool 160 "Sfh" "      Command-line: " 170
 osd .osd.hk-tool 170 "EtRxHf" .scheme.osd-entry "##################################################" 1 hktool-setup-inp
 osd .osd.hk-tool 180 ""
+osd .osd.hk-tool 184 "Sfh" "           Options: "
+osd .osd.hk-tool 186 "CRtpfhx" &cat .osd.checkbox-chars "\} \HRaw output" 0x21 hktool-setup-chkbx
+osd .osd.hk-tool 188 "Sfh" "        "
+osd .osd.hk-tool 190 "CRtpfx" &cat .osd.checkbox-chars "\} \HNo line wrap" 0x41 hktool-setup-chkbx
+osd .osd.hk-tool 192 "Sfh" "                    "
+osd .osd.hk-tool 194 "CRtpfx" &cat .osd.checkbox-chars "\} Supports \Hbuffers" 0x11 hktool-setup-chkbx
+osd .osd.hk-tool 196 ""
 osd .osd.hk-tool 200 "Sfh" "  \HFormat config:    " 210
 osd .osd.hk-tool 210 "OtxmsfhHzR" .scheme.osd-entry 27 1 "" .osd.tmp hktool-setup-fcmb
 osd .osd.hk-tool 220 "BdxfHRh" .scheme.osd-ebtt &mid $window-chars 10 1 210
@@ -295,7 +312,7 @@ define-macro major-mode-tools-setup
     set-variable .ei &add 0 &lget &set .el #l1 7
     osd .osd.hk-tool 130 "" &con &seq "" &reg &spr "/history/%s/fhook/%s-exec-com" $platform $buffer-major-mode "" " - Found" ""
   !else
-    set-variable .el &spr "\b\b\b\b\b\b\b-1\b"
+    set-variable .el &spr "\b\b\b\b\b\b\b-1\b0\b"
     set-variable .ei &con &set #l5 &exi &spr ".%s.exec1" $buffer-fhook 0 -1
     osd .osd.hk-tool 130 "" &con #l5 " - No tool found" ""
   !endif
@@ -305,7 +322,7 @@ define-macro major-mode-tools-setup
     set-variable .fi &add 0 &lget &set .fl #l1 7
     osd .osd.hk-tool 230 "" &con &seq "" &reg &spr "/history/%s/fhook/%s-format-com" $platform $buffer-major-mode "" " - Found" ""
   !else
-    set-variable .fl &spr "\b\b\b\b\b\b\b-1\b"
+    set-variable .fl &spr "\b\b\b\b\b\b\b-1\b0\b"
     set-variable .fi &con &set #l5 &exi &spr ".%s.format1" $buffer-fhook 0 -1
     osd .osd.hk-tool 230 "" &con #l5 " - No tool found" ""
   !endif
@@ -315,13 +332,14 @@ define-macro major-mode-tools-setup
     set-variable .li &add 0 &lget &set .ll #l1 7
     osd .osd.hk-tool 330 "" &con &seq "" &reg &spr "/history/%s/fhook/%s-lint-com" $platform $buffer-major-mode "" " - Found" ""
   !else
-    set-variable .ll &spr "\b\b\b\b\b\b\b-1\b"
+    set-variable .ll &spr "\b\b\b\b\b\b\b-1\b0\b"
     set-variable .li &con &set #l5 &exi &spr ".%s.lint1" $buffer-fhook 0 -1
     osd .osd.hk-tool 330 "" &con #l5 " - No tool found" ""
   !endif
   hktool-setup-mint
   0 major-mode $buffer-major-mode
   osd .osd.hk-tool 0 "batcHIs" 4 4 74 0 -1 -1 640 .scheme.osd-title &cat "Major Mode Tools Setup: " &lget $result 5
+  0 ml-write
   !force !force .osd.hk-tool osd
   !if &not &band @# 1
   !elif $status

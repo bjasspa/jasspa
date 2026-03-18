@@ -324,6 +324,12 @@ define-macro major-mode-help
     major-mode-help-add-item "item-list" "" "List Items"
     major-mode-help-add-item "item-list-close" "" "Close List Items window"
   !endif
+  !if &or &or &set #l1 &exi &ind &spr ".%s.exec1" $buffer-fhook &set #l2 &exi &ind &spr ".%s.format1" $buffer-fhook &set #l3 &exi &ind &spr ".%s.lint1" $buffer-fhook
+    major-mode-help-add-item "" "" ""
+    !iif #l1  major-mode-help-add-item "file-exec" "" "Execute file"
+    !iif #l2  major-mode-help-add-item "file-format" "" "Format file"
+    !iif #l3  major-mode-help-add-item "file-lint" "" "Lint file"
+  !endif
   !if &exi &ind &spr ".fhook-%s.tags" #l5
     major-mode-help-add-item "" "" ""
     major-mode-help-add-item "" "" "Tag generation is available under the Tools menu"
@@ -437,6 +443,13 @@ define-macro major-mode-help
   !if &exi &ind &spr ".%s.tags" $buffer-fhook
     !iif &not #l7  major-mode-tool-add-item "" "" "" #l8
     major-mode-tool-add-item "generate-tags-file" "0" "Generate \HTags File" #l8
+  !endif
+  !if &or &or &set #l1 &exi &ind &spr ".%s.exec1" $buffer-fhook &set #l2 &exi &ind &spr ".%s.format1" $buffer-fhook &set #l3 &exi &ind &spr ".%s.lint1" $buffer-fhook
+    major-mode-tool-add-item "" "" "" #l8
+    !iif #l1  major-mode-tool-add-item "file-exec" "" "E\Hxecute file" #l8
+    !iif #l2  major-mode-tool-add-item "file-format" "" "\HFormat file" #l8
+    !iif #l3  major-mode-tool-add-item "file-lint" "" "\HLint file" #l8
+    major-mode-tool-add-item "major-mode-tools-setup" "" "File Tool Setup" #l8
   !endif
 !emacro
 

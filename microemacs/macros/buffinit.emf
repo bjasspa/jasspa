@@ -183,6 +183,9 @@ define-macro-file hktlsosd major-mode-tools-setup
     buffer-bind-create "b" "esc C-e" "" end-of-function
     buffer-bind-create "b" "esc C-h" "" mark-function
   !endif
+  !iif &exi &ind &spr ".%s.exec1" $buffer-fhook  buffer-bind-create "b" "C-c C-x" "" file-exec
+  !iif &exi &ind &spr ".%s.format1" $buffer-fhook  buffer-bind-create "b" "C-c C-f" "" file-format
+  !iif &exi &ind &spr ".%s.lint1" $buffer-fhook  buffer-bind-create "b" "C-c C-l" "" file-lint
   !if &not &sin "s" #l0
   !elif &exi .spell.language
     !iif &reg "/history/spell/autospell" "0"  1 auto-spell

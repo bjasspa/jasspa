@@ -526,7 +526,7 @@ set-variable .fhook-c.item-list-r7 "Strc \CCd\\1\CCA"
 add-next-line "*c-exec*" "^%f:%l:\\d+.+"
 add-next-line "*c-lint*" "^%f:%l:\\d+.+"
 ; I do not see an advantage of these coms - how would I use v[com] in case I check for clang compiler or tcc
-set-variable .fhook-c.exec1 "\bgcc.exe\b\b\b\bdel %\"%b.exe%\" %& gcc.exe -Wall -g -std=c99 --max-errors=3 %\"%p%f%\" -o %b && .%\%\%b %v[args|20|Additional command-line arguments|]\bGcc - Windows\b"
+set-variable .fhook-c.exec1 "\bgcc.exe\b\b\b\bdel %\"%b.exe%\" %& gcc.exe -Wall -g -std=c99 --max-errors=3 %\"%p%f%\" -o %b && .\\%b %v[args|20|Additional command-line arguments|]\bGcc - Windows\b"
 set-variable .fhook-c.exec2 "\bgcc\b\b\b\brm -f %\"%b%\" %& gcc -Wall -g -std=c99 --max-errors=3 %\"%p%f%\" -o ./%b && ./%b %v[args|20|Additional command-line arguments|]\bGcc - UNIX\b"
 set-variable .fhook-c.format1 "\bastyle\b\b\b\bastyle --indent=spaces=4 %\"%f%\"\bAstyle\b"
 set-variable .fhook-c.format2 "\bclang-format\b\b\b\bclang-format --style=%\"{IndentWidth: 4}%\" -i %\"%f%\"\bClang-format\b"
