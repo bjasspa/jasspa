@@ -386,7 +386,7 @@ set-variable .fhook-sql.command-desc  "|SQL \HFormat|"
   !endif
 !endif
 
-set-variable .fhook-sql.exec1 "\bmysql\b\b\b\bmysql %v[args|20|Additional command-line arguments|] -e 'source %p%f'\b\b\b\b\b3\b"
+set-variable .fhook-sql.exec1 "\bmysql\b\b\b\bmysql %v[exec-opts|] %v[exec-args|20|Additional command-line arguments|] -e 'source %p%f'\b\b\b\b\b3\b"
 
 0 define-macro sql-format-line2
   set-variable #l9 $buffer-bname

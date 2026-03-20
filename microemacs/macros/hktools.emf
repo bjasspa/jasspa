@@ -80,7 +80,10 @@ define-macro-file hkipipe fhook-ipipe
     !if &not &exi &ind #l8
       !iif &seq "com" &lget #l6 1  file-tool-com-init #l9
     !endif
-    !if &exi &ind #l8
+    !if &exi &ind &cat #l8 "-np"
+      set-variable #l5 &ind &cat #l8 "-np"
+      set-variable #l6 "|||"
+    !elif &exi &ind #l8
       set-variable #l5 &ind #l8
     !elif &gre &llen #l6 3
       set-variable #l5 &lget #l6 4
