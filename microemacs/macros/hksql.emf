@@ -386,7 +386,8 @@ set-variable .fhook-sql.command-desc  "|SQL \HFormat|"
   !endif
 !endif
 
-set-variable .fhook-sql.exec1 "\bmysql\b\b\b\bmysql %v[exec-opts|] %v[exec-args|20|Additional command-line arguments|] -e 'source %p%f'\b\b\b\b\b3\b"
+set-variable .fhook-sql.exec1 "\bmysql\b\b\b\bmysql %v[exec-opts|] %v[exec-args|20|Additional command-line arguments|] -e 'source %p%f'\bMySql/MariaDB\b\b\b\b3\b"
+set-variable .fhook-sql.exec2 "\bsqlcmd\b\b\b\bsqlcmd %v[exec-opts|] %v[exec-args|20|Additional command-line arguments|] -i %\"%p%f%\"\bMS SQL Server\b\b\b\b3\b"
 
 0 define-macro sql-format-line2
   set-variable #l9 $buffer-bname
