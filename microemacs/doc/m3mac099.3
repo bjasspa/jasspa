@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth & Steven Phillips
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac099.3,v 2.10 2026/03/18 23:42:44 dgroth Exp $
+.Id $Id: m3mac099.3,v 2.10 2026/03/24 21:41:21 dgroth Exp $
 .Im MicroEmacs command
 .so me.tni
 .TH file-exec 3
@@ -119,8 +119,38 @@ being a success.
 lanuages like C++, Fortran and R there are already useful variable defaults defined in the hkHOOK.emf files, the user
 can overwrite these settings using \fBmajor-mode-tools-setup\fR.
 .PP
-The executables or the interpreters must be usually installed and in the system path for the command to function
-correctly or the full path might be given in the variable settings. 
+The executables or the interpreters will need to be installed in the system path for the commands to function
+correctly, otherwise the full path will need to be given in the settings.
+.PP
+When setting up tools it can be useful to add "\fC%v[<tool>-opts|]\fR" in places where standard options, such as user 
+name or server, may need to be supplied. Users can then define a \fB.fhook-<major-mode>.<tools>-opts\fR variable in 
+their \fCmy<major-mode>.emf\fR file so they do not have to type these values every time they restart \*(mS. For example, to 
+execute an SQL statement in MySql the base server, access and database details are required, rather than require the 
+user to supply this every time the main command can be defined as:
+.CS
+mysql %v[exec-opts|] %v[exec-args|20|Additional command-line arguments|--host=localhost --user=<user> --password=<passwd> <db-name>] -e 'source %p%f'
+.CE
+The user can then add the following line to their \fCmysql.emf\fR file:
+.Me $emf-scheme
+.CS
+set-variable .fhook-sql.exec-opts "--host=localhost --user=JDOE --password=12345"
+.CE
+.Me $ehf-scheme
+So the base DB access is pre-defined and only the database name is required, a better default can also be supplied by 
+adding:
+.Me $emf-scheme
+.CS
+set-variable .fhook-sql.exec-args "MYDB"
+.CE
+.Me $ehf-scheme
+The user will still be prompted, but the default is now likely to be correct. The user can avoid being prompted by 
+defining the variable \fCvar-name\fR\fB-np\fR ('np' = no-prompt), i.e. adding:
+.Me $emf-scheme
+.CS
+set-variable .fhook-sql.exec-args-np "MYDB"
+.CE
+.Me $ehf-scheme
+Would define the database name and stop the prompting. 
 .SH "SEE ALSO"
 .Ht get-next-line 2 ,
 .Ht file-tool-setup 3 ,
