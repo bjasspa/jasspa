@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3osd009.3,v 2.7 2022/06/12 17:14:00 jon Exp $
+.Id $Id: m3osd009.3,v 2.7 2026/03/24 01:36:14 jon Exp $
 .Im MicroEmacs command|spell|osd
 .so me.tni
 .TH describe-word 3
@@ -19,44 +19,141 @@ describe-word \- Display a dictionary definition of a word
 .ad
 .SH DESCRIPTION
 .B describe-word
-can be used to interface to an external  dictionary  to get a definition  of a
-given  word. The  interface  has two  modes of  interface,  the  first  simply
-launches an external  program  which  provides the  definition in its own user
-interface,  e.g. MS  Bookshelf.  The second  interface  launches  an  external
-program which prints out the definition to  \fCstdout\fR,  \*(mS can then pull
-out the definition and display it in \fBdescribe-word\fR's own GUI.
+can be used to interface to an external dictionary to get a definition of a given word. When executed
+\fBdescribe-word\fR will use the current word under the cursor as the initial \fIword\fR or will prompt the user if
+the cursor is not in a word.
 .PP
-When executed  \fBdescribe-word\fR  will use the current word under the cursor
-as the  initial  \fIword\fR  or will prompt the user if the cursor is not in a
-word.
+The command provides four methods of interfacing with an external dictionary and each language can be configured to
+use one or more dictionaries, allowing secondary sources to be used if the primary lookup failed. The first interface
+simply launches an external program which provides the definition in its own user interface, e.g. GoldenDict or MS
+Bookshelf. A lookup using this interface is always assumed to be successful so this should always be the last one for 
+a language.
 .PP
-When \fBdescribe-word\fR's dialog is used the information presented is defined
-as follows:
-.IP "\fBWord\fR"
-The word  being  defined,  the  entry  can be edited  and the new word will be
-automatically looked-up when the edit is completed.
-.IP "\fBInsert\fR"
-The effect of this button is dependent on where describe-word was executed. If
-executed from the \fBMeaning\fR button within the
-.Hl "spell checker" spell-buffer 3
-the Word entry is changed to the current word. When executed outside the spell
-checker  the  definition  of the  current  word is  inserted  into the current
-buffer.
-.IP "\fBExit\fR"
-Closes the dialog.
-.IP "Main definition box"
-Displays the definition of the current word. The user can select a new word to
-describe  by  clicking  the left mouse  button on any word  within the current
-definition.
+The second interface launches an external program which prints out the definition to \fCstdout\fR, \*(mS can then pull
+out the definition and display it in a \fB*describe-word*\fR buffer.
+.PP
+The third interface requires a URL, such as http:// or dict://, which provides the definition when loaded, and a 
+clean-up macro the turns the definition into a readable form.
+.PP
+The last interface requires a dictionary text file, a regex search string and a clean-up macro.  \fBdescribe-word\fR 
+loads the dictionary file and searches for definitions of the given word, adding each one to the output buffer, it 
+then calls the clean-up macro to format the definitions into a more readable form. 
 .SH NOTES
 \fBdescribe-word\fR is a macro implemented in \fCword.emf\fR.
 .PP
-Due to the  size and  availability  of  dictionaries  etc.  \*(mS is  released
-without  describe-word set up, the user must setup it up.
+Due to the size and availability of dictionaries etc. \*(mS is released with describe-word set up to use the most
+appropriate dictionaries available at \fCdict://dict.org/\fR.
 .PP
-\fBdescribe-word\fR must be setup for each required language as follows:
-.IP \fB1)\fR
-A  command-line  interface to a dictionary  of the required  language  must be
+\fBdescribe-word\fR must be setup for each required language, which requires the setting of a 
+\fB.describe-word.<lang-id>\fR variable. The variable must be a
+.Hl "\*(mS list" &lset 4
+of dictionary interface configurations, each one being a sub-list to configure the interface to a dictionary source, 
+each sub-list must take one of four forms:
+.IP \fBExternal\fR
+To interface with an external program the sub-list has the following items:
+.RS
+.CS
+|<flags>|<source-name>|<not-used>|<command-line>|
+.CE
+Where:
+.IP \fB<flags>\fR
+Is a list of option flags, one of which must be \fCx\fR to indicate an external source. Other flags supported by an 
+external source are \fCi\fR to use an ipipe to launch, this is useful when needing to debug the interface,
+and \fCs\fR for a single, or shared, output buffer which is only used when ipipe mode is also being used.
+.IP \fB<source-name>\fR
+Defines the name of the interface, or source, and is only used when ipipe mode is also being used.
+.IP \fB<not-used>\fR
+The 3rd item is not currently used and should be left empty.
+.IP \fB<command-line>\fR
+Defines the command-line required to launch the external dictionary program, the \fB<command-line>\fR should contain a
+\fC%w\fR token which is replaced with the given word, the token will typically also require surrounding \fC%"\fR
+tokens (i.e. \fC%"%w%"\fR) so that if the word contains a space it will be properly quoted in the generated
+command-line.
+.RE
+.IP \fBCommand\fR
+To interface with an external program which prints the definition out to \fCstdout\fR, the sub-list has the following items:
+.RS
+.CS
+|<flags>|<source-name>|<clean-up-macro>|<command-line>|
+.CE
+Where:
+.IP \fB<flags>\fR
+Is a list of option flags, one of which must be \fCc\fR to indicate a command source. The only other flags currently 
+supported by a command source is \fCs\fR for a single, or shared, output buffer, without this flag the buffer name 
+includes the word being described.
+.IP \fB<source-name>\fR
+Defines the name of the interface, or source, and is used in the details given in the first line of the output buffer.
+.IP \fB<clean-up-macro>\fR
+The clean-up macro has two purposes, firstly if the macro aborts (i.e. calls
+.Ht !abort 4
+etc.) it signals to \fBdescribe-word\fR that the output does not actually contain a definition, for example the output 
+may simply be "\fCNo definitions found for <word>\fR". The second purpose is to perform any clean-up and reformatting 
+required to make the output more legible. \fBdescribe-word\fR provides a simple \fBdescribe-word-cmd\fR macro which 
+simply aborts if the output contains one line with the line starting with "\fCNo definitions found for \fR".
+.IP \fB<command-line>\fR
+Defines the command-line required to launch the dictionary program, the \fB<command-line>\fR should contain a \fC%w\fR 
+token which is replaced with the given word, the token will typically also require surrounding \fC%"\fR tokens (i.e. 
+\fC%"%w%"\fR) so that if the word contains a space it will be properly quoted in the generated command-line.
+.RE
+.IP \fBURL\fR
+To interface with an online dictionary source, the sub-list has the following items:
+.RS
+.CS
+|<flags>|<source-name>|<clean-up-macro>|<url>|
+.CE
+Where:
+.IP \fB<flags>\fR
+Is a list of option flags, one of which must be \fCu\fR to indicate a URL source. The only other flags currently 
+supported by a URL source is \fCs\fR for a single, or shared, output buffer, without this flag the buffer name 
+includes the word being described.
+.IP \fB<source-name>\fR
+Defines the name of the interface, or source, and is used in the details given in the first line of the output buffer.
+.IP \fB<clean-up-macro>\fR
+The clean-up macro has two purposes, firstly if the macro aborts (i.e. calls
+.Ht !abort 4
+etc.) it signals to \fBdescribe-word\fR that the output does not actually contain a definition, for example the output 
+may simply be a network error. The second purpose is to perform any clean-up and reformatting 
+required to make the output more legible. \fBdescribe-word\fR provides a \fBdescribe-word-dct\fR macro for 
+\fCdict://\fR URLs which aborts if the output contains less than three lines. It also reformats the output to improve 
+the output in \*(mS.
+.IP \fB<url>\fR
+Defines the URL required to get a definition, the \fB<url>\fR should contain either a \fC%w\fR 
+token, which is replaced with the given word in plain text, or \fC%e\fR which is replaced with the given word 
+URL-encoded (also known as percent encoded).
+.RE
+.IP \fBFile\fR
+To interface with a dictionary text file, the sub-list has the following items:
+.RS
+.CS
+|<flags>|<source-name>|<clean-up-macro>|<regex-search>|<dict-file>|
+.CE
+Where:
+.IP \fB<flags>\fR
+Is a list of option flags, one of which must be \fCf\fR to indicate a file source. Other flags currently supported by
+a file source are \fCk\fR to keep the dictionary file loaded (improves performance at a cost of increased memory
+usage), \fCm\fR to indication that the dictionary may contain multiple definitions of the same word, and \fCs\fR for a
+single, or shared, output buffer, without this flag the buffer name includes the word being described.
+.IP \fB<source-name>\fR
+Defines the name of the interface, or source, and is used in the details given in the first line of the output buffer.
+.IP \fB<clean-up-macro>\fR
+The clean-up macro has two purposes, firstly if the macro aborts (i.e. calls
+.Ht !abort 4
+etc.) it signals to \fBdescribe-word\fR that the output does not actually contain a definition. The second purpose is to perform any clean-up and reformatting 
+required to make the output more legible. \fBdescribe-word\fR provides a \fBdescribe-word-sln\fR macro which 
+attempts to convert a single line of definition text into a better laid out set of definitions.
+.IP \fB<regex-search>\fR
+Defines the regex search string required to find the definition of a given word, it must contain a \fC%r\fR 
+token which is replaced with the given word (but regex encoded, i.e. '.' to '\\.' etc) and at least on group, the 
+first of which must fully contain the definition.
+.IP \fB<dict-file>\fR
+The file name of the dictionary, this can be an absolute file name or given without the path if the file is located in 
+a directory in the \*(mS
+.Ht $search-path 5 .
+.RE
+.\"TODO Need to update examples
+\fBNote:\fR the following examples need updating.
+.PP 
+Similar to \fBExternal\fR, a  command-line  interface to a dictionary  of the required  language  must be
 found. This could simply be a text file  containing  one word  definition  per
 line and using
 .Hr grep 1
@@ -151,6 +248,8 @@ long text lines are automatically wrapped by the GUI.
 The required variables should be added to the user setup file.
 .SH "SEE ALSO"
 .na
-.Ht spell-buffer 3 .
+.Ht spell-word 3 ,
+.Ht spell-buffer 3 ,
+.Ht find-word 3 .
 .ad
 .FH

@@ -39,6 +39,30 @@ set-variable .frame-handle.cmd "|delete-frame|create-frame|create-frame|next-fra
   !endif
 !emacro
 
+; URL (or percent) encode string given in @1 to variable given in @2
+0 define-macro str-urlencode
+  set-variable #l0 @1
+  set-variable #l9 ""
+  set-variable #l1 0
+  !while &len &set #l2 &mid #l0 &pinc #l1 1 1
+    !if &equ 32 &set #l3 &atoi #l2
+      set-variable #l2 "+"
+    !elif &les #l3 48
+      set-variable #l2 &spr "%%%02X" #l3
+    !elif &les #l3 58
+    !elif &les #l3 65
+      set-variable #l2 &spr "%%%02X" #l3
+    !elif &les #l3 91
+    !elif &les #l3 97
+      set-variable #l2 &spr "%%%02X" #l3
+    !elif &gre #l3 122
+      set-variable #l2 &spr "%%%02X" #l3
+    !endif
+    set-variable #l9 &cat #l9 #l2
+  !done
+  set-variable @2 #l9
+!emacro
+
 ; convert a string to a regex compliant search string
 0 define-macro str-to-regex
   set-variable @1 &xrep @1 "[\\\\[*+.?^$]" "\\\\\\0"

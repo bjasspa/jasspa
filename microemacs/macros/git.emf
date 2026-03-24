@@ -1413,7 +1413,7 @@ define-macro git-diff
 
 define-macro git-add
   8 git-osd
-  set-variable #l2 &spr "%s add %s-- " .git.com &con &lget .git.values 1 "--force " ""
+  set-variable #l2 &spr "%s add %s-- " .git.com &con &lget .git-osd.values 1 "--force " ""
   7 git-get-file-list 0 0 #l2
   8 git-exec 3 $buffer-fname
 !emacro
