@@ -105,6 +105,7 @@ jobs:
           export MEPATH=`pwd`/microemacs/macros
           export MEVER=`mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/doc
+          make clean
           make me.ehf
           rm -rf tfs
           mkdir -p tfs/macros

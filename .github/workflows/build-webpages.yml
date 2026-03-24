@@ -35,6 +35,7 @@ jobs:
         run: |
           export PATH=`pwd`/nroff/bin/linux:$PATH
           cd ./microemacs/doc
+          make clean
           make me.pdf
           make web_pages/me/index.html
 
