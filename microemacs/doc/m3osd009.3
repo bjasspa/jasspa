@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3osd009.3,v 2.7 2026/03/24 01:36:14 jon Exp $
+.Id $Id: m3osd009.3,v 2.7 2026/03/25 00:48:22 jon Exp $
 .Im MicroEmacs command|spell|osd
 .so me.tni
 .TH describe-word 3
@@ -82,7 +82,7 @@ Is a list of option flags, one of which must be \fCc\fR to indicate a command so
 supported by a command source is \fCs\fR for a single, or shared, output buffer, without this flag the buffer name 
 includes the word being described.
 .IP \fB<source-name>\fR
-Defines the name of the interface, or source, and is used in the details given in the first line of the output buffer.
+Defines the name of the interface, or source, which is used in the details given in the first line of the output buffer.
 .IP \fB<clean-up-macro>\fR
 The clean-up macro has two purposes, firstly if the macro aborts (i.e. calls
 .Ht !abort 4
@@ -107,7 +107,7 @@ Is a list of option flags, one of which must be \fCu\fR to indicate a URL source
 supported by a URL source is \fCs\fR for a single, or shared, output buffer, without this flag the buffer name 
 includes the word being described.
 .IP \fB<source-name>\fR
-Defines the name of the interface, or source, and is used in the details given in the first line of the output buffer.
+Defines the name of the interface, or source, which is used in the details given in the first line of the output buffer.
 .IP \fB<clean-up-macro>\fR
 The clean-up macro has two purposes, firstly if the macro aborts (i.e. calls
 .Ht !abort 4
@@ -134,7 +134,7 @@ a file source are \fCk\fR to keep the dictionary file loaded (improves performan
 usage), \fCm\fR to indication that the dictionary may contain multiple definitions of the same word, and \fCs\fR for a
 single, or shared, output buffer, without this flag the buffer name includes the word being described.
 .IP \fB<source-name>\fR
-Defines the name of the interface, or source, and is used in the details given in the first line of the output buffer.
+Defines the name of the interface, or source, which is used in the details given in the first line of the output buffer.
 .IP \fB<clean-up-macro>\fR
 The clean-up macro has two purposes, firstly if the macro aborts (i.e. calls
 .Ht !abort 4
@@ -150,102 +150,70 @@ The file name of the dictionary, this can be an absolute file name or given with
 a directory in the \*(mS
 .Ht $search-path 5 .
 .RE
-.\"TODO Need to update examples
-\fBNote:\fR the following examples need updating.
-.PP 
-Similar to \fBExternal\fR, a  command-line  interface to a dictionary  of the required  language  must be
-found. This could simply be a text file  containing  one word  definition  per
-line and using
-.Hr grep 1
-as the  command-line  interface.  In this example the text file could take the
-following form:
-.RS
-.CS
-A () The first letter of the English...
-Aam (n.) A Dutch and German measure of liquids...
-Aardvark (n.) An edentate mammal...
-\&.
-\&.
-.CE
-The   \fBgrep\fR   command-line   interface   required  to  look-up  the  word
-"\fCaardvark\fR" would be:
-.CS
-grep -i "^aardvark (" words.txt
-.CE
-The output  produced  from this will be the single  line  giving the  required
-definition.  A  second  common   interface  would  be  executing  an  external
-dictionary  program typically using a command-line  option to specify the word
-to define, e.g.:
-.CS
-mydict -d "aardvark"
-.CE 0
-.RE
-.IP \fB2)\fR
-The \*(mS language name must be found, this can be done by first using
-.Ht user-setup 3
-or
-.Ht spell-buffer 3
-to  ensure  that the  current  language  is set the the  require  one and then
-running  \fBdescribe-word\fR.  The command will  probably  fail, but before it
-does it will set the variable \fC.describe-word.lang\fR, use the command
-.Ht describe-variable 2
-to get the value of this  variable, this value is the internal  language name.
-For example, when the current language is \fBAmerican\fR or
-\fBAmerican  (Ext)\fR the language name is \fCamerican\fR.
-.IP \fB3)\fR
-To     execute     the      command-line      interface      the      variable
-\fC.describe-word.\fR\fI<language>\fR\fC-command\fR   must   be   set  to  the
-command-line  required to obtain a word definition with the string  "\fC%s\fR"
-used in place of the word and "\fC%%\fR" using in place of a single "\fC%\fR".
-For the first example in \fB(1)\fR above the following would be required:
-.RS
-.Me $emf-scheme
-.CS
-set-variable .describe-word.american-command ...
-        ... "grep -i \\"^%s (\\" /tmp/words.txt"
-.CE
-.Me $ehf-scheme
-For the second example:
-.Me $emf-scheme
-.CS
-set-variable .describe-word.american-command "mydict -d \\"%s (\\""
-.CE 0
-.Me $ehf-scheme
-.RE
-.IP \fB4)\fR
-Only required for the second mode, for use with \fBdescribe-word\fR's own GUI,
-the setting of another  variable is required,  the  presence of this  variable
-determines which mode is to be used.
-.IP
-The variable \fC.describe-word.\fR\fI<language>\fR\fC-search\fR must be set to
-a
-.Hl "regex search pattern" RegularExpressions 2
-which will match the required  definition(s) in the command out put, the first
-group   ("\fC\\(...\\)\fR")   must  enclose  the  required  definition,  again
-"\fC%s\fR"  can be used in  place  of the  word  and  "\fC%%\fR"  for a single
-"\fC%\fR". \fBdescribe-word\fR simply uses
-.Ht search-buffer 2
-repeatedly to find all definitions of the current word, it then uses the value
-of the variable
-.Ht @s1 4
-to get the  individual  definitions.  For  example  for the first  example the
-following is required:
-.RS
-.Me $emf-scheme
-.CS
-set-variable .describe-word.american-search  "^\\(%s (.*\\)\\n"
-.CE
-.Me $ehf-scheme
-Note that the word being defined  should be kept in the definition if possible
-as the
-.Hl "spell rules" add-spell-rule 2
-are used to  look-up  base  words  when a  derivitive  of a word is not found,
-therefore the word being defined may not be clear (e.g.  \fIdeactivate\fR  can
-be derived from  \fIactivate\fR  but their meanings are very  different). Also
-long text lines are automatically wrapped by the GUI.
-.RE
+Each interface sub-list must be wrapped up in the main setup list, which must use a different list separator 
+character.
 .PP
-The required variables should be added to the user setup file.
+Note that if spelling has also been setup for the current language, when \fBdescribe-word\fR fails to find a 
+definition it will use the
+.Ht spell 2
+interface to extract the base word (i.e. base of \fCwords\fR is \fCword\fR) and search for a definition of the base 
+word. When a language is configured to use multiple interfaces, the actual word and then the base is looked-up in the 
+primary interface before moving to the secondary etc.
+.SH EXAMPLE
+The following example configures \fBdescribe-word\fR to use the online \fBdict://dict.org/\fR \fBWordNet\fR English 
+dictionary:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.enus "!|u|WordNet|describe-word-dct|dict://dict.org/d:%w:wn|!"
+.CE
+.Me $ehf-scheme
+WordNet is a good modern English dictionary, but it has less than 150K word definitions. To improve the likelihood of 
+finding a definition, a secondary source can be added:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.enus "!|u|WordNet|describe-word-dct|dict://dict.org/d:%w:wn|!|u||describe-word-dct|dict://dict.org/d:%w:*|!"
+.CE
+.Me $ehf-scheme
+The changed of \fCwm\fR to \fC*\fR at the end of the \fCdict://\fR URL requests the dictionary server to search all 
+available dictionaries. Alternatively, if the
+.Hr dict 1
+utility is installed, it can be used instead, as follows:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.enus "!|c||describe-word-cmd|dict %\\"%w%\\"|!"
+.CE
+.Me $ehf-scheme
+Note the enclosing of \fC%w\fR with \fC%"\fR tokens to ensure the correct encoding/formatting of the command-line.
+.PP
+Alternatively, if the
+.Hr GoldenDict 1
+utility is installed, the following can be used to simply launch the utility:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.enus "!|x|GoldenDict||goldendict %\\"%w%\\"|!"
+.CE
+.Me $ehf-scheme
+Note however that \*(mS has no way to detect whether a definition was found, so it has to assume it was. As a result 
+this interface should be last as no further interfaces will be used.
+.PP
+If available, the use of a local dictionary text file can greatly improve performance, the dictionary file typically 
+contains the word at the start of a line, followed by a delimiter, such as a tab character, and then the definition in 
+the rest of the line. \fBdescribe-word\fR can be configured to use such a file as follows:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.enus "!|fkms|My Dictionary File|describe-word-sln|^%r\\t\\\\(.*\\\\)|mydict.txt|!"
+.CE
+.Me $ehf-scheme
+Where \fCmydict.txt\fR is the name of the dictionary file and is located in the \*(mS search path. This could be 
+combined with other sources such as \fCdict.org\fR or \fBGoldenDict\fR, to create a comprehensive dictionary look-up:
+.Me $emf-scheme
+.CS
+set-variable .describe-word.enus "!|fkms|My Dictionary File|describe-word-sln|^%r\\t\\\\(.*\\\\)|mydict.txt|!|u|WordNet|describe-word-dct|dict://dict.org/d:%w:wn|!|x|GoldenDict||goldendict %\\"%w%\\"|!"
+.CE
+.Me $ehf-scheme
+The required variables should be added to the user setup file. Notes that, as some interfaces could use '\fC!\fR' or
+\&'\fC|\fR' characters in their configuration, \*(mS uses different list separator characters, typically \fC\\f\fR
+place of \fC!\fR and \fC\\b\fR instead of \fC|\fR. 
 .SH "SEE ALSO"
 .na
 .Ht spell-word 3 ,
