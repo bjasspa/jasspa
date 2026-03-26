@@ -1,0 +1,309 @@
+// QOI.fu - encoder and decoder of the "Quite OK Image" format
+//
+// Copyright (C) 2021-2024 Piotr Fusik
+//
+// MIT License:
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+/// Encoder of the "Quite OK Image" (QOI) format.
+/// Losslessly compresses an image to a byte array.
+public class QOIEncoder
+{
+	internal const int HeaderSize = 14;
+	internal const int PaddingSize = 8;
+
+	byte[]#? Encoded;
+	int EncodedSize;
+
+	/// Constructs the encoder.
+	/// The encoder can be used for several images, one after another.
+	public QOIEncoder()
+	{
+	}
+
+	/// Determines if an image of given size can be encoded.
+	public static bool CanEncode(
+		/// Image width in pixels.
+		int width,
+		/// Image height in pixels.
+		int height,
+		/// Whether the image has the alpha channel (transparency).
+		bool alpha)
+		=> width > 0 && height > 0 && height <= (int.MaxValue - HeaderSize - PaddingSize) / width / (alpha ? 5  : 4);
+
+	/// Encodes the given image.
+	/// Returns `true` if encoded successfully.
+	public bool Encode!(
+		/// Image width in pixels.
+		int width,
+		/// Image height in pixels.
+		int height,
+		/// Pixels of the image, top-down, left-to-right.
+		/// Each pixel is a 32-bit integer 0xAARRGGBB.
+		int[] pixels,
+		/// `false` specifies that all pixels are opaque. High bytes of `pixels` elements are ignored then.
+		bool alpha,
+		/// Specifies the color space.
+		/// `false` = sRGB with linear alpha channel.
+		/// `true` = all channels linear.
+		/// This is written in the header, but doesn't affect decoding in any way.
+		bool linearColorspace)
+	{
+		if (!CanEncode(width, height, alpha))
+			return false;
+		int pixelsSize = width * height;
+		byte[]# encoded = new byte[HeaderSize + pixelsSize * (alpha ? 5 : 4) + PaddingSize];
+		encoded[0] = 'q';
+		encoded[1] = 'o';
+		encoded[2] = 'i';
+		encoded[3] = 'f';
+		encoded[4] = width >> 24;
+		encoded[5] = width >> 16 & 0xff;
+		encoded[6] = width >> 8 & 0xff;
+		encoded[7] = width & 0xff;
+		encoded[8] = height >> 24;
+		encoded[9] = height >> 16 & 0xff;
+		encoded[10] = height >> 8 & 0xff;
+		encoded[11] = height & 0xff;
+		encoded[12] = alpha ? 4 : 3;
+		encoded[13] = linearColorspace ? 1 : 0;
+
+		int[64] index = 0;
+		int encodedOffset = HeaderSize;
+		int lastPixel = 0xff << 24;
+		int run = 0;
+		for (int pixelsOffset = 0; pixelsOffset < pixelsSize; ) {
+			int pixel = pixels[pixelsOffset++];
+			if (!alpha)
+				pixel |= 0xff << 24;
+			if (pixel == lastPixel) {
+				if (++run == 62 || pixelsOffset >= pixelsSize) {
+					encoded[encodedOffset++] = 0xc0 - 1 + run;
+					run = 0;
+				}
+			}
+			else {
+				if (run > 0) {
+					encoded[encodedOffset++] = 0xc0 - 1 + run;
+					run = 0;
+				}
+				int indexOffset = (pixel >> 16) * 3 + (pixel >> 8) * 5 + (pixel & 0x3f) * 7 + (pixel >> 24) * 11 & 0x3f;
+				if (pixel == index[indexOffset])
+					encoded[encodedOffset++] = indexOffset;
+				else {
+					index[indexOffset] = pixel;
+					int r = pixel >> 16 & 0xff;
+					int g = pixel >> 8 & 0xff;
+					int b = pixel & 0xff;
+					if ((pixel ^ lastPixel) >> 24 != 0) {
+						encoded[encodedOffset] = 0xff;
+						encoded[encodedOffset + 1] = r;
+						encoded[encodedOffset + 2] = g;
+						encoded[encodedOffset + 3] = b;
+						encoded[encodedOffset + 4] = pixel >> 24 & 0xff;
+						encodedOffset += 5;
+					}
+					else {
+						int dr = (r - (lastPixel >> 16) & 0xff ^ 0x80) - 0x80;
+						int dg = (g - (lastPixel >> 8) & 0xff ^ 0x80) - 0x80;
+						int db = (b - lastPixel & 0xff ^ 0x80) - 0x80;
+						if (dr >= -2 && dr <= 1
+						 && dg >= -2 && dg <= 1
+						 && db >= -2 && db <= 1)
+							encoded[encodedOffset++] = 0x40 + (2 << 4) + (2 << 2) + 2 + (dr << 4) + (dg << 2) + db;
+						else {
+							dr -= dg;
+							db -= dg;
+							if (dr >= -8 && dr <= 7
+							 && dg >= -32 && dg <= 31
+							 && db >= -8 && db <= 7) {
+								encoded[encodedOffset] = 0x80 + 32 + dg;
+								encoded[encodedOffset + 1] = 0x88 + (dr << 4) + db;
+								encodedOffset += 2;
+							}
+							else {
+								encoded[encodedOffset] = 0xfe;
+								encoded[encodedOffset + 1] = r;
+								encoded[encodedOffset + 2] = g;
+								encoded[encodedOffset + 3] = b;
+								encodedOffset += 4;
+							}
+						}
+					}
+				}
+				lastPixel = pixel;
+			}
+		}
+
+		encoded.Fill(0, encodedOffset, PaddingSize - 1);
+		encoded[encodedOffset + PaddingSize - 1] = 1;
+		Encoded = encoded;
+		EncodedSize = encodedOffset + PaddingSize;
+		return true;
+	}
+
+	/// Returns the encoded file contents.
+	/// This method can only be called after `Encode` returned `true`.
+	/// The allocated array is usually larger than the encoded data.
+	/// Call `GetEncodedSize` to retrieve the number of leading bytes that are significant.
+	public byte[] GetEncoded() => Encoded;
+
+	/// Returns the encoded file length.
+	public int GetEncodedSize() => EncodedSize;
+}
+
+/// Decoder of the "Quite OK Image" (QOI) format.
+public class QOIDecoder
+{
+	int Width;
+	int Height;
+	int[]#? Pixels;
+	bool Alpha;
+	bool LinearColorspace;
+
+	/// Constructs the decoder.
+	/// The decoder can be used for several images, one after another.
+	public QOIDecoder()
+	{
+	}
+
+	/// Decodes the given QOI file contents.
+	/// Returns `true` if decoded successfully.
+	public bool Decode!(
+		/// QOI file contents. Only the first `encodedSize` bytes are accessed.
+		byte[] encoded,
+		/// QOI file length.
+		int encodedSize)
+	{
+		if (encodedSize < QOIEncoder.HeaderSize + 1 + QOIEncoder.PaddingSize
+		 || encoded[0] != 'q' || encoded[1] != 'o' || encoded[2] != 'i' || encoded[3] != 'f')
+			return false;
+		int width = encoded[4] << 24 | encoded[5] << 16 | encoded[6] << 8 | encoded[7];
+		int height = encoded[8] << 24 | encoded[9] << 16 | encoded[10] << 8 | encoded[11];
+		if (width <= 0 || height <= 0 || height > int.MaxValue / width)
+			return false;
+		switch (encoded[12]) {
+		case 3:
+			Alpha = false;
+			break;
+		case 4:
+			Alpha = true;
+			break;
+		default:
+			return false;
+		}
+		switch (encoded[13]) {
+		case 0:
+			LinearColorspace = false;
+			break;
+		case 1:
+			LinearColorspace = true;
+			break;
+		default:
+			return false;
+		}
+		int pixelsSize = width * height;
+		int[]# pixels = new int[pixelsSize];
+
+		encodedSize -= QOIEncoder.PaddingSize;
+		int encodedOffset = QOIEncoder.HeaderSize;
+		int[64] index = 0;
+		int pixel = 0xff << 24;
+		for (int pixelsOffset = 0; pixelsOffset < pixelsSize; ) {
+			if (encodedOffset >= encodedSize)
+				return false;
+			int e = encoded[encodedOffset++];
+			switch (e >> 6) {
+			case 0: // 00iiiiii
+				pixels[pixelsOffset++] = pixel = index[e];
+				continue;
+			case 1: // 01rrggbb
+				pixel = (pixel & 0xff << 24)
+					| (pixel + ((e >> 4) - 4 - 2 << 16) & 0xff << 16)
+					| (pixel + ((e >> 2 & 3) - 2 << 8) & 0xff << 8)
+					| (pixel + ((e & 3) - 2) & 0xff);
+				break;
+			case 2: // 01gggggg rrrrbbbbb
+				e -= 0x80 + 32;
+				int rb = encoded[encodedOffset++];
+				pixel = (pixel & 0xff << 24)
+					| (pixel + (e + (rb >> 4) - 8 << 16) & 0xff << 16)
+					| (pixel + (e << 8) & 0xff << 8)
+					| (pixel + e + (rb & 0xf) - 8 & 0xff);
+				break;
+			default: // 3
+				if (e < 0xfe) {
+					// 11rrrrrr
+					e -= 0xc0 - 1;
+					if (pixelsOffset + e > pixelsSize)
+						return false;
+					if (pixelsOffset == 0)
+						index[0xff * 11 & 0x3f] = pixel;
+					pixels.Fill(pixel, pixelsOffset, e);
+					pixelsOffset += e;
+					continue;
+				}
+				if (e == 0xfe) {
+					 // 11111110 rrrrrrrr gggggggg bbbbbbbb
+					pixel = (pixel & 0xff << 24)
+						| encoded[encodedOffset] << 16
+						| encoded[encodedOffset + 1] << 8
+						| encoded[encodedOffset + 2];
+					encodedOffset += 3;
+				}
+				else {
+					 // 11111111 rrrrrrrr gggggggg bbbbbbbb aaaaaaaa
+					pixel = encoded[encodedOffset + 3] << 24
+						| encoded[encodedOffset] << 16
+						| encoded[encodedOffset + 1] << 8
+						| encoded[encodedOffset + 2];
+					encodedOffset += 4;
+				}
+				break;
+			}
+			pixels[pixelsOffset++] = index[(pixel >> 16) * 3 + (pixel >> 8) * 5 + (pixel & 0x3f) * 7 + (pixel >> 24) * 11 & 0x3f] = pixel;
+		}
+		if (encodedOffset != encodedSize)
+			return false;
+
+		Width = width;
+		Height = height;
+		Pixels = pixels;
+		return true;
+	}
+
+	/// Returns the width of the decoded image in pixels.
+	public int GetWidth() => Width;
+
+	/// Returns the height of the decoded image in pixels.
+	public int GetHeight() => Height;
+
+	/// Returns the pixels of the decoded image, top-down, left-to-right.
+	/// Each pixel is a 32-bit integer 0xAARRGGBB.
+	public int[] GetPixels() => Pixels;
+
+	/// Returns the information about the alpha channel from the file header.
+	public bool HasAlpha() => Alpha;
+
+	/// Returns the color space information from the file header.
+	/// `false` = sRGB with linear alpha channel.
+	/// `true` = all channels linear.
+	public bool IsLinearColorspace() => LinearColorspace;
+}
