@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac104.3,v 2.2 2025/08/28 00:11:32 jon Exp $
+.Id $Id: m3mac104.3,v 2.2 2026/03/26 21:04:48 jon Exp $
 .Im MicroEmacs command|comparison
 .so me.tni
 .TH diff-lines 3
@@ -32,7 +32,7 @@ the buffer's highlighting has been setup correctly, see notes below.
 .IP \fB0x02\fR
 If set the mark position is always used to locate 2nd line, regardless of whether the region is active.
 .IP \fB0x04\fR
-If set the comparison is made for the current column of the cursor (and mark if region is used) to the end of the 
+If set the comparison is made from the current column of the cursor (and mark if region is used) to the end of the 
 line, this can be useful when the start of the lines have an ignorable difference such a +/- diff line markers.
 .IP \fB0x08\fR
 If set then the two lines are not wrapped, if clear the lines are wrapped at the width of the display window.
