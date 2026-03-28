@@ -27,10 +27,13 @@ define-macro fhook-diff
 ; Setup the buffer
 set-variable .fhook-diff.setup &reg "/history/fhook/diff" "UXghpo"
 set-variable .fhook-diff.setup-mask "aeghmpo"
-set-variable .fhook-diff.command-0  "|btho||diff-next-change|S-down|\HNext change||"
-set-variable .fhook-diff.command-1  "|btho||diff-previous-change|S-up|\HPrevious change||"
-set-variable .fhook-diff.command-2  "|btho||diff-next-file|S-right|Next file||"
-set-variable .fhook-diff.command-3  "|btho||diff-previous-file|S-left|Previous file||"
+set-variable .fhook-diff.command-0  "|btho||diff-line|return|\HDiff line||"
+set-variable .fhook-diff.command-1  "|bo||diff-line|space|||"
+set-variable .fhook-diff.command-2  "|th||||||"
+set-variable .fhook-diff.command-3  "|btho||diff-next-change|S-down|\HNext change||"
+set-variable .fhook-diff.command-4  "|btho||diff-previous-change|S-up|\HPrevious change||"
+set-variable .fhook-diff.command-5  "|btho||diff-next-file|S-right|Next file||"
+set-variable .fhook-diff.command-6  "|btho||diff-previous-file|S-left|Previous file||"
 ; Setup item-list
 set-variable .fhook-diff.item-list-s1 "^diff\\(\\s+-[^\\s]*\\)*\\s*\\([^\\s]*\\)"
 set-variable .fhook-diff.item-list-r1 "File \CCb\\2\CCA"
@@ -135,6 +138,67 @@ set-variable .fhook-diff.item-list-r4 "Add/Del \CCb\\1\CCA"
     !abort
   !endif
   recenter
+!emacro
+; try to find paired change line and call diff-lines
+0 define-macro diff-line
+  0 show-region
+  set-variable #l1 $window-line
+  !if &band 1 $result
+    exchange-point-and-mark
+    !if &sub #l1 $window-line
+      !iif &les $window-line #l1  exchange-point-and-mark
+      3 diff-lines
+      !return
+    !endif
+  !endif
+  !if &seq &lef @wl 1 "+"
+    !repeat
+      !force backward-line
+      !iif &not $status !break
+      !if &seq &lef @wl 1 "-"
+        set-variable #l2 &sub #l1 &set #l3 $window-line
+        !repeat
+          !force backward-line
+          !iif &not $status !break
+        !until &not &seq &lef @wl 1 "-"
+        !if &not &les &sub #l3 $window-line #l2
+          #l2 forward-line
+          set-variable $window-col 1
+          set-mark
+          #l1 goto-line
+          set-variable $window-col 1
+          7 diff-lines
+        !endif
+        !break
+      !endif
+    !until &not &seq &lef @wl 1 "+"
+    #l1 goto-line
+    -8 ml-write "diff-line error: Failed to find paired line to diff with."
+  !elif &seq &lef @wl 1 "-"
+    !repeat
+      !force forward-line
+      !if &seq &lef @wl 1 "+"
+        set-variable #l2 &sub &set #l3 $window-line #l1
+        !repeat
+          !force forward-line
+        !until &not &seq &lef @wl 1 "+"
+        !if &not &les &sub $window-line #l3 #l2
+          #l2 backward-line
+          set-variable $window-col 1
+          set-mark
+          #l1 goto-line
+          set-variable $window-col 1
+          exchange-point-and-mark
+          7 diff-lines
+        !endif
+        !break
+      !endif
+    !until &not &seq &lef @wl 1 "-"
+    #l1 goto-line
+    -8 ml-write "diff-line error: Failed to find paired line to diff with."
+  !else
+    -8 ml-write "diff-line error: Not on a removed or inserted line."
+  !endif
 !emacro
 
 buffer-init-fhook "diff"

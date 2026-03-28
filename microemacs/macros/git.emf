@@ -1262,7 +1262,7 @@ define-macro git-show
   !iif &band @# 1  set-variable $buffer-hilight .hilight.diff
 !emacro
 0 define-macro git-exec-complete7
-  set-variable $buffer-hilight .hilight.diff
+  major-mode "diff"
   !if &lget &lget .git.cvals 7 5
     beginning-of-buffer
     !repeat
@@ -1307,8 +1307,13 @@ define-macro git-show
 ; to get full blob hash: &spr "%s -C %s rev-parse --verify %s" .git.com #l3 #l7 #l0
 0 define-macro git-diff-cmd
   !if &not &xseq @wl "^\\(---\\|\\+\\+\\+\\) \\([ab]\\)/\\([^\n]+\\)\\(  \\[[-\\m]+\\]\\)+$" &lef @wl 4
-    !iif &not &seq $buffer-bname "*git-show*"  -8 ml-write "[ERROR: Invalid diff line]"
-    git-log-cmd
+    !if &seq $buffer-bname "*git-diff*"
+      diff-line
+    !elif &not &seq $buffer-bname "*git-show*"
+      -8 ml-write "[ERROR: Invalid diff line]"
+    !else
+      git-log-cmd
+    !endif
     !return
   !elif &or &sin @wc " \n" &not &seq "[Diff-" &lef &set #l0 &rig @wl &rsin " " &lef @wl $window-col 6
     -8 ml-write "[ERROR: Not in diff command]"
