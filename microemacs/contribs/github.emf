@@ -324,13 +324,13 @@ define-macro github-build-release
   !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_YR in makeinc.ver]"
   !iif &not &seq @s1 &mid $time 2 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_YR in makeinc.ver (%s,%s)]" @s1 &mid $time 2 2
   beginning-of-buffer
-  !force search-buffer "me" "^meVER_MN *= *\\(\\d+\\)$"
+  !force search-buffer "me" "^meVER_MN *= *0?\\(\\d+\\)$"
   !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_MN in makeinc.ver]"
   !iif &not &seq @s1 &trl &mid $time 7 2  -8 ml-write &spr "[Github Release Error: Incorrect meVER_MN in makeinc.ver (%s,%s)]" @s1 &trl &mid $time 7 2
   beginning-of-buffer
-  !force search-buffer "me" "^meVER_DY *= *\\(\\d+\\)$"
+  !force search-buffer "me" "^meVER_DY *= *0?\\(\\d+\\)$"
   !iif &not $status  -8 ml-write "[Github Release Error: Failed to locate meVER_DY in makeinc.ver]"
-  !iif &or &les &set #l2 @s1 1 &gre #l2 30  -8 ml-write &spr "[Github Release Error: Invalid meVER_DY in makeinc.ver (%s)]" #l2
+  !iif &not &band 1 &set #l2 @s1  -8 ml-write &spr "[Github Release Error: Invalid meVER_DY in makeinc.ver (%s)]" #l2
   !force 0 delete-buffer "*ghmv"
   set-variable #l1 &spr "%s%02d%02d" &lef $time 4 &mid $time 7 2 #l2
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version will be \"%s\", is this correct (y/n) ? " #l1 "NYny"
