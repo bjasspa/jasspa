@@ -34,6 +34,6 @@ meVER_CN = 20
 # Version year with 2 digits 
 meVER_YR = 26
 # version month with 2 digits
-meVER_MN = 02
+meVER_MN = 03
 # version release with 2 digits
-meVER_DY = 02
+meVER_DY = 01
