@@ -1198,8 +1198,18 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         break;
 
     case 0x08:          /* Line space '.' */
-        MoveToEx(hdc, x + cm->midX, y + cm->midY, NULL);
-        LineTo(hdc, x + cm->midX + 1, y + cm->midY);
+        if(cm->sizeY > 16)
+        {
+            MoveToEx(hdc, x + cm->midX - 1, y + cm->midY, NULL);
+            LineTo(hdc, x + cm->midX - 1, y + cm->midY - 2);
+            MoveToEx(hdc, x + cm->midX, y + cm->midY, NULL);
+            LineTo(hdc, x + cm->midX, y + cm->midY - 2);
+        }
+        else
+        {
+            MoveToEx(hdc, x + cm->midX, y + cm->midY, NULL);
+            LineTo(hdc, x + cm->midX + 1, y + cm->midY);
+        }
         break;
         
     case 0x09:          /* Line & Poly / Tab -> */
