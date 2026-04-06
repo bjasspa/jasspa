@@ -14,10 +14,8 @@ set-variable %tag-id "php"
 set-variable %tag-filemask ":*.php:*.php3:*.php4:*.php5:*.phtml:*.inc:"
 !iif &not &exi gentags  execute-file "gentagsc"
 
-set-char-mask "3" "$."
-
 define-macro phptags-add-file
-  set-variable $buffer-mask "luh13"
+  set-variable $buffer-mask "luh1"
   set-variable #l9 $buffer-fname
   !iif &seq &lef #l9 %tag-plen %tag-path  set-variable #l9 &rig #l9 %tag-plen
   ml-write &spr "[Parsing file %s]" #l9

@@ -7,10 +7,11 @@
 ; Synopsis:    AutoIt v3
 ; Authors:     Dr. Detlef Groth;
 ;
-set-char-mask "3" "_$@."
+set-char-mask "3" "$-."
+set-char-mask "4" "@"
 
 define-macro fhook-autoit
-  set-variable $buffer-mask "luh13"
+  set-variable $buffer-mask "luh134"
   @# buffer-init
   buffer-init-hooks
 !emacro

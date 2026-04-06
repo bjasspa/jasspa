@@ -14,7 +14,7 @@ set-variable %tag-id "tcl"
 set-variable %tag-filemask ":*.tcl:*.tk:"
 !iif &not &exi gentags  execute-file "gentagsc"
 
-set-char-mask "3" "$."
+set-char-mask "3" "$-."
 
 define-macro tcltags-add-file
   set-variable $buffer-mask "luh13"

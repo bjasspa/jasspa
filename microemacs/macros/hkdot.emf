@@ -8,7 +8,7 @@
 ; Synopsis:   Dot/Neato hook - invoked when a .dot script file is loaded (www.graphviz.org).
 ; Author:     Dr. Detlef Groth
 ;
-set-char-mask "3" "-$."
+set-char-mask "3" "$-."
 
 define-macro fhook-dot
   set-variable $buffer-mask "luh13"

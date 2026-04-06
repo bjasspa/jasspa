@@ -8,7 +8,7 @@
 ; Synopsis:   PlantUML - invoked when a .puml or .pml file is loaded (www.plantuml.com).
 ; Author:     Detlef Groth, University of Potsdam
 ;
-set-char-mask "3" "-$."
+set-char-mask "3" "$-."
 
 define-macro fhook-puml
   set-variable $buffer-mask "luh13"

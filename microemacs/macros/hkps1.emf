@@ -8,7 +8,7 @@
 ; Synopsis:    MS PowerShell script file hook
 ; Authors:     Steven Phillips & Detlef Groth
 ;
-set-char-mask "3" "-$"
+set-char-mask "3" "$-."
 
 define-macro fhook-ps1
   set-variable $buffer-mask "luh13"

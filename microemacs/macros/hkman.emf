@@ -8,7 +8,7 @@
 ; Synopsis:    UNIX Man pages hook (does grotty string replaces)
 ; Authors:     Steven Phillips
 ;
-set-char-mask "3" "-._"
+set-char-mask "3" "$-."
 
 define-macro fhook-man
   set-variable $buffer-mask "luh13"

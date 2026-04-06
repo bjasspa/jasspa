@@ -8,7 +8,7 @@
 ; Synopsis:    TCL mode hook
 ; Authors:     Steven Phillips & Detlef Groth
 ;
-set-char-mask "3" "-$."
+set-char-mask "3" "$-."
 
 define-macro fhook-tcl
   set-variable $buffer-mask "luh13"

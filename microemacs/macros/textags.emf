@@ -20,7 +20,6 @@ set-variable %tag-filemask ":*.tex:*.bib:"
 !iif &not &exi gentags  execute-file "gentagsc"
 
 define-macro textags-add-file
-  set-variable $buffer-mask "luh12"
   set-variable #l9 $buffer-fname
   !iif &seq &lef #l9 %tag-plen %tag-path  set-variable #l9 &rig #l9 %tag-plen
   ml-write &spr "[Parsing file %s]" #l9

@@ -9,7 +9,7 @@
 ; Synopsis:   R/S-Plus file hook (http://www.r-project.org)
 ; Author:     Dr. Detlef Groth
 ;
-set-char-mask "3" "-$."
+set-char-mask "3" "$-."
 
 define-macro fhook-r
   set-variable $buffer-mask "luh13"

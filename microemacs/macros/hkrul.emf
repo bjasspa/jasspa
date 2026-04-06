@@ -8,10 +8,10 @@
 ; Synopsis:    Install Shield rul file hook
 ; Authors:     Jon Green
 ;
-set-char-mask "3" "@"
+set-char-mask "4" "@"
 
 define-macro fhook-rul
-  set-variable $buffer-mask "luh13"
+  set-variable $buffer-mask "luh14"
   @# buffer-init
   buffer-init-hooks
 !emacro

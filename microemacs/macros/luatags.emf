@@ -15,7 +15,7 @@ set-variable %tag-filemask ":*.lua:"
 !iif &not &exi gentags  execute-file "gentagsc"
 
 define-macro luatags-add-file
-  set-variable $buffer-mask "luh13"
+  set-variable $buffer-mask "luh1"
   set-variable #l9 $buffer-fname
   !iif &seq &lef #l9 %tag-plen %tag-path  set-variable #l9 &rig #l9 %tag-plen
   ml-write &spr "[Parsing file %s]" #l9

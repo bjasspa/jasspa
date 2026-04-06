@@ -15,10 +15,10 @@ set-variable %tag-filemask ":*.pl:*.pm:"
 !iif &not &exi gentags  execute-file "gentagsc"
 
 ; in perl you can have function names with 's
-set-char-mask "3" "'"
+set-char-mask "4" "'"
 
 define-macro perltags-add-file
-  set-variable $buffer-mask "luh13"
+  set-variable $buffer-mask "luh14"
   set-variable #l9 $buffer-fname
   !iif &seq &lef #l9 %tag-plen %tag-path  set-variable #l9 &rig #l9 %tag-plen
   ml-write &spr "[Parsing file %s]" #l9

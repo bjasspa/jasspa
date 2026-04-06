@@ -8,10 +8,11 @@
 ; Synopsis:    lisp hook - invoked when a lisp file is loaded.
 ; Authors:     Steven Phillips
 ;
-set-char-mask "2" "-$&#!%:@."
+set-char-mask "3" "$-."
+set-char-mask "4" "@"
 
 define-macro fhook-lisp
-  set-variable $buffer-mask "luh1"
+  set-variable $buffer-mask "luh134"
   @# buffer-init
   buffer-init-hooks
 !emacro

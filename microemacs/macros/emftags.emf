@@ -13,7 +13,7 @@
 set-variable %tag-id "emf"
 set-variable %tag-filemask ":*.emf:"
 !iif &not &exi gentags  execute-file "gentagsc"
-set-char-mask "2" "-$&#!%:@"
+set-char-mask "2" "-$&#!%:@."
 
 define-macro emftags-add-file
   set-variable $buffer-mask "luh12"
