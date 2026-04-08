@@ -8,5 +8,5 @@
 ; Synopsis:    Setup file for Windows MSYS
 ; Authors:     Steven Phillips
 ;
-; Load up common unix stuff (colors, templates, grep, RCS, mail)
+; Load up common unix stuff
 execute-file "unixterm"
