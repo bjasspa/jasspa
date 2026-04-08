@@ -170,7 +170,7 @@ function install_package([string]$iext,[string]$pkg,[string]$ipth) {
 
 try {
   [string]$urss=""
-  $urss = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/bjasspa/jasspa/refs/heads/main/microemacs/release_latest.txt" -UseBasicParsing
+  $urss = Invoke-WebRequest -Uri "https://docs.jasspa.com/microemacs_release.txt" -UseBasicParsing
   $ursa = $urss.Replace("`r`n","`n").Split("`n")
   if($ursa[0] -match '^\d{8}$') {
     $mever = $ursa[0]

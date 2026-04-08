@@ -15,7 +15,6 @@ exec wish -file $0 ${1+"$@"}
 #  Author        : $Author: bill $
 #  Created By    : $AUTHOR$
 #  Created       : $DATE$
-#  Last Modified : <050223.1936>
 #
 #  Description	
 #

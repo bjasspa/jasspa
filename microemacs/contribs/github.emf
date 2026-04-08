@@ -218,10 +218,19 @@ define-macro github-release
     -1 buffer-mode "backup"
     save-buffer
     !force 0 delete-buffer $buffer-bname
+    find-file &cat #l1 "microemacs_release.txt"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    insert-string #l9
+    -1 buffer-mode "backup"
+    save-buffer
+    !force 0 delete-buffer $buffer-bname
     !force 0 delete-buffer "*ghr1*"
     find-buffer "*ghr1*"
     set-variable $buffer-fname #l1
-    shell-command "zip -r downloads/Jasspa_MicroEmacs_Latest_packages.zip packages"
+    shell-command "zip -r downloads/Jasspa_MicroEmacs_Latest_packages.zip microemacs_release.txt packages"
     !iif $result  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - zip returned %d]" $result
     !iif &not &seq "R" &stat t &cat #l1 "downloads/Jasspa_MicroEmacs_Latest_packages.zip"  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - file not found]"
     !force 0 delete-buffer "*ghr1*"

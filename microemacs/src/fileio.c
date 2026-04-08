@@ -341,7 +341,7 @@ ffCloseSockets(meIo *io, int force)
             io->urlOpts &= ~meSOCKOPT_SHOW_STATUS;
         
         if(meSockClose(io,force))
-            /* TODO: If user is using socket comms for both read & write this can go wrong, most likely way is a
+            /* Note: If user is using socket comms for both read & write this can go wrong, most likely way is a
              * http read with, say, a 5sec timeout, which sets the timeout to 4.5sec, followed by an ftp write with
              * a default timeout, 115sec and the initial 4.5sec timeout is lost. Should check and choose lowest */
             timerSet(SOCKET_TIMER_ID,-1,io->timeout);
@@ -2682,7 +2682,9 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
         rr = ffWriteFileOpen(&meior,sfname,dFlags & (meRWFLAG_DELETE|meRWFLAG_MKDIR|meRWFLAG_STAT|meRWFLAG_BACKUP|meRWFLAG_SILENT),NULL);
     }
 #if MEOPT_SOCKET
-    /* TODO bug: could read from ftp, wait 59 seconds then write to ftp - could get into here to close read io but also closes write io, or read is not closed when it should */
+    /* Potential issue: could read from ftp, wait 59 seconds then write to ftp - could get into here to close read io but
+     * also closes write io, or read is not closed when it should. In reality this shouldn't happen because on UNIX signals
+     * are held during write and on Windows the the timer object is not polled. */
     if((rr > 0) && (dFlags & meRWFLAG_SOCKCLOSE))
     {
         timerClearExpired(SOCKET_TIMER_ID);
