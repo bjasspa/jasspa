@@ -60,17 +60,6 @@ Once successfully installed a `microemacs-update`  script (or `microemacs-update
   
       microemacs-update enus
    
-- **UNIX - Homebrew:** For users familiar with brew we also provide a brew installer. In a terminal run:
-
-      brew tap bjasspa/jasspa
-      brew install microemacs
-    
-  This will install the binaries, macros and help. To install spelling languages run:
-  
-      brew install microemacs-spelling-<LANG>
-    
-  Use `brew search microemacs` for a full list of available packages.
-
 On all platforms, spelling dictionaries can also be downloaded and installed by MicroEmacs as and when required.
  
 

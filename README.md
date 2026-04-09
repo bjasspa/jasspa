@@ -71,9 +71,8 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 
 ### Linux/MacOS
 
-You can compile the code yourself, or you pick one or two of the pre-compiled
-single file executables from the Release page or you install the usual mec/mew
-executables  using curl or the homebrew  package manager. 
+You can compile the code yourself, or you pick one or two of the pre-compiled single file executables from the Release
+page or you install the usual mec/mew executables using the provided install scripts.
 
 Installation  using  curl for Linux and MacOS by copying and pasting the  following
 command into your terminal:
@@ -90,16 +89,8 @@ check that the binaries are installed by typing in the terminal.
 mec -V 
 ```
 
-Installation using [Homebrew](https://brew.sh) package manager on Linux or MacOS:
-
-```
-brew tap bjasspa/jasspa
-brew install microemacs
-```
-
-These install methods mentioned above will provide you with the terminal  version of MicroEmacs  (mec)
-and the GUI  version  (mew)  which  requires  X11 on Linux  MacOS  (using  for
-instance [XQuartz](https://www.xquartz.org/).
+The install method above will provide you with the terminal version of MicroEmacs (mec) and the GUI version (mew),
+which requires X11 on Linux and macOS (using for instance [XQuartz](https://www.xquartz.org/).
 
 ### Windows 
 
