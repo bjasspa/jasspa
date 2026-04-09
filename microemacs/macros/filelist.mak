@@ -70,6 +70,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	jst2text.emf	jstags.emf	jstutl.emf	\
 	keyboard.emf	killlist.emf	\
 	language.emf	langutl.emf	linux.emf	list.emf	\
+	luatags.emf	\
 	macos.emf	mahjongg.emf	mail.emf	mailmerg.emf	\
 	majormod.emf	matchit.emf	matrix.emf	mdtools.emf	\
 	me.emf		mecua.emf	meemacs.emf	melogo.emf	\
