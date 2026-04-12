@@ -427,7 +427,7 @@ gft_directory:
                 buf[jj] = '\0';
                 if((buf[0] == DIR_CHAR) || ((ss=meStrrchr(lbuf,DIR_CHAR)) == NULL))
                 {
-                    memcpy(ss,buf,jj+1);
+                    memcpy(lbuf,buf,jj+1);
                     ii = jj;
                 }
                 else
