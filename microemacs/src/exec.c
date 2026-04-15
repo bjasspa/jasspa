@@ -1231,7 +1231,7 @@ dobuf(meLine *hlp)
                 lno++ ;
             while ((tlp=meLineGetNext(tlp)) != lp)
                 ;
-            sprintf((char *)outline,"%s:%d:%d [%s] ? ",meRegCurr->commandName,lno,execlevel,tline) ;
+            snprintf((char *)outline,meBUF_SIZE_MAX,"%s:%d:%d [%s] ? ",meRegCurr->commandName,lno,execlevel,tline) ;
 loop_round2:
             mlwrite(MWSPEC,outline);        /* Write out the debug line */
             /* Cannot do update as if this calls a macro then

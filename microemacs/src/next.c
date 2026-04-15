@@ -156,7 +156,7 @@ getNextLine(int f,int n)
     while(--ii >= 0)
     {
         ll = meStrlen(nextName[ii]);
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
         if(meStrnicmp(tbp->name,nextName[ii],ll) == 0)
 #else
         if(meStrncmp(tbp->name,nextName[ii],ll) == 0)
@@ -178,7 +178,7 @@ getNextLine(int f,int n)
                 tbp = bheadp;
                 while(tbp != NULL)
                 {
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
                     if((rr=meStrnicmp(tbp->name,nextName[ii],ll)) == 0)
 #else
                     if((rr=meStrncmp(tbp->name,nextName[ii],ll)) == 0)

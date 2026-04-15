@@ -835,7 +835,7 @@ findBuffer(int f, int n)
         while(bp != NULL)
         {
             if((bp->fileName != NULL) &&
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
                (meStricmp(bp->fileName,bufn) == 0)
 #else
                (meStrcmp(bp->fileName,bufn) == 0)
@@ -1208,7 +1208,7 @@ linkBuffer(meBuffer *bp)
     sb = bheadp;
     while(sb != NULL)
     {
-#ifdef _INSENSE_CASE
+#ifdef _CMPLT_CASE_INSENSE
         if(meStridif(sb->name,bname) >= 0)
 #else
         if(meStrcmp(sb->name,bname) >= 0)
@@ -1789,10 +1789,14 @@ bfind(register meUByte *bname, int cflag)
         bp = bheadp;
         while(bp != NULL)
         {
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
             if((ii=meStricmp(bp->name,bname)) == 0)
 #else
+#ifdef _CMPLT_CASE_INSENSE
+            if((ii=meStridif(bp->name,bname)) == 0)
+#else
             if((ii=meStrcmp(bp->name,bname)) == 0)
+#endif
 #endif
             {
                 if(cflag & BFND_CLEAR)

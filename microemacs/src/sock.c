@@ -886,9 +886,9 @@ meSockGetRfc2253FormattedName(X509_NAME *name)
     if((b = OPENSSLFunc(BIO_new)(OPENSSLFunc(BIO_s_mem)())))
     {
         if((OPENSSLFunc(X509_NAME_print_ex)(b,name,0,XN_FLAG_RFC2253) >= 0) &&
-           ((len = (int) OPENSSLFunc(BIO_number_written)(b)) > 0))
+           ((len = (int) OPENSSLFunc(BIO_number_written)(b)) > 0) &&
+           ((out = malloc(len+1)) != NULL))
         {
-            out = malloc(len+1);
             OPENSSLFunc(BIO_read)(b,out,len);
             out[len] = 0;
         }
@@ -1492,7 +1492,8 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
         }
         io->urlPrt = port;
-        strcpy((char *) io->urlHst,(char *) host);
+        strncpy((char *) io->urlHst,(char *) host,meSOCK_HOST_SIZE-1);
+        io->urlHst[meSOCK_HOST_SIZE-1] = '\0';
         io->urlUsr[0] = '\0';
     }
 
@@ -2636,9 +2637,13 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
             return -34;
         }
         io->urlPrt = port;
-        strcpy((char *) io->urlHst,(char *) host);
+        strncpy((char *) io->urlHst,(char *) host,meSOCK_HOST_SIZE-1);
+        io->urlHst[meSOCK_HOST_SIZE-1] = '\0';
         if(user != NULL)
-            strcpy((char *) io->urlUsr,(char *) user);
+        {
+            strncpy((char *) io->urlUsr,(char *) user,meSOCK_USER_SIZE-1);
+            io->urlUsr[meSOCK_USER_SIZE-1] = '\0';
+        }
         else
             io->urlUsr[0] = '\0';
         if(meSockFtpCommand(io,rbuff,"PWD") == ftpPOS_COMPLETE)
@@ -2795,7 +2800,8 @@ meSockDictOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *dic
             meSockClose(io,1);
             return -17;
         }
-        strcpy((char *) io->urlHst,(char *) host);
+        strncpy((char *) io->urlHst,(char *) host,meSOCK_HOST_SIZE-1);
+        io->urlHst[meSOCK_HOST_SIZE-1] = '\0';
         io->urlPrt = port;
         meStrcpy((char *) ss,"CLIENT " ME_FULLNAME " " meVERSION_CODE "\r\n");
         ss += meStrlen(ss);

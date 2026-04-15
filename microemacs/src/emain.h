@@ -247,7 +247,7 @@
 #define meSYSTEM_NAME  "dos"            /* Identity name of the system   */
 #define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
 #define _CTRLM         1                /* ^M at end of lines (MSDOS)    */
-#define _SINGLE_CASE   1                /* Files only have single case   */
+#define _FILE_SINGLE_CASE 1             /* Files only have single case   */
 #define _MOUSE         1                /* Mouse supported               */
 #define _DRV_CHAR     ':'               /* drive divide letter, C:\dos   */
 #define _CONVDIR_CHAR '\\'              /* Filename convert '\\' => '/'  */
@@ -282,7 +282,7 @@
 #define _MOUSE         1                /* Mouse supported               */
 #define _CLIPBRD       1                /* Inter window clip board supp  */
 #define _WINDOW        1                /* Windowed, resizing & title    */
-#define _INSENSE_CASE  1                /* File names case insensitive   */
+#define _FILE_CASE_INSENSE 1            /* File names case insensitive   */
 #define _METFS         1                /* Use the tack-on file system   */
 #define _DRAGNDROP     1                /* Drag and drop supported.      */
 #define _DRV_CHAR     ':'               /* drive divide letter, C:\dos   */
@@ -505,6 +505,16 @@
 #ifdef _ME_WIN32_FULL_DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
+#endif
+
+/* Set whether file/buffer completion should be case insensitive or not, default for UNIX is now case insensitive.
+ * This affects the order files & buffers are listed, but on unix, foo, Foo & FOO are still different files/buffers */ 
+#ifdef _FILE_CASE_INSENSE
+#define _CMPLT_CASE_INSENSE 1
+#else
+#ifndef _FILE_SINGLE_CASE
+#define _CMPLT_CASE_INSENSE 1
+#endif
 #endif
 
 /*************************************************************************

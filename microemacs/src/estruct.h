@@ -1321,7 +1321,6 @@ typedef struct meRegister {
  * the same as meNamesList as it is used for $file-names variable
  */
 typedef struct {
-    int                exact;
     int                size;
     meUByte          **list;
     meUByte           *mask;
@@ -1331,7 +1330,6 @@ typedef struct {
 }  meDirList;
 
 typedef struct {
-    int                exact;
     int                size;
     meUByte          **list;
     meUByte           *mask;

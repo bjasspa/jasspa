@@ -568,7 +568,7 @@ isFileIgnored(meUByte *fileName)
             while(((cc=fi[fil]) != ' ') && (cc != '\0'))
                 fil++;
             if((fil <= len) &&
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
                !meStrnicmp(fileName+len-fil,fi,fil)
 #else
                !meStrncmp(fileName+len-fil,fi,fil)
@@ -1198,8 +1198,7 @@ input_expand:
             if(changed)
             {
                 changed = 0;
-                if((gotPos = getFirstLastPos
-                    (noStrs,strList,buf+compOff,option,&fstPos,&lstPos)) == 0)
+                if((gotPos = getFirstLastPos(noStrs,strList,buf+compOff,option,&fstPos,&lstPos)) == 0)
                 {
                     contstr = compNoMch;
                     TTbell();

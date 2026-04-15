@@ -946,7 +946,7 @@ meDictionarySave(meDictionary *dict, int n)
             }
 
             if(((ii=meStrlen(fname)) < 4) ||
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
                meStricmp(fname+ii-4,(const meUByte *)".edf")
 #else
                meStrcmp(fname+ii-4,".edf")

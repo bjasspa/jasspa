@@ -98,9 +98,9 @@ meUndoAddDelChar(void)
     meBuffer *cbp=cwp->buffer;
     if(meModeTest(cbp->mode,MDUNDO))
     {
-        meUByte type=meUNDO_SINGLE|meUNDO_DELETE ;
-        meUndoNode *nn ;
-        meUByte   cc ;
+        meUByte type=meUNDO_SINGLE|meUNDO_DELETE;
+        meUndoNode *nn;
+        meUByte   cc;
 
         if((cc = cwp->dotLine->text[cwp->dotOffset]) == '\0')
         {
@@ -108,13 +108,13 @@ meUndoAddDelChar(void)
                 /* This is trying to just remove the end line when the line
                  * before is not empty, this will fail so don't store it
                  */
-                return ;
-            cc = meCHAR_NL ;
+                return;
+            cc = meCHAR_NL;
         }
         if(cbp->undoContFlag == undoContFlag)
-            type |= meUNDO_CONTINUE ;
+            type |= meUNDO_CONTINUE;
 
-        nn = cbp->undoHead ;
+        nn = cbp->undoHead;
         if((nn != NULL) && ((nn->type & ~meUNDO_FORWARD) == type) &&
            (nn->udata.dotp == cwp->dotLineNo))
         {
@@ -123,15 +123,19 @@ meUndoAddDelChar(void)
             else if(((nn->doto-1) == cwp->dotOffset) &&
                     (((nn->type & meUNDO_FORWARD) != 0) || (nn->count == 1)))
             {
-                nn->doto-- ;
-                nn->type |= meUNDO_FORWARD ;
+                nn->doto--;
+                nn->type |= meUNDO_FORWARD;
             }
             else
-                goto meUndoAddDelCharNew ;
-            if(!(nn->count & 0x0f) &&
-               ((nn = meRealloc(nn,sizeof(meUndoNode)+nn->count+18)) == NULL))
-                return ;
-            cbp->undoHead = nn ;
+                goto meUndoAddDelCharNew;
+            if(!(nn->count & 0x0f))
+            {
+                meUndoNode *tn;
+                if((tn = meRealloc(nn,sizeof(meUndoNode)+nn->count+18)) == NULL)
+                    return;
+                nn = tn;
+                cbp->undoHead = nn ;
+            }
             nn->str[nn->count++] = cc ;
             nn->str[nn->count]   = '\0' ;
             cbp->undoContFlag = undoContFlag ;
@@ -158,25 +162,29 @@ meUndoAddRepChar(void)
     if(meModeTest(cbp->mode,MDUNDO))
     {
         meUByte type=meUNDO_SINGLE|meUNDO_INSERT|meUNDO_DELETE|meUNDO_FORWARD ;
-        meUndoNode *nn ;
-        meUByte   cc ;
+        meUndoNode *nn;
+        meUByte   cc;
 
         if(cbp->undoContFlag == undoContFlag)
-            type |= meUNDO_CONTINUE ;
+            type |= meUNDO_CONTINUE;
         if((cc = cwp->dotLine->text[cwp->dotOffset]) == '\0')
-            cc = meCHAR_NL ;
-        nn = cbp->undoHead ;
+            cc = meCHAR_NL;
+        nn = cbp->undoHead;
         if((nn != NULL) && (nn->type == type) &&
            (nn->udata.dotp == cwp->dotLineNo) &&
            (nn->doto == cwp->dotOffset))
         {
-            if(!(nn->count & 0x0f) &&
-               ((nn = meRealloc(nn,sizeof(meUndoNode)+nn->count+18)) == NULL))
-                return ;
-            cbp->undoHead = nn ;
-            nn->str[nn->count++] = cc ;
-            nn->str[nn->count]   = '\0' ;
-            cbp->undoContFlag = undoContFlag ;
+            if(!(nn->count & 0x0f))
+            {
+                meUndoNode *tn;
+                if((tn = meRealloc(nn,sizeof(meUndoNode)+nn->count+18)) == NULL)
+                    return;
+                nn = tn;
+                cbp->undoHead = nn;
+            }
+            nn->str[nn->count++] = cc;
+            nn->str[nn->count]   = '\0';
+            cbp->undoContFlag = undoContFlag;
         }
         else if((nn = meUndoCreateNode(sizeof(meUndoNode)+18)) != NULL)
         {
@@ -351,10 +359,13 @@ meUndoAddReplace(meUByte *dstr, meInt count)
                 ;
         }
         /* replace is the same as last time */
-        if(!(nn->doto & 0x0f) &&
-           ((nn->udata.pos = meRealloc(nn->udata.pos,sizeof(meUndoCoord)*
-                                       (nn->doto+16))) == NULL))
-            return ;
+        if(!(nn->doto & 0x0f))
+        {
+            meUndoCoord *tp;
+            if((tp = meRealloc(nn->udata.pos,sizeof(meUndoCoord)*(nn->doto+16))) == NULL)
+                return;
+            nn->udata.pos = tp;
+        }
         co = nn->udata.pos ;
         doto = cwp->dotOffset ;
         if(contFlag)
@@ -372,8 +383,8 @@ meUndoAddLineSort(meInt lineCount)
     meUndoNode *nn;
     meInt *lineSort;
     if(meModeTest(frameCur->windowCur->buffer->mode,MDUNDO) &&
-       ((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL) &&
-       ((lineSort = meMalloc((lineCount + 1) * sizeof(meInt))) != NULL))
+       ((lineSort = meMalloc((lineCount + 1) * sizeof(meInt))) != NULL) &&
+       ((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL))
     {
         nn->type |= meUNDO_SPECIAL|meUNDO_LINE_SORT;
         nn->count = lineCount;

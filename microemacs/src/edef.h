@@ -468,11 +468,7 @@ extern struct s_DragAndDrop *dadHead;   /* Drag and drop list */
 /* for MAIN.C */
 
 /* initialized global definitions */
-#ifdef _INSENSE_CASE
-meDirList curDirList={0,0,NULL,NULL,0,NULL} ;
-#else
-meDirList curDirList={1,0,NULL,NULL,0,NULL,0} ;
-#endif
+meDirList curDirList={0,NULL,NULL,0,NULL};
 #if MEOPT_OSD
 struct osdDIALOG  *osdDialogHd = NULL;  /* Root of the on screen displays */
 struct osdDISPLAY *osdDisplayHd = NULL; /* Menu display list */

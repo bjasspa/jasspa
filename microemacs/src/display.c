@@ -486,7 +486,8 @@ updCursor(register meWindow *wp)
             do
                 disLineSize += 512;
             while(disLineSize < ((int) jj));
-            disLineBuff = meRealloc(disLineBuff,disLineSize+32);
+            if((disLineBuff = meRealloc(disLineBuff,disLineSize+32)) == NULL)
+                meDie();
         }
     }
     switch(scrollFlag & 0x0f)
@@ -541,7 +542,8 @@ renderLine (meUByte *s1, int len, int wid, meBuffer *bp)
         if (wid >= disLineSize)
         {
             disLineSize += 512 ;
-            disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;
+            if((disLineBuff = meRealloc(disLineBuff,disLineSize+32)) == NULL)
+                meDie();
             s2 = disLineBuff + wid ;
         }
         cc = *s1++ ;
@@ -3420,8 +3422,8 @@ meVideoAttach (meVideo *vvptr, meWindow *wp)
         }
 
         /* Reset the strucure and chain to the existing frameCur->video list */
-        memset (vs, 0, frameCur->depthMax * sizeof(meVideoLine));
-        memset (vvptr, 0, sizeof (meVideo));
+        memset(vs, 0, frameCur->depthMax * sizeof(meVideoLine));
+        memset(vvptr, 0, sizeof (meVideo));
         vvptr->lineArray = vs;                    /* Attach the video structure */
         vvptr->next = frameCur->video.next;      /* Chain into frameCur->vvideo list */
         frameCur->video.next = vvptr;

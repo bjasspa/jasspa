@@ -159,11 +159,24 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
         ext = (meUByte *) "";
 
     if(name != NULL)
+    {
 #ifdef _UNIX
-        sprintf((char *)buf,"/tmp/me%s%s",name,ext);
+        memcpy(buf,"/tmp/me",7);
+        ii = 7;
 #else
-        sprintf((char *)buf,"%sme%s%s",tmpDir,name,ext);
+        ii = meStrlen(tmpDir);
+        memcpy(buf,tmpDir,ii);
+        buf[ii++] = 'm';
+        buf[ii++] = 'e';
 #endif
+        jj = meStrlen(name);
+        kk = meStrlen(ext);
+        rr = meBUF_SIZE_MAX-1-ii-kk;
+        if(jj > rr)
+            jj = rr;
+        memcpy(buf+ii,name,jj);
+        memcpy(buf+ii+jj,ext,kk+1);
+    }
     else
     {
         if(meRndSeed[0] == 0)
@@ -957,7 +970,7 @@ int main(int argc, char *argv[])
     if(argc == 3)
     {
         memset(key,0,32);
-        strcpy((char *) key,argv[1]);
+        strncpy((char *) key,argv[1],32);
         aes_set_key(&ctx,key,32 * 8);
         memset(buf,0,32);
         strncpy((char *) buf,argv[2],16);

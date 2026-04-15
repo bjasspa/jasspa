@@ -1505,7 +1505,8 @@ do                                                                           \
     if(dstPos >= disLineSize)                                                \
     {                                                                        \
         disLineSize += 512 ;                                                 \
-        disLineBuff = meRealloc(disLineBuff,disLineSize+32) ;                \
+        if((disLineBuff = meRealloc(disLineBuff,disLineSize+32)) == NULL)    \
+           meDie();                                                          \
     }                                                                        \
     if(isDisplayable(cc))                                                    \
     {                                                                        \
@@ -1558,19 +1559,22 @@ hilSchemeChange (meHilight *node, HILDATA *hd)
         /* Re-allocate a new hilight block - run out of room */
         if(hd->noColChng == hilBlockS)
         {
-            hilBlockS += 20 ;
+            meSchemeSet *tb;
             /* add 2 to hilBlockS to allow for a double trunc-scheme change */
-            hilBlock = meRealloc(hilBlock, (hilBlockS+2)*sizeof(meSchemeSet)) ;
+            if((tb = meRealloc(hilBlock,(hilBlockS+22)*sizeof(meSchemeSet))) == NULL)
+                return;
+            hilBlock = tb;
+            hilBlockS += 20 ;
         }
-        blkp = hilBlock + hd->noColChng + 1 ;
+        blkp = hilBlock + hd->noColChng + 1;
     }
     else
     {
-        blkp = hilBlock + 1 ;
+        blkp = hilBlock + 1;
         blkp->column = 0;
     }
     /* Apply the new change of colour to the new enry created. */
-    hd->noColChng++ ;
+    hd->noColChng++;
     blkp->scheme = node->scheme + (meScheme)(hd->colno);
     hd->hnode = node;
     hd->blkp = blkp;

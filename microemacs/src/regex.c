@@ -514,8 +514,8 @@ lazy_add_more:
             {
                 meRegexItem **itp, **iap;
                 int *iip;
-                if((itp=(meRegexItem **)malloc((matchSz+128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
-                                                                sizeof(int)+sizeof(int)))) == NULL)
+                if((itp=(meRegexItem **)meMalloc((matchSz+128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
+                                                                  sizeof(int)+sizeof(int)))) == NULL)
                     return 0;
                 matchSz += 128;
                 memcpy(itp,matchItem,matchLen*sizeof(meRegexItem *));
@@ -769,7 +769,7 @@ meRegexItemCreate(meRegex *regex)
 
     if((item=regex->lnext) == NULL)
     {
-        if((item=(meRegexItem *)malloc(sizeof(meRegexItem))) == NULL)
+        if((item=(meRegexItem *)meMalloc(sizeof(meRegexItem))) == NULL)
             return NULL;
         item->lnext = regex->lhead;
         regex->lhead = item;
@@ -1502,8 +1502,8 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
         /* If first time, malloc initial match buffers */
         if(matchSz == 0)
         {
-            if((matchItem=(meRegexItem **)malloc((128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
-                                                          sizeof(int)+sizeof(int)))) == NULL)
+            if((matchItem=(meRegexItem **)meMalloc((128+4)*(sizeof(meRegexItem *)+sizeof(meRegexItem *)+
+                                                            sizeof(int)+sizeof(int)))) == NULL)
                 return meREGEX_ERROR_MALLOC;
             matchSz = 128;
             matchAlt  = (meRegexItem **) (matchItem+128+4);
@@ -1512,7 +1512,7 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
         }
         if(regex->group == NULL)
         {
-            if((regex->group=(meRegexGroup *) malloc(8 * sizeof(meRegexGroup))) == NULL)
+            if((regex->group=(meRegexGroup *) meMalloc(8 * sizeof(meRegexGroup))) == NULL)
                 return meREGEX_ERROR_MALLOC;
             regex->group[0].regexStart = 0;
             regex->groupSz = 8;

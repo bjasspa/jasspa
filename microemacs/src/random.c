@@ -2794,7 +2794,7 @@ gotoAlphaMark(int f, int n)
 }
 
 
-#ifdef _SINGLE_CASE
+#ifdef _FILE_SINGLE_CASE
 /* make string lower case */
 void
 makestrlow(meUByte *str)

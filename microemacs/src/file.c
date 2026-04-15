@@ -515,12 +515,13 @@ gft_directory:
 #endif /* _DOS */
 }
 
+/* The return value is either 0 or not-0 due to the handling of NULLs */
 int
 fnamecmp(meUByte *f1, meUByte *f2)
 {
     if((f1==NULL) || (f2==NULL))
         return 1 ;
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
     return meStricmp(f1,f2);
 #else
     return meStrcmp(f1,f2);
@@ -653,7 +654,6 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
  * environment variable. Look first in the HOME directory if
  * asked and possible
  */
-
 int
 fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte *outName)
 {
@@ -668,7 +668,7 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
         jj = extCnt;
         while(--jj >= 0)
             if(((ii=fl - meStrlen(extLst[jj])) >= 0) &&
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
                !meStricmp(fname+ii,extLst[jj])
 #else
                !meStrcmp(fname+ii,extLst[jj])
@@ -1142,7 +1142,7 @@ meTestExecutable(meUByte *fileName)
         ee = fileName+ii-4 ;
         ii = extExecCnt;
         while(--ii >= 0)
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
             if(!meStrnicmp(ee,extExecLst[ii],4))
 #else
             if(!meStrncmp(ee,extExecLst[ii],4))
@@ -2208,7 +2208,7 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         for(ii=0 ; ii<curDirList.size ; ii++)
         {
             meUByte *ss = curDirList.list[ii] ;
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
             if(regexStrCmp(ss,mask,meRSTRCMP_ICASE|meRSTRCMP_WHOLE))
 #else
             if(regexStrCmp(ss,mask,meRSTRCMP_WHOLE))
@@ -3076,13 +3076,15 @@ fileNameSetHome(meUByte *ss)
 {
     int ll = meStrlen(ss);
     meNullFree(homedir);
-    homedir = meMalloc(ll+2);
-    meStrcpy(homedir,ss);
-    fileNameConvertDirChar(homedir);
-    if(homedir[ll-1] != DIR_CHAR)
+    if((homedir = meMalloc(ll+2)) != NULL)
     {
-        homedir[ll++] = DIR_CHAR;
-        homedir[ll] = '\0';
+        memcpy(homedir,ss,ll+1);
+        fileNameConvertDirChar(homedir);
+        if(homedir[ll-1] != DIR_CHAR)
+        {
+            homedir[ll++] = DIR_CHAR;
+            homedir[ll] = '\0';
+        }
     }
 }
 
@@ -3374,7 +3376,7 @@ double_url:
             p1++ ;
         }
     }
-#ifdef _SINGLE_CASE
+#ifdef _FILE_SINGLE_CASE
     if(flag == 0)
         makestrlow(newName) ;
 #endif
@@ -3577,7 +3579,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         {
             dirList->size = noFiles ;
             dirList->list = fls ;
-#ifdef _INSENSE_CASE
+#ifdef _CMPLT_CASE_INSENSE
             sortStrings(noFiles,fls,0,meStridif) ;
 #else
             sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
@@ -3666,12 +3668,12 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                         }
                         if(noFiles > 0)
                         {
-                            dirList->size = noFiles ;
-                            dirList->list = fls ;
-#ifdef _INSENSE_CASE
-                            sortStrings(noFiles,fls,0,meStridif) ;
+                            dirList->size = noFiles;
+                            dirList->list = fls;
+#ifdef _CMPLT_CASE_INSENSE
+                            sortStrings(noFiles,fls,0,meStridif);
 #else
-                            sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;
+                            sortStrings(noFiles,fls,0,(meIFuncSS) strcmp);
 #endif
                         }
                         else
@@ -3980,7 +3982,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
     dirList->size = noFiles ;
     dirList->list = fls ;
     if(noFiles > 1)
-#ifdef _INSENSE_CASE
+#ifdef _CMPLT_CASE_INSENSE
         sortStrings(noFiles,fls,0,meStridif) ;
 #else
         sortStrings(noFiles,fls,0,(meIFuncSS) strcmp) ;

@@ -601,17 +601,17 @@ extern  int     createVarList(meUByte ***listPtr);
  * consider where the platform file system only has one case and where it
  * is case insensitive
  */
-#ifdef _SINGLE_CASE
+#ifdef _FILE_SINGLE_CASE
 /* Typically dos */
 #define MLFILECASE   (MLFILE|MLLOWER)
 #define MLBUFFERCASE MLBUFFER
 #else
-#ifdef _INSENSE_CASE
+#ifdef _CMPLT_CASE_INSENSE
 /* Typically windows */
 #define MLFILECASE   (MLFILE|MLINSENSCASE)
 #define MLBUFFERCASE (MLBUFFER|MLINSENSCASE)
 #else
-/* Typically unix */
+/* Typically unix if using case sensitive completion */
 #define MLFILECASE   MLFILE
 #define MLBUFFERCASE MLBUFFER
 #endif
@@ -925,7 +925,6 @@ extern meRegNode *regFind(meRegNode *root, meUByte *subkey);
 #define regGetNext(rNd)  (rNd->next)
 extern meRegNode *regRead(meUByte *rname, meUByte *fname, int mode);
 extern meRegNode *regSet(meRegNode *root, meUByte *subkey, meUByte *value);
-extern meRegNode *vregFind(meRegNode *root, meUByte *fmt, ...);
 extern int  regDelete(meRegNode *root);
 extern int  regSave(meRegNode *root, meUByte *fname, int mode);
 extern int  anyChangedRegistry(void);

@@ -315,11 +315,11 @@ printGetParams (void)
         if (fp)
         {
             if (printTypes[ii] & mePD_INT)
-                fprintf (fp, "Parameter %s = %ld\n", printNames [ii],
+                fprintf (fp, "Parameter %s = %d\n", printNames [ii],
                          printer.param[ii].l);
             else
                 fprintf (fp, "Parameter %s = %s\n", printNames [ii],
-                         (printer.param[ii].p == NULL) ? "(nil)" : printer.param[ii].p);
+                         (printer.param[ii].p == NULL) ? "(nil)" : (char *) printer.param[ii].p);
         }
 #endif
     }
@@ -375,6 +375,12 @@ printGetParams (void)
         
     for(ii=0 ; ii<2 ; ii++)
     {
+        meUByte subkey[16];
+        int ll;
+        ll = meStrlen(fontPaths[ii]);
+        memcpy(subkey,fontPaths[ii],ll);
+        subkey[ll++] = '/';
+        
         /* Search in /print/<section>/order */
         for(jj=0 ; (jj<mePRINTSTYLE_SIZE) && (order[jj] != '\0') ; jj++)
         {
@@ -387,10 +393,9 @@ printGetParams (void)
                 {
                     if(option & (1 << kk))
                     {
-                        meUByte subkey[2] ;
-                        subkey[0] = order[jj] ;
-                        subkey[1] = '\0' ;
-                        if ((regData = vregFind (regPrint,(meUByte *)"%s/%s", fontPaths[ii],subkey)) != NULL)
+                        subkey[ll] = order[jj] ;
+                        subkey[ll+1] = '\0' ;
+                        if ((regData = regFind (regPrint,subkey)) != NULL)
                         {
                             fontStrings[ii][jj] = regGetString (regData, NULL) ;
                             if(kk == mePRINTSTYLE_FCOLOR)
@@ -1364,7 +1369,7 @@ printSection (meWindow *wp, long sLineNo, long numLines, meLine *sLine, meLine *
     case PDEST_INTERNAL:
         break;
     case PDEST_BUFFER:
-#ifdef _INSENSE_CASE
+#ifdef _FILE_CASE_INSENSE
         if(meStricmp(wp->buffer->name,printer.param[mePS_BUFFER].p) == 0)
 #else
         if(meStrcmp(wp->buffer->name,printer.param[mePS_BUFFER].p) == 0)

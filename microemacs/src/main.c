@@ -475,7 +475,7 @@ meAbout(int f, int n)
     meInt   numlines;		/* # of lines in file */
     meInt   predchars;		/* # chars preceding point */
     meInt   predlines;		/* # lines preceding point */
-    meUByte *ss, *dd, buf[meBUF_SIZE_MAX];
+    meUByte *ss, *dd, buf[meBUF_SIZE_MAX+16];
     int     ii;
     
     if((wp = meWindowPopup(NULL,BaboutN,BFND_CREAT|BFND_CLEAR|WPOP_USESTR,NULL)) == NULL)
@@ -496,7 +496,8 @@ meAbout(int f, int n)
     addLineToEob(bp,buf);
     addModesLists(bp,buf,globMode);
     tbp = frameCur->windowCur->buffer;
-    sprintf((char *)buf,"Current Buffer Status:\n  Buffer    : %s",tbp->name);
+    addLineToEob(bp,(meUByte *)"Current Buffer Status:");
+    sprintf((char *)buf,"  Buffer    : %s",tbp->name);
     addLineToEob(bp,buf);
     sprintf((char *)buf,"  File name : %s",(tbp->fileName == NULL) ? (meUByte *)"":tbp->fileName);
     addLineToEob(bp,buf);

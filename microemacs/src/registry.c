@@ -591,46 +591,6 @@ regFind (meRegNode *sroot, meUByte *subkey)
     return sroot;
 }
 
-/*
- * vregFind
- * Find the node in the registry
- */
-#ifdef _STDARG
-meRegNode *
-vregFind (meRegNode *sroot, meUByte *fmt, ...)
-#else
-meRegNode *
-vregFind (meRegNode *sroot, meUByte *fmt)
-#endif
-{
-    if (sroot == NULL)                  /* A NULL root is meaningless */
-        sroot = &root;
-    if (fmt != NULL)
-    {
-#ifdef _STDARG
-        va_list	ap;
-#else
-        register char **ap;
-#endif
-        meUByte buf [meBUF_SIZE_MAX];
-#ifdef _STDARG
-        va_start(ap,fmt);
-#else
-        ap = &fmt;
-#endif
-        if (*fmt == '/')
-            fmt++;
-        vsprintf((char *)buf, (char *) fmt, ap);
-        if (buf[0] != '\0')
-            sroot = rnodeFind (sroot, buf);
-#ifdef _STDARG
-        va_end (ap);
-#endif
-
-    }
-    return sroot;
-}
-
 
 /* Note the return value for this is:
  * meABORT - there was a major failure (i.e. couldn't open the file)

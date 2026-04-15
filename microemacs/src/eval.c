@@ -62,17 +62,12 @@ extern meUByte time_stamp[];   /* Time stamp string */
 #define meAtof(ss) (atof((const char *) ss))
 static time_t timeOffset=0;             /* Time offset in seconds */
 
-#ifdef _INSENSE_CASE
-meNamesList buffNames={0,0,NULL,NULL,0};
-meDirList  fileNames={0,0,NULL,NULL,0,NULL};
-#else
-meNamesList buffNames={1,0,NULL,NULL,0};
-meDirList  fileNames={1,0,NULL,NULL,0,NULL,0};
-#endif
-meNamesList commNames={1,0,NULL,NULL,0};
-meNamesList mjmdNames={0,0,NULL,NULL,0};
-meNamesList modeNames={0,MDNUMMODES,modeName,NULL,0};
-meNamesList varbNames={1,0,NULL,NULL,0};
+meDirList  fileNames={0,NULL,NULL,0,NULL};
+meNamesList buffNames={0,NULL,NULL,0};
+meNamesList commNames={0,NULL,NULL,0};
+meNamesList mjmdNames={0,NULL,NULL,0};
+meNamesList modeNames={MDNUMMODES,modeName,NULL,0};
+meNamesList varbNames={0,NULL,NULL,0};
 
 #endif
 
@@ -1054,7 +1049,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meNullFree(buffNames.list);
             buffNames.list = NULL;
             buffNames.curr = 0;
-            if(meRegexComp(&meRegexStrCmp,vvalue,(buffNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            if(meRegexComp(&meRegexStrCmp,vvalue,
+#ifdef _CMPLT_CASE_INSENSE
+                           meRSTRCMP_WHOLE|meRSTRCMP_ICASE
+#else
+                           meRSTRCMP_WHOLE
+#endif
+                           ) != meREGEX_OKAY)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&buffNames.mask,vvalue);
             if(buffNames.mask != NULL)
@@ -1064,7 +1065,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meNullFree(commNames.list);
             commNames.list = NULL;
             commNames.curr = 0;
-            if(meRegexComp(&meRegexStrCmp,vvalue,(commNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&commNames.mask,vvalue);
             if(commNames.mask != NULL)
@@ -1089,7 +1090,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                         mm = ss;
                 }
                 fileNames.curr = 0;
-                if(meRegexComp(&meRegexStrCmp,mm,(fileNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+                if(meRegexComp(&meRegexStrCmp,mm,
+#ifdef _CMPLT_CASE_INSENSE
+                               meRSTRCMP_WHOLE|meRSTRCMP_ICASE
+#else
+                               meRSTRCMP_WHOLE
+#endif
+                               ) != meREGEX_OKAY)
                     return mlwrite(MWABORT,(meUByte *)"[bad regex]");
                 meStrrep(&fileNames.mask,mm);
                 if(fileNames.mask != NULL)
@@ -1116,7 +1123,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meNullFree(mjmdNames.list);
             mjmdNames.list = NULL;
             mjmdNames.curr = 0;
-            if(meRegexComp(&meRegexStrCmp,vvalue,(mjmdNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&mjmdNames.mask,vvalue);
             if(mjmdNames.mask != NULL)
@@ -1125,7 +1132,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif /* MEOPT_MAJORMODE */
         case EVMNAMES:
             modeNames.curr = 0;
-            if(meRegexComp(&meRegexStrCmp,vvalue,(modeNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&modeNames.mask,vvalue);
             break;
@@ -1133,7 +1140,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             freeFileList(varbNames.size,varbNames.list);
             varbNames.list = NULL;
             varbNames.curr = 0;
-            if(meRegexComp(&meRegexStrCmp,vvalue,(varbNames.exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
             meStrrep(&varbNames.mask,vvalue);
             if(varbNames.mask != NULL)
@@ -1252,28 +1259,42 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
     case EVMOUSEY:      return meItoa(mouse_Y);
     case EVBNAMES:
         mv = &buffNames;
+#ifdef _CMPLT_CASE_INSENSE
+        ii = meRSTRCMP_ICASE|meRSTRCMP_WHOLE;
+#else
+        ii = meRSTRCMP_WHOLE;
+#endif
         goto handle_namesvar;
     case EVCNAMES:
         mv = &commNames;
+        ii = meRSTRCMP_WHOLE;
         goto handle_namesvar;
     case EVFNAMES:
         mv = (meNamesList *) &fileNames;
+#ifdef _CMPLT_CASE_INSENSE
+        ii = meRSTRCMP_ICASE|meRSTRCMP_WHOLE;
+#else
+        ii = meRSTRCMP_WHOLE;
+#endif
         goto handle_namesvar;
     case EVMNAMES:
         mv = &modeNames;
+        ii = meRSTRCMP_WHOLE;
         goto handle_namesvar;
     case EVMMNAMES:
         mv = &mjmdNames;
+        ii = meRSTRCMP_WHOLE;
         goto handle_namesvar;
     case EVVNAMES:
         mv = &varbNames;
+        ii = meRSTRCMP_WHOLE;
 handle_namesvar:
         if(mv->mask == NULL)
             return abortm;
         while(mv->curr < mv->size)
         {
             meUByte *ss = mv->list[(mv->curr)++];
-            if(regexStrCmp(ss,mv->mask,(mv->exact) ? meRSTRCMP_WHOLE:meRSTRCMP_ICASE|meRSTRCMP_WHOLE))
+            if(regexStrCmp(ss,mv->mask,ii))
                 return ss;
         }
         return emptym;
@@ -1289,7 +1310,7 @@ handle_namesvar:
 #if MEOPT_EXTENDED
     case EVRECENTKEYS:
         {
-            int ii, jj, kk;
+            int jj, kk;
             meUShort cc;
             for(ii=100,jj=TTnextKeyIdx,kk=0 ; --ii>0 ; )
             {
