@@ -60,7 +60,7 @@ createTimeStampSrch(meUByte *buf, meUByte *pos)
         if((cc == '%') && ((cc=*ss++) != '\0') &&
            ((tt = meStrchr(TSFIELDS,cc)) != NULL))
         {
-            ii = tt-TSFIELDS ;
+            ii = (int) (tt-TSFIELDS);
             pos[ii] = ++curPos ;
             if(ii == 0)
             {

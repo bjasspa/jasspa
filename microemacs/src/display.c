@@ -1558,7 +1558,7 @@ updateModeLine(meWindow *wp)
                 if((bp->name[0] == '*') || (bp->fileName == NULL))
                     break ;
                 ss = bp->fileName;
-                if((ii=meStrlen(ss)) > lineLen)
+                if((ii=(int) meStrlen(ss)) > lineLen)
                 {
                     *cp++ = windowChars[WCDISPTXTLFT];
                     if(--lineLen > 0)
@@ -2986,7 +2986,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
     if(flags & MWSPEC)
     {
         mlwant = (meUByte *) fmt ;
-        offset = meStrlen(mlwant) ;
+        offset = (int) meStrlen(mlwant) ;
     }
     else
     {
@@ -3058,7 +3058,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
                     ap += sizeof(meUByte *);
 #endif
                     /* catch a string which is too long */
-                    offset = meStrlen(s1) ;
+                    offset = (int) meStrlen(s1) ;
                     if(offset > frameCur->width)
                     {
                         mlwant = mlw ;
@@ -3079,7 +3079,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
         va_end (ap);
 #endif
         *mlwant= '\0' ;
-        offset = mlwant - mlw ;
+        offset = (int) (mlwant - mlw) ;
         mlwant = mlw ;
     }
     if((alarmState & meALARM_PIPED) || (flags & MWSTDALLWRT))

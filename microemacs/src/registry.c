@@ -69,7 +69,7 @@ rnodeNew (meUByte *name)
     int len;                            /* Length of the string */
 
     /* Get the length of the node name */
-    len = meStrlen(name) ;
+    len = (int) meStrlen(name);
 
     /* Allocate space for the node and copy in the node name */
     if ((np = (meRegNode *) meMalloc(sizeof(meRegNode) + len)) == NULL)
@@ -365,18 +365,18 @@ regSave(meRegNode *rnp, meUByte *fname, int mode)
             {
                 if(meGetString((meUByte *) "Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
                     return meABORT;
-                len = meStrlen(s1)+1;
+                len = (int) meStrlen(s1)+1;
             }
             if(mode & meREGMODE_ACRYPT)
             {
                 meStrcpy(s1+len,getFileBaseName(fname));
-                len += meStrlen(s1+len)+1;
+                len += (int) meStrlen(s1+len)+1;
                 if(meUserName == NULL)
                     s1[len++] = '\0';
                 else
                 {
                     meStrcpy(s1+len,meUserName);
-                    len += meStrlen(meUserName)+1;
+                    len += (int) meStrlen(meUserName)+1;
                 }
             }
             meCryptKeyEncode(key,s1,len);
@@ -704,18 +704,18 @@ regRead(meUByte *rname, meUByte *fname, int mode)
             {
                 if(meGetString((meUByte *) "Reg password",MLNOHIST|MLHIDEVAL,0,(meUByte *) s1,meSBUF_SIZE_MAX) <= 0)
                     return NULL;
-                len = meStrlen(s1)+1;
+                len = (int) meStrlen(s1)+1;
             }
             if(mode & meREGMODE_ACRYPT)
             {
                 meStrcpy(s1+len,getFileBaseName(fn));
-                len += meStrlen(s1+len)+1;
+                len += (int) meStrlen(s1+len)+1;
                 if(meUserName == NULL)
                     s1[len++] = '\0';
                 else
                 {
                     meStrcpy(s1+len,meUserName);
-                    len += meStrlen(meUserName)+1;
+                    len += (int) meStrlen(meUserName)+1;
                 }
             }
             meCryptKeyEncode(key,s1,len);

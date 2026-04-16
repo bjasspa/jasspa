@@ -113,7 +113,7 @@ stringExec(int f, int n, meUByte *macro)
     
     kbdptr = macro;
     kbdoff = 0;
-    kbdlen = meStrlen(macro);
+    kbdlen = (int) meStrlen(macro);
     kbdrep = n;
     kbdmode = mePLAY;     /* start us in play mode */
     ii = meTRUE;
@@ -381,7 +381,7 @@ findHelpItem(meUByte *item, int silent)
     int     sectLen, itemLen, ii;
     meUByte  *ss, cc, sect[5];
     
-    itemLen = meStrlen(item);
+    itemLen = (int) meStrlen(item);
     if((item[itemLen-1] == ')') &&
        ((item[(ii=itemLen-3)] == '(') ||
         (item[(ii=itemLen-4)] == '(') ))
@@ -702,7 +702,7 @@ insMacro(int f, int n)
     slp = cwp->dotLine;
     lineNo = cwp->dotLineNo;
     nol = addLine(slp,buf);
-    len = meStrlen(buf) + 9;
+    len = 9 + (int) meStrlen(buf);
     lp = meLineGetNext(mac->hlp);            /* First line.          */
     while (lp != mac->hlp)
     {

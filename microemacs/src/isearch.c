@@ -329,7 +329,7 @@ get_another_key:
         goto get_another_key;
     }
     
-    cpos = meStrlen(srchPat);
+    cpos = (int) meStrlen(srchPat);
     isHeadStr[9] = ':';
     status = meTRUE;                        /* Assume everything's cool   */
     mlisDisp(srchPat,status);

@@ -535,7 +535,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     if((rwflag & meRWFLAG_DELETE) && !(rwflag & meRWFLAG_BACKUP))
     {
         /* if backing up as well the file is already effectively deleted */
-        ii = meStrlen(fl);
+        ii = (meInt) meStrlen(fl);
         if(fl[ii-1] == '/')
         {
             if((meSockFtpCommand(io,buff,"CWD %s..",fl) != ftpPOS_COMPLETE) ||
@@ -565,14 +565,14 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         {
             /* this is a regular file */
             *dd++ = 'R';
-            if((ii=meStrlen(buff) - 4) > 0)
+            if((ii=(meInt) meStrlen(buff) - 4) > 0)
             {
                 meStrcpy(dd,buff+4);
                 dd += ii;
             }
             *dd++ = '|';
             /* get the mod time */
-            if((meSockFtpCommand(io,buff,"MDTM %s",fl) == ftpPOS_COMPLETE) && ((ii=meStrlen(buff) - 4) > 0))
+            if((meSockFtpCommand(io,buff,"MDTM %s",fl) == ftpPOS_COMPLETE) && ((ii=(meInt) meStrlen(buff) - 4) > 0))
             {
                 meStrcpy(dd,buff+4);
                 if(dd[4] == '0')
@@ -599,7 +599,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     if(!(rwflag & (meRWFLAG_WRITE|meRWFLAG_READ)))
         return meTRUE;
     
-    ii = meStrlen(fl);
+    ii = (meInt) meStrlen(fl);
     if(rwflag & meRWFLAG_FTPNLST)
         dirlist = -1;
     else if(fl[ii-1] == DIR_CHAR)
@@ -646,14 +646,14 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
                     dd = buff+22;
                     if(ups != NULL)
                     {
-                        ii = ups-url;
+                        ii = (meInt) (ups-url);
                         memcpy(dd,url,ii);
                         meStrcpy(dd+ii,meStrchr(ups,'@'));
                         url = buff;
                     }
                     else
                         meStrcpy(dd,url);
-                    ii = meStrlen(dd);
+                    ii = (meInt) meStrlen(dd);
                     if(dd[ii-1] != DIR_CHAR)
                     {
                         dd[ii] = DIR_CHAR;
@@ -773,7 +773,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
                     fl = dd;
                 fl++;
             }
-            ii = fl-url;
+            ii = (meInt) (fl-url);
             memcpy(urlBuff,url,ii);
             meStrcpy(urlBuff+ii,buff);
             dd = urlBuff;
@@ -805,7 +805,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
     {
         if(ups != NULL)
         {
-            ii = ups-url;
+            ii = (meInt) (ups-url);
             memcpy(buff,url,ii);
             meStrcpy(buff+ii,meStrchr(ups,'@'));
             url = buff;
@@ -846,7 +846,7 @@ ffDictFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     *dd++ = '\0';
     if((dct=meStrchr(wrd,':')) != NULL)
     {
-        ii = dct-wrd;
+        ii = (meInt) (dct-wrd);
         memcpy(dd,wrd,ii);
         dd[ii] = '\0';
         wrd = dd;
@@ -931,7 +931,7 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         meUByte *s1, *s2, *cv, *hdr;
         meInt s1l;
         hdr = ((vp = getUsrLclCmdVarP((meUByte *)"http-header",usrVarList)) == NULL) ? NULL:vp->value;
-        if(((vp = getUsrLclCmdVarP((meUByte *)"http-post-data",usrVarList)) == NULL) || ((s1=vp->value) == NULL) || ((s1l=meStrlen(s1)) == 0))
+        if(((vp = getUsrLclCmdVarP((meUByte *)"http-post-data",usrVarList)) == NULL) || ((s1=vp->value) == NULL) || ((s1l=(meInt) meStrlen(s1)) == 0))
         {
             s1 = NULL;
             s1l = 0;
@@ -952,7 +952,7 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
             if(ffUrlCookie.value != cv)
             {
                 ffUrlCookie.value = cv;
-                ffUrlCookie.buffLen = meStrlen(cv);
+                ffUrlCookie.buffLen = (meInt) meStrlen(cv);
             }
         }
         ii = ffHttpFileOpen(io,rwflag,url,cookie,hdr,s1l,s1,s2,bp);
@@ -1051,7 +1051,7 @@ createBackupNameStrcpySub(meUByte *dd, meUByte *ss, int subCount, meUByte **subF
         {
             for(ii=0 ; ii<subCount ; ii++)
             {
-                ll = meStrlen(subFrom[ii]);
+                ll = (int) meStrlen(subFrom[ii]);
                 if(!meStrncmp(ss,subFrom[ii],ll))
                 {
                     meStrcpy(dd,subTo[ii]);
@@ -1180,7 +1180,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
         {
             int ll;
             s = getFileBaseName(fn);
-            ll = ((size_t)s - (size_t)fn);
+            ll = (int) ((size_t)s - (size_t)fn);
             meStrncpy(filename,fn,ll);
             t = filename+ll;
             t = createBackupNameStrcpySub(t,backupPath,backupSubCount,
@@ -1287,7 +1287,7 @@ ffgetBuf(meIo *io,int offset, int len)
 #if MEOPT_TFS
     if(ffUrlTypeIsTfs(io->type))
     {
-        if((ffremain = tfs_fread(ffbuf+offset,len,io->tfsp)) <= 0)
+        if((ffremain = (meInt) tfs_fread(ffbuf+offset,len,io->tfsp)) <= 0)
         {
             if(ffremain < 0)
                 return mlwrite(MWABORT,(meUByte *)"[TFS file read error]");
@@ -1465,7 +1465,7 @@ ffgetline(meIo *io, meLine **line)
                     else
                         newl++;
                 
-                ffremain -= ((size_t) ffcur) - ((size_t) endp);
+                ffremain -= (meInt) (((size_t) ffcur) - ((size_t) endp));
                 
                 if(newl)
                 {
@@ -2130,7 +2130,7 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 {
                     int ll;
                     
-                    ll = meStrlen(filename)-1;
+                    ll = (int) meStrlen(filename)-1;
                     filename[ll++] = '.';
                     filename[ll++] = '~';
                     for(ii=0 ; ii<keptVersions ; ii++)
@@ -2587,7 +2587,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                     if(meior.urlHome != NULL)
                     {
                         meStrcpy(fnb,meior.urlHome);
-                        r1 = meStrlen(fnb);
+                        r1 = (int) meStrlen(fnb);
                     }
                     else
                         r1 = 0;
@@ -2604,7 +2604,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                         if(meior.urlHome != NULL)
                         {
                             meStrcpy(buff,meior.urlHome);
-                            r1 = meStrlen(fnb);
+                            r1 = (int) meStrlen(fnb);
                         }
                         else
                             r1 = 0;
@@ -2770,7 +2770,7 @@ translateBuffer(int f, int n)
         do {
             if((dd = uniBom[ii]) != NULL)
             {
-                ll = meStrlen(dd);
+                ll = (int) meStrlen(dd);
                 if(!memcmp(ss,dd,ll))
                     break;
             }
@@ -2786,7 +2786,7 @@ translateBuffer(int f, int n)
     else if((n & 0x000f) > 0x0008)
     {
         dd = uniBom[(n & 0x0007) - 1];
-        ll = meStrlen(dd);
+        ll = (int) meStrlen(dd);
         if(!memcmp(ss,dd,ll))
             ss += ll;
         else
@@ -3068,7 +3068,7 @@ translateBufferBack(meBuffer *bp, meUInt flags)
     if((bp->xlateFlag & 0x0f) > 0x08)
     {
         ss = uniBom[xlt - 1];
-        ll = meStrlen(ss);
+        ll = (int) meStrlen(ss);
         memcpy(dd,ss,ll);
         dd += ll;
     }

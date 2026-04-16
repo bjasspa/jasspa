@@ -225,7 +225,7 @@ meHashUpdate(meHash *ctx, const meUByte data[], size_t len)
         if((ctx->bitlen += 512) == 0)
             ctx->flag |= meHASH_OVERRUN;
     }
-    ll = (len - ii) >> 6;
+    ll = (meUInt) ((len - ii) >> 6);
     while(ll)
     {
         meHashTransform(ctx,data+ii);
@@ -360,10 +360,10 @@ generateHash(int f, int n)
                     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Data hex format error]");
                 *bb++ = (hexToNum(cc)<<4) | hexToNum(dd);
             }
-            ii = (size_t) (bb - resultStr);
+            ii = (int) (bb - resultStr);
         }
         else
-            ii = meStrlen(resultStr);
+            ii = (int) meStrlen(resultStr);
         meHashInitHmac(&iCtx,&oCtx,n,resultStr,ii);
         resultStr[0] = '\0';
     }
@@ -382,10 +382,10 @@ generateHash(int f, int n)
                     return mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Data hex format error]");
                 *bb++ = (hexToNum(cc)<<4) | hexToNum(dd);
             }
-            ii = (size_t) (bb - resultStr);
+            ii = (int) (bb - resultStr);
         }
         else
-            ii = meStrlen(resultStr);
+            ii = (int) meStrlen(resultStr);
         meHashUpdate(&iCtx,resultStr,ii);
     }
     else

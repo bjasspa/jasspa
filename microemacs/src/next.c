@@ -71,7 +71,7 @@ flNextFind(meUByte *str, meUByte **curFilePtr, meInt *curLine)
             pat[soff++] = '\\';
             pat[soff++] = '(';
             meStrcpy(pat+soff,n);
-            soff += meStrlen(n);
+            soff += (int) meStrlen(n);
             pat[soff++] = '\\';
             pat[soff++] = ')';
             n = NULL;
@@ -155,7 +155,7 @@ getNextLine(int f,int n)
     ii = noNextLine;
     while(--ii >= 0)
     {
-        ll = meStrlen(nextName[ii]);
+        ll = (int) meStrlen(nextName[ii]);
 #ifdef _FILE_CASE_INSENSE
         if(meStrnicmp(tbp->name,nextName[ii],ll) == 0)
 #else
@@ -174,7 +174,7 @@ getNextLine(int f,int n)
             ii = noNextLine;
             while(--ii >= 0)
             {
-                ll = meStrlen(nextName[ii]);
+                ll = (int) meStrlen(nextName[ii]);
                 tbp = bheadp;
                 while(tbp != NULL)
                 {
@@ -244,7 +244,7 @@ getNextLine(int f,int n)
                     meUByte fname[meBUF_SIZE_MAX], *value;
                     meVariable *var;
                     
-                    ii = meStrlen(nextFile);
+                    ii = (int) meStrlen(nextFile);
                     if((nextFile[0] != '*') || (nextFile[ii-1] != '*'))
                     {
                         if(bp->fileName != NULL)
@@ -270,7 +270,7 @@ getNextLine(int f,int n)
                 else if((nextFile = getUsrLclCmdVar((meUByte *)"next-file",bp->varList)) == errorm)
                     return mlwrite(MWABORT,(meUByte *)"[No File name]");
                 else
-                    ii = meStrlen(nextFile);
+                    ii = (int) meStrlen(nextFile);
                 SetUsrLclCmdVar((meUByte *)"next-line",meItoa(curLine),&(bp->varList));
                 
                 if(n & 0x04)
@@ -421,7 +421,7 @@ doRcsCommand(meUByte *fname, register meUByte *comStr)
 				break;
             if(cc == 'f')
             {
-                len = meStrlen(bname);
+                len = (int) meStrlen(bname);
                 if((ii + len) > meBUF_SIZE_MAX)
                     break;
                 meStrcpy(pat+ii,bname);
@@ -431,7 +431,7 @@ doRcsCommand(meUByte *fname, register meUByte *comStr)
             {
                 if(meGetString((meUByte *)"Enter message",0,0,pat+ii,meBUF_SIZE_MAX-ii) <= 0)
                     return meFALSE;
-                ii = meStrlen(pat);
+                ii = (int) meStrlen(pat);
             }
         }
         else

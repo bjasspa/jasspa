@@ -124,7 +124,7 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
 #if (defined _WIN32)
             else if(((pp = (meUByte *) meGetenv("LOCALAPPDATA")) != NULL) && !meTestDir(pp))
             {
-                ii = meStrlen(pp);
+                ii = (int) meStrlen(pp);
                 memcpy(buf,pp,ii);
                 pp = buf;
                 if(buf[ii-1] != PIPEDIR_CHAR)
@@ -138,7 +138,7 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
         }
         if(tmpDir == NULL)
         {
-            if((pp != NULL) && ((ii = meStrlen(pp)) > 0) && ((tmpDir = meMalloc(ii+2)) != NULL))
+            if((pp != NULL) && ((ii = (int) meStrlen(pp)) > 0) && ((tmpDir = meMalloc(ii+2)) != NULL))
             {
                 memcpy(tmpDir,pp,ii);
                 if(tmpDir[ii-1] != PIPEDIR_CHAR)
@@ -164,13 +164,13 @@ mkTempName(meUByte *buf, meUByte *name, meUByte *ext)
         memcpy(buf,"/tmp/me",7);
         ii = 7;
 #else
-        ii = meStrlen(tmpDir);
+        ii = (int) meStrlen(tmpDir);
         memcpy(buf,tmpDir,ii);
         buf[ii++] = 'm';
         buf[ii++] = 'e';
 #endif
-        jj = meStrlen(name);
-        kk = meStrlen(ext);
+        jj = (int) meStrlen(name);
+        kk = (int) meStrlen(ext);
         rr = meBUF_SIZE_MAX-1-ii-kk;
         if(jj > rr)
             jj = rr;
@@ -1106,7 +1106,7 @@ meCryptBufferSetKey(meBuffer *bp, meUByte *key)
         mlerase(MWCLEXEC);		/* clear it off the bottom line */
         key = keybuf;
     }
-    if((ll = meStrlen(key)) == 0)
+    if((ll = (int) meStrlen(key)) == 0)
     {
         if(meModeTest(bp->mode,MDCRYPT))
         {

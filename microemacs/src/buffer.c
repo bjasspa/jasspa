@@ -200,7 +200,7 @@ majorMode(int f, int n)
         {
             if((f == 0) || ((n & 1) == 0))
                 return mlwrite(MWABORT,(meUByte *) "[Error: Major-mode \"%s\" not defined]",id);
-            f = meStrlen(id);
+            f = (int) meStrlen(id);
             if((mm = (meMajorMode*) meMalloc(((size_t) (&(((meMajorMode *) 0)->id[1])))+f)) == NULL)
                 return meFALSE;
             /* add to the head as newer modes have higher priority */
@@ -491,9 +491,9 @@ setBufferContext(meBuffer *bp)
              * Check if its name has a <?> and/or a backup ~, if so reduce
              * the length so '<?>' & '~'s not inc. */
             sp = bp->name;
-            ll = meStrlen(sp);
+            ll = (int) meStrlen(sp);
             if((sp[ll-1] == '>') && (bp->fileName != NULL) && ((bn = getFileBaseName(bp->fileName)) != NULL) &&
-               ((bnll = meStrlen(bn)) > 0) && (ll > bnll) && (sp[bnll] == '<')  && !meStrncmp(sp,bn,bnll))
+               ((bnll = (int) meStrlen(bn)) > 0) && (ll > bnll) && (sp[bnll] == '<')  && !meStrncmp(sp,bn,bnll))
                 ll = bnll;
             if(sp[ll-1] == '~')
                 ll--;
@@ -1532,15 +1532,15 @@ makelist(meBuffer *blistp, int verb)
         else
             *cp1++ = ' ';
         if((bp == blistp) || meModeTest(bp->mode,MDNACT))
-            cp2 = (meUByte *) "-" ;
+            cp2 = (meUByte *) "-";
         else
             cp2 = meItoa(bp->lineCount+1);
-        ii = 8 - meStrlen(cp2) ;
+        ii = 8 - (int) meStrlen(cp2);
         while(ii-- > 0)
             *cp1++ = ' ' ;
         while((cc = *cp2++) != '\0')
-            *cp1++ = cc ;
-        cp2 = bp->name ;
+            *cp1++ = cc;
+        cp2 = bp->name;
         ii = 16 ;
         if((ff=(meStrchr(cp2,' ') != NULL)))
             *cp1 = '"';
@@ -1552,7 +1552,7 @@ makelist(meBuffer *blistp, int verb)
             *cp1++ = '"';
         else
             *cp1++ = ' ';
-        ii-- ;
+        ii--;
         
         for( ; ii>0 ; ii--)
             *cp1++ = ' ';
@@ -1563,55 +1563,55 @@ makelist(meBuffer *blistp, int verb)
 #if MEOPT_UNDO
             meUndoNode *nn ;
 #endif
-            meLine *ll ;
-            int jj ;
+            meLine *ll;
+            int jj;
             
-            ii = 0 ;
-            jj = 0 ;
-            ll = bp->baseLine ;
+            ii = 0;
+            jj = 0;
+            ll = bp->baseLine;
             do
             {
-                ii += meLineGetLength(ll) + 1 ;
-                jj += meLineGetMaxLength(ll) ;
-                ll = meLineGetNext(ll) ;
-            } while(ll != bp->baseLine) ;
-            ff = line + 30 - cp1 ;
+                ii += meLineGetLength(ll) + 1;
+                jj += meLineGetMaxLength(ll);
+                ll = meLineGetNext(ll);
+            } while(ll != bp->baseLine);
+            ff = (int) (line + 30 - cp1);
             while(--ff >= 0)
-                *cp1++ = ' ' ;
+                *cp1++ = ' ';
             *cp1++ = ' ';
-            cp2 = meItoa(ii) ;
+            cp2 = meItoa(ii);
             while((cc = *cp2++) != '\0')
                 *cp1++ = cc ;
-            ff = line + 42 - cp1 ;
+            ff = (int) (line + 42 - cp1);
             while(--ff >= 0)
-                *cp1++ = ' ' ;
-            jj += (meLINE_SIZE*(bp->lineCount+1)) + sizeof(meBuffer) ;
+                *cp1++ = ' ';
+            jj += (int) ((meLINE_SIZE*(bp->lineCount+1)) + sizeof(meBuffer));
             cp2 = meItoa(jj) ;
             while((cc = *cp2++) != '\0')
                 *cp1++ = cc ;
 #if MEOPT_UNDO
-            ff = line + 53 - cp1 ;
+            ff = (int) (line + 53 - cp1);
             while(--ff >= 0)
-                *cp1++ = ' ' ;
+                *cp1++ = ' ';
             ii = 0 ;
-            nn = bp->undoHead ;
+            nn = bp->undoHead;
             while(nn != NULL)
             {
                 if(meUndoIsLineSort(nn))
-                    ii += sizeof(meUndoNode) + (sizeof(meInt) * (nn->count + 1)) ;
+                    ii += sizeof(meUndoNode) + (sizeof(meInt) * (nn->count + 1));
 #if MEOPT_NARROW
                 else if(meUndoIsNarrow(nn))
-                    ii += sizeof(meUndoNarrow) ;
+                    ii += sizeof(meUndoNarrow);
 #endif
                 else
                 {
-                    ii += sizeof(meUndoNode) ;
+                    ii += sizeof(meUndoNode);
                     if(nn->type & meUNDO_DELETE)
-                        ii += meStrlen(nn->str) ;
+                        ii += (int) meStrlen(nn->str);
                     if(meUndoIsReplace(nn))
-                        ii += sizeof(meUndoCoord)*nn->doto ;
+                        ii += sizeof(meUndoCoord)*nn->doto;
                 }
-                nn = nn->next ;
+                nn = nn->next;
             }
             cp2 = meItoa(ii) ;
             while((cc = *cp2++) != '\0')
@@ -1623,7 +1623,7 @@ makelist(meBuffer *blistp, int verb)
             if((bp->name[0] != '*') &&
                ((cp2 = bp->fileName) != NULL))
         {
-            if((ii=meStrlen(cp2))+(cp1-line) > frameCur->width)
+            if((ii=(int) meStrlen(cp2))+((int) (cp1-line)) > frameCur->width)
             {
                 *cp1++ = '$' ;
                 cp2 += ii - (frameCur->width-(1+cp1-line)) ;

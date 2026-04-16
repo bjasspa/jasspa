@@ -107,7 +107,7 @@ static DIRNODE *
 dirConstructNode(meUByte *name, int mask)
 {
     DIRNODE *dnode;
-    int ll = meStrlen(name);
+    int ll = (int) meStrlen(name);
     if((dnode = (DIRNODE *) meMalloc(((size_t) (((DIRNODE *) ((size_t) 0))->dname)) + 1 + ll)) != NULL)
     {
         dnode->mask = mask;
@@ -465,7 +465,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
         fprintf(fp, "evalNode %s\n",pathname) ;
 #endif
         mlwrite(0,(meUByte *)"[Evaluating %s]",pathname);
-        len = meStrlen(pathname) ;
+        len = (int) meStrlen(pathname) ;
         if(len == 0)
         {
 #ifdef _WIN32
@@ -511,25 +511,25 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
         }
         else
         {
-            int     noFiles ;                   /* Number of files */
-            meUByte **files, *ss ;                /* File list */
+            int     noFiles;                   /* Number of files */
+            meUByte **files, *ss;              /* File list */
             
             ss = pathname+len ;
-            getDirectoryList(pathname,&curDirList) ;
-            noFiles = curDirList.size ;
-            files = curDirList.list ;
+            getDirectoryList(pathname,&curDirList);
+            noFiles = curDirList.size;
+            files = curDirList.list;
             
             /* Build a profile of the current directory. */
             for(ii=0 ; ii<noFiles ; ii++)
             {
                 meUByte *fn;
-                int flen ;
+                int flen;
                 
                 if(TTbreakTest(0))
-                    return ctrlg(meFALSE,1) ;
+                    return ctrlg(meFALSE,1);
                 /* Get the file and strip off any directory tail */
                 fn = files [ii];
-                flen = meStrlen(fn) - 1 ;
+                flen = (int) meStrlen(fn) - 1;
                 if (fn[flen] == DIR_CHAR)
                 {
                     if((flen > 2) || (fn [0] != '.') || ((flen != 1) && (fn[1] != '.')))
@@ -590,7 +590,7 @@ evalNode(register DIRNODE *dnode, meUByte *pathname, int flags)
     {   
         DIRNODE *dtemp, *dhead;
         meUByte *ss ;
-        len = meStrlen(pathname) ;
+        len = (int) meStrlen(pathname) ;
         ss = pathname+len ;
         
         dhead = dtemp = dnode->child ;
@@ -678,7 +678,7 @@ meFindDirLine(DIRNODE *dnode, meUByte *fname, long *itemNo)
                     len = 0;
                 else
 #endif
-                    len = meStrlen(dnode->dname) ;
+                    len = (int) meStrlen(dnode->dname) ;
                 if(dn != dnode)
                 {
                     ndn = dnode->child ;
@@ -753,7 +753,7 @@ dirDrawDirectory(meBuffer *bp, DIRNODE *dnode, int iLen, meUByte *iStr, meUByte 
             buf [len++] = ' ';
             
             /* Add the filename */
-            flen = meStrlen(dnode->dname);
+            flen = (int) meStrlen(dnode->dname);
             memcpy(buf+len,dnode->dname,flen);
             len += flen;
             fn = NULL;

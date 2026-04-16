@@ -436,11 +436,11 @@ addModesList(meBuffer *bp, register meUByte *buf, meUByte *name, meMode mode,
     register int ii, nlen, len, ll;
     
     meStrcpy(buf,name);
-    len = nlen = meStrlen(name);
+    len = nlen = (int) meStrlen(name);
     for (ii = 0; ii < MDNUMMODES; ii++)	/* add in the mode flags */
         if((meModeTest(mode,ii) != 0) == res)
         {
-            ll = meStrlen(modeName[ii]);
+            ll = (int) meStrlen(modeName[ii]);
             if(len+ll >= 78)
             {
                 buf[len] = '\0';
@@ -1839,7 +1839,7 @@ missing_arg:
             meStrncpy(buff+1,clientMessage,meBUF_SIZE_MAX);
             meStrcat(buff+1,"\"");
             token(buff,resultStr);
-            nn = meStrlen(resultStr);
+            nn = (int) meStrlen(resultStr);
             if((nn <= 1) || (resultStr[nn-1] != '\n'))
             {
                 resultStr[nn++] = '\n';

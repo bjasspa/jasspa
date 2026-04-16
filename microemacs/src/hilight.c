@@ -293,8 +293,8 @@ addTokenNode(meHilight *root, meUByte *token, int flags)
         mlwrite(MWABORT|MWWAIT,(meUByte *)"Table full, cant add [%s]. Optimise!",token) ;
         return NULL ;
     }
-    top++ ;
-    len = meStrlen(token) ;
+    top++;
+    len = (int) meStrlen(token);
     if(((root->list = (meHilight **) meRealloc(root->list,top*sizeof(meHilight *))) == NULL) ||
        ((nn = meMalloc(sizeof(meHilight)+len)) == NULL))
         return NULL ;
@@ -1400,7 +1400,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                (!(type & HLASOL) || (mode & meHIL_MODESTART)) &&
                ((node = findToken(nn,s1,mode,lastChar,len)) != NULL))
             {
-                *len += s1-text ;
+                *len += (meUShort) (s1-text);
                 return node ;
             }
             if((((type & HLVALID) == 0) || ((type & HLONELNBT) && (mode & meHIL_MODELOOKB))) &&
@@ -1412,7 +1412,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                  findTokenSingleCharTest(' ',nn->tknSttTst))) &&
                findTokenSingleCharTest(*s1,nn->tknEndTst))
             {
-                *len = s1-text ;
+                *len = (meUShort) (s1-text);
                 return nn ;
             }
         }
@@ -1476,7 +1476,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                        (!(type & HLASOL) || (mode & meHIL_MODESTART)) &&
                        ((node = findToken(nn,s1,mode,lastChar,len)) != NULL))
                     {
-                        *len += s1-text ;
+                        *len += (meUShort) (s1-text);
                         return node ;
                     }
                     if((((type & HLVALID) == 0) || ((type & HLONELNBT) && (mode & meHIL_MODELOOKB))) &&
@@ -1488,7 +1488,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                          findTokenSingleCharTest(' ',nn->tknSttTst))) &&
                        findTokenSingleCharTest(*s1,nn->tknEndTst))
                     {
-                        *len = s1-text ;
+                        *len = (meUShort) (s1-text);
                         return nn ;
                     }
                 }
@@ -1951,10 +1951,10 @@ BracketJump:
                 {
                     hd.blkp->column = dstPos ;
                     if(node->type & HLSNGLLNBT)
-                        node = NULL ;
-                    goto hiline_exit ;
+                        node = NULL;
+                    goto hiline_exit;
                 }
-                len = s2-s1 ;
+                len = (meUShort) (s2-s1);
                 if(node->clsSttOff)
                 {
                     dstPos = hilCopyLenString(dstPos,s1,node->clsSttOff,&hd) ;
@@ -2312,7 +2312,7 @@ column_token:
                 if(tt != '\0')
                     goto hiline_exit ;
 
-                len = s2-s1 ;
+                len = (meUShort) (s2-s1);
 
                 if(node->clsEndOff)
                     len -= node->clsEndOff ;
@@ -2942,7 +2942,7 @@ indentLine(int *inComment)
     ss[blkp[noColChng-1].column] = '\0' ;
     while(*ss == ' ')
         ss++ ;
-    cind = ss - disLineBuff ;
+    cind = (int) (ss - disLineBuff);
     if((noColChng > 1) && (blkp[0].scheme == 0x00))
         ii = 1 ;
     else
@@ -3072,7 +3072,7 @@ indentLine(int *inComment)
                 if(contFlag == 7)
                     ind += nind ;
                 nind = ind ;
-                ind += ss - disLineBuff + aind ;
+                ind += (int) (ss - disLineBuff) + aind;
                 if((contFlag == 0) && (meIndentGetFlags(indents[indent]) & HIGOTCONT))
                     contFlag = 0x07 ;
             }
@@ -3090,16 +3090,16 @@ indentLine(int *inComment)
     }
 
     /* restore the hilight setup */
-    hilights = bhilights ;
-    displayTab = bdisplayTab ;
-    displayNewLine = bdisplayNewLine ;
-    displaySpace = bdisplaySpace ;
+    hilights = bhilights;
+    displayTab = bdisplayTab;
+    displayNewLine = bdisplayNewLine;
+    displaySpace = bdisplaySpace;
 
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
-    ss = wp->dotLine->text ;
+    ss = wp->dotLine->text;
     while((*ss == ' ') || (*ss == '\t'))
-        ss++ ;
-    coff = ss - wp->dotLine->text ;
+        ss++;
+    coff = (int) (ss - wp->dotLine->text);
     /* change the current position to the indent position if to the left */
     if(wp->dotOffset < coff)
         wp->dotOffset = coff;

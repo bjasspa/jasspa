@@ -1428,7 +1428,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
 
 #if MEOPT_OPENSSL
         /*Bind the socket to the SSL structure*/
-        if((flags & meSOCKFLG_USE_SSL) && ((ret = OPENSSLFunc(SSL_set_fd)(ssl,sck)) < 1))
+        if((flags & meSOCKFLG_USE_SSL) && ((ret = OPENSSLFunc(SSL_set_fd)(ssl,(int) sck)) < 1))
         {
             err = OPENSSLFunc(SSL_get_error)(ssl,ret);
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -1473,7 +1473,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             /*Print out connection details*/
             if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
             {
-                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"SSL connected on socket %x, version: %s, cipher: %s",sck,OPENSSLFunc(SSL_get_version)(ssl),
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"SSL connected on socket %x, version: %s, cipher: %s",(unsigned int) sck,OPENSSLFunc(SSL_get_version)(ssl),
                          OPENSSLFunc(SSL_CIPHER_get_name)(OPENSSLFunc(SSL_get_current_cipher)(ssl)));
                 ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
             }
@@ -1488,7 +1488,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
 #endif
             if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
         {
-            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connected on socket %x",sck);
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connected on socket %x",(unsigned int) sck);
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
         }
         io->urlPrt = port;
@@ -1500,7 +1500,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     if(io->urlOpts & meSOCKOPT_LOG_STATUS)
     {
         memcpy(rbuff,"Connected - downloading ",24);
-        ret = strlen((char *) file);
+        ret = (meInt) strlen((char *) file);
         if(ret > 132)
             ret = 132;
         memcpy(rbuff+24,file,ret);
@@ -1635,7 +1635,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,ffbuf);
     }
     strcpy((char *) ss,"\r\n\r\n");
-    ll = ss+4-ffbuf;
+    ll = (meInt) (ss+4-ffbuf);
     ss = ffbuf;
     for(;;)
     {
@@ -1702,7 +1702,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             if(pfs)
             {
                 ss = rbuff+2;
-                ll = strlen((char *) ss);
+                ll = (meInt) strlen((char *) ss);
                 for(;;)
                 {
 #if MEOPT_OPENSSL
@@ -1718,7 +1718,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             }
             if(ret > 0)
             {
-                while((ll=fread(ffbuf,1,meFIOBUFSIZ,pfp)) > 0)
+                while((ll=(meInt) fread(ffbuf,1,meFIOBUFSIZ,pfp)) > 0)
                 {
                     ss = ffbuf;
                     for(;;)
@@ -1961,7 +1961,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                     *ee = '\0';
                     if((cookie->value != NULL) && (cookie->value[0] != '\0'))
                     {
-                        ll = vv - ss;
+                        ll = (meInt) (vv - ss);
                         if(strncmp((char *) cookie->value,(char *) ss,ll))
                         {
                             cc = *vv;
@@ -1989,9 +1989,9 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                     if(*vv != '\0')
                     {
                         meUByte *ov=NULL;
-                        ll = strlen((char *) ss)+1;
+                        ll = (meInt) strlen((char *) ss)+1;
                         if(de != NULL)
-                            ll += strlen((char *) de)+2;
+                            ll += (meInt) strlen((char *) de)+2;
                         if(ll > cookie->buffLen)
                         {
                             ov = cookie->value;
@@ -2249,7 +2249,7 @@ meSockFtpConnectData(meIo *io, meUByte *buff)
             return -12;
         }
         /*Bind the data socket to the SSL structure */
-        if((ret = OPENSSLFunc(SSL_set_fd)(io->ssl,io->sck)) <= 0)
+        if((ret = OPENSSLFunc(SSL_set_fd)(io->ssl,(int) io->sck)) <= 0)
         {
             err = OPENSSLFunc(SSL_get_error)(io->ssl,ret);
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -2455,7 +2455,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
 
 #if MEOPT_OPENSSL
         /*Bind the socket to the SSL structure*/
-        if((flags & meSOCKFLG_USE_SSL) && ((ret = OPENSSLFunc(SSL_set_fd)(ssl,sck)) < 1))
+        if((flags & meSOCKFLG_USE_SSL) && ((ret = OPENSSLFunc(SSL_set_fd)(ssl,(int) sck)) < 1))
         {
             err = OPENSSLFunc(SSL_get_error)(ssl,ret);
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -2500,7 +2500,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
             /*Print out connection details*/
             if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
             {
-                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"FTP control SSL connected on socket %x, version: %s, cipher: %s",sck,OPENSSLFunc(SSL_get_version)(ssl),
+                snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"FTP control SSL connected on socket %x, version: %s, cipher: %s",(unsigned int) sck,OPENSSLFunc(SSL_get_version)(ssl),
                          OPENSSLFunc(SSL_CIPHER_get_name)(OPENSSLFunc(SSL_get_current_cipher)(ssl)));
                 ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
             }
@@ -2515,7 +2515,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
 #endif
             if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
         {
-            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"FTP control connected on socket %x",sck);
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"FTP control connected on socket %x",(unsigned int) sck);
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
         }
         /* get the initial message */
@@ -2551,7 +2551,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
                     }
                 }
                 /*Bind the socket to the SSL structure*/
-                if((ret = OPENSSLFunc(SSL_set_fd)(ssl,sck)) < 1)
+                if((ret = OPENSSLFunc(SSL_set_fd)(ssl,(int) sck)) < 1)
                 {
                     err = OPENSSLFunc(SSL_get_error)(ssl,ret);
                     if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -2578,7 +2578,7 @@ meSockFtpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user
                 /*Print out connection details*/
                 if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
                 {
-                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Control SSL connected on socket %x, version: %s, cipher: %s",sck,OPENSSLFunc(SSL_get_version)(ssl),
+                    snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Control SSL connected on socket %x, version: %s, cipher: %s",(unsigned int) sck,OPENSSLFunc(SSL_get_version)(ssl),
                              OPENSSLFunc(SSL_CIPHER_get_name)(OPENSSLFunc(SSL_get_current_cipher)(ssl)));
                     ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
                 }
@@ -2792,7 +2792,7 @@ meSockDictOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *dic
         }
         if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
         {
-            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connected on socket %x",sck);
+            snprintf((char *) rbuff,meSOCK_BUFF_SIZE,"Connected on socket %x",(unsigned int) sck);
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,rbuff);
         }
         if(meSockDictReadReply(io,rbuff) != 220)
@@ -2812,7 +2812,7 @@ meSockDictOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *dic
         ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "Dict Request:");
         ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,ffbuf);
     }
-    ll = ss-ffbuf;
+    ll = (meInt) (ss-ffbuf);
     ss = ffbuf;
     for(;;)
     {
@@ -3018,7 +3018,7 @@ meSockRead(meIo *io, int sz, meUByte *buff, int offs)
                 if((ss=meStrstr(buff,"\n250 ")) != NULL)
                 {
                     ss++;
-                    ret = ss-buff;
+                    ret = (meInt) (ss-buff);
                     if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
                     {
                         if(ret > 12)

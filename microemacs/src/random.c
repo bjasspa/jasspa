@@ -252,7 +252,7 @@ sortLines(int f, int n)
     }
     if(f == meFALSE)
         n = 0;
-    offs = (int) ((size_t) sL->text) - ((size_t) sL);
+    offs = (meInt) (((size_t) sL->text) - ((size_t) sL));
     if(n < 0)
     {
         offs = 0-offs;
@@ -971,7 +971,7 @@ indentInsert(void)
             str = comCont;
             while(*str != '\0')
                 lineInsertChar(1, *str++);
-            if((doto=((size_t) str) - ((size_t) comCont)) > 0)
+            if((doto=(int) (((size_t) str) - ((size_t) comCont))) > 0)
             {
 #if MEOPT_UNDO
                 meUndoAddInsChars(doto);
@@ -1483,7 +1483,7 @@ hash_skip:
                         cwp->dotLine = lp;
                         cwp->dotLineNo = lineNo;
                     }
-                    if((inq = ((size_t) ss - (size_t) lp->text) - 2) >= 0)
+                    if((inq = (int) ((size_t) ss - (size_t) lp->text) - 2) >= 0)
                     {
                         cwp->dotOffset = inq;
                         break;
@@ -1828,7 +1828,7 @@ findfence(meUByte ch, meUByte forwFlag, meInt depth)
             }
             else if((ss = meStrchr(fenceString+meFENCE_BRACKET_OFFSET,cc)) != NULL)
             {
-                int ii=ss-fenceString;
+                int ii=(int) (ss-fenceString);
 
                 /* check for an oposite direction bracket - i.e. a ')' when going forward
                  * If so return a failure
@@ -1928,7 +1928,7 @@ gotoFence(int f, int n)
             /* this is a simple bracket fence, i.e. (,),{,},[,]
              * the direction and close ch can be calculated
              */
-            forwFlag = ss-fenceString;
+            forwFlag = (int) (ss-fenceString);
             ch = fenceString[forwFlag^1];
             forwFlag &= 1;
         }

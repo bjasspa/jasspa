@@ -1091,7 +1091,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                 if((ss=strchr(classChar,cc)) != NULL)
                 {
                     int ii, jj, kk, invert;
-                    ii = ((size_t) ss) - ((size_t) classChar);
+                    ii = (int) (((size_t) ss) - ((size_t) classChar));
                     invert = ii & 1;
                     ii >>= 1;
                     jj = 255;
@@ -1481,7 +1481,7 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
 {
     int ii;
 
-    if((ii=strlen((char *) regStr)) == 0)
+    if((ii=(int) strlen((char *) regStr)) == 0)
         return meREGEX_ERROR_UNKNOWN;
     else if((ii == regex->regexLen) && ((regex->flags & (meREGEX_VALID|meREGEX_ICASE)) == (flags|meREGEX_VALID)) &&
             !strcmp((char *) regStr,(char *) regex->regex))

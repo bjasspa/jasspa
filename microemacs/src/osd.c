@@ -2511,7 +2511,7 @@ menuRender (osdDISPLAY *md)
             
             /* We know the color is correct so just splat in the text */
             txtp = md->drawnText;
-            ll = meStrlen(ss);
+            ll = (int) meStrlen(ss);
             if(ll >= colWidth)
                 ll = colWidth-1;
             else if(md->flags & RF_CENTER)
@@ -5605,7 +5605,7 @@ osd (int f, int n)
                 txtlen = 0 ;
             }
             else
-                txtlen = meStrlen(txtbuf) + 1 ;  /* Length of the string. */
+                txtlen = (int) meStrlen(txtbuf) + 1;  /* Length of the string. */
         }
         /* Get the numeric argument. Check for 'f' which means false or
          * a value which means true. */
@@ -5631,7 +5631,7 @@ osd (int f, int n)
         if(ii > 0)
         {
             if (flags & MF_STR)
-                cmdlen = meStrlen (buf) + 1;
+                cmdlen = (int) meStrlen (buf) + 1;
             else if ((namidx = decode_fncname(buf,0)) < 0)
                 return meABORT ;
         }

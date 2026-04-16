@@ -390,7 +390,7 @@ mlInsertChar(meUByte cc, meUByte *buf, int *pos, int *len, int max)
      *          meFALSE   otherwise
      */
     int ll;
-    ll = meStrlen(buf);
+    ll = (int) meStrlen(buf);
     if(ll + 1 >= max)
         return meFALSE;
     
@@ -502,12 +502,12 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
     {
         meStrncpy(expbuf+len,cont,meMLDISP_SIZE_MAX-len);
         expbuf[meMLDISP_SIZE_MAX-1] = '\0';
-        len += strlen(expbuf+len);
+        len += (int) strlen(expbuf+len);
     }
     /* switch off the status cause we are replacing it */
     frameCur->mlStatus = 0;
     maxCol = frameCur->width;
-    promsiz = meStrlen(prompt);
+    promsiz = (int) meStrlen(prompt);
     col += promsiz;
     len += promsiz;
     /*
@@ -561,7 +561,7 @@ isFileIgnored(meUByte *fileName)
     
     if((fi = fileIgnore) != NULL)
     {
-        len = meStrlen(fileName);
+        len = (int) meStrlen(fileName);
         for(;;)
         {
             fil=1;
@@ -590,7 +590,7 @@ getFirstLastPos(int noStr,meUByte **strs, meUByte *str, int option,
 {
     register int nn;
     
-    if((nn = meStrlen(str)) == 0)
+    if((nn = (int) meStrlen(str)) == 0)
     {
         *fstPos = 0;
         *lstPos = noStr - 1;
@@ -963,7 +963,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         onHist = numHist+1;
     mlInputFlags = 0;
     meStrcpy(prom,prompt);
-    ii = meStrlen(prom);
+    ii = (int) meStrlen(prom);
     if((defnum > 0) && (defnum <= numHist))
     {
         defaultStr = history[defnum-1];
@@ -979,7 +979,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
 
     if(option & MLNORESET)
     {
-        ilen = meStrlen(buf);
+        ilen = (int) meStrlen(buf);
 #if MEOPT_OSD
         if(frameCur->mlStatus & MLSTATUS_OSDPOS)
         {
@@ -1025,7 +1025,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         if(option & MLHIDEVAL)
         {
             meUByte hbuf[meBUF_SIZE_MAX];
-            ff = meStrlen(buf);
+            ff = (int) meStrlen(buf);
             meAssert(ff < meBUF_SIZE_MAX);
             memset(hbuf,'*',ff);
             hbuf[ff] = '\0';
@@ -1144,7 +1144,7 @@ input_expand:
                 meUByte ft, fname[meBUF_SIZE_MAX], *base;
                 
                 pathNameCorrect(buf,PATHNAME_PARTIAL,fname,&base);
-                ipos = meStrlen(fname);
+                ipos = (int) meStrlen(fname);
                 if((fname[0] == DIR_CHAR) && (fname[1] == DIR_CHAR) && (base == fname+2) && (buf[ilen-1] != '/') && (buf[ilen-1] != '\\'))
                 {
                     /* don't try to expand '//xxx' as we can't get a list of remote servers */
@@ -1179,7 +1179,7 @@ input_expand:
                         }
                     }
 #endif
-                    compOff = meStrlen(fname);
+                    compOff = (int) meStrlen(fname);
                     getDirectoryList(fname,&curDirList);
                     if(noStrs != curDirList.size)
                     {
@@ -1210,7 +1210,7 @@ input_expand:
                 if(fstPos == lstPos)
                 {
                     meStrcpy(buf+compOff,(strList[lstPos]));
-                    ilen += meStrlen(buf+ilen);
+                    ilen += (int) meStrlen(buf+ilen);
                     if((option & MLFILE) && (buf[ilen-1] == DIR_CHAR))
                     {
                         /* if we're entering a file name and we've just
@@ -1298,7 +1298,7 @@ input_expand:
                         {
                             if(last >= 0)
                             {
-                                if(((len=meStrlen(strList[last])) < lwidth) && 
+                                if(((len=(int) meStrlen(strList[last])) < lwidth) && 
                                    ((int) meStrlen(strList[ii]) < lwidth))
                                 {
                                     meStrcpy(line,strList[last]);
@@ -1401,7 +1401,7 @@ input_expand:
                     meStrncpy(buf,history[onHist],nbuf);
                     buf[nbuf-1] = '\0';
                 }
-                ipos = ilen = meStrlen(buf);
+                ipos = ilen = (int) meStrlen(buf);
                 changed=1;
             }
             break;
@@ -1463,7 +1463,7 @@ input_expand:
                     meStrncpy(buf,history[--onHist],nbuf);
                     buf[nbuf-1] = '\0';
                 }                    
-                ipos = ilen = meStrlen(buf);
+                ipos = ilen = (int) meStrlen(buf);
                 changed=1;
             }
             break;
@@ -1538,7 +1538,7 @@ input_expand:
                         curPos = fstPos;
                     meStrncpy(buf+compOff,strList[curPos],nbuf-compOff);
                     buf[nbuf-1] = '\0';
-                    ipos = ilen = meStrlen(buf);
+                    ipos = ilen = (int) meStrlen(buf);
                 }
             }
             break;
@@ -1555,7 +1555,7 @@ input_expand:
                         curPos = lstPos;
                     meStrncpy(buf+compOff,strList[curPos],nbuf-compOff);
                     buf[nbuf-1] = '\0';
-                    ipos = ilen = meStrlen(buf);
+                    ipos = ilen = (int) meStrlen(buf);
                 }
             }
             break;
@@ -1817,7 +1817,7 @@ ml_yank:
 #endif            
                     ((cc=mlHandleMouse(buf,nbuf,compOff)) != 0))
             {
-                ipos = ilen = meStrlen(buf);
+                ipos = ilen = (int) meStrlen(buf);
                 if(cc == 2)
                     cont_flag = 3;
                 else

@@ -255,7 +255,7 @@ meBufferExpandNarrow(meBuffer *bp, register meNarrow *nrrw, meUByte *firstLine, 
         {
             int len;
             lp1 = nrrw->slp;
-            len = meStrlen(firstLine);
+            len = (int) meStrlen(firstLine);
             if((len > meLineGetMaxLength(lp1)) &&
                (addLine(lp1,firstLine) > 0))
             {

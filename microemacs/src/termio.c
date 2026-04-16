@@ -168,7 +168,7 @@ meTime meTimerTime[NUM_TIMERS]={0};   /* Absolute time of the timers */
 #ifdef _MULTI_TIMER
 
 #ifdef _WIN32
-static INT meTimerId[NUM_TIMERS]={0}; /* Windows timer handles          */
+static UINT_PTR meTimerId[NUM_TIMERS]={0}; /* Windows timer handles          */
 #define meSetMultiTimer(id,tim)  (meTimerId[id]=SetTimer(baseHwnd,id,tim,(TIMERPROC)(LPVOID)NULL))
 #define meKillMultiTimer(id)                                                 \
 do {                                                                         \
@@ -1579,7 +1579,7 @@ arg_print:
                 else
                     stackDep--;
                 sprintf(tbuff+len,ss,stack[stackDep]);
-                len += strlen(tbuff+len);
+                len += (meInt) strlen(tbuff+len);
                 *str = cc;
                 break;
             }

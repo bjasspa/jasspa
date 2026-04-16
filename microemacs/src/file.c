@@ -276,7 +276,7 @@ gft_directory:
         DWORD status;
         int len;
 
-        if(((len = meStrlen(file)) == 0) || (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
+        if(((len = (int) meStrlen(file)) == 0) || (meStrchr(file,'*') != NULL) || (meStrchr(file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
@@ -594,7 +594,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
                 {
                     /* it exists, add it to the front as we haven't got a user path yet */
                     gotPaths |= 8;
-                    jj = ll + meStrlen(meUserName);
+                    jj = ll + (int) meStrlen(meUserName);
                     if(index)
                     {
                         base_name[jj++] = mePATH_CHAR;
@@ -615,7 +615,7 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
                 do {
                     if(!(gotPaths & mm))
                     {
-                        jj = meStrlen(subdirs[ii]);
+                        jj = (int) meStrlen(subdirs[ii]);
                         memcpy(base_name+ll,subdirs[ii],jj+1);
                         /* Test the directory for existance, if it does not exist then do not add it as we
                          * do not want to search any directory unecessarily. */
@@ -664,10 +664,10 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 
     if(extCnt)
     {
-        fl = meStrlen(fname);
+        fl = (int) meStrlen(fname);
         jj = extCnt;
         while(--jj >= 0)
-            if(((ii=fl - meStrlen(extLst[jj])) >= 0) &&
+            if(((ii=fl - (int) meStrlen(extLst[jj])) >= 0) &&
 #ifdef _FILE_CASE_INSENSE
                !meStricmp(fname+ii,extLst[jj])
 #else
@@ -695,7 +695,7 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
         fileNameCorrect(fname,outName,NULL);
         if(extCnt)
         {
-            ii = meStrlen(outName);
+            ii = (int) meStrlen(outName);
             for(jj=0 ; jj<extCnt ; jj++)
             {
                 if((extLst[jj][0] == DIR_CHAR) && (outName[ii-1] == DIR_CHAR))
@@ -788,13 +788,13 @@ fileLookup(meUByte *fname, int extCnt, meUByte **extLst, meUByte flags, meUByte 
 #endif
         if((path = meStrchr(path,mePATH_CHAR)) != NULL)
         {
-            ii = path++ - sp ;
+            ii = (int) (path++ - sp);
             memcpy(buf,sp,ii) ;
         }
         else
         {
             meStrcpy(buf,sp) ;
-            ii = meStrlen(buf) ;
+            ii = (int) meStrlen(buf) ;
         }
         /* Check for zero length path */
         if(ii)
@@ -1057,7 +1057,7 @@ gwd(meUByte drive)
 #endif
 #endif  /* _DOS */
 
-    if((ll = meStrlen(dir)) > 0)
+    if((ll = (int) meStrlen(dir)) > 0)
     {
         if(dir[ll-1] != DIR_CHAR)
         {
@@ -1116,7 +1116,7 @@ inputFileName(meUByte *prompt, meUByte *fn, int corFlag)
     s = meGetString(prompt,(MLFILECASE|MLNORESET|MLMACNORT), 0, buf, meBUF_SIZE_MAX) ;
     if(s > 0)
     {
-        if(((ll = meStrlen(buf)) > 0) && (buf[ll-1] == '.') &&
+        if(((ll = (int) meStrlen(buf)) > 0) && (buf[ll-1] == '.') &&
            ((ll == 1) || (buf[ll-2] == '/') || (buf[ll-2] == '\\') ||
             ((buf[ll-2] == '.') &&
              ((ll == 2) || (buf[ll-3] == '/') || (buf[ll-3] == '\\')))))
@@ -1136,7 +1136,7 @@ int
 meTestExecutable(meUByte *fileName)
 {
     int ii ;
-    if((ii = meStrlen(fileName)) > 4)
+    if((ii = (int) meStrlen(fileName)) > 4)
     {
         meUByte *ee ;
         ee = fileName+ii-4 ;
@@ -2095,7 +2095,7 @@ findFileSingle(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         }
     }
 #if MEOPT_SOCKET
-    if(((gft & (meIOTYPE_FTP|meIOTYPE_FTPE)) == 0) || ((fnlen = meStrlen(fname)),(fname[fnlen] == DIR_CHAR)))
+    if(((gft & (meIOTYPE_FTP|meIOTYPE_FTPE)) == 0) || ((fnlen = (int) meStrlen(fname)),(fname[fnlen] == DIR_CHAR)))
         fnlen = 0;
 #endif
     for(bp=bheadp; bp!=NULL; bp=bp->next)
@@ -2394,7 +2394,7 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
        (((s=getFileStats(dfname,0,NULL,NULL)) & meIOTYPE_DIRECTORY) ||
         ((s & (meIOTYPE_FTP|meIOTYPE_FTPE)) && (dfname[meStrlen(dfname)-1] == DIR_CHAR))))
     {
-        s = meStrlen(dfname);
+        s = (int) meStrlen(dfname);
         if(dfname[s-1] != DIR_CHAR)
             dfname[s++] = DIR_CHAR;
         meStrcpy(dfname+s,getFileBaseName(sfname));
@@ -3074,7 +3074,7 @@ fileNameConvertDirChar(meUByte *fname)
 void
 fileNameSetHome(meUByte *ss)
 {
-    int ll = meStrlen(ss);
+    int ll = (int) meStrlen(ss);
     meNullFree(homedir);
     if((homedir = meMalloc(ll+2)) != NULL)
     {
@@ -3219,7 +3219,7 @@ double_url:
     }
     if(flag)
     {
-        int ll = (size_t) urle - (size_t) urls;
+        int ll = (int) ((size_t) urle - (size_t) urls);
         memcpy(p1,urls,ll);
         p1 += ll;
     }
@@ -3252,7 +3252,7 @@ double_url:
             {
                 /* look for an alias/abbrev path */
                 if((pe = meStrchr(p,DIR_CHAR)) == NULL)
-                    ll = meStrlen(p);
+                    ll = (int) meStrlen(p);
                 else
                     ll = (int) (((size_t) pe) - ((size_t) (p)));
 
@@ -3499,7 +3499,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                             if(lp->text[0] == 'd')
                                 fls[noFiles][ii++] = '/' ;
                             else if((lp->text[0] == 'l') && ((ss = meStrstr(fls[noFiles]," -> ")) != NULL))
-                                ii = ((size_t) ss) - ((size_t) fls[noFiles]) ;
+                                ii = (int) (((size_t) ss) - ((size_t) fls[noFiles]));
                             else if(isDigit(lp->text[0]) && (lp->text[meRegexStrCmp.group[6].start+1] == 'D'))
                                 fls[noFiles][ii++] = '/' ;
                             fls[noFiles++][ii] = '\0' ;
@@ -3595,12 +3595,12 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
         int len ;
 
         meStrcpy(upb,homedir) ;
-        len = meStrlen(upb) ;
+        len = (int) meStrlen(upb) ;
         upb[len-1] = '\0' ;
         if((ss = meStrrchr(upb,DIR_CHAR)) != NULL)
         {
             ss[1] = '\0' ;
-            len = meStrlen(upb) ;
+            len = (int) meStrlen(upb) ;
         }
         else
             upb[len-1] = DIR_CHAR ;
@@ -3652,13 +3652,13 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     {
                         int ll,ii=1+(int)(ss-pathName);
                         *ss = '\\';
-                        len = meStrlen(pathName);
+                        len = (int) meStrlen(pathName);
                         // May need to ignore if rr[bs].dwType == RESOURCETYPE_PRINT (2), but RESOURCETYPE_ANY (0) could be a disk (1) too
                         rr = (NETRESOURCE *) ffbuf;
                         for(bs=0; bs<fc; bs++)
                         {
                             if(!meStrncmp(rr[bs].lpRemoteName,pathName,len) &&
-                               ((fls[noFiles] = meMalloc((ll=strlen(rr[bs].lpRemoteName+ii))+2)) != NULL))
+                               ((fls[noFiles] = meMalloc((ll=(int) strlen(rr[bs].lpRemoteName+ii))+2)) != NULL))
                             {
                                 memcpy(fls[noFiles],rr[bs].lpRemoteName+ii,ll);
                                 fls[noFiles][ll] = DIR_CHAR;
@@ -3689,7 +3689,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
             return;
         }
         meFiletimeInit(stmtime);
-        if(((len = meStrlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
+        if(((len = (int) meStrlen(pathName)) > 0) && (pathName[len-1] == DIR_CHAR))
         {
             pathName[len-1] = '\0';
             if((handle = FindFirstFile((const char *) pathName,&fd)) != INVALID_HANDLE_VALUE)
@@ -3961,7 +3961,7 @@ getDirectoryList(meUByte *pathName, meDirList *dirList)
                     noFiles = 0 ;
                     break ;
                 }
-                len = meStrlen(rNd->name) ;
+                len = (int) meStrlen(rNd->name) ;
                 if((ff = meMalloc(len+2)) == NULL)
                 {
                     fls = NULL ;

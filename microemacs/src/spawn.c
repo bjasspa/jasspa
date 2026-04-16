@@ -726,14 +726,14 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 
 #define ipipeStoreInputPos()                                                 \
 do {                                                                         \
-    meLine *lp_new ;                                                         \
-    noLines += addLine(lp_old,buff) ;                                        \
-    lp_new = meLineGetPrev(lp_old) ;                                         \
+    meLine *lp_new;                                                          \
+    noLines += addLine(lp_old,buff);                                         \
+    lp_new = meLineGetPrev(lp_old);                                          \
     if(lp_old != bp->baseLine)                                               \
     {                                                                        \
-        noLines-- ;                                                          \
-        lp_new->next = lp_old->next ;                                        \
-        lp_old->next->prev = lp_new ;                                        \
+        noLines--;                                                           \
+        lp_new->next = lp_old->next;                                         \
+        lp_old->next->prev = lp_new;                                         \
         if(lp_old->flag & meLINE_ANCHOR)                                     \
             meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,bp,   \
                                lp_old,lp_new,0,0);                           \
@@ -741,16 +741,16 @@ do {                                                                         \
     }                                                                        \
     else                                                                     \
     {                                                                        \
-        bp->dotLineNo-- ;                                                    \
-        ipipe->curRow-- ;                                                    \
+        bp->dotLineNo--;                                                     \
+        ipipe->curRow--;                                                     \
     }                                                                        \
-    bp->dotLineNo += noLines ;                                               \
-    bp->lineCount += noLines ;                                               \
-    ipipe->curRow = curRow ;                                                 \
-    bp->vertScroll = bp->dotLineNo-curRow ;                                  \
-    bp->dotLine = lp_new ;                                                   \
-    bp->dotOffset = p1 - buff ;                                              \
-    meBufferUpdateLocation(bp,noLines,bp->dotOffset) ;                       \
+    bp->dotLineNo += noLines;                                                \
+    bp->lineCount += noLines;                                                \
+    ipipe->curRow = curRow;                                                  \
+    bp->vertScroll = bp->dotLineNo-curRow;                                   \
+    bp->dotLine = lp_new;                                                    \
+    bp->dotOffset = (meUShort) (p1 - buff);                                  \
+    meBufferUpdateLocation(bp,noLines,bp->dotOffset);                        \
 } while(0)
 
 
@@ -1166,7 +1166,7 @@ cant_handle_this:
                 meUByte *ss, *dd ;
                 int ll ;
 
-                ll = meStrlen(p1) ;
+                ll = (int) meStrlen(p1) ;
                 ss = p1 + ll ;
                 dd = ss+1 ;
                 do
@@ -1568,7 +1568,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     /* get or create the command buffer */
     if(((bp=bfind(bufName,0)) != NULL) && meModeTest(bp->mode,MDPIPE))
     {
-        cd = meStrlen(bufName);
+        cd = (int) meStrlen(bufName);
         if(cd > (meBUF_SIZE_MAX-22))
             cd = meBUF_SIZE_MAX-22;
         memcpy(line,bufName,cd);

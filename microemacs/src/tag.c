@@ -123,7 +123,7 @@ findTagInFile(meUByte *file, meUByte *baseName, meUByte *tagTemp,
 static int
 findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
 {
-    meUByte *tagFile, *tagTemp, *baseName, *tt ;
+    meUByte *tagFile, *tagTemp, *baseName, *tt;
     int ii, tagOption;
     
     /* Get the tag environment variables */
@@ -150,12 +150,12 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
     
     /* Get the current directory location of our file and use this to locate
      * the tag file. */
-    getFilePath(frameCur->windowCur->buffer->fileName,file) ;
-    baseName = file + meStrlen(file) ;
+    getFilePath(frameCur->windowCur->buffer->fileName,file);
+    baseName = file + meStrlen(file);
     for(;;)
     {
         /* Construct the new tags file base */
-        meStrcpy(baseName,tagFile) ;
+        meStrcpy(baseName,tagFile);
         
         /* Attempt to find the tag in this tags file. */
         if((ii = findTagInFile(file,baseName,tagTemp,tagOption,key,patt)) == 0)
@@ -166,12 +166,12 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
                     tagLastFile = meMalloc(meBUF_SIZE_MAX) ;
                 if(tagLastFile != NULL)
                 {
-                    ii = (size_t) baseName - (size_t) file ;
-                    meStrncpy(tagLastFile,file,ii) ;
-                    meStrcpy(tagLastFile+ii,tagFile) ;
+                    ii = (int) ((size_t) baseName - (size_t) file);
+                    meStrncpy(tagLastFile,file,ii);
+                    meStrcpy(tagLastFile+ii,tagFile);
                 }
                 else
-                    tagLastPos = -1 ;
+                    tagLastPos = -1;
             }
             return meTRUE ;
         }
@@ -179,7 +179,7 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
         {
             if(!(tagOption & 2))
             {
-                meStrcpy(baseName,tagFile) ;
+                meStrcpy(baseName,tagFile);
                 /* no continue after fail to find it a tag file - return */
                 return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Can't find tag [%s] in tag file : %s]",
                                key, file);
@@ -192,13 +192,13 @@ findTagSearch(meUByte *key, meUByte *file, meUByte *patt)
         /* continue search. Ascend the tree by geting the directory path
          * component of our current path position */
         if(baseName == file)
-            break ;
+            break;
         baseName[-1] = '\0';    /* Knock the trailing '/' */
         if((baseName=meStrrchr(file,DIR_CHAR)) == NULL)
-            break ;
-        baseName++ ;    /* New basename to try */
+            break;
+        baseName++;    /* New basename to try */
     }
-    tagLastPos = -1 ;
+    tagLastPos = -1;
     return mlwrite(MWABORT|MWCLEXEC,(meUByte *)"[Failed to find tag : %s]",key);
 }
 

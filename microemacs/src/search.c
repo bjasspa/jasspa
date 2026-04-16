@@ -416,20 +416,20 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
                     /* Save the current position in case we need to restore it on a match. */
                     if(curptr == curline->text)
                     {
-                        curline = meLineGetPrev(curline) ;
+                        curline = meLineGetPrev(curline);
                         curlnno-- ;
                         curoff = meLineGetLength(curline);
                     }
                     else
-                        curoff = ((size_t) curptr) - ((size_t) curline->text) - 1 ;
-                    matchoff = ((size_t) matchptr) - ((size_t) matchline->text) ;
-                    break ;
+                        curoff = (int) (((size_t) curptr) - ((size_t) curline->text)) - 1;
+                    matchoff = (int) (((size_t) matchptr) - ((size_t) matchline->text));
+                    break;
                 }
             }
             if(TTbreakTest(1))
             {
-                ctrlg(meFALSE,1) ;
-                return meFALSE ;
+                ctrlg(meFALSE,1);
+                return meFALSE;
             }
         }
     }
@@ -583,7 +583,7 @@ expandexp(int slen, meUByte *s, int dlen, int doff, meUByte *d,
     int ii ;
     
     if(slen < 0)
-        slen = meStrlen(s) ;
+        slen = (int) meStrlen(s);
     for(ii=0 ; (doff<dlen-6) && (ii<slen) ; ii++)
     {
         if(cpos == ii)
@@ -633,7 +633,7 @@ rvstrcpy(register meUByte *str)
     register meUByte *rvstr ;
     register int ii ;
     
-    if((ii = meStrlen(str)) > meBUF_SIZE_MAX-1)
+    if((ii = (int) meStrlen(str)) > meBUF_SIZE_MAX-1)
         ii = meBUF_SIZE_MAX-1;
     
     rvstr = srchRPat+ii ;
@@ -765,7 +765,7 @@ replaces(int kind, int ff, int nn)
                   1+lastReplace)) <= 0)
 		return status;		/* Aborted out - Exit */
             
-            slength = meStrlen (srchPat);	/* Get length of search string */
+            slength = (int) meStrlen(srchPat);	/* Get length of search string */
             
 /*            mlwrite (MWWAIT,"Search [%d:%s]", slength, srchPat);*/
             
@@ -790,7 +790,7 @@ replaces(int kind, int ff, int nn)
                 return status;
             }	/* End of 'if' */
             
-            rlength = meStrlen(rpat);	/* Get length of replace string. */
+            rlength = (int) meStrlen(rpat);	/* Get length of replace string. */
             
             if (kind)	  	/* Build query replace question string.  */
             {

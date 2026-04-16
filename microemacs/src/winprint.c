@@ -146,10 +146,8 @@ printMakeDevNames (char *driver, char *printer, char *port, int defaultp)
             port = "";
 
         /* Get the size of the structure */
-        jj = ((strlen (printer) + 1) +
-              (strlen (driver) + 1) +
-              (strlen (port) + 1) +
-               sizeof (DEVNAMES));
+        jj = (int) ((strlen(printer) + 1) + (strlen(driver) + 1) +
+                    (strlen(port) + 1) + sizeof(DEVNAMES));
 
         /* Build movable global object */
         if ((hDevNames = GlobalAlloc (GMEM_MOVEABLE|GMEM_ZEROINIT, jj)) != NULL)
@@ -252,10 +250,8 @@ getPrinterInfo (int index)
                     int jj;
 
                     /* Get the size of the structure */
-                    jj = ((strlen (pi2[ii].pPrinterName) + 1) +
-                          (strlen (pi2[ii].pDriverName) + 1) +
-                          (strlen (pi2[ii].pPortName + 1) +
-                           sizeof (DEVNAMES)));
+                    jj = (int) ((strlen(pi2[ii].pPrinterName) + 1) + (strlen(pi2[ii].pDriverName) + 1) +
+                                (strlen(pi2[ii].pPortName + 1) + sizeof(DEVNAMES)));
 
                     /* Build movable global object */
                     if ((hDevNames = GlobalAlloc (GMEM_MOVEABLE|GMEM_ZEROINIT, jj)) == NULL)

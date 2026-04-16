@@ -997,25 +997,25 @@ mlUnbind(int f, int n)
 static int
 buildlist(int n, meUByte *mstring)
 {
-    meCommand    *cmd ;
-    meBind   *ktp;	        /* pointer into the command table */
-    meWindow   *wp;
-    meBuffer   *bp;	        /* buffer to put binding list into */
-    int       cpos;   		/* current position to use in outseq */
-    meUByte     _outseq[meBUF_SIZE_MAX]; 	/* output buffer for keystroke sequence */
-    meUByte    *outseq=_outseq+4;	/* output buffer for keystroke sequence */
-    int       curidx;           /* Name integer index. */
-    char      op_char;		/* Output character */
+    meCommand *cmd;
+    meBind *ktp;	        /* pointer into the command table */
+    meWindow *wp;
+    meBuffer *bp;	        /* buffer to put binding list into */
+    int cpos;   		/* current position to use in outseq */
+    meUByte _outseq[meBUF_SIZE_MAX]; /* output buffer for keystroke sequence */
+    meUByte *outseq=_outseq+4;	/* output buffer for keystroke sequence */
+    int curidx;                 /* Name integer index. */
+    char op_char;		/* Output character */
     
     /* and get a buffer for it */
     if((wp = meWindowPopup(NULL,BcommandsN,(BFND_CREAT|BFND_CLEAR|WPOP_USESTR),NULL)) == NULL)
-        return mlwrite(MWABORT,(meUByte *)"[Failed to create list]") ;
-    bp = wp->buffer ;
+        return mlwrite(MWABORT,(meUByte *)"[Failed to create list]");
+    bp = wp->buffer;
     
-    _outseq[0] = ' ' ;
-    _outseq[1] = ' ' ;
-    _outseq[2] = ' ' ;
-    _outseq[3] = ' ' ;
+    _outseq[0] = ' ';
+    _outseq[1] = ' ';
+    _outseq[2] = ' ';
+    _outseq[3] = ' ';
     wp->markLine = NULL;
     wp->markOffset = 0;
     
@@ -1030,8 +1030,8 @@ buildlist(int n, meUByte *mstring)
             continue;		/* Do next loop */
         /* Add in the command name */
         meStrcpy(outseq, cmd->name);
-        curidx = cmd->id ;
-        cpos = meStrlen(outseq);
+        curidx = cmd->id;
+        cpos = (int) meStrlen(outseq);
         
         /* Search down any keys bound to this */
         
@@ -1059,10 +1059,10 @@ buildlist(int n, meUByte *mstring)
         
         /* if no key was bound, we need to dump it anyway */
         if (cpos > 0)
-            addLineToEob(bp,_outseq) ;
+            addLineToEob(bp,_outseq);
     }
-    meModeClear(bp->mode,MDEDIT) ;    /* don't flag this as a change */
-    meModeSet(bp->mode,MDVIEW) ;      /* put this buffer view mode */
+    meModeClear(bp->mode,MDEDIT);       /* don't flag this as a change */
+    meModeSet(bp->mode,MDVIEW);         /* put this buffer view mode */
     wp->dotLine = meLineGetNext(bp->baseLine);    /* back to the beginning */
     wp->dotOffset = 0;
     mlerase(MWCLEXEC);          	/* clear the mode line */
@@ -1076,7 +1076,7 @@ buildlist(int n, meUByte *mstring)
 int
 listCommands(int f, int n)
 {
-    return buildlist(n,NULL) ;
+    return buildlist(n,NULL);
 }
 
 int

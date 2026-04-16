@@ -554,7 +554,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             tt = ss ;
             while(((cc = *ss) != '\0') && (cc != meCHAR_NL))
                 ss++ ;
-            ii = (size_t) ss - (size_t) tt ;
+            ii = (int) ((size_t) ss - (size_t) tt);
             off = windCurLineOffsetEval(cwp);
             ldel = lsspc = lespc = 0 ;
             coff = 0 ;

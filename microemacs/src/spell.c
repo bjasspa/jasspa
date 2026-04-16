@@ -742,7 +742,7 @@ spellRuleAdd(int f, int n)
             {
                 rule = SPELLRULE_REGEX;
                 if((meGetString((meUByte *)"Rule",MLNOSPACE,0,buff,meBUF_SIZE_MAX) <= 0) ||
-                   ((rr = meMalloc(sizeof(meSpellRule)+(ll=meStrlen(buff)))) == NULL))
+                   ((rr = meMalloc(sizeof(meSpellRule)+(ll=(int) meStrlen(buff)))) == NULL))
                     return meABORT;
                 rr->ending = rr->subRule;
                 memcpy(rr->ending,buff,ll+1);
@@ -765,7 +765,7 @@ spellRuleAdd(int f, int n)
 
             rule -= SPELLRULE_OFFST;
             if((meGetString((meUByte *)"Ending",MLNOSPACE,0,buff,255) <= 0) ||
-               ((ll = meStrlen(buff) + 1),
+               ((ll = (int) meStrlen(buff) + 1),
                 (meGetString((meUByte *)"Remove",MLNOSPACE,0,buff+ll,meAFFIX_SIZE_MAX) <= 0)) ||
                ((rl = (meUByte) meStrlen(buff+ll)),
                 (meGetString((meUByte *)"Append",MLNOSPACE,0,buff+ll+rl,meAFFIX_SIZE_MAX) <= 0)) ||
@@ -945,7 +945,7 @@ meDictionarySave(meDictionary *dict, int n)
                 meStrcpy(pp,ss);
             }
 
-            if(((ii=meStrlen(fname)) < 4) ||
+            if(((ii=(int) meStrlen(fname)) < 4) ||
 #ifdef _FILE_CASE_INSENSE
                meStricmp(fname+ii-4,(const meUByte *)".edf")
 #else
@@ -1844,7 +1844,7 @@ wordCheck(meUByte *word, int len)
             }
         }
         if(hyphen &&
-           (((len=ss-word) == 0) || (wordCheckBase(word,(meUByte)len) > 0)))
+           (((len=(int) (ss-word)) == 0) || (wordCheckBase(word,(meUByte)len) > 0)))
         {
             wordCurr = NULL;
             return meTRUE;
@@ -2304,7 +2304,7 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
         /* if the last letter is a '.' etc then loop through the guesses adding one */
         for(ii=0 ; ii<off ; ii++)
         {
-            wlen = meStrlen(words[ii]);
+            wlen = (int) meStrlen(words[ii]);
             /* must check that its not there already */
             if(words[ii][wlen-1] != cc)
             {
@@ -2355,7 +2355,7 @@ spellWordToInternalCharset(meUByte *db, meUByte *ss)
         *dd++ = toInternalCharset(cc);
     }
     *dd = '\0';
-    return (size_t) (dd-db);
+    return (int) (dd-db);
 }
 
 
@@ -2501,7 +2501,7 @@ spellWord(int f, int n)
 
         if(meGetString((meUByte *)"Enter flags", MLNOSPACE,0,wd,meWORD_FLAG_MAX) <= 0)
             return meABORT;
-        len = meStrlen(wd);
+        len = (int) meStrlen(wd);
         memcpy(meWordGetFlag(dw),wd,len);
         /* set flag len directly to clear the ERROR flag */
         dw->flagLen = len;
@@ -2832,7 +2832,7 @@ spellWord(int f, int n)
         *dd++ = '|';
         cw = 0;
         ll = meBUF_SIZE_MAX-3;
-        while((cw < nw) && ((ii=meStrlen((ss=words[cw++]))) < ll))
+        while((cw < nw) && ((ii=(int) meStrlen((ss=words[cw++]))) < ll))
         {
             spellWordToDisplayCharset(dd,ss);
             dd += ii;

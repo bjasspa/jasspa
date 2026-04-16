@@ -371,7 +371,7 @@ lineMakeSpace(int n)
             lp_new->flag |= meLINE_CHANGED;
             cp2 = lp_old->text + lp_old->length;
             cp1 = cp2 - n;
-            ii  = cp1 - lp_old->text - doto;
+            ii  = (meUShort) (cp1 - lp_old->text - doto);
             do
                 *cp2-- = *cp1--;
             while(ii--);
@@ -455,7 +455,7 @@ lineInsertString(register int n, register meUByte *cp)
     
     /* if n == 0 the length if the string is unknown calc the length */
     if((n == 0) &&
-       ((n = meStrlen(cp)) == 0))
+       ((n = (int) meStrlen(cp)) == 0))
         return meTRUE;
     
     lineSetChanged(WFMAIN);
@@ -688,8 +688,8 @@ bufferInsertText(meUByte *str, meInt flags)
     {
         while(((cc=*ss++) != '\0') && (cc != ccnl))
             ;
-        ss-- ;
-        len = (((size_t) ss) - ((size_t) str)) ;
+        ss--;
+        len = (int) (((size_t) ss) - ((size_t) str));
         if(len > meLINE_ELEN_MAX)
         {
             mlwrite(MWABORT|MWPAUSE,(meUByte *)"[Line too long!]");

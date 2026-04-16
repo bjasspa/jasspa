@@ -152,7 +152,7 @@ token(meUByte *src, meUByte *tok)
                 case 'P':
                     /* Go to set position, defined by \p - replace with \CXAP */
                     {
-                        int ll = meStrlen(__cmdArray[CK_GOAMRK].name) ;
+                        int ll = (int) meStrlen(__cmdArray[CK_GOAMRK].name) ;
                         if((size_t) (dd+ll+9) <= (size_t) tokEnd)
                         {
                             *dd++ = meCHAR_LEADER ;
@@ -196,7 +196,7 @@ quote_spec_key1:
                 case 'n':   *dd++ = 0x0a; break;
                 case 'p':
                     {
-                        int ll = meStrlen(__cmdArray[CK_SETAMRK].name) ;
+                        int ll = (int) meStrlen(__cmdArray[CK_SETAMRK].name) ;
                         if((size_t) (dd+ll+9) <= (size_t) tokEnd)
                         {
                             *dd++ = meCHAR_LEADER ;
@@ -1321,7 +1321,7 @@ loop_round:
                     register int linlen;        /* length of line to execute */
                     register meLine *glp;         /* line to goto */
                     
-                    linlen = meStrlen(tkn) ;
+                    linlen = (int) meStrlen(tkn) ;
                     glp = hlp->next;
                     while(glp != hlp)
                     {

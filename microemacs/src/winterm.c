@@ -702,7 +702,7 @@ TTsendClientServer(meUByte *line)
 {
     if(connectHandle != INVALID_HANDLE_VALUE)
     {
-        int ll=meStrlen(line);
+        int ll=(int) meStrlen(line);
         DWORD ww;
         WriteFile(connectHandle,line,ll,&ww,NULL);
     }
@@ -754,16 +754,7 @@ ConsolePaint(void)
         coordUpdateBegin.X = consolePaintArea.Left;
         coordUpdateBegin.Y = consolePaintArea.Top;
         
-#ifdef ME_DONT_FORCE_UNICODE
-        /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
-        /* Write to console */
-        if(meSystemCfg & meSYSTEM_FONTFIX)
-#endif
-            WriteConsoleOutputW(hOutput,ciScreenBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
-#ifdef ME_DONT_FORCE_UNICODE
-        else
-            WriteConsoleOutputA(hOutput,ciScreenBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
-#endif
+        WriteConsoleOutputW(hOutput,ciScreenBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
         
         /* Remove the region, as we just updated it */
         consolePaintArea.Right = consolePaintArea.Bottom = 0;
@@ -786,47 +777,26 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
     pCI = &ciScreenBuffer[(y * frameCur->width) + x];
     
     /* Copy the string to the screen buffer memory, and flag any changes */
-#ifdef ME_DONT_FORCE_UNICODE
-    /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
-    if(meSystemCfg & meSYSTEM_FONTFIX)
+    while(--len >= 0)
     {
-#endif
-        while(--len >= 0)
+        if(((cc=*ss++) & 0xe0) == 0)
+            uc = ttSpeUChars[cc];
+        else if((cc & 0x80) == 0)
+            uc = cc;
+        else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
+            uc = ttSpeUChars[meCHAR_UNDEF];
+        if(uc != pCI->Char.UnicodeChar)
         {
-            if(((cc=*ss++) & 0xe0) == 0)
-                uc = ttSpeUChars[cc];
-            else if((cc & 0x80) == 0)
-                uc = cc;
-            else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
-                uc = ttSpeUChars[meCHAR_UNDEF];
-            if(uc != pCI->Char.UnicodeChar)
-            {
-                pCI->Char.UnicodeChar = uc;
-                bAny = meTRUE;
-            }
-            if(wAttribute != pCI->Attributes)
-            {
-                pCI->Attributes = wAttribute;
-                bAny = meTRUE;
-            }
-            pCI++;
+            pCI->Char.UnicodeChar = uc;
+            bAny = meTRUE;
         }
-#ifdef ME_DONT_FORCE_UNICODE
-    }
-    else
-    {
-        while(--len >= 0)
+        if(wAttribute != pCI->Attributes)
         {
-            if(((cc=*ss++) != pCI->Char.AsciiChar) || (wAttribute != pCI->Attributes))
-            {
-                pCI->Char.AsciiChar = cc;
-                pCI->Attributes = wAttribute;
-                bAny = meTRUE;
-            }
-            pCI++;
+            pCI->Attributes = wAttribute;
+            bAny = meTRUE;
         }
+        pCI++;
     }
-#endif
     /* Adjust the current update region */
     if(bAny)
     {
@@ -1936,7 +1906,7 @@ meModifierUpdate(void)
 
 /* returns 0 for not translation, -1 for dead key, -2 for key>255 else char */
 int
-WinKeyTranslate(UINT key, meUShort modif)
+WinKeyTranslate(WPARAM key, meUShort modif)
 {
     BYTE keyBuf[256];
     WCHAR buf[5];
@@ -1949,7 +1919,7 @@ WinKeyTranslate(UINT key, meUShort modif)
     if(modif & ME_CONTROL)
         keyBuf[VK_CONTROL] = 0xff;
     
-    if((rr = ToUnicode(key,0,keyBuf,buf,5,4)) < 0)
+    if((rr = ToUnicode((UINT) key,0,keyBuf,buf,5,4)) < 0)
         rr = -1;
     else if((rr > 0) && ((rr = buf[0]) > 0x0ff))
         rr = -2;
@@ -2304,7 +2274,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #endif
                 compSpecName = (meUByte *) "cmd.exe";
         }
-        compSpecLen = meStrlen(compSpecName);
+        compSpecLen = (int) meStrlen(compSpecName);
     }
     
 #ifdef _WIN32s
@@ -2348,7 +2318,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         if(flags & LAUNCH_FILTER)
             status += strlen(inFile) + 4;
 #else
-        status = meStrlen(ss) + compSpecLen + 16;
+        status = ((int) meStrlen(ss)) + compSpecLen + 16;
 #endif
         if((cmdLine = meMalloc(status)) == NULL)
             return meFALSE;
@@ -3504,7 +3474,7 @@ do_keydown:
              * 
              * Steve 2025-06-20
              */
-            UINT cv;
+            WPARAM cv;
             int ci;
             if(((cv=MapVirtualKey(((lParam>>16) & 0x0ff),MAPVK_VSC_TO_VK)) > 0) && 
                ((ci = WinKeyTranslate(cv,(ttmodif & ME_SHIFT))) > 0))
@@ -4513,7 +4483,7 @@ TTwaitForChar(void)
 #ifdef _ME_WINDOW
             if(meSystemCfg & meSYSTEM_CONSOLE)
 #endif /* _ME_WINDOW */
-                timerAlarm(msg.wParam);
+                timerAlarm((int) msg.wParam);
 #ifdef _ME_WINDOW
             else
 #endif /* _ME_WINDOW */
@@ -4728,16 +4698,9 @@ TTstart(void)
         
         /* console can't support fonts and only has XANSI */
         meSYSTEM_MASK &= ~meSYSTEM_FONTS;
-#ifdef ME_DONT_FORCE_UNICODE
-        /* THIS CODE CAN BE REMOVED ONCE WE CONFIRM THE USE OF UNICODE FOR OUTPUT IS UNIVERSALLY WORKING */
-        meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_FONTFIX|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR);
-        /* TODO Could consider using SetConsoleOutputCP to make console use Unicode, what impact would that have in input? */
-        if(GetConsoleCP() == 65001)
-            meSystemCfg |= meSYSTEM_FONTFIX;
-#else
         /* windows console always supports unicode which is far more flexible and supports FONTFIX */
         meSystemCfg = (meSystemCfg & ~(meSYSTEM_FONTS|meSYSTEM_RGBCOLOR)) | (meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR|meSYSTEM_FONTFIX);
-#endif        
+        
         /* This will allocate a console if started from
          * the windows NT program manager. */
         AllocConsole();
@@ -4910,7 +4873,7 @@ TTahead(void)
                 }
             }
             else if(PeekMessage(&msg, meHWndNull, WM_TIMER, WM_TIMER, PM_REMOVE) != meFALSE)
-                timerAlarm(msg.wParam);
+                timerAlarm((int) msg.wParam);
             else
                 break;
         }
@@ -5048,7 +5011,7 @@ TTaheadFlush(void)
             {
                 if(msg.message == WM_TIMER)
                     /* Timer has expired */
-                    timerAlarm(msg.wParam);
+                    timerAlarm((int) msg.wParam);
             }
             else
                 break;
@@ -5198,7 +5161,7 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
 #endif
             else if(msg.message == WM_TIMER)
                 /* Timer has expired */
-                timerAlarm(msg.wParam);
+                timerAlarm((int) msg.wParam);
         }
 #ifdef _ME_WINDOW
         else
@@ -5495,7 +5458,7 @@ meSetupPathsAndUser(void)
         else
             pdBuf[0] = '\0';
     }
-    if(((pdLen=strlen(pdBuf)) > 0) && ((meProgData=meMalloc(pdLen+9)) != NULL))
+    if(((pdLen=(int) strlen(pdBuf)) > 0) && ((meProgData=meMalloc(pdLen+9)) != NULL))
     {
         fileNameConvertDirChar((meUByte *) pdBuf);
         if(pdBuf[pdLen-1] != DIR_CHAR)
@@ -5508,7 +5471,7 @@ meSetupPathsAndUser(void)
     if((((ss = (char *) meUserPath) != NULL) && (ss[0] != '\0')) ||
        (((ss = meGetenv("MEUSERPATH")) != NULL) && (ss[0] != '\0')))
     {
-        ll = meStrlen(ss);
+        ll = (int) meStrlen(ss);
         if((ss[ll-1] == DIR_CHAR) || (ss[ll-1] == _CONVDIR_CHAR))
             ll--;
         meUserPath = meMalloc(ll+2);
@@ -5571,7 +5534,7 @@ meSetupPathsAndUser(void)
         /* also check for directories in the same location as the binary */
         if((ss=meStrrchr(meProgName,DIR_CHAR)) != NULL)
         {
-            ii = (((size_t) ss) - ((size_t) meProgName));
+            ii = (int) (((size_t) ss) - ((size_t) meProgName));
             meStrncpy(buff,meProgName,ii);
             buff[ii] = '\0';
             ll = mePathAddSearchPath(ll,evalResult,(meUByte *) buff,9,&gotPaths);
@@ -5593,9 +5556,9 @@ meSetupPathsAndUser(void)
         {
             /* the first path in the search-path is to be used as the user-path */
             if((ss = meStrchr(searchPath,mePATH_CHAR)) != NULL)
-                ll = ((size_t) ss) - ((size_t) searchPath);
+                ll = (int) (((size_t) ss) - ((size_t) searchPath));
             else
-                ll = meStrlen(searchPath);
+                ll = (int) meStrlen(searchPath);
             if(searchPath[ll-1] == DIR_CHAR)
                 ll--;
             meUserPath = meMalloc(ll+2);

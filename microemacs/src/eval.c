@@ -121,7 +121,7 @@ regexStrCmp(meUByte *str, meUByte *rgx, int flags)
     if(meRegexComp(rg,rgx,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
         return -1;
     
-    ii = meStrlen(str);
+    ii = (int) meStrlen(str);
     rr = meRegexMatch(rg,str,ii,0,ii,(flags & meRSTRCMP_WHOLE));
     if((flags & meRSTRCMP_USEMAIN) && (rr > 0))
     {
@@ -327,7 +327,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                 cwp->dotOffset = 0;
                 if((status = ldelete(meLineGetLength(cwp->dotLine),6)) > 0)
                 {
-                    ll = meStrlen(vvalue);
+                    ll = (int) meStrlen(vvalue);
                     status = lineInsertString(ll,vvalue);
 #if MEOPT_UNDO
                     if(status >= 0)
@@ -417,7 +417,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             meRegCurr->n = meAtoi(vvalue);
         else if(*nn == 'y')
         {
-            int len = meStrlen(vvalue);
+            int len = (int) meStrlen(vvalue);
             killInit(0);
             if((nn = killAddNode(len)) == NULL)
                 return meABORT;
@@ -498,7 +498,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             {
                 meUByte cc;
                 int len;
-                len = meStrlen(vvalue);
+                len = (int) meStrlen(vvalue);
                 if (len > BCLEN)
                     len = BCLEN;
                 while(--len >= 0)
@@ -718,7 +718,7 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             {
                 meUByte cc;
                 int len;
-                len = meStrlen(vvalue);
+                len = (int) meStrlen(vvalue);
                 if (len > WCLEN)
                     len = WCLEN;
                 while(--len >= 0)
@@ -2406,7 +2406,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         {
         case TKLVR:
         case TKCVR:
-            if(((ii=meStrlen(arg1)) > 2) && (arg1[--ii] == arg1[0]))
+            if(((ii=(int) meStrlen(arg1)) > 2) && (arg1[--ii] == arg1[0]))
             {
                 /* simple buffer exists */
                 arg1[ii] = '\0';
@@ -2553,7 +2553,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             int ii=meAtoi(arg2);
             ss = arg1;
             if(ii < 0)
-                ii = meStrlen(ss) + ii;
+                ii = ((int) meStrlen(ss)) + ii;
             dd = evalResult;
             while(--ii >= 0)
             {
@@ -2575,7 +2575,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             int ii=meAtoi(arg2);
             ss = arg1;
             if(ii < 0)
-                ii = meStrlen(ss) + ii;
+                ii = ((int) meStrlen(ss)) + ii;
             while(--ii >= 0)
             {
                 if((cc=*ss++) == meCHAR_LEADER)
@@ -2600,7 +2600,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             ll = meAtoi(arg3);
             ii = meAtoi(arg2);
             if(ii < 0)
-                ii = meStrlen(ss) + ii;
+                ii = ((int) meStrlen(ss)) + ii;
             if(ii > 0)
             {
                 do
@@ -2617,7 +2617,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             else if(ll >= 0)
                 ll += ii;
             if(ll < 0)
-                ll = meStrlen(ss) + ll;
+                ll = ((int) meStrlen(ss)) + ll;
             dd = evalResult;
             while(--ll >= 0)
             {
@@ -2679,7 +2679,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             meIFuncSSI cmpIFunc;
             meUByte cc, *ss=arg2, *lss=NULL;
             int len, off=0;
-            len = meStrlen(arg1);
+            len = (int) meStrlen(arg1);
             if((fnum == UFSIN) || (fnum == UFRSIN))
                 cmpIFunc = (meIFuncSSI) strncmp;
             else
@@ -2701,7 +2701,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             } while(cc != '\0');
             
             if(lss != NULL)
-                return meItoa(lss-arg2-off+1);
+                return meItoa((int) (lss-arg2-off+1));
             return meLtoa(0);
         }
     case UFREP:
@@ -2710,8 +2710,8 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             meIFuncSSI cmpIFunc;
             meUByte cc, *ss=arg1;
             int mlen, dlen=0, rlen, ii;
-            mlen = meStrlen(arg2);
-            rlen = meStrlen(arg3);
+            mlen = (int) meStrlen(arg2);
+            rlen = (int) meStrlen(arg3);
             if(fnum == UFREP)
                 cmpIFunc = (meIFuncSSI) strncmp;
             else
@@ -2755,7 +2755,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             if(meRegexComp(&meRegexStrCmp,arg2,(fnum == UFXREP) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
                 return abortm;
             
-            slen = meStrlen(arg1);
+            slen = (int) meStrlen(arg1);
             for(;;)
             {
                 ii = meRegexMatch(&meRegexStrCmp,arg1,slen,soff,slen,(meREGEX_BEGBUFF|meREGEX_ENDBUFF));
@@ -2992,20 +2992,20 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             }
             else
             {
-                ii = meStrlen(s2);
+                ii = (int) meStrlen(s2);
                 s1 = s2+ii;
                 s2 += ii-1;
             }
             index = (int) (s1 - arg1);
             memcpy(evalResult,arg1,index);
-            ii = meStrlen(arg3);
+            ii = (int) meStrlen(arg3);
             if(ii+index < meBUF_SIZE_MAX)
             {
                 memcpy(evalResult+index,arg3,ii);
                 index += ii;
                 if(fnum == UFLINS)
                     s2 = s1-1;
-                ii = meStrlen(s2);
+                ii = (int) meStrlen(s2);
                 if(ii+index < meBUF_SIZE_MAX)
                 {
                     memcpy(evalResult+index,s2,ii);
@@ -3066,7 +3066,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             for (ss = arg1 ; (((cc = *ss) != '\0') && isSpace(cc)) ; ss++)
                 ;
             /* Trim right */
-            ii = meStrlen (ss);
+            ii = (int) meStrlen(ss);
             while (ii > 0)
             {
                 cc = ss[ii-1];
@@ -3093,7 +3093,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         {
             /* Trim right */
             int ii;
-            ii = meStrlen (arg1);
+            ii = (int) meStrlen(arg1);
             while (ii > 0)
             {
                 meUByte cc;
@@ -3401,7 +3401,7 @@ get_flag:
                     case 's':                   /* String */
                         if (macarg (arg2) <= 0)
                             return abortm;
-                        nn = meStrlen(arg2);
+                        nn = (int) meStrlen(arg2);
                         while(--count >= 0)
                         {
                             if(index+nn >= meBUF_SIZE_MAX)

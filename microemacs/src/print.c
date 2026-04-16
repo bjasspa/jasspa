@@ -111,7 +111,7 @@ getTranslationLen (meUByte *str, int n)
         if ((p = printer.filter[cc]) == NULL)
             len++;
         else
-            len += meStrlen (p);
+            len += (int) meStrlen(p);
     }
     return (len);
 }
@@ -377,7 +377,7 @@ printGetParams (void)
     {
         meUByte subkey[16];
         int ll;
-        ll = meStrlen(fontPaths[ii]);
+        ll = (int) meStrlen(fontPaths[ii]);
         memcpy(subkey,fontPaths[ii],ll);
         subkey[ll++] = '/';
         
@@ -693,7 +693,7 @@ cat_string:
         }
     }
     /* Return the delta length of the string */
-    return buf - bbuf;
+    return (int) (buf - bbuf);
 }
 /*
  * expandTitleText
@@ -740,7 +740,7 @@ addFormatedLine (meLine **head, meLine **tail,
         buf = buf + expandText (buf, tbuf, 0);
         /* Add the end of line code */
         buf = buf + expandText (buf, printer.param [mePS_EOL].p, 1);
-        addComposedLine (head, tail, bhead, buf - bhead);
+        addComposedLine(head,tail,bhead,(int) (buf - bhead));
     }
 }
 
@@ -792,17 +792,17 @@ printSetScheme(meScheme col, meUByte *buff)
                 meInt cno, cc, rr, gg, bb ;
                 char *str ;
                 if(fontMasks[sore][ii] & meSTYLE_FCOLOR)
-                    cno = meStyleGetFColor(ss) ;
+                    cno = meStyleGetFColor(ss);
                 else
-                    cno = meStyleGetBColor(ss) ;
-                cc = printer.color[cno] ;
-                rr = mePrintColorGetRed(cc) ;
-                gg = mePrintColorGetGreen(cc) ;
-                bb = mePrintColorGetBlue(cc) ;
-                str = meTParm((char *)fontStrings[sore][ii],cno,rr,gg,bb) ;
+                    cno = meStyleGetBColor(ss);
+                cc = printer.color[cno];
+                rr = mePrintColorGetRed(cc);
+                gg = mePrintColorGetGreen(cc);
+                bb = mePrintColorGetBlue(cc);
+                str = meTParm((char *)fontStrings[sore][ii],cno,rr,gg,bb);
                 if(buff != NULL)
-                    meStrcpy(buff+len,str) ;
-                len += strlen(str) ;
+                    meStrcpy(buff+len,str);
+                len += (int) strlen(str);
             }
             else if(((sore == 1) && (cs & fontMasks[sore][ii])) ||
                     ((sore == 0) && (ss & fontMasks[sore][ii])) )
@@ -849,7 +849,7 @@ composePage (int f)
             if (printer.param [mePS_EOF].p != NULL)
             {
                 p = buf + expandText (buf, printer.param [mePS_EOF].p, 1);
-                addComposedLine (&head, &tail, buf, p - buf);
+                addComposedLine(&head, &tail, buf,(int) (p - buf));
             }
             return head;
         }
@@ -883,7 +883,7 @@ composePage (int f)
             p += printSetScheme(printTextScheme,p) ;
 #endif
             if(p != buf)
-                addComposedLine (&head, &tail, buf, p - buf);
+                addComposedLine(&head, &tail, buf,(int) (p - buf));
             return head;
         }
     }
@@ -891,8 +891,8 @@ composePage (int f)
     /* Add the start of page marker */
     if (printer.param [mePS_SOP].p != NULL)
     {
-        p = buf + expandText (buf, printer.param [mePS_SOP].p, 1);
-        addComposedLine (&head, &tail, buf, p - buf);
+        p = buf + expandText(buf, printer.param [mePS_SOP].p, 1);
+        addComposedLine(&head, &tail, buf,(int) (p - buf));
     }
 
     /* Render the top margin and the header */
@@ -990,8 +990,8 @@ composePage (int f)
                         break;
                 }
             }
-            p += expandText (p, printer.param [mePS_EOL].p, 1);
-            addComposedLine (&head, &tail, buf, p - buf);
+            p += expandText(p, printer.param [mePS_EOL].p, 1);
+            addComposedLine(&head, &tail, buf,(int) (p - buf));
         }
 
         /* Add the horizontal separator if required */
@@ -1020,8 +1020,8 @@ composePage (int f)
             }
 
             /* Add the end of line marker and push the buffer */
-            p += expandText (p, printer.param [mePS_EOL].p, 1);
-            addComposedLine (&head, &tail, buf, p - buf);
+            p += expandText(p, printer.param [mePS_EOL].p, 1);
+            addComposedLine(&head, &tail, buf,(int) (p - buf));
         }
     }
 
@@ -1033,8 +1033,8 @@ composePage (int f)
     /* Add the end of line marker and push the buffer */
     if (printer.param [mePS_EOP].p != NULL)
     {
-        p = buf + expandText (buf, printer.param [mePS_EOP].p, 1);
-        addComposedLine (&head, &tail, buf, p - buf);
+        p = buf + expandText(buf, printer.param [mePS_EOP].p, 1);
+        addComposedLine(&head, &tail, buf,(int) (p - buf));
     }
     return head;
 }
