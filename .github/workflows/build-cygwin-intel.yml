@@ -112,8 +112,9 @@ jobs:
     - name: Create cygwin-intel mesc
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
       run: |
+        cd ./workspace/jasspa
         export MEVER=`./microemacs/bin/cygwin3-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./workspace/jasspa/microemacs/mesingle
+        cd ./microemacs/mesingle
         rm -rf bin/cygwin3-intel64
         mkdir -p bin/cygwin3-intel64
         ../bin/cygwin3-intel64/mec -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec -t ../bin/cygwin3-intel64/tfs -o bin/cygwin3-intel64/mesc
@@ -121,11 +122,12 @@ jobs:
         cp ../readme.txt ./
         zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesc bin LICENSE readme.txt
 
-    - name: Create cygwin-intel mesc
+    - name: Create cygwin-intel mesw
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
       run: |
+        cd ./workspace/jasspa
         export MEVER=`./microemacs/bin/cygwin3-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./workspace/jasspa/microemacs/mesingle
+        cd ./microemacs/mesingle
         rm -rf bin/cygwin3-intel64
         mkdir -p bin/cygwin3-intel64
         ../bin/cygwin3-intel64/mec -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mew -t ../bin/cygwin3-intel64/tfs -o bin/cygwin3-intel64/mesw
