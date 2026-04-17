@@ -115,7 +115,6 @@ jobs:
         cd ./workspace/jasspa
         export MEVER=`./microemacs/bin/cygwin3-intel64/mec -p @microemacs/contribs/ver.emf`
         cd ./microemacs/mesingle
-        rm -rf bin/cygwin3-intel64
         mkdir -p bin/cygwin3-intel64
         ../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
         cp ../LICENSE ./
