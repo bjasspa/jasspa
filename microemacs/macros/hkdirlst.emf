@@ -168,9 +168,9 @@ define-macro fhook-dirlst
 
 ; buffer-init variables
 set-variable .fhook-dirlst.setup &reg "/history/fhook/dirlst" "ghmop"
-set-variable .fhook-dirlst.setup-mask    "eghlop"
-set-variable .fhook-dirlst.setup-flags   "|l|"
-set-variable .fhook-dirlst.setup-labels  "|Enable filter by default|"
+set-variable .fhook-dirlst.setup-mask    "eghopcl"
+set-variable .fhook-dirlst.setup-flags   "|c|l|"
+set-variable .fhook-dirlst.setup-labels  "|Case sensitive file order|Enable filter by default|"
 set-variable .fhook-dirlst.command-flag  "|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|thbio|thbio|thbio|thbio|thbio|th|thbio|h|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|thbio|thbio|thbio|thbio|bio|thbio|thbio|thbio|thbio|h|t|"
 set-variable .fhook-dirlst.command-name  "|file-browser-swap-buffers|file-browser-close|dirlst-up-dir|dirlst-refresh|dirlst-refresh|file-browser-set-filter|dirlst-search|dirlst-search||dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list|dirlst-sort-list||dirlst-tag-toggle|dirlst-tag-mask|dirlst-tag-mask|dirlst-tag-invert|dirlst-tag-set|dirlst-tag-set||dirlst-find-file||dirlst-find-file|dirlst-tag-open|dirlst-find-file|dirlst-find-file|dirlst-find-file|dirlst-file-rename|dirlst-file-fattr|dirlst-tag-file-touch|dirlst-tag-file-copy|dirlst-tag-file-copy|dirlst-new-folder|dirlst-tag-file-delete|dirlst-tag-file-delete|dirlst-tag-file-delete|dirlst-delete-line|file-tool-menu|dirlst-tag-execute||file-tool-setup|"
 set-variable .fhook-dirlst.command-nbind "||||||-1||0||5|6|4|3|2|1|||1|-1||1|-1||5||1||9|4|4||||1|0||||3||||||"
@@ -183,7 +183,8 @@ set-variable .fhook-dirlst.col-name "| |Attr|   Size|           Modified|Name|<O
 set-variable .fhook-dirlst.col-flag "|20|4|18|16|0|8|"
 set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0
-set-variable .fhook-dirlst.mode &cond &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
+set-variable .fhook-dirlst.mode &con &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
+set-variable .fhook-dirlst.case &con &sin "c" .fhook-dirlst.setup 1 -1
 set-variable .fhook-dirlst.sc-name "|"
 set-variable .fhook-dirlst.sc-menu "|"
 set-variable .fhook-dirlst.sc-detect "|"
@@ -801,7 +802,7 @@ define-macro file-browser-swap-buffers
   set-alpha-mark "\x81"
   -1 buffer-mode "view"
   1 buffer-mode "edit" "y"
-  &cond &band $system 0x100 -1 1 buffer-mode "exact"
+  .fhook-dirlst.case buffer-mode "exact"
   set-variable #l2 &lget .fhook-dirlst.col-flag @#
   !if &band #l2 8
     dirlst-sort-list-add-ext
@@ -2270,6 +2271,7 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
   !endif
   find-buffer "*toolbar-files*"
   &cond &band $system 0x100 -1 1 buffer-mode "exact"
+  .fhook-dirlst.case buffer-mode "exact"
   -1 buffer-mode "view"
   -1 buffer-mode "undo"
   beginning-of-buffer
