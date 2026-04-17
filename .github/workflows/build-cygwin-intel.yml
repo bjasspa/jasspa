@@ -1,0 +1,97 @@
+name: Build windows cygwin intel 64 (cygwin-latest)
+
+on:
+  workflow_dispatch:
+    branches: [ master ]
+env:
+   VERSION: "091226b1"
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x86_64]    
+    steps:
+    - name: Install Cygwin
+      uses: cygwin/cygwin-install-action@v6
+      with:
+        packages: |
+          git
+          python3
+          python3-pip
+          bash 
+          make 
+          gcc-core 
+          gcc-g++ 
+          wget 
+          zlib-devel 
+          libncurses-devel 
+          libXt-devel
+          libXft-devel
+          libssl-devel 
+          zip 
+          unzip
+        install-dir: C:\cygwin
+        platform: ${{ matrix.arch }}
+    - name: Modify PATH
+      run: |
+        echo "C:\cygwin\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        
+    - name: Verify Cygwin installation
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      run: |
+        echo $PATH
+        which bash
+        bash --version
+
+    - name: Run your commands
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      run: |
+        # Your Cygwin commands here
+        cygcheck -c
+        make --version
+        gcc --version
+        
+    - name: Install apt-cyg
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      run: |
+        wget https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
+        install apt-cyg /bin
+        chmod +x /bin/apt-cyg
+        apt-cyg install nano
+        
+    - name: Verify Python Installation
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      run: |
+        python3 --version
+        which python3
+
+    - name: Capture Cygwin Version
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      run: |
+        CYGWIN_VER=$(uname -r | grep -oE '^[0-9]\.[0-9]+')
+        echo "CYGWIN_VER=$CYGWIN_VER" >> $GITHUB_ENV
+        echo "Cygwin version: $CYGWIN_VER"
+        CYGWIN_MACHINE=$(uname -m)
+        echo "CYGWIN_MACHINE=$CYGWIN_MACHINE" >> $GITHUB_ENV
+        echo "Cygwin Machine: $CYGWIN_MACHINE"
+
+    - name: Clone MicroEmacs
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      run: |
+        mkdir workspace
+        cd workspace
+        git clone https://github.com/bjasspa/jasspa.git
+        echo `pwd`
+    - name: Compile cygwin-intel mec
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
+      run: |
+        echo `pwd`
+        cd ./workspace/jasspa/microemacs/src
+        ./build.sh -t c
+    - name: Compile cygwin-intel mew
+      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
+      run: |
+        cd ./workspace/microemacs/src
+        ./build.sh -t w
+
