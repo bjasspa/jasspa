@@ -83,7 +83,7 @@ jobs:
         cd workspace
         git clone https://github.com/bjasspa/jasspa.git
         echo `pwd`
-        cd ./workspace/jasspa/
+        cd ./jasspa/
         mkdir downloads
     - name: Compile cygwin-intel mec
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
