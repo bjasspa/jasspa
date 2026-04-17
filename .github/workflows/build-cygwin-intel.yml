@@ -96,14 +96,15 @@ jobs:
         cd ./workspace/jasspa/microemacs/src
         ./build.sh -t w
     - name: Create cygwin-intel binaries download
-        run: |
-          cd ./workspace/jasspa/microemacs/bin
-          mv cygwin3-intel64-gcc13 cygwin3-intel64
-          rm ./.gitignore
-          cd ..
-          mv release_readme.txt readme.txt
-          export MEVER=`./bin/cygwin3-intel64/mec -p @contribs/ver.emf`
-          zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_cygwin_intel_binaries bin LICENSE readme.txt
+      run: |
+        echo `pwd`
+        cd ./workspace/jasspa/microemacs/bin
+        mv cygwin3-intel64-gcc13 cygwin3-intel64
+        rm ./.gitignore
+        cd ..
+        mv release_readme.txt readme.txt
+        export MEVER=`./bin/cygwin3-intel64/mec -p @contribs/ver.emf`
+        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_cygwin_intel_binaries bin LICENSE readme.txt
 
     - name: Create cygwin-intel mesc
       run: |
