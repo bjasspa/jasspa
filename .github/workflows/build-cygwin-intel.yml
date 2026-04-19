@@ -123,7 +123,11 @@ jobs:
         pwd
         mkdir -p bin/cygwin3-intel64
         ls
-        ../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
+        echo files
+        ls ../bin/cygwin3-intel64/mec.exe 
+        ls ../bin/cygwin3-intel64/tfs.exe
+        echo `../bin/cygwin3-intel64/mec.exe -V`
+        ../bin/cygwin3-intel64/mec.exe -p "@./mesgen.emf" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
         ls bin/*
         cp ../LICENSE ./
         cp ../readme.txt ./
