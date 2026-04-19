@@ -552,7 +552,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
 #endif
                 {
                     meSystemCfg = (meSystemCfg & ~(meSYSTEM_ANSICOLOR|meSYSTEM_XANSICOLOR))|meSYSTEM_FONTFIX;
+#ifdef _CLIPBRD
                     TTinitClipboard();
+#endif
                 }
 #ifdef _ME_CONSOLE
                 else

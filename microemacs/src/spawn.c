@@ -1974,9 +1974,9 @@ ipipeCommand(int f, int n)
 int
 anyActiveIpipe(void)
 {
-    if((ipipes == NULL) ||
+    if((ipipes == NULL)
 #if MEOPT_CLIENTSERVER
-       ((ipipes->pid == 0) && (ipipes->next == NULL))
+       || ((ipipes->pid == 0) && (ipipes->next == NULL))
 #endif
        )
         return meFALSE ;

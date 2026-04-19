@@ -2668,26 +2668,25 @@ special_bound:
 
 #endif
 
-#ifdef _ME_CONSOLE
-#ifdef _TCAP
-
 /****************************************************************************
  * TCAP FUNCTIONS                                                           *
  ****************************************************************************/
+/* The TCAPgetattr function is needed even when _ME_CONSOLE is not defined
+ * as the the otermio is used to setup ishell termals */
 
 #ifdef _USG
 /* Get the terminal attributes structure. There are cases when the call will
  * fail we have been launched off the desktop via an open action. Return an
  * integer status of -1 if the call failed and we filled in the values. */
 static int
-TCAPgetattr (meTermio p, int isX)
+TCAPgetattr(meTermio p, int isX)
 {
     int status;                         /* Status for attribute retrieval. */
     
 #ifdef _TERMIOS
-    if ((status = tcgetattr (0, p)) < 0)
+    if((status = tcgetattr(0, p)) < 0)
 #else
-    if ((status = ioctl(0, TCGETA, p)) < 0)
+    if((status = ioctl(0, TCGETA, p)) < 0)
 #endif
     {
         /* Input flag defaults */
@@ -2771,6 +2770,9 @@ TCAPgetattr (meTermio p, int isX)
     return status;
 }
 #endif /* _USG */
+
+#ifdef _ME_CONSOLE
+#ifdef _TCAP
 
 int
 TCAPstart(void)
@@ -4031,14 +4033,12 @@ XTERMstart(void)
     meUInt       ww, hh  ;
     char        *ss ;
     
-#ifdef _ME_CONSOLE
     /* Copy the Terminal I/O. We may spawn a terminal in the window later and
      * the termio structure must be initialised. The structure may be
      * uninitialised if we have been launched off the desktop via an open
      * action. */
 #ifdef _USG
-    TCAPgetattr (&otermio, 1);
-#endif
+    TCAPgetattr(&otermio, 1);
 #endif
     
     /* Configure X-Windows */
