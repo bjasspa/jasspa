@@ -3,8 +3,6 @@ name: Build windows cygwin intel 64 (cygwin-latest)
 on:
   workflow_dispatch:
     branches: [ master ]
-env:
-   VERSION: "091226b1"
 jobs:
   build:
     runs-on: windows-latest
@@ -129,8 +127,9 @@ jobs:
         echo `../bin/cygwin3-intel64/mec.exe -V`
         echo `../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -h`
         echo `ls -lt ../bin/cygwin3-intel64/tfs.exe`
-        PATH=:../bin/cygwin3-intel64/:$PATH bash mesgen.sh -p ../src/.cygwin3-intel64-gcc14-release-${f}/${f} -o ${f}s
-        ../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
+        echo `ls -R bin/*`
+        PATH=:../bin/cygwin3-intel64/:${PATH} bash mesgen.sh -p ../bin/cygwin3-intel64/mec.exe -o bin/cygwin3-intel64/mesc.exe
+        #../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
         ls -l bin/*/*
         cp ../LICENSE ./
         cp ../readme.txt ./
