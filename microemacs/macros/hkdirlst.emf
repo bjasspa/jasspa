@@ -13,13 +13,13 @@
 !iif &not &exi fhook-html  define-macro-file hkhtml fhook-html
 
 define-macro fhook-dirlst
-  ; note that as the hook it quite complex and in the case of CVS it can
-  ; load other files and launch processes, it can get into a strange state
-  ; where the buffer is out of date (dir already changed) and inserting text
-  ; can prompt the user 'do you really want to edit' - care is needed
-  !if &les $window-eline 2
-    !return
-  !elif &exi :tag-count
+  ; this case-ordering option is here so changes to the major-mode setting take effect quickly
+  set-variable .fhook-dirlst.case &con &sin "c" .fhook-dirlst.setup 1 -1
+  ; note that as the hook it quite complex and in the case of CVS it can load other files and launch processes, it
+  ; can get into a strange state where the buffer is out of date (dir already changed) and inserting text can prompt
+  ; the user 'do you really want to edit' - care is needed 
+  !iif &les $window-eline 2  !return
+  !if &exi :tag-count
     ; dont process the dir twice as it changes the buffer
   !elif &lfin "|ftp://|ftps:/|ftpe:/|" &lef $buffer-fname 6
     -1 buffer-mode "view"
@@ -184,7 +184,6 @@ set-variable .fhook-dirlst.col-flag "|20|4|18|16|0|8|"
 set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.mode &con &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
-set-variable .fhook-dirlst.case &con &sin "c" .fhook-dirlst.setup 1 -1
 set-variable .fhook-dirlst.sc-name "|"
 set-variable .fhook-dirlst.sc-menu "|"
 set-variable .fhook-dirlst.sc-detect "|"
@@ -520,8 +519,7 @@ define-macro file-browser-swap-buffers
       set-variable @1 &mid @wl 22 &sub #l1 22
       !return
     !endif
-    ml-write "Invalid line!"
-    !abort
+    -8 ml-write "Invalid line!"
   !endif
   set-variable #l0 &rig @wl :fmpf
   !if &sin " -> " #l0
@@ -1006,7 +1004,7 @@ define-macro file-browser-swap-buffers
   set-variable @#  &cond &les @# 0 -1 1
   set-variable #l1 &cond &les @# 0 " " "*"
   set-variable #l2 &cond &les @# 0 "*" " "
-  set-variable #l3 &cond &band $system 0x100 "mE" "me"
+  set-variable #l3 &cond &bmod "exact" "me" "mE"
   set-variable #l9 $window-line
   set-variable $window-line 5
   -1 buffer-mode "view"
@@ -1088,7 +1086,7 @@ define-macro dirlst-search
   !endif
   set-variable #l7 ""
   set-variable #l6 #l8
-  set-variable #l5 &cond &band $system 0x100 "mE" "me"
+  set-variable #l5 &cond &gre .fhook-dirlst.case 0 "me" "mE"
   set-variable #l4 1
   beginning-of-line
   !repeat
@@ -1312,15 +1310,13 @@ define-macro dirlst-search
 0 define-macro dirlst-tag-file-delete
   set-variable #l1 &con &band @# 2 "Trash & " ""
   !if &not @#
-  !elif :tag-count
+  !elif &set #l5 :tag-count
     11 dirlst-tag-list &cat #l1 "Delete Files"
   !else
     11 dirlst-get-filename &cat #l1 "Delete Files"
   !endif
-  !if &les .find-file.file-count 1
-    ml-write "[Delete Files Error: No files selected]"
-    !abort
-  !elif &equ .find-file.file-count 1
+  !iif &les .find-file.file-count 1  -8 ml-write "[Delete Files Error: No files selected]"
+  !if &equ .find-file.file-count 1
     set-variable #l3 &spr "Are you sure you want to %sdelete \"%s\" (?/y/n) ? " &slo #l1 .find-file.file1
   !else
     set-variable #l3 &spr "Are you sure you want to %sdelete" &slo #l1
@@ -1334,19 +1330,37 @@ define-macro dirlst-search
   !force !force set-variable #l4 @mc5 #l3 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
   set-variable #l3 $status
   !force -1 show-region
-  !if &not #l3
-    !abort
-  !elif &iseq #l4 "n"
-    !abort
+  !iif &not #l3  !abort
+  !iif &iseq #l4 "n"  !abort
+  ; workout the next non-deleted file so we can return to it
+  set-variable #l3 $window-line
+  !if #l5
+    beginning-of-line
+    !while &seq @wc "*"
+      forward-line
+    !done
+  !else
+    forward-line
   !endif
+  !iif &not &set #l5 &seq @wc ""  set-variable #l4 &rig @wl &sub :fmpf 1
+  set-variable $window-line #l3
   !force !force @# dirlst-tag-list-delete
-  !force search-buffer "me" "^ "
-  beginning-of-line
   !if &not &band @# 1
   !elif &band .find-file.flags 1
     dirlst-refresh
   !else
     -1 dirlst-tag-set
+  !endif
+  !if #l5
+    end-of-buffer
+  !else
+    !force search-buffer "Me" &cat #l4 "\n"
+    !if $status
+      backward-line
+    !else
+      !force search-buffer "me" "^ "
+    !endif
+    beginning-of-line
   !endif
 !emacro
 
@@ -2270,7 +2284,6 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
     !endif
   !endif
   find-buffer "*toolbar-files*"
-  &cond &band $system 0x100 -1 1 buffer-mode "exact"
   .fhook-dirlst.case buffer-mode "exact"
   -1 buffer-mode "view"
   -1 buffer-mode "undo"
@@ -2321,12 +2334,10 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
     set-variable $line-scheme .scheme.dir
     forward-line
   !done
-  !if &band $system 0x100
-    sort-lines
-    set-mark
-    end-of-buffer
-    sort-lines
-  !endif
+  sort-lines
+  set-mark
+  end-of-buffer
+  sort-lines
   set-variable :mouse-pick-1 toolbar-file-list-mouse-pick-1
   set-variable :mouse-drop-1 toolbar-file-list-mouse-drop-1
   set-variable :mouse-pick-3 void
