@@ -3120,28 +3120,22 @@ mlwrite(int flags, meUByte *fmt, int arg)
     while((*s1++ = *mlwant++))
         ;
     frameCur->mlLine->length=offset ;
-    /* JDG 02/03/97 - This line was removed, however when it is then the
-     * bottom line is not reset properly.
-     * SWP - I've commented it out again - this only alleviates another bug
-     * which should be/should have been fixed.
-     */
-    /* vp1->endp = frameCur->width ;*/
 
     updateline(frameCur->depth,vp1,NULL);
-    mlResetCursor() ;
+    mlResetCursor();
     TTflush();
 
     if(flags & MWABORT)
-        TTbell() ;
+        TTbell();
     if(flags & MWPAUSE)
     {
         /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string for the length of the sleep
          */
-        meUByte oldMlStatus = frameCur->mlStatus ;
-        frameCur->mlStatus = MLSTATUS_KEEP ;
-        TTsleep(pauseTime,1,NULL)  ;
-        frameCur->mlStatus = oldMlStatus ;
+        meUByte oldMlStatus = frameCur->mlStatus;
+        frameCur->mlStatus = MLSTATUS_KEEP;
+        TTsleep(pauseTime,1,NULL);
+        frameCur->mlStatus = oldMlStatus;
     }
     else if((flags & MWWAIT) || (clexec && (flags & MWCLWAIT)))
     {

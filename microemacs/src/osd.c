@@ -669,24 +669,27 @@ menuExecute(osdITEM *mp, int flags, int n)
     TTallKeys = 0 ;
     if (mpflags & MF_ENTRY)
     {
-        /* If entry then must set frameCur->mlStatus to 0x08 bit to get entries at the osd
-         * entry field, must back up previous value.
-         * Also flush input to get rid of any mouse-moves
-         */
-        mlStatusStore = frameCur->mlStatus ;
-        oldUseMlBinds = useMlBinds ;
-        
-        useMlBinds = 1 ;
-        
-        frameCur->mlStatus = MLSTATUS_POSOSD ;
-        if(mpflags & MF_NINPUT)
-            frameCur->mlStatus |= MLSTATUS_NINPUT ;
-        if(osdCol >= 0)
-            frameCur->mlStatus |= MLSTATUS_OSDPOS ;
+        oldUseMlBinds = (useMlBinds & 0x0f);
         if(n < 0)
-            TTinflush() ;
+        {
+            /* If getting user input via entry then must set frameCur->mlStatus to 0x08 bit 
+             * to get entries at the osd entry field, must back up previous value.
+             * Also flush input to get rid of any mouse-moves
+             */
+            oldUseMlBinds |= 0x10;
+            mlStatusStore = frameCur->mlStatus;
+        
+            useMlBinds = 1;
+        
+            frameCur->mlStatus = MLSTATUS_POSOSD;
+            if(mpflags & MF_NINPUT)
+                frameCur->mlStatus |= MLSTATUS_NINPUT;
+            if(osdCol >= 0)
+                frameCur->mlStatus |= MLSTATUS_OSDPOS;
+            TTinflush();
+        }
         else if(osdCol >= 0)
-            TTallKeys = oldAllKeys ;
+            TTallKeys = oldAllKeys;
     }
     else
     {
@@ -744,9 +747,10 @@ menuExecute(osdITEM *mp, int flags, int n)
         f = execFunc ((int) mp->cmdIndex, f, n);
     if (mpflags & MF_ENTRY)
     {
-        /* Restore the previous frameCur->mlStatus value */
-        frameCur->mlStatus = mlStatusStore ;
-        useMlBinds = oldUseMlBinds ;
+        if(oldUseMlBinds & 0x10)
+            /* Restore the previous frameCur->mlStatus value */
+            frameCur->mlStatus = mlStatusStore ;
+        useMlBinds = (oldUseMlBinds & 0x0f);
     }
     TTallKeys = oldAllKeys ;
     meRegHead->force = oldForce ;

@@ -443,8 +443,8 @@ extern meIo       meior;                /* The current I/O Read op */
 extern meIo       meiow;                /* The current I/O Write op */
 
 #if MEOPT_OSD
-extern int        osdCol ;              /* The osd current column */
-extern int        osdRow ;              /* The osd current row */
+extern int        osdCol;               /* The osd current column */
+extern int        osdRow;               /* The osd current row */
 #endif
 
 #define MLSTATUS_KEEP    0x01
@@ -736,13 +736,13 @@ char    **meEnviron = NULL;             /* Our own environment          */
 #endif /* (defined _UNIX) && (defined _NOPUTENV) */
 
 #if MEOPT_IPIPES
-meIPipe  *ipipes=NULL ;                 /* list of all the current pipes*/
-int       noIpipes=0 ;                  /* count of all the cur pipes   */
+meIPipe  *ipipes=NULL;                  /* list of all the current pipes*/
+int       noIpipes=0;                   /* count of all the cur pipes   */
 #endif
 
 #if MEOPT_OSD
-int       osdCol=0 ;                    /* The osd current column       */
-int       osdRow=0 ;                    /* The osd current row          */
+int       osdCol=0;                     /* The osd current column       */
+int       osdRow=0;                     /* The osd current row          */
 #endif
 meLine     *lpStore = NULL;             /* line off which to store macro*/
 meBuffer   *lpStoreBp = NULL;           /* help is stored in a buffer   */
@@ -758,7 +758,7 @@ meUShort  prefixc[ME_PREFIX_NUM+1]=
     ME_INVALID_KEY, ME_INVALID_KEY,
     ME_INVALID_KEY, ME_INVALID_KEY,
     ME_INVALID_KEY
-} ;
+};
 meUShort  reptc    = 'U'-'@';           /* current universal repeat char*/
 meUShort  breakc   = 'G'-'@';           /* current abort-command char   */
 
@@ -776,28 +776,28 @@ meUByte   truem[]   = "1";              /* true literal                 */
 meUByte   falsem[]  = "0";              /* false litereal               */
 
 /* global buffer names */
-meUByte   BvariablesN[] = "*variables*" ;
-meUByte   BbindingsN[] = "*bindings*" ;
-meUByte   BcompleteN[] = "*complete*" ;
-meUByte   BcommandsN[] = "*commands*" ;
-meUByte   BcommandN[] = "*command*" ;
-meUByte   BbuffersN[] = "*buffers*" ;
-meUByte   BmainN[] = "*scratch*" ;
-meUByte   BaboutN[] = "*about*" ;
+meUByte   BvariablesN[] = "*variables*";
+meUByte   BbindingsN[] = "*bindings*";
+meUByte   BcompleteN[] = "*complete*";
+meUByte   BcommandsN[] = "*commands*";
+meUByte   BcommandN[] = "*command*";
+meUByte   BbuffersN[] = "*buffers*";
+meUByte   BmainN[] = "*scratch*";
+meUByte   BaboutN[] = "*about*";
 #if MEOPT_EXTENDED
-meUByte   BtranskeyN[] = "*translate-key*" ;
-meUByte   BolhelpN[] = "*on-line help*" ;
-meUByte   BstdinN[] = "*stdin*" ;
-meUByte   BhelpN[] = "*help*" ;
+meUByte   BtranskeyN[] = "*translate-key*";
+meUByte   BolhelpN[] = "*on-line help*";
+meUByte   BstdinN[] = "*stdin*";
+meUByte   BhelpN[] = "*help*";
 #endif
 #if MEOPT_IPIPES
-meUByte   BicommandN[] = "*icommand*" ;
+meUByte   BicommandN[] = "*icommand*";
 #endif
 #if MEOPT_REGISTRY
-meUByte   BregistryN[] = "*registry*" ;
+meUByte   BregistryN[] = "*registry*";
 #endif
 #if MEOPT_CLIENTSERVER
-meUByte   BserverN[] = "*server*" ;
+meUByte   BserverN[] = "*server*";
 #endif
 
 meUInt    meRndSeed[4] = { 0,0,0,0 };

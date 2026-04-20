@@ -106,14 +106,14 @@ getTranslationLen (meUByte *str, int n)
     int cc;                             /* Character pointer */
     meUByte *p;
 
-    while (((cc = *str++) != '\0') && (--n >= 0))
+    while((--n >= 0) && ((cc = *str++) != '\0'))
     {
         if ((p = printer.filter[cc]) == NULL)
             len++;
         else
             len += (int) meStrlen(p);
     }
-    return (len);
+    return len;
 }
 
 /*
@@ -1266,7 +1266,7 @@ printAddLine (meBuffer *bp, meLine *lp)
             ll = 0;
 
         /* Copy the line into the buffer */
-        if (noColChng == 0)
+        if(noColChng == 0)
         {
             /* No colour changes - simply copy the line */
             ll += doTranslation (nlp->text+ll, disLineBuff+len, kk);
@@ -1297,6 +1297,7 @@ printAddLine (meBuffer *bp, meLine *lp)
                                          blkp->column-len-jj);
                     jj = blkp->column-len;
                     blkp++;
+                    noColChng--;
                 }
             }
 #if MEOPT_HILIGHT
