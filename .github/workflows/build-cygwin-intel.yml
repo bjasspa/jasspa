@@ -162,7 +162,7 @@ jobs:
     - name: Download pre-built OpenSSL
       shell: pwsh
       run: |
-        cd c:\cygwin\home\runneradmin\workspace\microemacs\3rdparty
+        cd c:\cygwin\home\runneradmin\workspace\jasspa\microemacs\3rdparty
         Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.4.zip -OutFile openssl.zip
         Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
         dir .\openssl-3.5
@@ -174,5 +174,5 @@ jobs:
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
         nmake -f winmsvc.mak BTYP=c
-      working-directory: c:/cygwin/home/runneradmin/workspace/microemacs/src
+      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/microemacs/src
 
