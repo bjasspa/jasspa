@@ -10,6 +10,15 @@ jobs:
       matrix:
         arch: [x86_64]    
     steps:
+    - name: Find VS
+      shell: pwsh
+      run: |
+        $installationPath = Get-VSSetupInstance `
+          | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
+          | Select-Object -ExpandProperty InstallationPath
+        Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
+          | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
+        cat "${Env:GITHUB_ENV}"
     - name: Install Cygwin
       uses: cygwin/cygwin-install-action@v6
       with:
@@ -128,13 +137,13 @@ jobs:
         echo `../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -h`
         echo `ls -lt ../bin/cygwin3-intel64/tfs.exe`
         echo `ls -R bin/*`
-        PATH=:../bin/cygwin3-intel64/:${PATH} bash mesgen.sh -d -p ../bin/cygwin3-intel64/mec.exe -o bin/cygwin3-intel64/mesc.exe
+        #PATH=:../bin/cygwin3-intel64/:${PATH} bash mesgen.sh -d -p ../bin/cygwin3-intel64/mec.exe -o bin/cygwin3-intel64/mesc.exe
         #../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
         ls -l bin/*/*
         cp ../LICENSE ./
         cp ../readme.txt ./
         ls
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesc bin LICENSE readme.txt
+        #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesc bin LICENSE readme.txt
 
     - name: Create cygwin-intel mesw
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
@@ -144,8 +153,25 @@ jobs:
         cd ./microemacs/mesingle
         rm -rf bin/cygwin3-intel64
         mkdir -p bin/cygwin3-intel64
-        ../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mew.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesw.exe
+        #../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mew.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesw.exe
         cp ../LICENSE ./
         cp ../readme.txt ./
-        zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesw bin LICENSE readme.txt
+        #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesw bin LICENSE readme.txt
+
+    - name: Download pre-built OpenSSL
+      shell: pwsh
+      run: |
+        cd c:\cygwin\home\runneradmin\microemacs\3rdparty
+        Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.4.zip -OutFile openssl.zip
+        Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
+        dir .\openssl-3.5
+          
+    - name: Compile windows-intel mec
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=c
+      working-directory: c:/cygwin/home/runneradmin/workspace/microemacs/src
 
