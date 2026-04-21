@@ -137,7 +137,7 @@ jobs:
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(..\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
         mkdir -Path bin\cygwin-intel64
         ..\bin\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin-intel64\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesc.exe
