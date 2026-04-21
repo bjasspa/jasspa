@@ -159,9 +159,9 @@ jobs:
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
       working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/
 
-      - name: Upload cygwin-intel downloads
-        uses: actions/upload-artifact@v4
-        with: 
-          name: cygwin-intel-downloads
-          path: c:\cygwin\home\runneradmin\workspace\jasspa\downloads
+    - name: Upload cygwin-intel downloads
+      uses: actions/upload-artifact@v4
+      with: 
+        name: cygwin-intel-downloads
+        path: c:\cygwin\home\runneradmin\workspace\jasspa\downloads
 
