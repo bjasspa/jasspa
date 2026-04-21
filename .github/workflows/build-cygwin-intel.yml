@@ -146,48 +146,22 @@ jobs:
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
       working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/
 
-    - name: Create cygwin-intel mesc2
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
+    - name: Create cygwin-intel mesw
+      shell: pwsh
       run: |
-        echo `pwd`
-        cd ./workspace/jasspa
-        pwd
-        export MEVER=`./microemacs/bin/cygwin3-intel64/mec.exe -p @microemacs/contribs/ver.emf`
-        echo $MEVER
-        echo starting
-        ls
-        cd ./microemacs/mesingle
-        pwd
-        mkdir -p bin/cygwin3-intel64
-        ls
-        echo files
-        ls ../bin/cygwin3-intel64/mec.exe 
-        ls ../bin/cygwin3-intel64/tfs.exe
-        echo `../bin/cygwin3-intel64/mec.exe -V`
-        echo `../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -h`
-        echo `ls -lt ../bin/cygwin3-intel64/tfs.exe`
-        echo `ls -R bin/*`
-        #PATH=:../bin/cygwin3-intel64/:${PATH} bash mesgen.sh -d -p ../bin/cygwin3-intel64/mec.exe -o bin/cygwin3-intel64/mesc.exe
-        #../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mec.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesc.exe
-        ls -l bin/*
-        cp ../LICENSE ./
-        cp ../readme.txt ./
-        ls
-        cygpath -w `pwd`
-        #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesc bin LICENSE readme.txt
+        cd .\microemacs
+        $env:MEVER=$(.\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
+        cd .\mesingle
+        Remove-Item bin\cygwin-intel64\mesc.exe
+        ..\bin\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mew.exe -t ..\bin\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesw.exe
+        Copy-Item -Path ..\LICENSE -Destination .
+        Copy-Item -Path ..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
+      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/
 
-    - name: Create cygwin-intel mesw2
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
-      run: |
-        cd ./workspace/jasspa
-        export MEVER=`./microemacs/bin/cygwin3-intel64/mec -p @microemacs/contribs/ver.emf`
-        cd ./microemacs/mesingle
-        rm -rf bin/cygwin3-intel64
-        mkdir -p bin/cygwin3-intel64
-        #../bin/cygwin3-intel64/mec.exe -p "@./mesgen" -f -p ../bin/cygwin3-intel64/mew.exe -t ../bin/cygwin3-intel64/tfs.exe -o bin/cygwin3-intel64/mesw.exe
-        cp ../LICENSE ./
-        cp ../readme.txt ./
-        #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesw bin LICENSE readme.txt
-
-
+      - name: Upload cygwin-intel downloads
+        uses: actions/upload-artifact@v4
+        with: 
+          name: cygwin-intel-downloads
+          path: c:\cygwin\home\runneradmin\workspace\jasspa\downloads
 
