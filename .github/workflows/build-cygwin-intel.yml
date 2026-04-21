@@ -143,7 +143,7 @@ jobs:
         cp ../LICENSE ./
         cp ../readme.txt ./
         ls
-        echo `cygpath -w .`
+        cygpath -w `pwd`
         #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesc bin LICENSE readme.txt
 
     - name: Create cygwin-intel mesw
@@ -162,7 +162,7 @@ jobs:
     - name: Download pre-built OpenSSL
       shell: pwsh
       run: |
-        cd c:\cygwin\home\runneradmin\microemacs\3rdparty
+        cd c:\cygwin\home\runneradmin\workspace\microemacs\3rdparty
         Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.4.zip -OutFile openssl.zip
         Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
         dir .\openssl-3.5
