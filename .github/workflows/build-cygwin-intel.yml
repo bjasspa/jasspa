@@ -116,7 +116,37 @@ jobs:
         export MEVER=`./bin/cygwin3-intel64/mec -p @contribs/ver.emf`
         zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_cygwin_intel_binaries bin LICENSE readme.txt
 
+    - name: Download pre-built OpenSSL
+      shell: pwsh
+      run: |
+        cd c:\cygwin\home\runneradmin\workspace\jasspa\microemacs\3rdparty
+        Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.4.zip -OutFile openssl.zip
+        Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
+        dir .\openssl-3.5
+          
+    - name: Compile windows-intel mec
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=c
+      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/microemacs/src
+
     - name: Create cygwin-intel mesc
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
+        cd .\mesingle
+        mkdir -Path bin\cygwin-intel64
+        ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin-intel64\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesc.exe
+        Copy-Item -Path ..\LICENSE -Destination .
+        Copy-Item -Path ..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
+      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/
+
+    - name: Create cygwin-intel mesc2
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
       run: |
         echo `pwd`
@@ -146,7 +176,7 @@ jobs:
         cygpath -w `pwd`
         #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesc bin LICENSE readme.txt
 
-    - name: Create cygwin-intel mesw
+    - name: Create cygwin-intel mesw2
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'            
       run: |
         cd ./workspace/jasspa
@@ -159,20 +189,5 @@ jobs:
         cp ../readme.txt ./
         #zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_cygwin_intel_mesw bin LICENSE readme.txt
 
-    - name: Download pre-built OpenSSL
-      shell: pwsh
-      run: |
-        cd c:\cygwin\home\runneradmin\workspace\jasspa\microemacs\3rdparty
-        Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.4.zip -OutFile openssl.zip
-        Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
-        dir .\openssl-3.5
-          
-    - name: Compile windows-intel mec
-      shell: pwsh
-      run: |
-        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
-          | % { , ($_ -Split '=', 2) } `
-          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
-        nmake -f winmsvc.mak BTYP=c
-      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/microemacs/src
+
 
