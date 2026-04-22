@@ -35,6 +35,19 @@
 #include <sys/types.h>
 #endif
 
+#ifdef _LINUX_BASE
+#include <malloc.h>
+#define malloc_blk_size(a)  malloc_usable_size(a)
+#endif
+#ifdef _MACOS
+#include <malloc/malloc.h>
+#define malloc_blk_size(a)  malloc_size(a)
+#endif
+#ifdef _WIN32
+#include <malloc.h>
+#define malloc_blk_size(a)  _msize(a)
+#endif
+
 #ifndef _ME_USE_STD_MALLOC
 void *
 meMalloc(size_t s)
@@ -71,9 +84,18 @@ meStrrep(meUByte **dd, const meUByte *ss)
 {
     size_t ll;
     void *rr;
-    if(*dd != NULL)
-        free(*dd);
     ll = strlen((char *) ss) + 1;
+    if(*dd != NULL)
+    {
+#ifdef malloc_blk_size
+        if(malloc_blk_size(*dd) >= ll)
+        {
+            memcpy(*dd,ss,ll);
+            return;
+        }
+#endif
+        free(*dd);
+    }
     if((rr = malloc(ll)) == NULL)
         mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Warning! Malloc failure");
     else
