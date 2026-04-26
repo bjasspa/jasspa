@@ -138,7 +138,7 @@ define-macro time
   set-variable #l0 $unix-time
   !force execute-line #l2
   set-variable #l1 $unix-time
-  ml-write &spr "Command took %.6f sec" &fsub #l1 #l0
+  ml-write &spr "Command took %.6f sec" &set $result &fsub #l1 #l0
 !emacro
 
 ; The default compare-windows ignores white space. The -exact extension checks

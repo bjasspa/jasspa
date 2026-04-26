@@ -35,6 +35,7 @@ jobs:
           libncurses-devel 
           libXt-devel
           libXft-devel
+          libXpm-devel
           libssl-devel 
           zip 
           unzip

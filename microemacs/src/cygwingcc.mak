@@ -135,18 +135,26 @@ endif
 ifneq (,$(findstring w,$(BTYP)))
 
 ifneq (,$(X11_LIBS))
-else ifeq (0,$(shell pkg-config --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
-X11_LIBS = $(shell pkg-config --libs X11)
+else ifeq (0,$(shell pkg-config --exists x11; echo $$? ))
+X11_LIBS = $(shell pkg-config --libs x11)
 endif
 
-ifneq (,$(WINDOW_LIBS))
+ifeq (,$(X11_LIBS))
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 BTYP = c
-else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? ))
+else
+
+ifeq (0,$(shell pkg-config --exists xpm; echo $$? ))
 WINDOW_DEFS = -D_XPM
-WINDOW_LIBS = $(X11_LIBS) -lXpm
+WINDOW_LIBS = $(shell pkg-config --libs xpm)
 else
 WINDOW_LIBS = $(X11_LIBS)
+endif
+ifeq (0,$(shell pkg-config --exists xft; echo $$? ))
+WINDOW_DEFS += -DMEOPT_XFT=1 $(shell pkg-config --cflags xft)  
+WINDOW_LIBS += $(shell pkg-config --libs xft)
+endif
+
 endif
 
 endif

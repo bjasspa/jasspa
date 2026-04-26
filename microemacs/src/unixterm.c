@@ -291,6 +291,7 @@ meUShort tcapSpecSKeyModMsk[tcapSpecSKeyModCnt] = {
 
 #include <X11/Xatom.h>
 #include <X11/cursorfont.h>
+#include <X11/Xresource.h>
 
 /* X11 Drag and drop */
 #ifdef _DRAGNDROP

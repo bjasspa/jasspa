@@ -324,10 +324,9 @@
 #define _CLIPBRD        1       /* Inter window clip board supp          */
 #define _WINDOW         1       /* Window, need resizing & title code    */
 #define _MULTI_WINDOW   1       /* can support multiple window frames    */
-#include <X11/Intrinsic.h>      /* Intrinsics Definitions                */
-#include <X11/StringDefs.h>     /* Standard Name-String definitions      */
-#include <X11/keysym.h>         /* Keyboard symbols                      */
+#include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/keysym.h>         /* Keyboard symbols                      */
 #if MEOPT_XFT
 #include <X11/Xft/Xft.h>
 #endif
