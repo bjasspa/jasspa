@@ -1058,7 +1058,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                            meRSTRCMP_WHOLE
 #endif
                            ) != meREGEX_OKAY)
+            {
+                if(buffNames.mask != NULL)
+                {
+                    meFree(buffNames.mask);
+                    buffNames.mask = NULL;
+                }
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            }
             meStrrep(&buffNames.mask,vvalue);
             if(buffNames.mask != NULL)
                 buffNames.size = createBuffList(&buffNames.list,0);
@@ -1068,7 +1075,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             commNames.list = NULL;
             commNames.curr = 0;
             if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            {
+                if(commNames.mask != NULL)
+                {
+                    meFree(commNames.mask);
+                    commNames.mask = NULL;
+                }
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            }
             meStrrep(&commNames.mask,vvalue);
             if(commNames.mask != NULL)
             {
@@ -1099,7 +1113,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
                                meRSTRCMP_WHOLE
 #endif
                                ) != meREGEX_OKAY)
+                {
+                    if(fileNames.mask != NULL)
+                    {
+                        meFree(fileNames.mask);
+                        fileNames.mask = NULL;
+                    }
                     return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+                }
                 meStrrep(&fileNames.mask,mm);
                 if(fileNames.mask != NULL)
                 {
@@ -1126,7 +1147,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             mjmdNames.list = NULL;
             mjmdNames.curr = 0;
             if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            {
+                if(mjmdNames.mask != NULL)
+                {
+                    meFree(mjmdNames.mask);
+                    mjmdNames.mask = NULL;
+                }
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            }
             meStrrep(&mjmdNames.mask,vvalue);
             if(mjmdNames.mask != NULL)
                 mjmdNames.size = createMajorModeList(&mjmdNames.list);
@@ -1135,7 +1163,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVMNAMES:
             modeNames.curr = 0;
             if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            {
+                if(modeNames.mask != NULL)
+                {
+                    meFree(modeNames.mask);
+                    modeNames.mask = NULL;
+                }
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            }
             meStrrep(&modeNames.mask,vvalue);
             break;
         case EVVNAMES:
@@ -1143,7 +1178,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             varbNames.list = NULL;
             varbNames.curr = 0;
             if(meRegexComp(&meRegexStrCmp,vvalue,meRSTRCMP_WHOLE) != meREGEX_OKAY)
+            {
+                if(varbNames.mask != NULL)
+                {
+                    meFree(varbNames.mask);
+                    varbNames.mask = NULL;
+                }
                 return mlwrite(MWABORT,(meUByte *)"[bad regex]");
+            }
             meStrrep(&varbNames.mask,vvalue);
             if(varbNames.mask != NULL)
                 varbNames.size = createVarList(&varbNames.list);
@@ -2877,8 +2919,8 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFSGREAT:     return meLtoa(meStrcmp(arg1,arg2) > 0);
     case UFISEQUAL:    return meLtoa(meStricmp(arg1,arg2) == 0);
 #if MEOPT_EXTENDED
-    case UFXSEQ:       return meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1);
-    case UFXISEQ:      return meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) == 1);
+    case UFXSEQ:       return meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) > 0);
+    case UFXISEQ:      return meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) > 0);
     case UFLDEL:
         {
             int  index=meAtoi(arg2);

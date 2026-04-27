@@ -2209,9 +2209,9 @@ findFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
         {
             meUByte *ss = curDirList.list[ii] ;
 #ifdef _FILE_CASE_INSENSE
-            if(regexStrCmp(ss,mask,meRSTRCMP_ICASE|meRSTRCMP_WHOLE))
+            if(regexStrCmp(ss,mask,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
 #else
-            if(regexStrCmp(ss,mask,meRSTRCMP_WHOLE))
+            if(regexStrCmp(ss,mask,meRSTRCMP_WHOLE) > 0)
 #endif
             {
                 meStrcpy(baseName,ss) ;

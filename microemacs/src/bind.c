@@ -1026,7 +1026,7 @@ buildlist(int n, meUByte *mstring)
          * we are executing an apropos command and current string doesn't
          * include the search string */
         if(((n & 0x01) && (cmd->id >= CK_MAX) && (((meMacro *) cmd)->hlp->flag & meMACRO_HIDE)) ||
-           ((mstring != NULL) && !regexStrCmp(cmd->name,mstring,meRSTRCMP_WHOLE)))
+           ((mstring != NULL) && (regexStrCmp(cmd->name,mstring,meRSTRCMP_WHOLE) <= 0)))
             continue;		/* Do next loop */
         /* Add in the command name */
         meStrcpy(outseq, cmd->name);
