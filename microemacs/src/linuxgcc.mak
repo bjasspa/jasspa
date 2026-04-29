@@ -44,6 +44,12 @@ include $(TOPDIR)/etc/makeinc.ver
 TOOLKIT  = gcc
 TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
+PKG_CONFIG ?= pkg-config
+
+ifneq (0,$(shell command -v $(PKG_CONFIG) >/dev/null 2>&1 ; echo $$? ))
+$(warning WARNING: Package config ($(PKG_CONFIG)) not found, some extensions may not be avialable.)
+endif
+
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -m | cut -c 1-5)" "aarch"
 ARCHITEC = aarch
@@ -109,6 +115,8 @@ else
 ifneq (,$(OPENSSLP))
 else ifneq (,$(OPENSSLPATH))
 OPENSSLP = 1 -I$(OPENSSLPATH)
+else ifeq (0,$(shell $(PKG_CONFIG) --exists openssl; echo $$? ))
+OPENSSLP = 1 $(shell $(PKG_CONFIG) --cflags openssl)
 else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
 OPENSSLP = 1
 else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <openssl/ssl.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -I/usr/local/opt/openssl/include -o /dev/null > /dev/null 2> /dev/null - ; echo $$? ))
@@ -138,10 +146,9 @@ endif
 
 ifneq (,$(findstring w,$(BTYP)))
 
-ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lX11 > /dev/null 2> /dev/null - ; echo $$? ))
-
-X11_LIBS = -lX11
-
+ifneq (,$(X11_LIBS))
+else ifeq (0,$(shell $(PKG_CONFIG) --exists x11; echo $$? ))
+X11_LIBS = $(shell $(PKG_CONFIG) --libs x11)
 else ifeq (64,$(BIT_SIZE))
 
 ifneq (,$(wildcard /usr/lib/x86_64-linux-gnu/libX11.a))
@@ -162,21 +169,23 @@ endif
 
 endif
 
-ifneq (,$(WINDOW_LIBS))
+ifeq (,$(X11_LIBS))
 $(warning WARNING: No X11 support found, forcing build type to console only.)
 BTYP = c
 else
 
-ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null $(X11_LIBS) -lXpm > /dev/null 2> /dev/null - ; echo $$? ))
-WINDOW_DEFS = -D_XPM 
-WINDOW_LIBS = $(X11_LIBS) -lXpm
-else
-WINDOW_LIBS = $(X11_LIBS)
+ifeq (0,$(shell $(PKG_CONFIG) --exists xft; echo $$? ))
+WINDOW_DEFS += -DMEOPT_XFT=1 $(shell $(PKG_CONFIG) --cflags xft)  
+WINDOW_LIBS += $(shell $(PKG_CONFIG) --libs xft)
 endif
-ifeq (0,$(shell pkg-config --exists xft; echo $$? ))
-WINDOW_DEFS += -DMEOPT_XFT=1 $(shell pkg-config --cflags xft)  
-WINDOW_LIBS += $(shell pkg-config --libs xft)
+ifeq (0,$(shell $(PKG_CONFIG) --exists xpm; echo $$? ))
+WINDOW_DEFS += -D_XPM 
+WINDOW_LIBS += $(shell $(PKG_CONFIG) --libs xpm)
+else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\n$(HASH)include <X11/Xlib.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lXpm $(X11_LIBS) > /dev/null 2> /dev/null - ; echo $$? ))
+WINDOW_DEFS += -D_XPM 
+WINDOW_LIBS += -lXpm
 endif
+WINDOW_LIBS += $(X11_LIBS)
 
 endif
 
@@ -186,7 +195,10 @@ ifneq (w,$(BTYP))
 #
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
-ifeq (0,$(shell printf '$(HASH)include <stdio.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? ))
+ifeq (0,$(shell $(PKG_CONFIG) --exists ncurses; echo $$? ))
+CONSOLE_LIBS  = $(shell $(PKG_CONFIG) --libs ncurses)
+CONSOLE_DEFS  = -D_USE_NCURSES
+else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? ))
 CONSOLE_LIBS  = -lncurses
 CONSOLE_DEFS  = -D_USE_NCURSES
 else
