@@ -45,6 +45,12 @@ include $(TOPDIR)/etc/makeinc.ver
 TOOLKIT  = gcc
 TOOLKIT_VER = $(shell $(CC) -dumpversion)
 
+PKG_CONFIG ?= pkg-config
+
+ifneq (0,$(shell command -v $(PKG_CONFIG) >/dev/null 2>&1 ; echo $$? ))
+$(warning WARNING: Package config ($(PKG_CONFIG)) not found, some extensions may not be avialable.)
+endif
+
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -m | cut -c 1-5)" "aarch"
 ARCHITEC = aarch
@@ -105,9 +111,9 @@ else
 ifneq (,$(OPENSSLP))
 else ifneq (,$(OPENSSLPATH))
 OPENSSLP = 1 -I$(OPENSSLPATH)
-else ifneq (0,$(shell pkg-config --libs openssl > /dev/null 2> /dev/null; echo $$? ))
+else ifneq (0,$(shell $(PKG_CONFIG) --libs openssl > /dev/null 2> /dev/null; echo $$? ))
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
-else ifneq (,$(shell pkg-config --modversion openssl | grep "^3\..*"))
+else ifneq (,$(shell $(PKG_CONFIG) --modversion openssl | grep "^3\..*"))
 OPENSSLP = 1
 OPENSSLV = -3
 else
@@ -115,7 +121,7 @@ $(warning WARNING: Unsupported OpenSSL version, https support will be disabled.)
 endif
 ifneq (,$(OPENSSLP))
 OPENSSLDEFS = -DMEOPT_OPENSSL=$(OPENSSLP) -D_OPENSSLLNM=cygssl$(OPENSSLV).dll -D_OPENSSLCNM=cygcrypto$(OPENSSLV).dll
-LDLIBS := $(LDLIBS) $(shell pkg-config --libs openssl)
+LDLIBS := $(LDLIBS) $(shell $(PKG_CONFIG) --libs openssl)
 endif
 BCOR     = me
 BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
@@ -135,8 +141,8 @@ endif
 ifneq (,$(findstring w,$(BTYP)))
 
 ifneq (,$(X11_LIBS))
-else ifeq (0,$(shell pkg-config --exists x11; echo $$? ))
-X11_LIBS = $(shell pkg-config --libs x11)
+else ifeq (0,$(shell $(PKG_CONFIG) --exists x11; echo $$? ))
+X11_LIBS = $(shell $(PKG_CONFIG) --libs x11)
 endif
 
 ifeq (,$(X11_LIBS))
@@ -144,15 +150,15 @@ $(warning WARNING: No X11 support found, forcing build type to console only.)
 BTYP = c
 else
 
-ifeq (0,$(shell pkg-config --exists xpm; echo $$? ))
+ifeq (0,$(shell $(PKG_CONFIG) --exists xpm; echo $$? ))
 WINDOW_DEFS = -D_XPM
-WINDOW_LIBS = $(shell pkg-config --libs xpm)
+WINDOW_LIBS = $(shell $(PKG_CONFIG) --libs xpm)
 else
 WINDOW_LIBS = $(X11_LIBS)
 endif
-ifeq (0,$(shell pkg-config --exists xft; echo $$? ))
-WINDOW_DEFS += -DMEOPT_XFT=1 $(shell pkg-config --cflags xft)  
-WINDOW_LIBS += $(shell pkg-config --libs xft)
+ifeq (0,$(shell $(PKG_CONFIG) --exists xft; echo $$? ))
+WINDOW_DEFS += -DMEOPT_XFT=1 $(shell $(PKG_CONFIG) --cflags xft)  
+WINDOW_LIBS += $(shell $(PKG_CONFIG) --libs xft)
 endif
 
 endif
@@ -164,10 +170,10 @@ ifneq (w,$(BTYP))
 # Preference now is to use "ncurses" rather than "termcap", figure out if ncurses is avaiable or if we must fall back to termcap.
 #
 
-ifeq (0,$(shell pkg-config --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
+ifeq (0,$(shell $(PKG_CONFIG) --libs ncurses > /dev/null 2> /dev/null; echo $$? ))
 CONSOLE_DEFS  = -D_USE_NCURSES
-CONSOLE_LIBS  := $(shell pkg-config --libs ncurses)
-CCFLAGS += $(shell pkg-config --cflags ncurses)
+CONSOLE_LIBS  := $(shell $(PKG_CONFIG) --libs ncurses)
+CCFLAGS += $(shell $(PKG_CONFIG) --cflags ncurses)
 else
 $(warning WARNING: No ncurses, defaulting to termcap.)
 CONSOLE_LIBS  = -ltermcap
