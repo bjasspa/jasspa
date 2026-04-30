@@ -95,7 +95,7 @@ jobs:
           ..\..\..\..\bin\windows100-arm64\tfs ../../../../../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_windows100_arm64.tfs tfs
 
       - name: Get ehf help file
-        uses: dawidd6/action-download-artifact@v6
+        uses: dawidd6/action-download-artifact@v21
         with:
           run_id: ${{ inputs.refToHelpAsset }}
           workflow: build-linux-intel.yml
