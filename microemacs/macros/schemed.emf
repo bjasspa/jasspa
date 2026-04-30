@@ -19,7 +19,7 @@ add-color 5 30 30 255
 add-color 6 200 0 200
 add-color 7 0 200 200
 add-color 8 255 255 255
-add-color 9 130 130 130
+add-color 9 80 80 90
 add-color 10 255 50 50
 add-color 11 50 255 50
 add-color 12 255 255 50
