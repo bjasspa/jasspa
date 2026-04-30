@@ -2,7 +2,7 @@
 "autosv" = "300"
 "company" = ""
 "cygwin" {
- "file-ignore" = "./ ~ tags .o"
+ "file-ignore" = "./ ~ .git/ .svn/ tags .o"
  "kept-vers" = "10"
 }
 "cygwinc" {
@@ -13,7 +13,7 @@
 "dos" {
  "blink" = "13107800"
  "char-set" = "cp437"
- "file-ignore" = "./ ~ tags .o"
+ "file-ignore" = "./ ~ .git/ .svn/ tags .o"
  "scroll-bar" = "0x1be"
 }
 "fhook" 2 {
@@ -48,7 +48,7 @@
  "blink" = "13107800"
  "ext-char-set" = "1"
  "fence" = "3"
- "file-ignore" = "./ ~ tags .o"
+ "file-ignore" = "./ ~ .git/ .svn/ tags .o"
  "file-tool" {
   "1" = "S\\Hystem Open" {
    "cmd" = "xdg-open %\"%f%\""
@@ -96,7 +96,7 @@
  "blink" = "13107600"
  "ext-char-set" = "1"
  "fence" = "3"
- "file-ignore" = "./ ~ tags .o"
+ "file-ignore" = "./ ~ .git/ .svn/ tags .o"
  "file-tool" {
   "1" = "S\\Hystem Open" {
    "cmd" = "open %\"%f%\""
@@ -178,7 +178,7 @@
  "mouse-wup" = "10 mouse-wup-scroll"
 }
 "msyswin" {
- "file-ignore" = "./ ~ tags .o"
+ "file-ignore" = "./ ~ .git/ .svn/ tags .o"
  "kept-vers" = "10"
 }
 "msyswinc" {
@@ -200,7 +200,7 @@
  "char-set" = "cp1252"
  "ext-char-set" = "1"
  "fence" = "3"
- "file-ignore" = "./ ~ tags .o"
+ "file-ignore" = "./ ~ .git/ .svn/ tags .o"
  "file-tool" {
   "1" = "S\\Hystem Open" {
    "cmd" = "cmd /c \"%F\""
