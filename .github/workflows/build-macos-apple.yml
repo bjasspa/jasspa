@@ -34,7 +34,7 @@ jobs:
            brew install xquartz
         
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.refToBuild }}
 
@@ -124,13 +124,13 @@ jobs:
           ../../bin/macos15-apple64/tfs ../../../packages/Jasspa_MicroEmacs_macos_icons.tfs tfs
 
       - name: Upload macos-apple downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: macos-apple-downloads
           path: downloads
           
       - name: Upload macos-apple packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: macos-apple-packages
           path: packages

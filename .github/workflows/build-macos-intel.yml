@@ -34,7 +34,7 @@ jobs:
            brew install xquartz
         
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.refToBuild }}
 
@@ -106,13 +106,13 @@ jobs:
           ./bin/macos15-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_macos15_intel64.tfs tfs
 
       - name: Upload macos-intel downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: macos-intel-downloads
           path: downloads
           
       - name: Upload macos-intel packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: macos-intel-packages
           path: packages
