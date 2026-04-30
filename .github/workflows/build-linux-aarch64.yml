@@ -34,7 +34,7 @@ jobs:
            pkg-config --modversion libssl
         
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.refToBuild }}
 
@@ -95,13 +95,13 @@ jobs:
           ./bin/linux6-aarch64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux6_aarch64.tfs tfs
 
       - name: Upload linux-aarch downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: linux-aarch-downloads
           path: downloads
           
       - name: Upload linux-aarch packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: linux-aarch-packages
           path: packages

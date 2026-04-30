@@ -34,7 +34,7 @@ jobs:
            pkg-config --modversion libssl
            
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.refToBuild }}
        
@@ -146,19 +146,19 @@ jobs:
           ../../bin/linux6-intel64/tfs ../../../packages/Jasspa_MicroEmacs_linux_icons.tfs jasspa
 
       - name: Upload linux-intel downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: linux-intel-downloads
           path: downloads
           
       - name: Upload linux-intel packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: linux-intel-packages
           path: packages
       
       - name: Upload help ehf
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: help-ehf
           path: microemacs/doc/me.ehf

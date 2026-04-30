@@ -33,7 +33,7 @@ jobs:
           gci env:
           
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.refToBuild }}
 
@@ -144,13 +144,13 @@ jobs:
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesw
 
       - name: Upload windows-intel downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: windows-arm-downloads
           path: downloads
 
       - name: Upload windows-arm packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: windows-intel-packages
           path: packages

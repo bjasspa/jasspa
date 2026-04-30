@@ -32,7 +32,7 @@ jobs:
           cat "${Env:GITHUB_ENV}"
           
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ inputs.refToBuild }}
 
@@ -161,13 +161,13 @@ jobs:
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_intel_mesw
 
       - name: Upload windows-intel downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: windows-intel-downloads
           path: downloads
 
       - name: Upload windows-intel packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: windows-intel-packages
           path: packages
