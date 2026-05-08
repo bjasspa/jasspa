@@ -219,14 +219,15 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, meVariable **varList)
 #endif
     
     /* Not found so create a new one */
-    if((vp = (meVariable *) meMalloc(sizeof(meVariable)+meStrlen(vname))) != NULL)
+    ii = meStrlen(vname);
+    if(((vp = (meVariable *) meMalloc(sizeof(meVariable)+ii)) != NULL) &&
+       ((vp->value = meStrdup(vvalue)) != NULL))
     {
-        meStrcpy(vp->name,vname);
+        memcpy(vp->name,vname,ii+1);
 #if MEOPT_CMDHASH
         vp->hash = hash;
 #endif
         vp->next = vptr->next;
-        vp->value = meStrdup(vvalue);
         vptr->next = vp;
     }
     return vp;

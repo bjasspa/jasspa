@@ -1688,8 +1688,10 @@ meXEventHandler(void)
                  * note that we do not check the error return because there
                  * is not actually anything that we can do if the hints
                  * cannot be set. */
-                sizeHints.base_width = sizeHints.width = mecm.fwidth*frame->width;
-                sizeHints.base_height = sizeHints.height = mecm.fdepth*(frame->depth+1);
+                sizeHints.base_width = 0;
+                sizeHints.base_height = 0;
+                sizeHints.width = mecm.fwidth*frame->width;
+                sizeHints.height = mecm.fdepth*(frame->depth+1);
                 XSetWMNormalHints(mecm.xdisplay,meFrameGetXWindow(frame),&sizeHints) ;
                 meFrameSetWindowSize(frame);
                 /* Now that the hints have been changed then the window may
@@ -1709,25 +1711,17 @@ meXEventHandler(void)
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
             /* Get the width and height back and setup the frame->depthMax etc */
-            int ww, hh, sizeSet ;
+            int ww, hh, sizeSet;
             
-            /* Make sure that there are no other pending ConfigureNotify
-             * events, if there are then find the last one */
-#if 0
-            /* Although advised causes a paused startup */
-            {
-                XEvent nextEvent;
-                
-                while (XCheckTypedWindowEvent(mecm.xdisplay, 
-                                              meFrameGetXWindow(frame), 
-                                              ConfigureNotify,
-                                              &nextEvent) != 0)
-                {
-                    /* Overwrite the current envent with the new one. */
-                    memcpy (&event, &nextEvent, sizeof (XEvent));
-                }
-            }
-#endif            
+            /* Make sure that there are no other pending ConfigureNotify events, if there are then
+             * find the last one */
+            /* Had been reported as a cause for a delay during startup, however this should have
+             * the opporsite effect if enything (less events to process) so this may have been a
+             * side-effect of another issue. If start-up remains an issue we could avoid doing this
+             * until ME is fully running. */
+            while(XCheckTypedWindowEvent(mecm.xdisplay,meFrameGetXWindow(frame), 
+                                         ConfigureNotify,&event) != 0)
+                ;
             sizeHints.x = event.xconfigure.x ;
             sizeHints.y = event.xconfigure.y ;
             sizeHints.height = event.xconfigure.height ;
@@ -3679,8 +3673,10 @@ XTERMsetFont(int n, char *fontName)
             sizeHints.height_inc = jj;
             sizeHints.min_width = ii*10;
             sizeHints.min_height = jj*4;
-            sizeHints.base_width = TTwidthDefault*ii;
-            sizeHints.base_height = TTdepthDefault*jj;
+            sizeHints.base_width = 0;
+            sizeHints.base_height = 0;
+            sizeHints.width = TTwidthDefault*ii;
+            sizeHints.height = TTdepthDefault*jj;
             
             /* Clean up the font table for the existing font. Unload all of the
              * previously loaded fonts */
@@ -3814,8 +3810,10 @@ XTERMsetFont(int n, char *fontName)
     sizeHints.height_inc = jj;
     sizeHints.min_width  = ii*10;
     sizeHints.min_height = jj*4;
-    sizeHints.base_width = TTwidthDefault*ii;
-    sizeHints.base_height = TTdepthDefault*jj;
+    sizeHints.base_width = 0;
+    sizeHints.base_height = 0;
+    sizeHints.width = TTwidthDefault*ii;
+    sizeHints.height = TTdepthDefault*jj;
     
     /* Clean up the font table for the existing font. Unload all of the previously loaded fonts */
 #if MEOPT_XFT
@@ -4105,16 +4103,17 @@ XTERMstart(void)
         ww = (meUInt) tw;
         hh = (meUInt) th;
     }
-    
-    if((sizeHints.base_width = ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
+    sizeHints.base_width = 0;
+    sizeHints.base_height = 0;
+    if((sizeHints.width = ww*mecm.fwidth) > ((meUInt) sizeHints.max_width))
     {
         ww = sizeHints.max_width / mecm.fwidth;
-        sizeHints.base_width = ww*mecm.fwidth;
+        sizeHints.width = ww*mecm.fwidth;
     }
-    if((sizeHints.base_height = hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
+    if((sizeHints.height = hh*mecm.fdepth) > ((meUInt) sizeHints.max_height))
     {
         hh = sizeHints.max_height / mecm.fdepth;
-        sizeHints.base_height = hh*mecm.fdepth;
+        sizeHints.height = hh*mecm.fdepth;
     }
     TTdepthDefault = hh;
     TTwidthDefault = ww;
@@ -4441,8 +4440,10 @@ changeFont(int f, int n)
         else
 #endif
         {
-            sizeHints.base_width = sizeHints.width = mecm.fwidth*loopFrame->width;
-            sizeHints.base_height = sizeHints.height = mecm.fdepth*(loopFrame->depth+1);
+            sizeHints.base_width = 0;
+            sizeHints.base_height = 0;
+            sizeHints.width = mecm.fwidth*loopFrame->width;
+            sizeHints.height = mecm.fdepth*(loopFrame->depth+1);
 #if 0
             printf("Font Change: %d,%d %d x %d, %d + %d (%d %d)\n",sizeHints.x,sizeHints.y,sizeHints.width,sizeHints.height,
                    sizeHints.width_inc,sizeHints.height_inc,loopFrame->width,loopFrame->depth+1);
@@ -4605,8 +4606,11 @@ meFrameSetWindowSize(meFrame *frame)
     if(disableResize == 0)
 #endif /* _ME_CONSOLE */
     {
-        sizeHints.base_width = sizeHints.width = mecm.fwidth*frame->width;
-        sizeHints.base_height = sizeHints.height = mecm.fdepth*(frame->depth+1);
+        sizeHints.base_width = 0;
+        sizeHints.base_height = 0;
+        sizeHints.width = mecm.fwidth*frame->width;
+        sizeHints.height = mecm.fdepth*(frame->depth+1);
+        printf("meFrameSetWindowSize Resize %d %d\n",sizeHints.width,sizeHints.height);
 #if 0
         printf("meFrameSetWindowSize Resize %d %d\n",sizeHints.width,sizeHints.height);
 #endif

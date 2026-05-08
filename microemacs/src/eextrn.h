@@ -75,11 +75,14 @@ extern	void	meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff
 /* General string hash based on djb2 hash by Bernstein (hash = (hash*33)+key[i]) */
 #define meStringHash(str,hsh)                                                \
 do {                                                                         \
-    register meUInt hh=0;                                                    \
-    register meUByte cc, *ss=str;                                            \
-    while((cc = *ss++) != '\0')                                              \
-        hh = (hh << 5) + hh + cc;                                            \
-    hsh = hh;                                                                \
+    register meUByte icc, *iss=str;                                          \
+    register meUInt ihh;                                                     \
+    if((ihh=*iss++) != 0)                                                    \
+    {                                                                        \
+      while((icc = *iss++) != '\0')                                          \
+        ihh = (ihh << 5) + ihh + icc;                                        \
+    }                                                                        \
+    hsh = ihh;                                                               \
 } while(0)
 
 extern  meUShort  meGetKeyFromString(meUByte **tp);

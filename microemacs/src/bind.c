@@ -683,11 +683,11 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
     
     /*---	Get the function name to bind it to */
     
-    if(meGetString(prom, MLCOMMAND, 0, buf, meBUF_SIZE_MAX) <= 0)
-        return meFALSE ;
+    if(meGetString(prom,MLCOMMAND,0,buf,meBUF_SIZE_MAX) <= 0)
+        return meFALSE;
     if((namidx = decode_fncname(buf,0)) < 0)
-        return meFALSE ;
-    kfunc = getCommandFunc(namidx) ;
+        return meFALSE;
+    kfunc = getCommandFunc(namidx);
 
     /*---	Prompt the user to type in a key to bind */
     /*---	Get the command sequence to bind */
