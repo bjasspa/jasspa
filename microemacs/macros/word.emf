@@ -23,6 +23,11 @@
 ; Where <flags> is a list of flag letters:
 ;   f - File, u - Url, C - cmd, x - external; k - keep loaded (file); m - multiple defs possible (file); i - use ipipe (ext); s - single/shared output buffer (all)
 ;
+!if &not &exi .osd.word
+  set-variable .osd.word &pinc .osd.next 1
+  set-variable .osd.wordc &pinc .osd.next 1
+!endif
+
 0 define-macro describe-word-dct
   !iif &les $window-eline 3  !abort
   buffer-is-utf8 #l1
@@ -34,7 +39,7 @@
   replace-string "{\\([^\n}]+\\)}" "\\1"
   beginning-of-buffer
   set-variable #l1 1
-  set-variable #l9 40
+;  set-variable #l9 40
   !while &len @wc
     !if &seq &lef @wl 4 "151 "
       !iif &not #l1  insert-newline
@@ -45,7 +50,7 @@
       !else
         set-variable @wl &xrep @wl "^.*\"\\(.*\\)\" *" "From \\1:"
         end-of-line
-        !iif &gre $window-col #l9  set-variable #l9 $window-col
+;        !iif &gre $window-col #l9  set-variable #l9 $window-col
         insert-newline
         forward-line
       !endif
@@ -53,7 +58,7 @@
     !elif &not &sin &trr @wl "."
       !iif #l0  2 insert-space
       end-of-line
-      !iif &gre $window-col #l9  set-variable #l9 $window-col
+;      !iif &gre $window-col #l9  set-variable #l9 $window-col
       set-variable #l1 0
       forward-char
     !elif #l1
@@ -66,7 +71,7 @@
       forward-line
     !endif
   !done
-  ml-write &cat "Width: " #l9
+;  ml-write &cat "Width: " #l9
 !emacro
 0 define-macro describe-word-sln
   beginning-of-buffer
@@ -76,7 +81,7 @@
   replace-string "\\(\\S\\) +—\\(n\\|v\\|adj\\|adv\\)\\. " "\\1\n  —\\2. "
   beginning-of-buffer
   replace-string " \\(\\d\\d?\\.?\\) " "\n    \\1 "
-  set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
+  set-variable #l3 .describe-wordi.lw
   beginning-of-buffer
   !while &len @wc
     !if &not &seq @wc " "
@@ -112,39 +117,27 @@
     !abort
   !endif
 !emacro
-define-macro describe-word
-  set-position "\xa3"
-  !if &les &llen &set #l0 &ind &cat "." .spell.language 1
-    set-variable #l0 &spr "  Not setup for current language (%s),  \n    see word.emf for more information." .spell.language
-    osd-dialog "Describe Word Error" #l0 " \HOkay "
-    !abort
+0 define-macro describe-word-lup
+  !if &exi &spr ".*dw:%s: %s." .spell.language &set #l1 #p1
+    find-buffer &set .bn &spr "*dw:%s: %s" .spell.language #l1
+    !return
   !endif
-  !force set-variable #l1 @1
-  !if $status
-  !elif &inw @wc
-    set-variable #l2 $window-col
-    forward-char
-    backward-word
-    set-mark
-    forward-word
-    copy-region
-    set-variable #l1 @y
-    -1 yank
-    goto-position "\xa3"
-  !else
-    set-variable #l1 @ml "Word"
-  !endif
-  !force 0 delete-buffer "*dw-tmp*"
+  set-variable .bn ""
   !iif &sin "s" &set .hf %http-flags  set-variable %http-flags &rep %http-flags "s" ""
-  set-variable .lw #l1
+  !force 0 delete-buffer "*dw-tmp*"
   set-variable #l2 0
-  !while &len &set #l9 &lget #l0 &inc #l2 1
+  !while &len &set #l9 &lget #p0 &inc #l2 1
     !repeat
       !if &sin "f" &lget #l9 1
         !iif &not &seq "R" &stat t &set #l4 &find &lget #l9 5 ""  -8 ml-write &spr "Error: describe-word file not found (%s) for language (%s)." &lget #l9 5 .spell.language
-        !force 2 find-buffer #l4
-        !if &not $status
-          find-file #l4
+        find-buffer &spr "*dw-f*%s*" #l4
+        !if &les $window-eline 5
+          -1 buffer-mode "undo"
+          end-of-buffer
+          set-mark
+          beginning-of-buffer
+          -1 kill-region
+          insert-file #l4
           1 buffer-mode "hide"
         !endif
         set-variable #l4 $buffer-bname
@@ -196,7 +189,7 @@ define-macro describe-word
           !return
         !endif
       !else
-        -8 ml-write &spr "Error: Unknown decribe-word source (%s), language (%s)." &lget #l0 #l4 .spell.language
+        -8 ml-write &spr "Error: Unknown decribe-word source (%s), language (%s)." &lget #p0 #l4 .spell.language
       !endif
       !if &exi ":*dw-tmp*:"
         find-buffer "*dw-tmp*"
@@ -208,21 +201,14 @@ define-macro describe-word
         !endif
         !if $status
           beginning-of-buffer
-          insert-string &cat "describe-word:  " .lw
-          !iif &not &seq .lw #l1  insert-string &cat "  base-word:  " #l1
+          insert-string &cat "describe-word:  " #p1
+          !iif &not &seq #p1 #l1  insert-string &cat "  base-word:  " #l1
           !iif &len &lget #l9 2  insert-string &cat "  from:  " &lget #l9 2
           insert-newline
           insert-newline
-          set-variable .lw &spr "%s:%s" .spell.language .lw
-          !force 0 delete-buffer &set .lb &cat "*describe-word" &con &sin "s" &lget #l9 1 "*" &cat ":" .lw
-          set-variable $buffer-bname .lb
+          !force 0 delete-buffer &set .bn &spr "*dw:%s: %s" .spell.language #p1
+          set-variable $buffer-bname .bn
           !iif &sin "s" .hf  set-variable %http-flags .hf
-          goto-position "\xa3"
-          !if &seq &lef $buffer-bname 14 "*describe-word"
-            find-buffer .lb
-          !else
-            popup-window .lb
-          !endif
           !return
         !endif
         !force 0 delete-buffer "*dw-tmp*"
@@ -235,10 +221,169 @@ define-macro describe-word
       !iif &seq #l1 #l4  !break
       set-variable #l1 #l4
     !done
-    set-variable #l1 .lw
+    set-variable #l1 #p1
   !done
   !iif &sin "s" .hf  set-variable %http-flags .hf
+!emacro
+
+0 define-macro describe-word-pick
+  set-variable #l0 $mouse-y
+  set-variable #l1 $mouse-x
+  !if &inw @fs #l0 #l1
+    set-variable #l2 @fs #l0 #l1
+    !repeat
+      set-variable #l1 &sub #l1 1
+      !iif &not &inw @fs #l0 #l1  !break
+      set-variable #l2 &cat @fs #l0 #l1 #l2
+    !done
+    set-variable #l1 $mouse-x
+    !repeat
+      set-variable #l1 &add #l1 1
+      !iif &not &inw @fs #l0 #l1  !break
+      set-variable #l2 &cat #l2 @fs #l0 #l1
+    !done
+    7 describe-wordi #l2
+  !endif
+!emacro
+0 define-macro describe-wordc
+  !if &les @# 0
+    set-variable .describe-word.cw @ml2 "" .describe-word.cw
+  !elif &gre @# 0
+    set-variable $result .describe-word.cw
+  !endif
+!emacro
+
+0 define-macro describe-wordi
+  !if &les &llen &set #l0 &ind &cat ".describe-word." .spell.language 1
+    set-variable #l0 &spr "  Not setup for current language (%s).  \n\n  See help for describe-word for more information.  " .spell.language
+    osd-dialog "Describe Word Error" #l0 " \HOkay "
+    !abort
+  !endif
+  ; Setup spell rules so we can get the base word if this is a derivative
+  spell-rules-init
+  !if &band 8 @#
+    set-variable #l1 &set #l4 &trb .describe-word.cw
+  !else
+    set-variable #l1 &set #l4 &trb @1
+  !endif
+  !while &len #l1
+    !iif &gre &atoi &slow &lef #l1 1 96  !break
+    set-variable #l1 &rig #l1 1
+  !done
+  !while &len #l1
+    !iif &gre &atoi &slow &rig #l1 -1 96  !break
+    !if &gre &atoi &slow &mid #l1 -2 1 96
+      257 spell #l1
+      !iif &not &seq &lef &set #l2 $result 1 "O"  !break
+      !iif &iseq &mid #l2 1 &len #l1 #l1  !break
+    !endif
+    set-variable #l1 &lef #l1 -1
+  !done
+  !if &seq &set .describe-word.cw #l1 ""
+    set-variable #l0 &spr "  Not a word - no letters in \"%s\".  " #l4
+    !if &band @# 2
+      osd .osd.wordc 1 ""
+      osd-dialog "Describe Word Error" #l0 " \HOkay "
+      !iif &band @# 4  !return
+    !else
+      ml-write &cat "Error: " &trb #l0
+    !endif
+    !abort
+  !endif
+  !if &band @# 2
+    !if &not &band @# 4
+      !iif &gre &set #l2 &sub $frame-width 10 90  set-variable #l2 90
+      !iif &les #l2 50  set-variable #l2 50
+      !iif &gre &set #l3 &sub $frame-depth 9 30  set-variable #l3 30
+      !iif &les #l3 10  set-variable #l3 10
+      set-variable .lw &sub #l2 2
+      osd .osd.word 0  "batcHsID" 2 3 &add #l2 6 &add #l3 7 -1 -1 30 20 .scheme.osd-title "Describe Word"
+      osd .osd.word 50 "IbHc" .scheme.osd-sbar #l2 &set .wd #l3 .osd.wordc
+      !if &band @# 16
+        osd .osd.word 70 "BHrfth" .scheme.osd-ebtt " \HReplace " f void
+      !else
+        osd .osd.word 70 "fh" ""
+      !endif
+    !endif
+    -1 osd .osd.wordc
+    osd .osd.wordc 0 "sS" .scheme.osd-child &add .lw 2 .wd -1 -1
+  !else
+    set-variable .lw &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
+  !endif
+  ; TODO - Put up dialog so user knows its searching...
+  @# describe-word-lup
+  
+  !if &seq "" &set #l2 .describe-word-lup.bn
+    goto-position "\xa3"
+    set-variable #l0 &spr "  No definition for \"%s\" found.  " #l1
+    !if &band @# 2
+      osd .osd.wordc 1 ""
+      osd-dialog "Describe Word Error" #l0 " \HOkay "
+      !iif &band @# 4  !return
+    !else
+      ml-write &trb #l0
+    !endif
+    !abort
+  !endif
+  !if &not &lfin .wds #l2
+    !while &gre &llen .wds 19
+      !force delete-buffer &lget .wds 1
+      set-variable .wds &ldel .wds 1
+    !done
+    set-variable .wds &lins .wds -1 #l2
+  !endif
+  !if &band @# 2
+    beginning-of-buffer
+    !while &not &seq @wc ""
+      set-mark
+      !force 10 forward-line
+      backward-char
+      copy-region
+      forward-char
+      osd .osd.wordc $window-line "xu" @y f describe-word-pick
+      -1 yank
+    !done
+  !endif
   goto-position "\xa3"
-  set-variable .lb ""
-  -8 ml-write &cat "No definitions found for " .lw
+  !if &band @# 4
+  !elif &band @# 2
+    !force .osd.word osd
+  !elif &seq &lef $buffer-bname 4 "*dw:"
+    find-buffer #l2
+  !else
+    popup-window #l2
+  !endif
+!emacro
+set-variable .describe-wordi.wds "\b"
+  
+osd .osd.word 0  "batcHsID" 9 3 76 27 -1 -1 30 20 .scheme.osd-title "Describe Word"
+osd .osd.word 10 ""
+osd .osd.word 15 "Shf" "  \HWord: " 20
+osd .osd.word 20 "ExHfth" .scheme.osd-entry "##############################" 1 describe-wordc
+osd .osd.word 25 "fh" "  "
+osd .osd.word 30 "BHfxt"  .scheme.osd-ebtt " \HLook Up " 15 describe-wordi
+osd .osd.word 40 ""
+osd .osd.word 50 "IbHc" .scheme.osd-sbar 70 20 .osd.wordc
+osd .osd.word 60 ""
+osd .osd.word 80 "fh" "    "
+osd .osd.word 90 "BHrfth"  .scheme.osd-ebtt " \HClose " 0 void
+osd .osd.word 95 "f" "    "
+  
+define-macro describe-word
+  set-position "\xa3"
+  !force set-variable #l1 @1
+  !if $status
+  !elif &inw @wc
+    forward-char
+    backward-word
+    set-mark
+    forward-word
+    copy-region
+    set-variable #l1 @y
+    -1 yank
+    goto-position "\xa3"
+  !else
+    set-variable #l1 @ml "Word"
+  !endif
+  &band 19 @# describe-wordi #l1
 !emacro
