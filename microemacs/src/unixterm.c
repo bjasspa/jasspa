@@ -4610,7 +4610,6 @@ meFrameSetWindowSize(meFrame *frame)
         sizeHints.base_height = 0;
         sizeHints.width = mecm.fwidth*frame->width;
         sizeHints.height = mecm.fdepth*(frame->depth+1);
-        printf("meFrameSetWindowSize Resize %d %d\n",sizeHints.width,sizeHints.height);
 #if 0
         printf("meFrameSetWindowSize Resize %d %d\n",sizeHints.width,sizeHints.height);
 #endif

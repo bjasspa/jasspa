@@ -1264,9 +1264,9 @@ extern void gettimeofday (struct meTimeval *tp, struct meTimezone *tz);
 /* File is a directory */
 #define meTestDir(fn)       ((GetFileAttributes((const char *) (fn)) & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) != FILE_ATTRIBUTE_DIRECTORY)
 extern int meTestExecutable(meUByte *fileName);
-#define meStatTestRead(st)  (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
-#define meStatTestWrite(st) (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
-#define meStatTestSystem(st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
+#define meFileStatTestRead(fn,st)   (((st).stmode & FILE_ATTRIBUTE_DIRECTORY) == 0)
+#define meFileStatTestWrite(fn,st)  (((st).stmode & (FILE_ATTRIBUTE_DIRECTORY|FILE_ATTRIBUTE_READONLY)) == 0)
+#define meFileStatTestSystem(fn,st) (((st).stmode & FILE_ATTRIBUTE_SYSTEM) == 0)
 #define meFileGetAttributes(fn) GetFileAttributes((const char *) (fn))
 #define meFileSetAttributes(fn,attr) SetFileAttributes((const char *) (fn),attr)
 extern void WinShutdown (void);
@@ -1309,9 +1309,9 @@ extern int   meChdir(meUByte *path);
 /* File is a directory */
 #define meTestDir(fn)       ((meFileGetAttributes(fn) & 0xf0000010) != 0x010)
 extern int   meTestExecutable(meUByte *fileName);
-#define meStatTestRead(st)  (((st).stmode & 0x10) == 0)
-#define meStatTestWrite(st) (((st).stmode & 0x11) == 0)
-#endif
+#define meFileStatTestRead(fn,st)  (((st).stmode & 0x10) == 0)
+#define meFileStatTestWrite(fn,st) (((st).stmode & 0x11) == 0)
+#endif /* _DOS */
 
 #ifdef _UNIX
 /* Define the standard POSIX tests for the file stats */
@@ -1383,22 +1383,19 @@ extern int   meTestExecutable(meUByte *fileName);
 /* File modes defined in terms of POSIX tests */
 extern meInt meFileGetAttributes(meUByte *fn);
 extern int meGidInGidList(gid_t gid);
-#define meStatTestRead(st)                                                   \
-((((st).stuid == meUid) && ((st).stmode & S_IRUSR)) ||                       \
- ((st).stmode & S_IROTH) ||                                                  \
- (((st).stmode & S_IRGRP) &&                                                 \
-  (((st).stgid == meGid) || (meGidSize && meGidInGidList((st).stgid))))) 
-#define meStatTestWrite(st)                                                  \
-((((st).stuid == meUid) && ((st).stmode & S_IWUSR)) ||                       \
- ((st).stmode & S_IWOTH) ||                                                  \
- (((st).stmode & S_IWGRP) &&                                                 \
-  (((st).stgid == meGid) || (meGidSize && meGidInGidList((st).stgid))))) 
-#define meStatTestExec(st)                                                   \
-((((st).stuid == meUid) && ((st).stmode & S_IXUSR)) ||                       \
- ((st).stmode & S_IXOTH) ||                                                  \
- (((st).stmode & S_IXGRP) &&                                                 \
-  (((st).stgid == meGid) || (meGidSize && meGidInGidList((st).stgid))))) 
-#endif
+#ifdef _CYGWIN
+/* Cygwin's mapping from Windows DACLs to POSIX is lossy so can't rely on st_gid &
+ * st_mode based tests being accurate. We must use the access() function which
+ * directly uses Windows call to correctly access current user's access */
+#define meFileStatTestRead(fn,st)  (meTestRead(fn) == 0)
+#define meFileStatTestWrite(fn,st) (meTestWrite(fn) == 0)
+#else
+#define meFileStatTestRead(fn,st)                                            \
+((st).stmode & (((st).stuid == meUid) ? S_IRUSR:((((st).stgid == meGid) || (meGidSize && meGidInGidList((st).stgid))) ? S_IRGRP:S_IROTH)))
+#define meFileStatTestWrite(fn,st)                                           \
+((st).stmode & (((st).stuid == meUid) ? S_IWUSR:((((st).stgid == meGid) || (meGidSize && meGidInGidList((st).stgid))) ? S_IWGRP:S_IWOTH)))
+#endif /* _CYGWIN */
+#endif /* _UNIX */
 
 /* Differentiate between different styles for waiting for a process to finish */
 #ifdef _BSD

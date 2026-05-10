@@ -72,26 +72,6 @@
 
 #endif  /* _DOS */
 
-#ifdef _UNIX
-#include <utime.h>
-
-#define statTestRead(st)                                                   \
-((((st).st_uid == meUid) && ((st).st_mode & S_IRUSR)) ||                   \
- ((st).st_mode & S_IROTH) ||                                               \
- (((st).st_mode & S_IRGRP) &&                                              \
-  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
-#define statTestWrite(st)                                                  \
-((((st).st_uid == meUid) && ((st).st_mode & S_IWUSR)) ||                   \
- ((st).st_mode & S_IWOTH) ||                                               \
- (((st).st_mode & S_IWGRP) &&                                              \
-  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
-#define statTestExec(st)                                                   \
-((((st).st_uid == meUid) && ((st).st_mode & S_IXUSR)) ||                   \
- ((st).st_mode & S_IXOTH) ||                                               \
- (((st).st_mode & S_IXGRP) &&                                              \
-  (((st).st_gid == meGid) || (meGidSize && meGidInGidList((st).st_gid)))))
-#endif
-
 /* Min length of root */
 #ifdef _DRV_CHAR
 #define _ROOT_DIR_LEN  3                /* 'c:\' */
@@ -100,6 +80,8 @@
 #endif
 
 #ifdef _UNIX
+#include <utime.h>
+
 int
 meFileTestDir(meUByte *fname)
 {
@@ -236,25 +218,25 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
             goto gft_directory;
 
 #ifdef __DJGPP2__
-        ii = meFileGetAttributes(file) ;
+        ii = meFileGetAttributes(file);
         if(ii < 0)
             return (ft|meIOTYPE_NOTEXIST);
 #else
         {
-            union REGS reg ;                /* cpu register for use of DOS calls */
-            reg.x.ax = 0x4300 ;
-            reg.x.dx = ((unsigned long) file) ;
+            union REGS reg;                /* cpu register for use of DOS calls */
+            reg.x.ax = 0x4300;
+            reg.x.dx = ((unsigned long) file);
             intdos(&reg, &reg);
 
             if(reg.x.cflag)
                 return (ft|meIOTYPE_NOTEXIST);
-            ii = reg.x.cx ;
+            ii = reg.x.cx;
         }
 #endif
         if(stats != NULL)
         {
-            struct ffblk fblk ;
-            stats->stmode = ii | meFILE_ATTRIB_ARCHIVE ;
+            struct ffblk fblk;
+            stats->stmode = ii | meFILE_ATTRIB_ARCHIVE;
             if(!findfirst((char *) file,&fblk,FA_RDONLY|FA_HIDDEN|FA_SYSTEM|FA_DIREC))
             {
                 stats->stmtime = (((meUInt) fblk.ff_ftime) & 0x0ffff) | (((meUInt) fblk.ff_fdate) << 16) ;
@@ -1401,22 +1383,46 @@ getDirectoryInfo(meUByte *fname)
                 }
                 /* construct attribute string */
                 if(S_ISREG(sbuf.st_mode))
-                    curFile->attrib[0] = '-' ;
+                    curFile->attrib[0] = '-';
                 else if(S_ISDIR(sbuf.st_mode))
-                    curFile->attrib[0] = 'd' ;
+                    curFile->attrib[0] = 'd';
                 else
-                    curFile->attrib[0] = 's' ;
-                curFile->attrib[1] = (statTestRead(sbuf))  ? 'r' : '-' ;
-                curFile->attrib[2] = (statTestWrite(sbuf)) ? 'w' : '-' ;
-                curFile->attrib[3] = (statTestExec(sbuf))  ? 'x' : '-' ;
+                    curFile->attrib[0] = 's';
+#ifdef _CYGWIN
+                /* Cygwin's mapping from Windows DACLs to POSIX is lossy so can't rely on st_gid &
+                 * st_mode based tests being accurate. We must use the access() function which
+                 * directly uses Windows call to correctly access current user's access */
+                curFile->attrib[1] = (!meTestRead(bfname))  ? 'r':'-';
+                curFile->attrib[2] = (!meTestWrite(bfname)) ? 'w':'-';
+                curFile->attrib[3] = (!meTestExec(bfname))  ? 'x':'-';
+#else
+                if(sbuf.st_uid == meUid)
+                {
+                    curFile->attrib[1] = (sbuf.st_mode & S_IRUSR) ? 'r':'-';
+                    curFile->attrib[2] = (sbuf.st_mode & S_IWUSR) ? 'w':'-';
+                    curFile->attrib[3] = (sbuf.st_mode & S_IXUSR) ? 'x':'-';
+                }
+                else if((sbuf.st_gid == meGid) || (meGidSize && meGidInGidList(sbuf.st_gid)))
+                {
+                    curFile->attrib[1] = (sbuf.st_mode & S_IRGRP) ? 'r':'-';
+                    curFile->attrib[2] = (sbuf.st_mode & S_IWGRP) ? 'w':'-';
+                    curFile->attrib[3] = (sbuf.st_mode & S_IXGRP) ? 'x':'-';
+                }
+                else
+                {
+                    curFile->attrib[1] = (sbuf.st_mode & S_IROTH) ? 'r':'-';
+                    curFile->attrib[2] = (sbuf.st_mode & S_IWOTH) ? 'w':'-';
+                    curFile->attrib[3] = (sbuf.st_mode & S_IXOTH) ? 'x':'-';
+                }
+#endif
 #ifdef _LARGEFILE_SOURCE
-                curFile->sizeHigh = (meUInt) (sbuf.st_size >> 32) ;
-                curFile->sizeLow = (meUInt) sbuf.st_size ;
+                curFile->sizeHigh = (meUInt) (sbuf.st_size >> 32);
+                curFile->sizeLow = (meUInt) sbuf.st_size;
 #else
                 curFile->sizeHigh = 0 ;
-                curFile->sizeLow = (meUInt) sbuf.st_size ;
+                curFile->sizeLow = (meUInt) sbuf.st_size;
 #endif
-                curFile->mtime = sbuf.st_mtime ;
+                curFile->mtime = sbuf.st_mtime;
             }
             closedir(dirp) ;
         }
@@ -1671,16 +1677,16 @@ int
 readin(register meBuffer *bp, meUByte *fname)
 {
     int   ss=meABORT ;
-    meUByte lfn[meBUF_SIZE_MAX], afn[meBUF_SIZE_MAX], *fn=fname ;
+    meUByte lfn[meBUF_SIZE_MAX], afn[meBUF_SIZE_MAX], *fn=fname;
 
 #if MEOPT_CRYPT
     if(meCryptBufferInit(bp) <= 0)
         return meABORT;
 #endif
-    if(bp->fileName != fname)
+    if(bp->fileName != fn)
     {
-        meNullFree(bp->fileName) ;
-        bp->fileName = fname ;
+        meNullFree(bp->fileName);
+        bp->fileName = fn;
     }
     if(fn != NULL)
     {
@@ -1771,20 +1777,17 @@ readin(register meBuffer *bp, meUByte *fname)
                 bp->intFlag &= ~BIFFILE ;
                 goto newfile_end;
             }
-
             /* Make sure that we can read the file. If we are root then
              * we do not test the 'stat' bits. Root is allowed to read
              * anything */
-            if ((
-#if MEOPT_TFS
-                 !ffUrlTypeIsTfs(ffUrlGetType(fname)) &&
-#endif
-                 (meTestRead (fn))) ||
-                (
+            if(
 #ifdef _UNIX
-                 (meUid != 0) &&
+               (meUid != 0) &&
 #endif
-                 (!meStatTestRead(bp->stats))))
+#if MEOPT_TFS
+               ((ft & meIOTYPE_TFS) == 0) &&
+#endif
+               !meFileStatTestRead(fn,bp->stats))
             {
                 /* We are not allowed to read the file */
                 mlwrite(MWABORT,(meUByte *)"[Cannot read file %s]",fn);
@@ -1808,7 +1811,7 @@ readin(register meBuffer *bp, meUByte *fname)
             }
 #endif
 #ifdef _WIN32
-            if(!meStatTestSystem(bp->stats))
+            if(!meStatTestSystem(fn,bp->stats))
             {
                 /* if windows system file read in a readonly */
                 meModeSet(bp->mode,MDVIEW);
@@ -1816,15 +1819,13 @@ readin(register meBuffer *bp, meUByte *fname)
             }
             else
 #endif
-                /* Depending on whether we have write access set the buffer into
-                 * view mode. Again root gets the privelidge of being able to
-                 * write if possible. */
-                if ((meTestWrite (fn)) ||
-                    (
+                /* Depending on whether we have write access set the buffer into view mode. */
+                if(
 #ifdef _UNIX
-                     (meUid != 0) &&
+                   (meUid != 0) &&
 #endif
-                     (!meStatTestWrite(bp->stats))))
+                   ((ft & (meIOTYPE_DIRECTORY|meIOTYPE_TFS|meIOTYPE_HTTP|meIOTYPE_DICT)) ||
+                   !meFileStatTestWrite(fn,bp->stats)))
                 meModeSet(bp->mode,MDVIEW);
         }
         mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"[Reading %s%s]",fn,
@@ -2362,21 +2363,20 @@ writeCheck(meUByte *pathname, int flags, meStat *statp)
     }
     /* Quick test for read only. */
 #ifdef _UNIX
-    /* READ ONLY directory test
-       See if we can write to the directory. */
+    /* READ ONLY directory test - see if we can write to the directory. */
     getFilePath(pathname,dirbuf);
-    if (meTestWrite (dirbuf))
-        return mlwrite (MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
+    if(meTestWrite(dirbuf))
+        return mlwrite(MWABORT,(meUByte *)"Read Only Directory: %s", dirbuf);
 #endif
     /* See if there is an existing file */
     if((flags & meWRITECHECK_CHECK) == 0)       /* Validity check enabled ?? */
         return meTRUE;                          /* No - quit. */
     if(meTestExist(pathname))                   /* Does it exist ?? */
         return meTRUE;                          /* No - quit */
-    if((statp != NULL) && !meStatTestWrite(*statp))
+    if((statp != NULL) && !meFileStatTestWrite(pathname,*statp))
     {
         /* No - advised read only - see if the users wants to write */
-        sprintf((char *)dirbuf, "%s is read only, overwrite", pathname);
+        sprintf((char *) dirbuf,"%s is read only, overwrite",pathname);
         if((flags & meWRITECHECK_NOPROMPT) || (mlyesno(dirbuf) <= 0))
             return ctrlg(meFALSE,1);
     }
@@ -2704,68 +2704,66 @@ int
 writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
 {
     if(meModeTest(bp->mode,MDBACKUP))
-        flags |= meRWFLAG_BACKUP ;
+        flags |= meRWFLAG_BACKUP;
 #if MEOPT_TIMSTMP
     set_timestamp(bp);			/* Perform time stamping */
 #endif
     if(ffWriteFile(&meiow,fn,flags,bp) <= 0)
-        return meFALSE ;
+        return meFALSE;
     /* No write error.      */
     /* must be done before buffer is flagged as not changed */
 #if MEOPT_UNDO
     if(meSystemCfg & meSYSTEM_KEEPUNDO)
     {
         /* go through undo list removing any unedited flags */
-        meUndoNode *nn ;
-        nn = bp->undoHead ;
+        meUndoNode *nn;
+        nn = bp->undoHead;
         while(nn != NULL)
         {
             if(meUndoIsSetEdit(nn))
-                nn->type |= meUNDO_UNSET_EDIT ;
-            nn = nn->next ;
+                nn->type |= meUNDO_UNSET_EDIT;
+            nn = nn->next;
         }
     }
     else
-        meUndoRemove(bp) ;
+        meUndoRemove(bp);
 #endif
-    autowriteremove(bp) ;
-    meModeClear(bp->mode,MDEDIT) ;
+    autowriteremove(bp);
+    meModeClear(bp->mode,MDEDIT);
 
     if(fn != NULL)
     {
 #ifndef _WIN32
         /* set the right file attributes */
         if(bp->stats.stmode != meUmask)
-            meFileSetAttributes(fn,bp->stats.stmode) ;
+            meFileSetAttributes(fn,bp->stats.stmode);
 #ifdef _UNIX
         /* If we are the root then restore the existing settings on the
          * file. This should really be done using a $system flag - but
          * one assumes that this is the default action for the super user. */
-        if (meUid == 0)
+        if(meUid == 0)
         {
             if((bp->stats.stuid != meUid) || (bp->stats.stgid != meGid))
-                chown ((char *)fn, bp->stats.stuid, bp->stats.stgid);
+                chown((char *)fn,bp->stats.stuid,bp->stats.stgid);
         }
         /* else restore the group for normal users if possible */
         else if((bp->stats.stgid != meGid) && meGidSize && meGidInGidList(bp->stats.stgid))
-            chown ((char *)fn, meUid, bp->stats.stgid);
+            chown((char *)fn, meUid, bp->stats.stgid);
 #endif
 #endif
-        /* Read in the new stats */
-        getFileStats(fn,0,&bp->stats,NULL);
-        /* Change the view status back to the file's permissions.
+        /* Read in the new stats & change the view status back to the file's permissions.
          * For root we let the super user do as they wish so no
          * read protection is added. */
-        if(
-#if (defined _UNIX)
+        if(!ffUrlTypeIsFtp(getFileStats(fn,0,&bp->stats,NULL)) &&
+#ifdef _UNIX
            (meUid != 0) &&
 #endif
-           (!meStatTestWrite(bp->stats)))
-            meModeSet(frameCur->windowCur->buffer->mode,MDVIEW) ;
+           !meFileStatTestWrite(fn,bp->stats))
+            meModeSet(frameCur->windowCur->buffer->mode,MDVIEW);
         else
-            meModeClear(frameCur->windowCur->buffer->mode,MDVIEW) ;
+            meModeClear(frameCur->windowCur->buffer->mode,MDVIEW);
     }
-    return meTRUE ;
+    return meTRUE;
 }
 
 static meUByte fileHasBinary[]="File had binary characters which will be lost, write" ;

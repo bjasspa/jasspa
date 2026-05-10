@@ -3644,6 +3644,7 @@ get_flag:
                             else
                             {
                                 v2 = (ftype & meIOTYPE_DIRECTORY) ? 'D':'R';
+                                /* TODO: why call this and not use stats.stmode ?? */ 
                                 v4 = meFileGetAttributes(arg3);
                                 v5 = 1;
                                 v51 = stats.stsizeHigh;
@@ -3743,13 +3744,15 @@ get_flag:
 #else
                     return meLtoa(0);
 #endif
-                /* If its a DOS/WIN directory - yes */
+                /* If its a TFS and exists we must have TFS enabled, if dir on DOS/WIN directory - yes */
+                if(ftype & (meIOTYPE_TFS
 #if (defined _DOS) || (defined _WIN32)
-                if(ftype & meIOTYPE_DIRECTORY)
-                    return meLtoa(1);
+                            |meIOTYPE_DIRECTORY
 #endif
+                            ))
+                    return meLtoa(1);
                 /* normal test */
-                return meLtoa(meStatTestRead(stats));
+                return meLtoa(meFileStatTestRead(arg3,stats));
                 
             case 's':
                 /* File size - return -1 if not a regular file */
@@ -3784,7 +3787,7 @@ get_flag:
                 if(ftype & meIOTYPE_NOTEXIST)
 #endif
                     return meLtoa(1);
-                return meLtoa(meStatTestWrite(stats));
+                return meLtoa(meFileStatTestWrite(arg3,stats));
                 
             case 'x':
                 /* File execute permission */
