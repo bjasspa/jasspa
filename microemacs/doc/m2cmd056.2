@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd056.2,v 2.11 2026/01/17 22:26:34 jon Exp $
+.Id $Id: m2cmd056.2,v 2.11 2026/05/11 11:05:14 jon Exp $
 .Im MicroEmacs command|file
 .ds C0 "(\fB\*(cX\*cf\fR)\ \&
 .so me.tni
@@ -49,9 +49,12 @@ If this bit is set the file will be loaded with
 mode enabled. See help on \fBrbin\fR  mode for more  information  on efficient
 editing of binary data files.
 .IP \fB0x10\fR
-If this bit is set then the file hook  evaluation  is not  performed  when the
-file is loaded (i.e. the 
-.Hl "buffer's file hook"  fileHooks  2 
+If this bit is set then the file's
+.Hl "major-mode" major-mode 2
+evaluation is not performed (i.e. the
+.Ht $buffer-major-mode 5
+is not set and the
+.Hl "file hook"  fileHooks  2 
 is not executed).
 .PP
 Text files are usually thought of as named collections of text residing on disk (or some other storage medium). In
@@ -195,12 +198,14 @@ to an appropriate size.
 .Ht find-hfile 3 ,
 .Ht ftp 3 ,
 .Ht next-window-find-file 2 ,
+.Ht major-mode 2 ,
 .Ht page-bfile 3 ,
 .Ht page-file 3 ,
 .Ht read-file 2 ,
 .Ht save-buffer 2 ,
 .Ht view-file 2 ,
 .Ht write-buffer 2 ,
+.Ht $buffer-major-mode 5 ,
 .Ht $file-size-prompt 5 ,
 .Ht $rcs-file 5 ,
 .Ht %ftp-flags 5 ,

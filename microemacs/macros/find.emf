@@ -289,7 +289,7 @@
           ; check the file size, if larger then 100Mb dont bother unless -
           !if &not &or &lget #l5 5 &gre &lget #l5 6 0x6400000
             !force 0 delete-buffer "*find-tmp*"
-            33 find-buffer "*find-tmp*"
+            97 find-buffer "*find-tmp*"
             !force 2 insert-file &cat #l8 #l2
             set-variable #l3 &not $status
           !elif &sin "!" #l9

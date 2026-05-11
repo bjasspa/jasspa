@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd091.2,v 2.9 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd091.2,v 2.9 2026/05/11 11:04:54 jon Exp $
 .Im MicroEmacs command|buffer
 .ds C0 "(\fB\*(cXx\fR)\ \&
 .ds C1 "(\fB\*(cXb\fR)\ \&
@@ -73,6 +73,14 @@ Bit set causes the buffer to be hidden.
 Forces the buffer to be hidden from all windows.
 .IP "\fC0x20\fR"
 Stop the  history  of the outgoing buffer from being incremented.
+.IP \fB0x40\fR
+If this bit is set and the buffer is created then the buffer's
+.Hl "major-mode" major-mode 2
+evaluation is not performed (i.e. the
+.Ht $buffer-major-mode 5
+is not set and the
+.Hl "file hook"  fileHooks  2 
+is not executed).
 .PP
 If the current buffer has an \fI$buffer-ehook\fR command set then this command
 is  executed  before  the new buffer is  switched  in. If the new buffer has a
@@ -81,7 +89,9 @@ after the new buffer is switched in but before control returns to the user.
 .SH "SEE ALSO"
 .na
 .Ht next-window-find-buffer 2 ,
-.Ht hide 2m .
+.Ht hide 2m ,
+.Ht $buffer-major-mode 5 ,
+.Ht major-mode 2 .
 .ad
 .rm C0
 .rm C1

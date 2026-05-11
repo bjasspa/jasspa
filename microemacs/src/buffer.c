@@ -252,7 +252,8 @@ majorMode(int f, int n)
             if(assignMajorMode(bp,mm,0) != 0)
                 return meFALSE;
             meRegCurr->next->val[9][0] = '\0';
-            return execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->intFlag & BIFFILE) ? 1:0);
+            /* When run manually the insert-template flag is determined by whether the buffer is empty and unedited */
+            return execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->lineCount || meModeTest(bp->mode,MDEDIT)) ? 1:0);
         }
         else if(n == 0)
         {
@@ -860,6 +861,8 @@ findBuffer(int f, int n)
             f = BFND_CREAT;
         else
             f = 0;
+        if(n & 64)
+            f |= BFND_NOHOOK;
         if((bp = bfind(bufn,f)) == NULL)
             return meFALSE ;
     }
@@ -1803,11 +1806,10 @@ bfind(register meUByte *bname, int cflag)
                 {
                     bp->intFlag |= BIFBLOW;             /* Don't complain!      */
                     bclear(bp);
-                    /* The BFND_CLEAR functionality is only used for system buffers
-                     * such as *help* *command* etc. i.e. not user loaded buffer. 
-                     * These buffers do not and must not be linked to a filename.
-                     * This can happen if the user renames "./foo" to *compile* say
-                     * and then runs another compile, it its still linked to foo then
+                    /* The BFND_CLEAR functionality is only used for system buffers such as *help*
+                     * *command* etc. i.e. not user loaded buffer. These buffers do not and must
+                     * not be linked to a filename. This can happen if the user renames "./foo" to
+                     * *compile* say and then runs another compile, if its still linked to foo then
                      * it gets loaded */
                     bp->intFlag &= ~BIFFILE;
                     if(bp->fileName != NULL)
