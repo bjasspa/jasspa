@@ -215,7 +215,7 @@ tfsAddFile(tfsUByte *name, tfsUByte *path)
         return NULL;
     }
     fLen = statbuf.st_size;
-    ll = strlen((char *) name);
+    ll = (int) strlen((char *) name);
     if((fil=malloc(sizeof(tfsUFile)+ll)) == NULL)
     {
         printf("ERROR: Failed to malloc file for [%s]\n",path);
@@ -283,7 +283,7 @@ tfsAddFile(tfsUByte *name, tfsUByte *path)
     }
     else
     {
-        while((ll=fread(buf,1,2048,fileReadFp)) > 0)
+        while((ll=(int) fread(buf,1,2048,fileReadFp)) > 0)
         {
             if(fwrite(buf,1,ll,fileWriteFp) != ll)
             {
@@ -318,7 +318,7 @@ tfsAddDirectory(tfsUByte *name, tfsUByte *path)
     int ll;
     
     printf("Adding dir:  %s\n",path);
-    ll = strlen((char *) name);
+    ll = (int) strlen((char *) name);
     fn = name+ll;
     strcpy((char *) fn,"\\*.*") ;
           
@@ -625,7 +625,7 @@ main(int argc, char *argv[])
             printf("tfs Error: Failed to open base file [%s]\n",argv[3]);
             return 1;
         }
-        while((rr=fread(buf,1,4096,fp)) > 0)
+        while((rr=(int) fread(buf,1,4096,fp)) > 0)
         {
             if(fwrite(buf,1,rr,fileWriteFp) != rr)
             {

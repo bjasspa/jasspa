@@ -1811,7 +1811,7 @@ readin(register meBuffer *bp, meUByte *fname)
             }
 #endif
 #ifdef _WIN32
-            if(!meStatTestSystem(fn,bp->stats))
+            if(!meFileStatTestSystem(fn,bp->stats))
             {
                 /* if windows system file read in a readonly */
                 meModeSet(bp->mode,MDVIEW);

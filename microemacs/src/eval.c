@@ -219,7 +219,7 @@ SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, meVariable **varList)
 #endif
     
     /* Not found so create a new one */
-    ii = meStrlen(vname);
+    ii = (int) meStrlen(vname);
     if(((vp = (meVariable *) meMalloc(sizeof(meVariable)+ii)) != NULL) &&
        ((vp->value = meStrdup(vvalue)) != NULL))
     {

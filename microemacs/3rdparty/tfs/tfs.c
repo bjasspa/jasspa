@@ -232,7 +232,7 @@ tfs_mount(tfsUByte *name)
         else
         {
             tailPos = ftello(fp)-1-buf[31];
-            ll = strlen((char *) name);
+            ll = (int) strlen((char *) name);
             if((tfs = malloc(sizeof(tfsMount) + ll)) != NULL)
             {
                 memcpy(tfs->name,name,ll+1);
@@ -494,8 +494,8 @@ tfs_fread(void *dest, size_t size, tfsFile *fl)
                     TFS_DEBUG(("tfs_fread error: Decode returned error (%d).\n",res));
                     return -1;
                 }
-                if((fc->bremain -= sl) > 0)
-                    fc->boffset += sl;
+                if((fc->bremain -= (int) sl) > 0)
+                    fc->boffset += (int) sl;
                 if(dl == sz)
                     return size;
                 dest = ((tfsUByte *) dest)+dl;
@@ -531,7 +531,7 @@ tfs_fread(void *dest, size_t size, tfsFile *fl)
                 return -1;
             }
             fc->cremain -= rd;
-            fc->bremain += rd;
+            fc->bremain += (int) rd;
         }
     }
     if((fr=fl->fremain) == 0)
