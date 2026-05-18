@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Fri Jan 09 15:30:00 2026
 .\"
-.Id $Id: m9typ076.9,v 2.8 2026/01/09 16:48:14 jon Exp $
+.Id $Id: m9typ076.9,v 2.8 2026/05/18 17:34:45 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH fusion 9
@@ -99,6 +99,17 @@ The short cut keys used within the buffer are:
 \fBf6\fR \- List items.
 .br
 \fB\*ef6\fR \- Close item list,
+.IP "\fBExecuting, Formatting and Linting Fusion Code\fR"
+The Fusion file hook supports the 
+.Ht file-exec 3 ,
+the 
+.Ht file-format 3
+and the 
+.Ht file-lint 3
+macros.  The  tools,  compilers  which  are  currently   supported  are  using
+the "fut" command line transpiler and the "astyle" source code formatter in
+C-sharp mode. For executing the  transpiled  code the python3  interpreter  is
+used per default
 .SH NOTES
 .PP
 The  hilighting  or the addition of new item list matches  is  typically
@@ -110,6 +121,9 @@ extended  using  a  file   \fBmyfusion.emf\fR
 .Ht collapse-current 3 ,
 .Ht compile 3 ,
 .Ht expand-abbrev-handle 3 ,
+.Ht file-exec 3 ,
+.Ht file-format 3 ,
+.Ht file-lint 3 ,
 .Ht java 9 ,
 .Ht item-list 3 ,
 .Ht restyle-buffer 3 ,

@@ -1,17 +1,17 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1988-2009 JASSPA (www.jasspa.com)
+.\" Copyright (C) 1988-2026 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
 .\" Global abbreviations for MicroEmacs
 .\"
-.ds mE "MicroEmacs 2001
+.ds mE "MicroEmacs 2026
 .ds mS "MicroEmacs
-.ds nE "NanoEmacs 2001
+.ds nE "NanoEmacs 2026
 .ds nS "NanoEmacs
-.ds yR "2001
-.ds rL "20010101
+.ds yR "2026
+.ds rL "20260502
 .ds cX "C-x\ \&
 .ds cH "C-h\ \&
 .ds e  "esc \&
