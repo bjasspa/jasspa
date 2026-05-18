@@ -150,13 +150,23 @@ set-variable .fhook-fusion.item-list-r4 "Enum \CCb\\1\CCA"
   !endif
 !endif
 !if &sin "d" .fhook-fusion.setup
-  ; Use the 'C' indentation framework.
-  0 indent .hilight.fusion 12
-  indent .hilight.fusion "u" " * "
+  0 indent  .hilight.fusion 0 10  
+  indent .hilight.fusion n "{"  t
+  indent .hilight.fusion o "}" -t
+  indent .hilight.fusion n "("  t
+  indent .hilight.fusion o ")" -t
+  indent .hilight.fusion e "\"" "\"" ""  
+  ;indent .hilight.fusion "u" " * "
   !if &sin "v" .fhook-fusion.setup
     ; limit continuation indentation
     indent .hilight.fusion "x" 5t
   !endif
 !endif
+
+add-next-line "*fusion-exec*" "^%f(%l):.+"
+add-next-line "*fusion-lint*" "^%f(%l):.+"
+set-variable .fhook-fusion.exec1 "\bfut\b\b\b\bfut %\"%p%f%\" -o %b.py && python3 %b.py %v[args|20|Additional command-line arguments|]\b"
+set-variable .fhook-fusion.format1 "\bastyle\b\b\b\bastyle --mode=cs --indent=tab --indent=force-tab=4 %\"%f%\"\bAstyle\b"
+set-variable .fhook-fusion.lint1 "\bfut\b\b\b\bfut %\"%p%f%\" -o %\"%p%b.py%\" \bfut\b"
 
 buffer-init-fhook "fusion"
