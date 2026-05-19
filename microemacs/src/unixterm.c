@@ -3630,7 +3630,7 @@ XTERMsetFont(int n, char *fontName)
         {
             XGlyphInfo ext;
             jj = ftFont->ascent + ftFont->descent;
-            if(n & 0x08)
+            if(n & 0x20)
             {
                 if(ftFont->height < jj)
                     jj = ftFont->height;
@@ -4383,9 +4383,11 @@ changeFont(int f, int n)
 {
     meUByte buff[meBUF_SIZE_MAX] ;            /* Input buffer */
     
+#ifdef _ME_CONSOLE
     if(meSystemCfg & meSYSTEM_CONSOLE)
         /* change-font not supported on termcap */
         return notAvailable(f,n) ;
+#endif /* _ME_CONSOLE */
     if(n & 1)
     {
         /* Get the name of the font. If it is specified as default then

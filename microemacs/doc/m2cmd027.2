@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd027.2,v 2.8 2026/02/16 21:45:23 jon Exp $
+.Id $Id: m2cmd027.2,v 2.8 2026/05/19 21:27:02 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH change-font 2
@@ -152,6 +152,10 @@ spacing is proportional; the <flg> value is only given when the font name is giv
 argument \fBn\fR is set). The \fB<font-size>\fR will be set to 0 for X11 core fonts, or the font size for FreeType 
 fonts, this field is empty on systems that do not support FreeType fonts.   
 .IP \fB0x08\fR
+Not used by this platform.
+.IP \fB0x10\fR
+Not used by this platform.
+.IP \fB0x20\fR
 When set and the reported font height and sum of the ascent and descent differ, the smaller of the two values is used,
 however this may cause rendering issues ('debris' in the window). When clear, the larger value is used to minimise
 rendering issues. 
