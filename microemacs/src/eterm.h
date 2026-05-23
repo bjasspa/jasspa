@@ -233,6 +233,7 @@ extern void TCAPschemeReset(void);
 #endif /* _ME_CONSOLE */
 
 #ifdef _ME_WINDOW
+#ifdef _XTERM
 /* Display information */
 #define meXFONT_MASK         (meFONT_BOLD|meFONT_ITALIC|meFONT_LIGHT)
 #define meXFONT_MAX          (meFONT_LIGHT << 1)
@@ -411,6 +412,7 @@ extern int  TTstart(void);
 #define meFrameTermMakeCur(f) meFrameXTermMakeCur(f)
 
 #endif /* _ME_CONSOLE */
+#endif /* _XTERM */
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER

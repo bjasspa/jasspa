@@ -803,7 +803,7 @@ menuRenderArea(int x, int y, int len, int dep)
     }
 #endif
     
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
@@ -839,7 +839,7 @@ menuRenderArea(int x, int y, int len, int dep)
         TTapplyArea() ;
     }
 #endif /* _ME_WINDOW */
-#endif /* _WIN32 */
+#endif /* _WIN32 || _ME_MACOSNW */
     
 #ifdef _UNIX
 #ifdef _ME_WINDOW

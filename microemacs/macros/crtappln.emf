@@ -82,7 +82,7 @@ define-macro create-app
     !force 0 delete-buffer $buffer-bname
     set-variable #l4 $temp-name
     !force 0x80 file-op &cat .me-pinstall.purl "Jasspa_MicroEmacs_macos_icons.tfs" #l4
-    !iif &not $status  -10 ml-write "Error: Failed to download linux icons package."
+    !iif &not $status  -10 ml-write "Error: Failed to download macos icons package."
     set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
     !force 0xf7 copy-file &spr "tfs://%s?/.*" #l4 "/Applications/MicroEmacs.app/Contents/Resources/"
     !iif &set #l0 $status  set-variable #l0 &lget $result 3

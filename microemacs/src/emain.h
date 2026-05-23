@@ -319,6 +319,13 @@
 #undef _XTERM                   /* Do not want X-Windows                 */
 #undef _DRAGNDROP               /* Do not support Drag-n-drop            */
 #endif
+#ifdef _ME_MACOSNW
+#undef _XTERM                   /* Do not want X-Windows                 */
+#define _MOUSE          1       /* Mouse supported on XTERM              */
+#define _CLIPBRD        1       /* Inter window clip board supp          */
+#define _WINDOW         1       /* Window, need resizing & title code    */
+#define _MULTI_WINDOW   1       /* can support multiple window frames    */
+#else
 #ifdef _XTERM
 #define _MOUSE          1       /* Mouse supported on XTERM              */
 #define _CLIPBRD        1       /* Inter window clip board supp          */
@@ -331,6 +338,7 @@
 #include <X11/Xft/Xft.h>
 #endif
 #endif /* _XTERM */
+#endif /* _ME_MACOSNW */
 
 #ifndef _ME_CONSOLE             /* window only mode?                     */
 #undef _TCAP                    /* Do not want Termcap                   */
@@ -576,7 +584,11 @@ typedef   time_t       meTime;
 #include "emode.h"      /* Mode enum, type & var defs    */
 #include "estruct.h"    /* Type structure definitions    */
 #include "edef.h"       /* Global variable definitions   */
+#ifdef _ME_MACOSNW
+#include "macosnw.h"
+#else
 #include "eterm.h"      /* platform terminal definitions */
+#endif
 #include "eextrn.h"     /* External function defintions  */
 
 #endif /* __EMAIN_H__ */

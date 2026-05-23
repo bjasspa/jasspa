@@ -1133,7 +1133,7 @@ hideLineJump:
      * MS-WINDOWS
      *
      ************************************************************************/
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
     if (meSystemCfg & meSYSTEM_CONSOLE)
@@ -1308,7 +1308,7 @@ updateWindow(meWindow *wp)
     }
 #endif
 #endif
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
@@ -1385,7 +1385,7 @@ updateWindow(meWindow *wp)
         }
         lp->flag = flag ;
     }
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
@@ -1810,7 +1810,7 @@ updateScrollBar(meWindow *wp)
     else
         flipBox = 0 ;
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
@@ -1835,7 +1835,7 @@ updateScrollBar(meWindow *wp)
         }
 
         /* Perform the update */
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
         if (!(meSystemCfg & meSYSTEM_CONSOLE))
@@ -1856,7 +1856,7 @@ updateScrollBar(meWindow *wp)
             fstp = frameCur->store[row].text + col ;
             fssp = frameCur->store[row].scheme + col ;
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
             /****************************************************************
              * MS-Windows                                                   *
              ****************************************************************/
@@ -2011,7 +2011,7 @@ updateScrollBar(meWindow *wp)
 #endif /* _DOS */
         }
     }
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
@@ -2509,7 +2509,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
                   (col <= frameCur->cursorColumn) && ((col+len) > frameCur->cursorColumn)) ;
 #endif /* _ME_POKE_REDRAW_CURSOR */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
 #ifdef _ME_WINDOW
 #ifdef _ME_CONSOLE
     if (!(meSystemCfg & meSYSTEM_CONSOLE))
@@ -2648,7 +2648,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         }
 #endif /* _DOS */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
         /********************************************************************
          * MS-WINDOWS                                                       *
          ********************************************************************/
@@ -2808,7 +2808,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme,
         }
 #endif /* _DOS */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_ME_MACOSNW)
         /********************************************************************
          * MS-WINDOWS                                                       *
          ********************************************************************/

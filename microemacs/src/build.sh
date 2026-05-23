@@ -52,6 +52,7 @@ do
         echo "             c   Console support only (Termcap/ncurses - default)"
         echo "             w   Window support only (XTerm)"
         echo "             cw  Console and window support"
+        echo "             nw  Native window support (macOS)"
         echo "   -v <variable>=<value>"
         echo "        : Build with given variable override, (e.g. -v OPENSSLPATH=...)"
         echo ""
@@ -105,9 +106,9 @@ do
 done
 
 if [ -z "$MAKEFILE" ] ; then
-    
+
     PLATFORM=`uname`
-    
+
     if [ $PLATFORM = "Darwin" ] ; then
         VERSION=`uname -r | cut -f 1 -d .`
         if [ $VERSION -gt 15 ] ; then
@@ -169,19 +170,23 @@ if [ -z "$MAKEFILE" ] ; then
         exit 1
     fi
 
-    # use cc by default if available
-    if [ -r ${MAKEBAS}cc.mak ] ; then
-        # try to detect cc, if found use it in preference
-        if [ "`type cc | cut -b 1-5`" = "cc is" ] ; then
-            MAKEFILE=${MAKEBAS}cc.mak
-        fi
-        # Special rules for sun, if cc is /usr/ucb then this is a dummy.
-        if [ $PLATFORM = "SunOS" ] ; then 
-            WHATCC=`/usr/bin/which cc`
-            if [ "$WHATCC" = "/usr/ucb/cc" ] ; then
-                MAKEFILE=""
+    if [ -z "$MAKEFILE" ] ; then
+        # if -t nw given use the native window makefile, else use cc by default if available
+        if [ "$METYPE" = " BTYP=nw" ] ; then
+            MAKEFILE=${MAKEBAS}nw.mak
+        elif [ -r ${MAKEBAS}cc.mak ] ; then
+            # try to detect cc, if found use it in preference
+            if [ "`type cc | cut -b 1-5`" = "cc is" ] ; then
+                MAKEFILE=${MAKEBAS}cc.mak
             fi
-        fi                      
+            # Special rules for sun, if cc is /usr/ucb then this is a dummy.
+            if [ $PLATFORM = "SunOS" ] ; then
+                WHATCC=`/usr/bin/which cc`
+                if [ "$WHATCC" = "/usr/ucb/cc" ] ; then
+                    MAKEFILE=""
+                fi
+            fi
+        fi
     fi
     if [ -z "$MAKEFILE" ] ; then
         # failed to find cc, try gcc

@@ -112,8 +112,8 @@ meShell(int f, int n)
 #ifdef _DOS
     register char *cp;
 #endif
-    meUByte path[meBUF_SIZE_MAX] ;		/* pathfrom where to execute */
-    int  cd, ss ;
+    meUByte path[meBUF_SIZE_MAX];		/* pathfrom where to execute */
+    int  cd, ss=meABORT;
     
     getFilePath(frameCur->windowCur->buffer->fileName,path);
     cd = (meStrcmp(path,curdir) && (meChdir(path) != -1));
@@ -124,7 +124,7 @@ meShell(int f, int n)
                            NULL, 
 #endif
                            NULL);
-#endif
+#endif /* _WIN32 */
 #ifdef _DOS
     TTclose();
     if ((cp=meGetenv("COMSPEC")) == NULL)
@@ -135,8 +135,10 @@ meShell(int f, int n)
     sgarbf = meTRUE;
 #endif
 #ifdef _UNIX
-#ifdef _XTERM
+#ifdef _ME_WINDOW
+#ifdef _ME_CONSOLE
     if(!(meSystemCfg & meSYSTEM_CONSOLE))
+#endif
     {
         char *termPrg[] = {
 #ifdef _LINUX
@@ -191,8 +193,11 @@ meShell(int f, int n)
 #endif
         }
     }
+#ifdef _ME_CONSOLE
     else
 #endif
+#endif /* _ME_WINDOW */
+#ifdef _ME_CONSOLE
     {
 	TTclose();				/* stty to old settings */
 	ss = system((char *)getShellCmd()) ;
@@ -200,10 +205,11 @@ meShell(int f, int n)
 	TTopen();
 	ss = (ss < 0) ? meFALSE:meTRUE ;
     }
+#endif /* _ME_CONSOLE */
 #endif
     if(cd)
         meChdir(curdir) ;
-    return ss ;
+    return ss;
 }
 
 

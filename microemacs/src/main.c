@@ -2232,7 +2232,11 @@ commandWait(int f, int n)
 
 #ifndef _WIN32
 int
+#ifdef _ME_MACOSNW
+meMain(int argc, char *argv[])
+#else
 main(int argc, char *argv[])
+#endif
 {
 #ifdef DMALLOC
     dmalloc_debug_setup(getenv("DMALLOC_OPTIONS"));
