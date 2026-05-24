@@ -99,6 +99,9 @@ meUByte meOptionList[]=
 #if MEOPT_FILENEXT
     "nex\n"
 #endif
+#if _ME_MACOSNW
+    "nwn\n"
+#endif
 #if MEOPT_OSD
     "osd\n"
 #endif

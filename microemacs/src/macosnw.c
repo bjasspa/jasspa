@@ -340,6 +340,7 @@ meNativeGetStyleTable(void)
 void
 meNativeReturnFontName(char *fontName, int ptSize)
 {
+    mecm.fontSize = ptSize;
     snprintf(mecm.fontName,meFONTNAME_MAX,"%s:size=%d",(char *) fontName,ptSize);
 }
 
@@ -1138,9 +1139,16 @@ void TTNbell(void)
 
 void TTbeep(void) { TTNbell(); }
 
-/* meFrameSetWindowSize - the NSView already has the correct size after a
- * resize event; nothing to do here. */
-void meFrameSetWindowSize(meFrame *frame) { (void)frame; }
+/* meFrameSetWindowSize - called when $frame-width or $frame-depth is set
+ * programmatically.  Notify Swift so it resizes both the render buffer and
+ * the NSWindow to match the new frame dimensions. */
+void
+meFrameSetWindowSize(meFrame *frame)
+{
+    if (!gCbsReady || !gCbs.setWindowSize)
+        return;
+    gCbs.setWindowSize(frame->width, frame->depth + 1);
+}
 
 void
 meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
@@ -1234,7 +1242,7 @@ changeFont(int f, int n)
                 return meFALSE;
             if((pp = meStrchr(fontBuf,':')) != NULL)
             {
-                if((ss = meStrstr(pp,":size=")) == NULL)
+                if((ss = meStrstr(pp,":size=")) != NULL)
                     sz = meAtoi(ss+6);
                 *pp = '\0';
             }
@@ -1245,6 +1253,7 @@ changeFont(int f, int n)
             }
             else
                 snprintf(mecm.fontName,meFONTNAME_MAX,"%s:size=%d",(char *) fontBuf,sz);
+            mecm.fontSize = sz;
             gCbs.changeFont(n,(const char *)fontBuf,sz);
         }
     }

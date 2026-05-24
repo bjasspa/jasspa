@@ -146,11 +146,12 @@ final class MEView: NSView {
 
         // Register the C-side callbacks (cursor/bell/title/font)
         var cbs = MENativeCallbacks();
-        cbs.setCursor  = meViewSetCursor;
-        cbs.hideCursor = meViewHideCursor;
-        cbs.bell       = meViewBell;
-        cbs.setTitle   = meViewSetTitle;
-        cbs.changeFont = meViewChangeFont;
+        cbs.setCursor     = meViewSetCursor;
+        cbs.hideCursor    = meViewHideCursor;
+        cbs.bell          = meViewBell;
+        cbs.setTitle      = meViewSetTitle;
+        cbs.changeFont    = meViewChangeFont;
+        cbs.setWindowSize = meViewSetWindowSize;
         meNativeSetCallbacks(&cbs);
     }
 
@@ -797,6 +798,27 @@ final class MEView: NSView {
         }
     }
 
+    /// Called from the ME engine thread when $frame-width or $frame-depth is set.
+    /// Resizes the cells buffer and the NSWindow to match the new dimensions.
+    func cSetWindowSize(_ cols: Int, _ rows: Int) {
+        let block: () -> Void = { [weak self] in
+            guard let self = self else { return }
+            let sz = cols * rows
+            if sz > self.cols * self.rows {
+                var blank = Cell()
+                blank.bg = UInt8(meNWBgColor)
+                self.cells = Array(repeating: blank, count: sz)
+            }
+            self.cols = cols
+            self.rows = rows
+            if let wc = self.window?.windowController as? MEWindowController {
+                wc.sizeWindow(to: self)
+            }
+            self.needsDisplay = true
+        }
+        if Thread.isMainThread { block() } else { DispatchQueue.main.sync(execute: block) }
+    }
+
     func cBell() {
         DispatchQueue.main.async { NSSound.beep() }
     }
@@ -1022,6 +1044,10 @@ private func meViewSetTitle(_ title: UnsafePointer<CChar>?) {
 private func meViewChangeFont(_ n: Int32, _ name: UnsafePointer<CChar>?, _ size: Float) {
     let nameStr = name.map { String(cString: $0) } ?? "";
     gMEView?.cChangeFont(n: n, name: nameStr, size: size);
+}
+
+private func meViewSetWindowSize(_ cols: Int32, _ rows: Int32) {
+    gMEView?.cSetWindowSize(Int(cols), Int(rows))
 }
 
 // ---------------------------------------------------------------------------

@@ -38,7 +38,7 @@ define-macro-file hkipipe ishell gdb dbx perldb
     !iif &not $status  translate-key "\x7f" "backspace"
   !endif
 !else
-  !iif &not &seq &set #l0 &reg &spr "/history/%s/font" $platform "" ""  !force &con &reg &spr "/history/%s/font-ymin" $platform "0" 33 1 change-font #l0
+  !iif &not &seq "" &set #l0 &reg &spr "/history/%s/font%s" $platform &con &opt "nwn" "-nwn" "" ""  !force &con &reg &spr "/history/%s/font-ymin" $platform "0" 33 1 change-font #l0
   define-macro change-font-size
     !if &not &and @? @#
       !iif &gre 1 &set .csz &lget .ofnt 7  set-variable .csz &lget .ofnt 5

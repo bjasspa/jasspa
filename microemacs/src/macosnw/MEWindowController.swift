@@ -99,7 +99,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
         sizeWindow(to: view)
     }
 
-    private func sizeWindow(to view: MEView) {
+    func sizeWindow(to view: MEView) {
         guard let win = window else { return }
         let w = view.pixelWidth
         let h = view.pixelHeight

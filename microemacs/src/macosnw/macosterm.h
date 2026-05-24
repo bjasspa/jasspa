@@ -88,6 +88,13 @@ typedef struct {
      * name: PostScript font name, e.g. "Menlo-Regular".
      * size: point size > 0.  0 means keep current size (dialog mode only). */
     void (*changeFont)(int n, const char *name, float size);
+
+    /* Resize the terminal to (cols x rows) characters.
+     * Called on the ME engine thread when $frame-width or $frame-depth is set
+     * programmatically.  The implementation must update the render buffer and
+     * resize the NSWindow to match.  Called synchronously; the engine blocks
+     * until this returns so the next TTflush sees a consistent buffer size. */
+    void (*setWindowSize)(int cols, int rows);
 } MENativeCallbacks;
 
 /* Register the Swift-side callbacks.  Must be called before meStartEngine(). */
