@@ -1,5 +1,5 @@
 // MEClipboard.swift
-// JASSPA MicroEmacs – native macOS frontend
+// JASSPA MicroEmacs - native macOS frontend
 //
 // Thin NSPasteboard wrappers exported to C via @_cdecl.
 // Called from TTinitClipboard / TTgetClipboard / TTsetClipboard in macosnw.c.
@@ -11,7 +11,7 @@
 import Cocoa
 
 // ---------------------------------------------------------------------------
-// MARK: – meNativeGetPasteboardChangeCount
+// MARK: - meNativeGetPasteboardChangeCount
 // ---------------------------------------------------------------------------
 // Returns NSPasteboard.general.changeCount, incremented by the system every
 // time any app (including us) writes to the pasteboard.  macosnw.c records
@@ -27,7 +27,7 @@ func meNativeGetPasteboardChangeCount() -> Int32 {
 }
 
 // ---------------------------------------------------------------------------
-// MARK: – meNativeGetClipboard
+// MARK: - meNativeGetClipboard
 // ---------------------------------------------------------------------------
 // Reads NSPasteboard.general and returns its plain-text content as a
 // NUL-terminated UTF-8 C string allocated with strdup().
@@ -47,7 +47,7 @@ func meNativeGetClipboard() -> UnsafeMutablePointer<CChar>? {
 }
 
 // ---------------------------------------------------------------------------
-// MARK: – meNativeSetClipboard
+// MARK: - meNativeSetClipboard
 // ---------------------------------------------------------------------------
 // Writes len bytes of UTF-8 text to NSPasteboard.general and returns the
 // new changeCount so macosnw.c can track pasteboard ownership.

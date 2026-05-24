@@ -1,19 +1,19 @@
 // MEView.swift
-// JASSPA MicroEmacs – native macOS frontend
+// JASSPA MicroEmacs - native macOS frontend
 //
 // Owns the NSView that ME renders into.  Responsibilities:
-//   • Measure the monospace font and tell macosterm.c the cell metrics
-//   • Register MENativeCallbacks (setCursor, bell, title, font)
-//   • Implement meNativeFlushDirty (@_cdecl): copies dirty rows from
+//   - Measure the monospace font and tell macosterm.c the cell metrics
+//   - Register MENativeCallbacks (setCursor, bell, title, font)
+//   - Implement meNativeFlushDirty (@_cdecl): copies dirty rows from
 //     frameCur->store into the cells[] render buffer, then calls setNeedsDisplay
-//   • Translate NSEvent keyboard and mouse events into ME key codes
-//   • Forward events to macosterm.c via meNativePushKey / meNativePushMouseButton
+//   - Translate NSEvent keyboard and mouse events into ME key codes
+//   - Forward events to macosterm.c via meNativePushKey / meNativePushMouseButton
 
 import Cocoa
 import CoreText
 
 // ---------------------------------------------------------------------------
-// MARK: – ME modifier bits  (from estruct.h via macosterm.h ME_MOD_* defines)
+// MARK: - ME modifier bits  (from estruct.h via macosterm.h ME_MOD_* defines)
 // ---------------------------------------------------------------------------
 // Special-key codes are read from meSKeys (a C global) so they always match
 // the SKEY_* enum values in the current build.
@@ -65,7 +65,7 @@ private let kVKKPDecimal:    UInt16 = 0x41
 private let kVKKPEnter:      UInt16 = 0x4C
 
 // ---------------------------------------------------------------------------
-// MARK: – Drawing cell
+// MARK: - Drawing cell
 // ---------------------------------------------------------------------------
 
 /// One cell in the backing store: colour indices + attributes + character.
@@ -78,7 +78,7 @@ private struct Cell {
 }
 
 // ---------------------------------------------------------------------------
-// MARK: – MEView
+// MARK: - MEView
 // ---------------------------------------------------------------------------
 
 final class MEView: NSView {
@@ -88,6 +88,8 @@ final class MEView: NSView {
     private var boldFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
     private var italicFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
     private var boldItalicFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
+    private var changeFontN: Int32 = 0
+    private var fontPanelSemaphore: DispatchSemaphore? = nil
 
     private(set) var cellW:  Int = 8
     private(set) var cellH:  Int = 16
@@ -98,22 +100,22 @@ final class MEView: NSView {
     // Populated on the main thread by cFlushDirty (called from TTflush via
     // DispatchQueue.main.sync while the ME engine thread is blocked).
     // Read on the main thread by draw().  No lock needed.
-    private var cells: [Cell] = []   // rows × cols
+    private var cells: [Cell] = []   // rows * cols
 
     // ---- Cursor -----------------------------------------------------------
     private var cursorCol:  Int = 0
     private var cursorRow:  Int = 0
     private var cursorVisible: Bool = true
-    private var cursorOn:   Bool = true   // blink phase – driven by ME's TTshowCur/TThideCur
-    var hasFocus: Bool = true             // window key state – controls filled vs outline cursor
+    private var cursorOn:   Bool = true   // blink phase - driven by ME's TTshowCur/TThideCur
+    var hasFocus: Bool = true             // window key state - controls filled vs outline cursor
 
-    // ---- Colour cache – NSColor objects keyed by MEColor palette index ---
+    // ---- Colour cache - NSColor objects keyed by MEColor palette index ---
     private var colorCache: [Int: NSColor] = [:]
 
-    // ---- Layer background tracking – updated in cFlushDirty (main thread) --
+    // ---- Layer background tracking - updated in cFlushDirty (main thread) --
     private var layerBgIndex: Int = -1
 
-    // ---- Glyph cache – pre-computed for all 256 ISO-8859-1 chars ---------
+    // ---- Glyph cache - pre-computed for all 256 ISO-8859-1 chars ---------
     // Built once per font change in measureFont(); avoids per-character
     // NSAttributedString + CTLine allocation in the hot draw path.
     private var glyphs:           [CGGlyph] = Array(repeating: 0, count: 256)
@@ -138,22 +140,19 @@ final class MEView: NSView {
     }
 
     private func commonInit() {
-        wantsLayer = true
-        layer?.backgroundColor = NSColor.black.cgColor
+        wantsLayer = true;
+        layer?.backgroundColor = NSColor.black.cgColor;
         //TODO:acceptsFirstResponder()
 
-        // Register the C-side callbacks (cursor/bell/title/font only;
-        // drawing is handled by meNativeFlushDirty below)
-        var cbs = MENativeCallbacks()
-        cbs.setCursor  = meViewSetCursor
-        cbs.hideCursor = meViewHideCursor
-        cbs.bell       = meViewBell
-        cbs.setTitle   = meViewSetTitle
-        cbs.applyFont  = meViewApplyFont
-        meNativeSetCallbacks(&cbs)
+        // Register the C-side callbacks (cursor/bell/title/font)
+        var cbs = MENativeCallbacks();
+        cbs.setCursor  = meViewSetCursor;
+        cbs.hideCursor = meViewHideCursor;
+        cbs.bell       = meViewBell;
+        cbs.setTitle   = meViewSetTitle;
+        cbs.changeFont = meViewChangeFont;
+        meNativeSetCallbacks(&cbs);
     }
-
-    // MARK: – Public API called by MEWindowController
 
     func setSize(cols: Int, rows: Int)
     {
@@ -170,35 +169,30 @@ final class MEView: NSView {
         needsDisplay = true;
     }
 
-    func setFont(font: NSFont)
-    {
-        measureFont(font);
-              
-        self.font = font;
-        self.boldFont = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask);
-        self.italicFont = NSFontManager.shared.convert(font, toHaveTrait: .italicFontMask);
-        self.boldItalicFont = NSFontManager.shared.convert(boldFont, toHaveTrait: .italicFontMask);
-        glyphs = makeGlyphTable(for: font);
-        boldGlyphs = makeGlyphTable(for: boldFont);
-        italicGlyphs = makeGlyphTable(for: italicFont);
-        boldItalicGlyphs = makeGlyphTable(for: boldItalicFont);
-
-        layerBgIndex = -1;   // force layer background refresh on next flush
-    }
-
-    // MARK: – Font measurement
-
-    private func measureFont(_ font: NSFont)
+    func setFont(n: Int32, font: NSFont)
     {
         // Use CoreText for sub-pixel accurate metrics
         let ctFont = font as CTFont;
         let w = max(1,Int(CTFontGetAdvancesForGlyphs(ctFont,.horizontal,[CTFontGetGlyphWithName(ctFont,"W" as CFString)],nil,1) + 0.5));
         let h = max(1,Int(CTFontGetDescent(ctFont) + CTFontGetAscent(ctFont) + CTFontGetLeading(ctFont) + 0.5));
         // Tell C side
-        let isMono = CTFontGetSymbolicTraits(font as CTFont).contains(.monoSpaceTrait) ? Int32(1) : Int32(0)
-        meNativeReturnFontSize(Int32(cols),Int32(rows),Int32(cellW),Int32(cellH),Int32(font.ascender),isMono)
-        cellW = w;
-        cellH = h;
+        meNativeReturnFontSize(Int32(w),Int32(h),Int32(font.ascender),Int32(CTFontGetSymbolicTraits(ctFont).contains(.monoSpaceTrait) ? 1:0));
+        
+        if((n & 2) == 0)
+        {
+            self.font = font;
+            self.boldFont = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask);
+            self.italicFont = NSFontManager.shared.convert(font, toHaveTrait: .italicFontMask);
+            self.boldItalicFont = NSFontManager.shared.convert(boldFont, toHaveTrait: .italicFontMask);
+            glyphs = makeGlyphTable(for: font);
+            boldGlyphs = makeGlyphTable(for: boldFont);
+            italicGlyphs = makeGlyphTable(for: italicFont);
+            boldItalicGlyphs = makeGlyphTable(for: boldItalicFont);
+            cellW = w;
+            cellH = h;
+
+            layerBgIndex = -1;   // force layer background refresh on next flush
+        }
     }
 
     private func makeGlyphTable(for nsFont: NSFont) -> [CGGlyph]
@@ -213,10 +207,10 @@ final class MEView: NSView {
     {
         switch (attrs & 0x03)
         {
-        case 3:  return boldItalicFont as CTFont;
-        case 2:  return boldFont as CTFont;
+        case 0:  return font as CTFont;
         case 1:  return italicFont as CTFont;
-        default: return font as CTFont;
+        case 2:  return boldFont as CTFont;
+        default: return boldItalicFont as CTFont;
         }
     }
 
@@ -224,14 +218,14 @@ final class MEView: NSView {
     {
         switch(attrs & 0x03)
         {
-        case 3:  return boldItalicGlyphs;
-        case 2:  return boldGlyphs;
+        case 0:  return glyphs;
         case 1:  return italicGlyphs;
-        default: return glyphs;
+        case 2:  return boldGlyphs;
+        default: return boldItalicGlyphs;
         }
     }
 
-    // MARK: – Geometry helpers
+    // MARK: - Geometry helpers
 
     var pixelWidth:  CGFloat { CGFloat(cols * cellW) }
     var pixelHeight: CGFloat { CGFloat(rows * cellH) }
@@ -248,7 +242,7 @@ final class MEView: NSView {
         cellRect(col: col, row: row, rows: rows)
     }
 
-    // MARK: – Colour helpers
+    // MARK: - Colour helpers
 
     private func nsColor(index: Int) -> NSColor {
         if let c = colorCache[index] { return c }
@@ -277,7 +271,7 @@ final class MEView: NSView {
         return c
     }
 
-    // MARK: – Drawing
+    // MARK: - Drawing
 
     override var isOpaque: Bool { true }
     override var acceptsFirstResponder: Bool { true }
@@ -324,7 +318,7 @@ final class MEView: NSView {
         // ---- Pass 2: text glyphs -------------------------------------------
         // Batch consecutive cells with the same fg colour and font variant into
         // a single CTFontDrawGlyphs call.  Special chars and spaces do NOT break
-        // the run — they simply contribute no glyph (their cell is already filled
+        // the run, they simply contribute no glyph (their cell is already filled
         // by pass 1 and will be drawn over in pass 3).
         col = 0
         while col < cols {
@@ -636,9 +630,9 @@ final class MEView: NSView {
         }
     }
 
-    // MARK: – Cursor blink  (driven by ME's TThandleBlink / CURSOR_TIMER_ID)
-    // Swift no longer owns the blink schedule; TTshowCur → cSetCursor sets
-    // cursorOn=true, TThideCur → cHideCursor sets cursorOn=false.
+    // MARK: - Cursor blink  (driven by ME's TThandleBlink / CURSOR_TIMER_ID)
+    // Swift no longer owns the blink schedule; TTshowCur -> cSetCursor sets
+    // cursorOn=true, TThideCur -> cHideCursor sets cursorOn=false.
 
     func startCursorBlink() {
         hasFocus = true
@@ -652,7 +646,7 @@ final class MEView: NSView {
         meNativeFocusLost()
     }
 
-    // MARK: – Flush: copy dirty rows from the C frame store into cells[]
+    // MARK: - Flush: copy dirty rows from the C frame store into cells[]
 
     // Called on the main thread (via DispatchQueue.main.sync from meNativeFlushDirty).
     // The ME engine thread is blocked for the duration, so frameCur->store is stable.
@@ -718,72 +712,87 @@ final class MEView: NSView {
     }
 
     func cSetCursor(_ col: Int, _ row: Int) {
-        // Called from ME engine thread – dispatch UI work to main thread
+        // Called from ME engine thread - dispatch UI work to main thread
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.setNeedsDisplay(self.cellRect(col: self.cursorCol, row: self.cursorRow))
             self.cursorCol = col
             self.cursorRow = row
-            self.cursorOn  = true   // TTshowCur – cursor visible
+            self.cursorOn  = true   // TTshowCur - cursor visible
             self.setNeedsDisplay(self.cellRect(col: self.cursorCol, row: self.cursorRow))
         }
     }
 
     func cHideCursor() {
-        // Called from ME engine thread – dispatch UI work to main thread
+        // Called from ME engine thread - dispatch UI work to main thread
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.cursorOn = false   // TThideCur – blink-off phase
+            self.cursorOn = false   // TThideCur - blink-off phase
             self.setNeedsDisplay(self.cellRect(col: self.cursorCol, row: self.cursorRow))
         }
     }
 
-    // MARK: – Font change
+    // MARK: - Font change
 
-    /// Called from the ME engine thread (via gCbs.applyFont).
+    /// Called from the ME engine thread (via gCbs.changeFont).
+    /// - If (n & 9) == 9: shows NSFontPanel and blocks until the user closes it.
     /// - If name is non-empty: applies that PostScript font synchronously.
-    /// - If name is empty:     shows NSFontPanel asynchronously and returns.
-    func cApplyFont(name: String, size: Float) {
-        if name.isEmpty {
-            // Dialog mode: show NSFontPanel on the main thread (async – ME thread continues).
+    func cChangeFont(n: Int32, name: String, size: Float) {
+        self.changeFontN = n;
+        if (n & 9) == 9 {
+            // Dialog mode: show NSFontPanel and block the ME engine thread until
+            // the user closes the panel.
+            let sema = DispatchSemaphore(value: 0);
+            fontPanelSemaphore = sema;
             DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                let fm = NSFontManager.shared
-                fm.target  = self
-                fm.action  = #selector(MEView.fontPanelFontChanged(_:))
-                fm.setSelectedFont(self.font, isMultiple: false)
-                fm.orderFrontFontPanel(nil)
+                guard let self = self else { sema.signal(); return }
+                let fm = NSFontManager.shared;
+                fm.target  = self;
+                fm.action  = #selector(MEView.fontPanelFontChanged(_:));
+                fm.setSelectedFont(self.font, isMultiple: false);
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(MEView.fontPanelWillClose(_:)),
+                    name: NSWindow.willCloseNotification,
+                    object: NSFontPanel.shared);
+                fm.orderFrontFontPanel(nil);
             }
+            sema.wait();
+            fontPanelSemaphore = nil;
             return
         }
-        // Prompt mode: apply the named font synchronously.
+        // Named-font mode: apply the specified font synchronously.
+        guard !name.isEmpty else { return }
         let block: () -> Void = { [weak self] in
             guard let self = self else { return }
-            let pt = CGFloat(size)
-            let newFont: NSFont
-            if name.isEmpty, let f = NSFont(name: "Menlo-Regular", size: pt) {
-                newFont = f
-            } else if let f = NSFont(name: name, size: pt) {
-                newFont = f
-            } else {
-                newFont = NSFont.monospacedSystemFont(ofSize: pt, weight: .regular)
-            }
-            self.applyFontImpl(newFont)
+            let pt = CGFloat(size);
+            let newFont = NSFont(name: name, size: pt) ?? NSFont.monospacedSystemFont(ofSize: pt, weight: .regular);
+            self.applyFont(newFont);
         }
         if Thread.isMainThread { block() } else { DispatchQueue.main.sync(execute: block) }
     }
 
+    /// Signalled by NSWindow.willCloseNotification for the shared font panel.
+    @objc private func fontPanelWillClose(_ notification: Notification) {
+        NotificationCenter.default.removeObserver(
+            self, name: NSWindow.willCloseNotification, object: notification.object);
+        fontPanelSemaphore?.signal();
+    }
+
     /// Called by NSFontPanel when the user changes the font selection.
     @objc func fontPanelFontChanged(_ sender: Any?) {
-        let fm = NSFontManager.shared
-        let newFont = fm.convert(font)
-        applyFontImpl(newFont)
+        let fm = NSFontManager.shared;
+        let newFont = fm.convert(font);
+        let psName = newFont.fontName;
+        let ptSize = Int32(newFont.pointSize);
+        psName.withCString { meNativeReturnFontName(UnsafeMutablePointer(mutating: $0), ptSize) };
+        applyFont(newFont);
     }
 
     /// Apply a resolved NSFont: reconfigure metrics, resize window, notify ME.
-    private func applyFontImpl(_ newFont: NSFont) {
-        setFont(font: newFont);
-        if let wc = window?.windowController as? MEWindowController {
+    private func applyFont(_ newFont: NSFont) {
+        setFont(n: self.changeFontN, font: newFont);
+        if ((self.changeFontN & 2) == 0),let wc = window?.windowController as? MEWindowController {
             wc.fontDidChange(in: self);
         }
     }
@@ -799,7 +808,7 @@ final class MEView: NSView {
     }
 
 
-    // MARK: – Keyboard events
+    // MARK: - Keyboard events
 
     override func keyDown(with event: NSEvent) {
         let keyCode   = event.keyCode
@@ -817,7 +826,7 @@ final class MEView: NSView {
         if isAlt   { specialMod |= MEMod.alt }
 
         // ---- Function / navigation keys (layout-independent) -------------
-        // SKEY values come from meSKeys (C global) – correct for this build.
+        // SKEY values come from meSKeys (C global) - correct for this build.
         let specialKey: UInt16?
         switch keyCode {
         case kVKUpArrow:        specialKey = meSKeys.up
@@ -867,7 +876,7 @@ final class MEView: NSView {
 
         // ---- Regular character keys --------------------------------------
         // For Ctrl/Alt use charactersIgnoringModifiers to get the base letter.
-        // For plain/shift keys use characters – shift is already in the char.
+        // For plain/shift keys use characters - shift is already in the char.
         guard let chars = (isCtrl || isAlt)
                 ? event.charactersIgnoringModifiers
                 : event.characters,
@@ -879,10 +888,10 @@ final class MEView: NSView {
         if code >= 0x20 && code <= 0x7e {
             let keyVal: UInt16
             if isCtrl && code >= 0x61 && code <= 0x7a {
-                // Ctrl+a–z → C0 codes 0x01–0x1a, Alt may combine
+                // Ctrl+a-z -> C0 codes 0x01-0x1a, Alt may combine
                 keyVal = UInt16(code ^ 0x60) | (specialMod & MEMod.alt)
             } else if isCtrl && code >= 0x40 && code <= 0x5f {
-                // Ctrl+@, A–Z, [, \, ], ^, _ → C0 codes 0x00–0x1f
+                // Ctrl+@, A-Z, [, \, ], ^, _ -> C0 codes 0x00-0x1f
                 keyVal = UInt16(code ^ 0x40) | (specialMod & MEMod.alt)
             } else if isCtrl {
                 // Ctrl+punctuation/digits: keep ME_CONTROL, strip ME_SHIFT
@@ -896,7 +905,7 @@ final class MEView: NSView {
         }
 
         if code < 0x20 {
-            // C0 from OS (defensive – shouldn't happen with Ctrl using ignoringModifiers)
+            // C0 from OS (defensive - shouldn't happen with Ctrl using ignoringModifiers)
             meNativePushKey(UInt16(code) | (specialMod & MEMod.alt))
             return
         }
@@ -906,7 +915,7 @@ final class MEView: NSView {
         }
     }
 
-    // MARK: – Mouse events
+    // MARK: - Mouse events
 
     override func mouseDown(with event: NSEvent)       { handleMouse(event, button: 1, pick: 1) }
     override func mouseUp(with event: NSEvent)         { handleMouse(event, button: 1, pick: 0) }
@@ -968,7 +977,7 @@ final class MEView: NSView {
         return m
     }
 
-    // MARK: – Track mouse for mouseMoved events
+    // MARK: - Track mouse for mouseMoved events
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         trackingAreas.forEach { removeTrackingArea($0) }
@@ -978,13 +987,13 @@ final class MEView: NSView {
         addTrackingArea(ta)
     }
 
-    // MARK: – Become first responder on click
+    // MARK: - Become first responder on click
     override func becomeFirstResponder() -> Bool { true }
     override func resignFirstResponder() -> Bool { true }
 }
 
 // ---------------------------------------------------------------------------
-// MARK: – C callback trampolines
+// MARK: - C callback trampolines
 //
 // C requires plain function pointers; these free functions capture the view
 // via a global reference set by MEWindowController.
@@ -1010,13 +1019,13 @@ private func meViewSetTitle(_ title: UnsafePointer<CChar>?) {
     gMEView?.cSetTitle(String(cString: title))
 }
 
-private func meViewApplyFont(_ name: UnsafePointer<CChar>?, _ size: Float) {
-    let nameStr = name.map { String(cString: $0) } ?? ""
-    gMEView?.cApplyFont(name: nameStr, size: size)
+private func meViewChangeFont(_ n: Int32, _ name: UnsafePointer<CChar>?, _ size: Float) {
+    let nameStr = name.map { String(cString: $0) } ?? "";
+    gMEView?.cChangeFont(n: n, name: nameStr, size: size);
 }
 
 // ---------------------------------------------------------------------------
-// MARK: – meNativeFlushDirty  (@_cdecl – called directly from C TTflush)
+// MARK: - meNativeFlushDirty  (@_cdecl - called directly from C TTflush)
 //
 // TTflush calls this on the ME engine thread.  We dispatch synchronously to
 // the main thread so the engine blocks until the cells[] render buffer has

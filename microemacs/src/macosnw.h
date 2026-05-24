@@ -20,9 +20,9 @@
 extern "C" {
 #endif
 
-#include "../eterm.h"
+#include "eterm.h"
 
-/* Dirty-region tracking – mirrors the Windows TTinitArea/TTaddArea/TTapplyArea
+/* Dirty-region tracking - mirrors the Windows TTinitArea/TTaddArea/TTapplyArea
  * macros from eterm.h but using a plain struct (no Win32 RECT needed). */
 typedef struct { int left; int right; int top; int bottom; } meNWRect;
 extern meNWRect ttRect;
@@ -69,6 +69,7 @@ extern void meFrameTermFree(meFrame *frame, meFrame *sibling);
 extern void meFrameTermMakeCur(meFrame *frame);
 #define meXFONT_MASK         (meFONT_BOLD|meFONT_ITALIC|meFONT_LIGHT)
 #define meStyleGetXFont(ss)  (((ss)>>16) & meXFONT_MASK)
+#define meFONTNAME_MAX       128
 
 typedef struct
 {
@@ -79,7 +80,7 @@ typedef struct
     int       fadepth;                  /* Font up-arrow depth in pixels */
     int       ascent;                   /* Font ascent */
     int       underline;                /* The underline position */
-    char     *fontName;
+    char      fontName[meFONTNAME_MAX];
     int       fontSize;
     int       fontMono;
 } meCellMetrics;                        /* The character cell metrics */

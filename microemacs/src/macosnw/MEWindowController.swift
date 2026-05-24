@@ -1,5 +1,5 @@
 // MEWindowController.swift
-// JASSPA MicroEmacs – native macOS frontend
+// JASSPA MicroEmacs - native macOS frontend
 //
 // Creates and owns the NSWindow + MEView.  Measures the monospace font,
 // sizes the window to the configured terminal dimensions, and starts the
@@ -10,7 +10,7 @@ import Cocoa
 final class MEWindowController: NSWindowController, NSWindowDelegate {
 
     // ---- Configuration ---------------------------------------------------
-    /// Font family name; nil → system monospaced font
+    /// Font family name; nil = system monospaced font
     var fontName:   String? = nil
     var fontSize:   CGFloat = 14.0
     var termCols:   Int     = 80
@@ -26,11 +26,11 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     var engineArgv: [String] = []
 
     // =========================================================================
-    // MARK: – Initialisation
+    // MARK: - Initialisation
     // =========================================================================
 
     convenience init() {
-        // Build NSWindow programmatically – no nib required
+        // Build NSWindow programmatically - no nib required
         let contentRect = NSRect(x: 0, y: 0, width: 640, height: 800)
         let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .resizable]
         let win = NSWindow(contentRect: contentRect,
@@ -56,7 +56,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     }
 
     // =========================================================================
-    // MARK: – Setup
+    // MARK: - Setup
     // =========================================================================
 
     private func setup() {
@@ -72,11 +72,9 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
         // Expose to C trampolines
         gMEView = view
 
-        // ---- Resolve font ------------------------------------------------
-        let font = resolveFont()
-
         // ---- Configure view (measures font, sets mecm) -------------------
-        view.setFont(font: font);
+        let font = resolveFont()
+        view.setFont(n: 2, font: font);
         view.setSize(cols: termCols, rows: termRows);
 
         // ---- Size window to terminal dimensions --------------------------
@@ -120,7 +118,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     }
 
     // =========================================================================
-    // MARK: – Engine thread
+    // MARK: - Engine thread
     // =========================================================================
 
     private func startEngine() {
@@ -133,7 +131,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
             cStrings.withUnsafeMutableBufferPointer { buf in
                 meStartEngine(argc, buf.baseAddress)
             }
-            // ME exited – clean up strings
+            // ME exited - clean up strings
             for p in cStrings where p != nil { free(p) }
             // Terminate the app on the main thread
             DispatchQueue.main.async { NSApp.terminate(nil) }
@@ -145,7 +143,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     }
 
     // =========================================================================
-    // MARK: – NSWindowDelegate
+    // MARK: - NSWindowDelegate
     // =========================================================================
 
     func windowWillClose(_ notification: Notification) {

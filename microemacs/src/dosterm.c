@@ -37,13 +37,6 @@
 #if MEOPT_MOUSE
 
 /* Local definitions for mouse handling code */
-/* mouseState - An integer interpreted as a bit mask that holds the current state of the mouse interaction. */
-#define MOUSE_STATE_LEFT         0x0001 /* Left mouse button is pressed */
-#define MOUSE_STATE_MIDDLE       0x0002 /* Middle mouse button is pressed */
-#define MOUSE_STATE_RIGHT        0x0004 /* Right mouse button is pressed */
-#define MOUSE_STATE_VISIBLE      0x0200 /* Mouse is currently visible */
-#define MOUSE_STATE_SHOW         0x0400 /* Mouse active, show next time */
-#define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)
 
 /* bit button lookup - [0] = no keys, [1] = left, [2] = right, [4]=middle */
 static meUShort mouseKeys[8] = { 0, 1, 3, 0, 2, 0, 0, 0 } ;

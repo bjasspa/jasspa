@@ -1,5 +1,5 @@
 // MEAppDelegate.swift
-// JASSPA MicroEmacs – native macOS frontend
+// JASSPA MicroEmacs - native macOS frontend
 //
 // Application entry point.  Creates MEWindowController and passes any
 // command-line arguments through to the ME engine.
@@ -25,10 +25,10 @@ class MEAppDelegate: NSObject, NSApplicationDelegate {
         // Build the window controller with sensible defaults.
         // Users can override font, size and geometry via environment variables
         // or future preferences:
-        //   ME_FONT_NAME  – e.g. "Menlo-Regular"
-        //   ME_FONT_SIZE  – e.g. "14"
-        //   ME_COLS       – e.g. "100"
-        //   ME_ROWS       – e.g. "40"
+        //   ME_FONT_NAME  - e.g. "Menlo-Regular"
+        //   ME_FONT_SIZE  - e.g. "14"
+        //   ME_COLS       - e.g. "100"
+        //   ME_ROWS       - e.g. "40"
 
         let wc = MEWindowController()
 

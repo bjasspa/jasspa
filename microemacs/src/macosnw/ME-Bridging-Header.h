@@ -1,5 +1,5 @@
 /* ME-Bridging-Header.h
- * JASSPA MicroEmacs – native macOS frontend
+ * JASSPA MicroEmacs - native macOS frontend
  *
  * Swift bridging header.  Exposes the macosterm.h C API to all Swift
  * source files in the target.  Set this file as the target's

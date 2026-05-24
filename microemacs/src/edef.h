@@ -192,6 +192,20 @@ extern  meUByte mouse_pos;              /* mouse virtual position       */
 extern  meShort mouse_X;                /* mouse X pos at last event    */
 extern  meShort mouse_Y;                /* mouse X pos at last event    */
 #if MEOPT_MOUSE
+/* mouseState - An integer interpreted as a bit mask that holds the current state of the mouse interaction. */
+#define MOUSE_STATE_LEFT         0x0001 /* Left mouse button is pressed */
+#define MOUSE_STATE_MIDDLE       0x0002 /* Middle mouse button is pressed */
+#define MOUSE_STATE_RIGHT        0x0004 /* Right mouse button is pressed */
+#define MOUSE_STATE_BUT4         0x0008 /* Button 4 (can be used by wheel) */
+#define MOUSE_STATE_BUT5         0x0010 /* Button 5 (can be used by wheel) */
+#define MOUSE_STATE_SHOW         0x0200 /* Mouse active, show next time */
+#define MOUSE_STATE_VISIBLE      0x0400 /* Mouse is currently visible */
+#define MOUSE_STATE_LOCKED       0x0800 /* Mouse is locked in */
+#ifdef _UNIX
+#define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT|MOUSE_STATE_BUT4|MOUSE_STATE_BUT5)
+#else
+#define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)
+#endif
 extern  meInt mouseState;               /* State of the mouse. */
 extern  meUShort mouseKeyState;         /* State of keyboard ACS on Unix*/
 extern  meShort mouse_dX;               /* mouse delta X last event pos */

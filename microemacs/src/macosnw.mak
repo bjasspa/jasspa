@@ -76,7 +76,8 @@ endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
-NWDIR    = $(PLATFORM)nw
+TRDPMKFL = $(PLATFORM)$(TOOLKIT)
+NWDIR    = $(PLATFORM)$(BTYP)
 
 CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
@@ -163,7 +164,7 @@ CCPROF =
 LDPROF = 
 endif
 
-BTYP_CDF = $(WINDOW_DEFS) -D_ME_WINDOW -D_ME_MACOSNW -I./macosnw/
+BTYP_CDF = $(WINDOW_DEFS) -D_ME_WINDOW -D_ME_MACOSNW
 BTYP_LIB = $(WINDOW_LIBS) -lswiftCore -lswiftFoundation
 
 OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
@@ -173,13 +174,13 @@ APPNAME  = MicroEmacs
 APPPATH  = $(APPNAME).app
 # TODO mak name wrong
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h evar.h evers.h eopt.h \
-	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def macosnw.h $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
+	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def macos$(BTYP).h $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
 	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
 	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
-	   $(OUTDIR)/macosnw.o
+	   $(OUTDIR)/macos$(BTYP).o
 SWIFTSRC = $(NWDIR)/MEApplication.swift $(NWDIR)/MEAppDelegate.swift $(NWDIR)/MEWindowController.swift $(NWDIR)/MEView.swift $(NWDIR)/MEClipboard.swift
 SWIFTOBJ = $(OUTDIR)/swift_me.o
 #
@@ -209,7 +210,6 @@ $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(SWIFTOBJ) $(PRGLIBS)
 	$(RM) $@
 	$(LD) $(LDDEFS) $(LDFLAGS) $(SWLDEFS) -o $@ $(PRGOBJS) $(SWIFTOBJ) $(PRGLIBS) $(BTYP_LIB) $(LDLIBS)
 	$(STRIP) $@
-	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)
 
@@ -217,17 +217,14 @@ $(SWIFTOBJ): $(SWIFTSRC) $(NWDIR)/ME-Bridging-Header.h
 	$(SWIFTC) $(SWDEFS) $(SWFLAGS) -emit-object -whole-module-optimization -emit-module \
 	-emit-module-path $(OUTDIR)/$(APPNAME).swiftmodule -pch-output-dir $(OUTDIR) -o $@ $(SWIFTSRC)
 
-$(OUTDIR)/$(APPPATH)/Contents/MacOS: $(OUTDIR)/$(APPPATH)/Contents
-	-mkdir $@
+$(OUTDIR)/$(APPPATH)/Contents/MacOS:
+	-mkdir -p $@
 
-$(OUTDIR)/$(APPPATH)/Contents/Resources: $(OUTDIR)/$(APPPATH)/Contents
-	-mkdir $@
+$(OUTDIR)/$(APPPATH)/Contents/Resources:
+	-mkdir -p $@
 
-$(OUTDIR)/$(APPPATH)/Contents: $(OUTDIR)/$(APPPATH)
-	-mkdir $@
-
-$(OUTDIR)/$(APPPATH): $(OUTDIR)
-	-mkdir $@
+$(OUTDIR)/$(APPPATH)/Contents:
+	-mkdir -p $@
 
 $(OUTDIR):
 	-mkdir $(OUTDIR)
@@ -236,13 +233,13 @@ $(INSTDIR):
 	-mkdir $(INSTDIR)
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TRDPMKFL).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) clean
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TRDPMKFL).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) clean
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) spotless
+	cd $(TRDPARTY)/tfs && $(MK) -f $(TRDPMKFL).mak ARCHITEC=$(ARCHITEC) BCFG=$(BCFG) spotless

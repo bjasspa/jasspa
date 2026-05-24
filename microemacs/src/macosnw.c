@@ -19,42 +19,20 @@
  *     -D_MACOS -D_UNIX -D_POSIX_SIGNALS -D_ME_WINDOW -D_ME_NATIVE -D_MOUSE
  *
  * Architecture:
- *   • SIGALRM  – ME's timer system (termio.c) uses setitimer(ITIMER_REAL).
+ *   - SIGALRM  - ME's timer system (termio.c) uses setitimer(ITIMER_REAL).
  *                sigAlarm() (declared extern in eterm.h) is implemented here
  *                and signals the pthread condvar to wake waitForEvent().
  *
- *   • Input    – A lock-protected circular buffer.  Swift pushes events via
+ *   - Input    - A lock-protected circular buffer.  Swift pushes events via
  *                meNativePush*; the ME engine thread drains them in
- *                drainQueue() → addKeyToBuffer().
+ *                drainQueue() -> addKeyToBuffer().
  *
- *   • Drawing  – TTputs/TTapplyArea mark per-row dirty column ranges.
+ *   - Drawing  - TTputs/TTapplyArea mark per-row dirty column ranges.
  *                TTflush calls meNativeFlushDirty (Swift @_cdecl) which,
  *                via DispatchQueue.main.sync, copies dirty rows from the
  *                frame store into the Swift cells[] render buffer and
  *                schedules setNeedsDisplay.
  */
-
-/* =========================================================================
- * Mouse button state bookkeeping
- *
- * These macros/data are defined as static locals in unixterm.c.  Since we
- * are not compiling unixterm.c we must provide them here.
- * ====================================================================== */
-#define MOUSE_STATE_LEFT    0x0001
-#define MOUSE_STATE_MIDDLE  0x0002
-#define MOUSE_STATE_RIGHT   0x0004
-#define MOUSE_STATE_BUT4    0x0008
-#define MOUSE_STATE_BUT5    0x0010
-
-#define mouseButtonPick(bb)    (mouseState |=  (1 << ((bb) - 1)))
-#define mouseButtonDrop(bb)    (mouseState &= ~(1 << ((bb) - 1)))
-#define mouseButtonGetPick() \
-    ((mouseState == 0)                 ? 0 : \
-     (mouseState & MOUSE_STATE_LEFT)   ? 1 : \
-     (mouseState & MOUSE_STATE_MIDDLE) ? 2 : \
-     (mouseState & MOUSE_STATE_RIGHT)  ? 3 : \
-     (mouseState & MOUSE_STATE_BUT4)   ? 4 : \
-     (mouseState & MOUSE_STATE_BUT5)   ? 5 : 0)
 
 /* =========================================================================
  * Includes (after the macros above so emain.h sees __MACOSTERMINAL)
@@ -63,7 +41,7 @@
 #include "evers.h"
 #include "efunc.h"
 #include "eskeys.h"
-#include "macosterm.h"
+#include "macosnw/macosterm.h"
 
 #include <pthread.h>
 #include <pwd.h>
@@ -79,10 +57,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifdef _MACOS
 #include <mach-o/dyld.h>   /* _NSGetExecutablePath */
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 
 struct  termios otermio;        /* original terminal characteristics */
 struct  termios ntermio;        /* charactoristics to use inside */
@@ -95,10 +71,26 @@ typedef struct termios *meTermio ;
 /* Setup the macosterm variables and things */
 meCellMetrics mecm;
 
+/* =========================================================================
+ * Mouse button state bookkeeping
+ *
+ * These macros/data are defined as static locals in unixterm.c.  Since we
+ * are not compiling unixterm.c we must provide them here.
+ * ====================================================================== */
 /* mouseKeyState - The state of the control keys when the mouse was pressed. */
 meUShort mouseKeyState;          /* State of keyboard control */
 
-/* Special-key code table – read by Swift so it never hard-codes SKEY values */
+/* mouseKeys maps physical button index to allows swap. */
+static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5, 0, 0 };
+
+#define mouseButtonPick(bb)  (mouseState |=  (1<<((bb)-1)))
+#define mouseButtonDrop(bb)  (mouseState &= ~(1<<((bb)-1)))
+#define mouseButtonGetPick() (((mouseState & MOUSE_STATE_BUTTONS) == 0) ? 0 : \
+     (mouseState & MOUSE_STATE_LEFT)   ? 1 : (mouseState & MOUSE_STATE_RIGHT) ? 3 : \
+     (mouseState & MOUSE_STATE_MIDDLE) ? 2 : (mouseState & MOUSE_STATE_BUT4)  ? 4 : 5)
+
+
+/* Special-key code table, read by Swift so it never hard-codes SKEY values */
 MESKeyTable meSKeys = {
     .backspace  = ME_SPECIAL | SKEY_backspace,
     .delete_    = ME_SPECIAL | SKEY_delete,
@@ -134,19 +126,16 @@ MESKeyTable meSKeys = {
     .kpPageUp   = ME_SPECIAL | SKEY_kp_page_up,
 };
 
-/* mouseKeys maps physical button index → ME SKEY offset (allows swap). */
-static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5, 0, 0 };
-
 meUByte meColorTable[ME_MAX_COLORS*3];
 
-/* Resolved cursor colour index – updated by TTshowCur, read by Swift. */
+/* Resolved cursor colour index - updated by TTshowCur, read by Swift. */
 meUByte meCursorColor = 0;
 
-/* Background palette index for the global scheme – updated by TTsetBgcol,
+/* Background palette index for the global scheme - updated by TTsetBgcol,
  * read by Swift to initialise blank cells and set the layer background. */
 meUByte meNWBgColor = 0;
 
-/* Palette-dirty flag – set by TTaddColor, cleared by Swift in cFlushDraw. */
+/* Palette-dirty flag - set by TTaddColor, cleared by Swift in cFlushDraw. */
 int meNWColorsDirty = 0;
 
 /* =========================================================================
@@ -155,15 +144,6 @@ int meNWColorsDirty = 0;
 
 static MENativeCallbacks gCbs;
 static int               gCbsReady = 0;
-
-/* ---- Current font state ---------------------------------------------------
- * Populated in changeFont (spec/size) and meNativeSetMetrics (isMono).
- * Read back by the changeFont query path to fill $result.
- * gFontSpec stores the full Xft-style spec written to $result field 8, e.g.
- * "Menlo:size=13".  Initialised to empty so the query path works before any
- * font has been explicitly set.
- * ---------------------------------------------------------------------- */
-static char  gFontSpec[meBUF_SIZE_MAX] = "";
 
 /* ---- Thread-safe input queue -------------------------------------------
  * Swift event thread writes; ME engine thread reads.
@@ -177,14 +157,21 @@ static int             gInputTail  = 0;
 static int             gInputCount = 0;
 static pthread_mutex_t gInputMutex = PTHREAD_MUTEX_INITIALIZER;
 
-/* ---- Self-pipe – used to wake select() from any thread or signal --------
+/* ---- Resize / quit / focus flags (written by Swift, read by ME engine) -*/
+static volatile int gQuitPending   = 0;
+static volatile int gFocusChange   = 0;
+static volatile int gResizePending = 0;
+static volatile int gResizeCols    = 80;
+static volatile int gResizeRows    = 24;
+
+/* ---- Self-pipe - used to wake select() from any thread or signal --------
  * gWakePipe[0] = read end (watched by ME engine in waitForEvent)
  * gWakePipe[1] = write end (written by Swift threads and sigAlarm)
  * The write end is non-blocking so it is safe from signal handlers.
  * ---------------------------------------------------------------------- */
 static int gWakePipe[2] = { -1, -1 };
 
-/* Wake the ME engine's select() – safe from any thread or signal handler. */
+/* Wake the ME engine's select() - safe from any thread or signal handler. */
 static void
 wakeSelect(void)
 {
@@ -201,14 +188,7 @@ drainWakePipe(void)
         ;
 }
 
-/* ---- Resize / quit / focus flags (written by Swift, read by ME engine) -*/
-static volatile int gResizePending = 0;
-static volatile int gResizeCols    = 80;
-static volatile int gResizeRows    = 24;
-static volatile int gQuitPending   = 0;
-static volatile int gFocusChange   = 0;
-
-/* ---- Per-row dirty column ranges – accumulated by TTputs/TTapplyArea ----
+/* ---- Per-row dirty column ranges - accumulated by TTputs/TTapplyArea ----
  * At TTflush time the accumulated ranges are handed to meNativeFlushDirty,
  * which (via DispatchQueue.main.sync) copies the dirty cells from the frame
  * store into the Swift render buffer and schedules setNeedsDisplay.
@@ -249,7 +229,7 @@ meNativeMarkDirty(int row, int startCol, int endCol)
 /* =========================================================================
  * SIGALRM handler
  *
- * ME's timer system (termio.c) uses setitimer(ITIMER_REAL, …) + SIGALRM.
+ * ME's timer system (termio.c) uses setitimer(ITIMER_REAL, ...) + SIGALRM.
  * sigAlarm is declared extern in eterm.h (under _UNIX) and previously lived
  * in unixterm.c.  We implement it here.
  *
@@ -271,7 +251,7 @@ sigAlarm(SIGNAL_PROTOTYPE)
  * Queue helpers
  * ====================================================================== */
 
-/* Push a key code – safe to call from any thread, including signal handlers
+/* Push a key code - safe to call from any thread, including signal handlers
  * (pthread_mutex_lock is async-signal-safe on macOS via the kernel). */
 static void
 queuePush(meUShort key)
@@ -286,7 +266,7 @@ queuePush(meUShort key)
     wakeSelect();
 }
 
-/* Pop one key – ME engine thread only. */
+/* Pop one key - ME engine thread only. */
 static int
 queuePop(meUShort *key)
 {
@@ -329,7 +309,7 @@ meNativeSetCallbacks(const MENativeCallbacks *cbs)
 }
 
 /* =========================================================================
- * Frame-store accessors – called from Swift inside meNativeFlushDirty
+ * Frame-store accessors - called from Swift inside meNativeFlushDirty
  * while the ME engine thread is blocked on DispatchQueue.main.sync.
  * ====================================================================== */
 
@@ -358,7 +338,13 @@ meNativeGetStyleTable(void)
 }
 
 void
-meNativeReturnFontSize(int cols, int rows, int cellW, int cellH, int ascent, int isMono)
+meNativeReturnFontName(char *fontName, int ptSize)
+{
+    snprintf(mecm.fontName,meFONTNAME_MAX,"%s:size=%d",(char *) fontName,ptSize);
+}
+
+void
+meNativeReturnFontSize(int cellW, int cellH, int ascent, int isMono)
 {
     mecm.fwidth    = cellW;
     mecm.fdepth    = cellH;
@@ -370,9 +356,6 @@ meNativeReturnFontSize(int cols, int rows, int cellW, int cellH, int ascent, int
         mecm.underline = cellH - 1;
     mecm.fadepth   = (cellW + 1 < cellH) ? cellW + 1 : cellH;
     mecm.fontMono  = isMono;
-
-    TTwidthDefault = (meUShort) cols;
-    TTdepthDefault = (meUShort) rows;
 }
 
 void
@@ -383,6 +366,11 @@ meNativeReturnFrameSize(int cols, int rows)
     gResizeRows = rows;
     gResizePending = 1;
     pthread_mutex_unlock(&gInputMutex);
+    if(TTwidthDefault == 0)
+    {
+        TTwidthDefault = (meUShort) cols;
+        TTdepthDefault = (meUShort) rows;
+    }
     wakeSelect();
 }
 
@@ -467,6 +455,7 @@ meNativeFocusLost(void)
     wakeSelect();
 }
 
+#ifdef _CLIPBRD
 /* =========================================================================
  * Clipboard support (TTinitClipboard / TTsetClipboard / TTgetClipboard)
  *
@@ -476,21 +465,18 @@ meNativeFocusLost(void)
  *
  * Ownership model (lazy, matching X11/Windows):
  *
- *   TTsetClipboard(0)    – claim ownership lazily; mark dirty but do NOT
+ *   TTsetClipboard(0)    - claim ownership lazily; mark dirty but do NOT
  *                          write to NSPasteboard yet.  Called on every kill,
  *                          so must be fast.
- *   TTsetClipboard(n!=0) – explicit copy (e.g. copy-region): write to
+ *   TTsetClipboard(n!=0) - explicit copy (e.g. copy-region): write to
  *                          NSPasteboard immediately and claim ownership.
- *   TTgetClipboard       – if CLIP_OWNER, return immediately (kill buffer is
+ *   TTgetClipboard       - if CLIP_OWNER, return immediately (kill buffer is
  *                          authoritative).  Otherwise read from NSPasteboard.
- *   TTflushClipboard     – called on focus-lost: push dirty content so other
+ *   TTflushClipboard     - called on focus-lost: push dirty content so other
  *                          apps can paste while ME is in the background.
- *   TTcheckClipboard     – called on focus-gained: detect if another app
+ *   TTcheckClipboard     - called on focus-gained: detect if another app
  *                          replaced the pasteboard; clear CLIP_OWNER if so.
  * ====================================================================== */
-#define _CLIPBRD        1
-#ifdef _CLIPBRD
-
 static int gClipChangeCount = -1; /* changeCount from our last NSPasteboard write */
 static int gClipDirty       =  0; /* kill buffer changed but not yet written to pasteboard */
 
@@ -650,14 +636,14 @@ TTgetClipboard(int flag)
           !(frameCur && (frameCur->flags & meFRAME_NOT_FOCUS)))))
         return;
 
-    /* ME owns the kill buffer – use it directly without touching NSPasteboard */
+    /* ME owns the kill buffer - use it directly without touching NSPasteboard */
     if(clipState & CLIP_OWNER)
         return;
 
     if((utf8text = meNativeGetClipboard()) == NULL)
         return;
 
-    /* ---- Convert UTF-8 clipboard text → ME kill buffer ---- */
+    /* ---- Convert UTF-8 clipboard text - ME kill buffer ---- */
     {
         const meUByte *ss;
         meUByte       *dd;
@@ -791,11 +777,11 @@ TTinitMouse(meInt nCfg)
  * ====================================================================== */
 
 /*
- * waitForEvent – block until something interesting happens.
+ * waitForEvent - block until something interesting happens.
  *
- * mode 0 – return on key, timer expiry, resize, quit, or ipipe data
- * mode 1 – same as 0, explicit ipipe-event return
- * mode 2 – return only on non-key events (timer, resize, quit, ipipe data)
+ * mode 0 - return on key, timer expiry, resize, quit, or ipipe data
+ * mode 1 - same as 0, explicit ipipe-event return
+ * mode 2 - return only on non-key events (timer, resize, quit, ipipe data)
  *
  * Uses select() so that ipipe file descriptors are watched alongside the
  * self-pipe wake channel.  SIGALRM wakes select() via wakeSelect().
@@ -899,7 +885,7 @@ waitForEvent(int mode)
     }
 }
 
-/* TTahead – non-zero if there are keys waiting in the ME key buffer */
+/* TTahead - non-zero if there are keys waiting in the ME key buffer */
 int
 TTahead(void)
 {
@@ -922,7 +908,7 @@ TTahead(void)
     return TTnoKeys;
 }
 
-/* TTwaitForChar – block until at least one key is in the ME key buffer */
+/* TTwaitForChar - block until at least one key is in the ME key buffer */
 void
 TTwaitForChar(void)
 {
@@ -978,7 +964,7 @@ TTwaitForChar(void)
                 screenUpdate(meTRUE,2 - sgarbf);
         }
 
-        /* Handle focus change – handle NOT_FOCUS flag, clipboard and cursor blink */
+        /* Handle focus change - handle NOT_FOCUS flag, clipboard and cursor blink */
         if(gFocusChange > 0)
         {
             gFocusChange = 0;
@@ -1016,7 +1002,7 @@ TTwaitForChar(void)
     }
 }
 
-/* TTsleep – sleep for msec ms, optionally interruptible by keys */
+/* TTsleep - sleep for msec ms, optionally interruptible by keys */
 void
 TTsleep(int msec, int intable, meVariable **waitVarList)
 {
@@ -1053,7 +1039,7 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
 }
 
 /* =========================================================================
- * Colour management  – TTaddColor / TTsetBgcol
+ * Colour management  - TTaddColor / TTsetBgcol
  * ====================================================================== */
 
 void
@@ -1091,7 +1077,7 @@ meFrameRepositionWindow(meFrame *frame, int resize)
 int
 meFrameTermInit(meFrame *frame, meFrame *sibling)
 {
-    frame->termData = NULL;   /* single NSWindow – no per-frame handle */
+    frame->termData = NULL;   /* single NSWindow - no per-frame handle */
     return meTRUE;
 }
 
@@ -1105,7 +1091,7 @@ meFrameTermFree(meFrame *frame, meFrame *sibling)
 void
 meFrameTermMakeCur(meFrame *frame)
 {
-    (void)frame;   /* single window – nothing to raise */
+    (void)frame;   /* single window - nothing to raise */
 }
 
 /* =========================================================================
@@ -1152,7 +1138,7 @@ void TTNbell(void)
 
 void TTbeep(void) { TTNbell(); }
 
-/* meFrameSetWindowSize – the NSView already has the correct size after a
+/* meFrameSetWindowSize - the NSView already has the correct size after a
  * resize event; nothing to do here. */
 void meFrameSetWindowSize(meFrame *frame) { (void)frame; }
 
@@ -1163,7 +1149,7 @@ meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
     (void)scheme;
 }
 
-/* Dirty-region rectangle – accumulated by TTaddArea, consumed by TTapplyArea */
+/* Dirty-region rectangle - accumulated by TTaddArea, consumed by TTapplyArea */
 meNWRect ttRect;
 
 void
@@ -1205,57 +1191,63 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 }
 
 /* =========================================================================
- * changeFont – implements the ME "change-font" command.
+ * changeFont - implements the ME "change-font" command.
  *
  * Numeric argument n bit flags:
  *   0x01  Prompt for font name and size (ME minibuffer)
- *   0x02  Don't apply (query-only – not used here)
+ *   0x02  Don't apply (query-only - not used here)
  *   0x04  Don't set $result
  *   0x08  Dialog: show the system font-picker panel
- *   0x10  (Windows: list all fonts – ignored on macOS)
+ *   0x10  (Windows: list all fonts - ignored on macOS)
  *
  * With no argument (f==0) the dialog panel is shown.
  * ====================================================================== */
 int
 changeFont(int f, int n)
 {
-    meUByte *pp, *ss, fontBuf[meBUF_SIZE_MAX];
-    int sz = 0;
+    meUByte *pp, *ss, fontBuf[meFONTNAME_MAX];
+    meCellMetrics bmecm;
+    int sz=0;
 
     if(!f)
         n = 0x09;   /* default: open the font-picker dialog */
 
-    if(!gCbsReady || !gCbs.applyFont)
+    if(!gCbsReady || !gCbs.changeFont)
         return notAvailable(f,n);
-
+          
     if(n & 0x01)
     {
+        if(n & 0x02)
+            /* not applying the font so back up the current font details */
+            memcpy(&bmecm,&mecm,sizeof(meCellMetrics));
         if(n & 0x08)
         {
             /* Dialog mode: pass empty name to Swift which shows NSFontPanel.
-             * Returns immediately; the font is applied asynchronously when
-             * the user confirms in the panel. */
-            gCbs.applyFont("", 0.0f);
-            return meTRUE;
+             * Blocks here until the user closes the panel; font changes are
+             * applied live as the user browses. */
+            gCbs.changeFont(n,"",0.0f);
         }
-        /* Prompt mode: ask the user for a PostScript font name and size. */
-        if(meGetString((meUByte *)"Font Name ['' for Menlo]",0,0,fontBuf,meBUF_SIZE_MAX) == meABORT)
-            return meFALSE;
-        if((pp = meStrchr(fontBuf,':')) != NULL)
+        else
         {
-            if((ss = meStrstr(pp,":size=")) == NULL)
-                sz = meAtoi(ss+6);
-            *pp = '\0';
+            /* Prompt mode: ask the user for a PostScript font name and size. */
+            if(meGetString((meUByte *)"Font Name",0,0,fontBuf,meFONTNAME_MAX) == meABORT)
+                return meFALSE;
+            if((pp = meStrchr(fontBuf,':')) != NULL)
+            {
+                if((ss = meStrstr(pp,":size=")) == NULL)
+                    sz = meAtoi(ss+6);
+                *pp = '\0';
+            }
+            if(sz <= 0)
+            {
+                meStrcpy(mecm.fontName,fontBuf);
+                sz = (int) ((CGDisplayBounds(CGMainDisplayID()).size.height / 95.0) + 0.5);
+            }
+            else
+                snprintf(mecm.fontName,meFONTNAME_MAX,"%s:size=%d",(char *) fontBuf,sz);
+            gCbs.changeFont(n,(const char *)fontBuf,sz);
         }
-        if(sz <= 0)
-            sz = (int) ((CGDisplayBounds(CGMainDisplayID()).size.height / 95.0) + 0.5);
-        /* Save font state for the query path ($result field 7 and 8). */
-        snprintf(gFontSpec, sizeof(gFontSpec),"%s:size=%d",(char *) fontBuf,sz);
-        /* applyFont blocks the ME engine thread via DispatchQueue.main.sync
-         * until the font is applied and the window has been resized. */
-        gCbs.applyFont((const char *)fontBuf,sz);
     }
-
     if((n & 0x04) == 0)
     {
         /* Return current font info in $result.
@@ -1263,15 +1255,17 @@ changeFont(int f, int n)
          *   |pitch|charset|weight|sizeX|sizeY|reqX|reqY|name|
          * pitch:   '0'=fixed  '1'=proportional
          * charset: 0 (not meaningful on macOS)
-         * weight:  4 (normal) – we do not track weight separately yet
-         * sizeX:   mecm.fwidth  (actual cell width in pixels)
-         * sizeY:   mecm.fdepth  (actual cell height in pixels)
+         * weight:  4 (normal) - we do not track weight separately yet
+         * sizeX:   mecm.fwidth   (actual cell width in pixels)
+         * sizeY:   mecm.fdepth   (actual cell height in pixels)
          * reqX:    0 (auto)
-         * name:    gFontSpec    (Xft-style, e.g. "Menlo:size=13") */
+         * name:    mecm.fontName (Xft-style, e.g. "Menlo:size=13") */
         sprintf((char *) resultStr, "|%c|0|4|%d|%d|0|%d|%s|",(mecm.fontMono ? '0':'1'),
-                mecm.fwidth,mecm.fdepth,mecm.fontSize, gFontSpec);
+                mecm.fwidth,mecm.fdepth,mecm.fontSize,mecm.fontName);
     }
-
+    /* if not applying prompted font, restore font details */
+    if((n & 0x03) == 3)
+        memcpy(&mecm,&bmecm,sizeof(meCellMetrics));
     return meTRUE;
 }
 
@@ -1331,7 +1325,7 @@ TCAPgetattr(meTermio p, int isX)
 }
 
 /* =========================================================================
- * Client/server – Unix domain socket IPC (identical to unixterm.c)
+ * Client/server - Unix domain socket IPC (identical to unixterm.c)
  * ====================================================================== */
 #if MEOPT_CLIENTSERVER
 
@@ -1502,7 +1496,7 @@ TTsendClientServer(meUByte *line)
 #endif /* MEOPT_CLIENTSERVER */
 
 /* =========================================================================
- * TTstart – called once via TTstart() macro during mesetup() in main.c
+ * TTstart - called once via TTstart() macro during mesetup() in main.c
  * ====================================================================== */
 
 int
@@ -1573,26 +1567,11 @@ meSetupProgname(char *progname)
         mlwrite(MWCURSOR | MWABORT | MWWAIT,
                 (meUByte *)"Failed to get cwd\n");
 
-#ifdef _MACOS
-    /* _NSGetExecutablePath gives us the real path without /proc tricks */
-    {
-        ii = meBUF_SIZE_MAX;
-        if (_NSGetExecutablePath((char *)resultStr, (uint32_t *)&ii) == 0)
-            fileNameCorrect(resultStr, evalResult, NULL);
-        else
-            ii = 0;
-    }
-#elif (defined _LINUX)
-    /* Linux: /proc/self/exe is a symlink to the executable */
-    if ((ii = readlink("/proc/self/exe", (char *)evalResult, meBUF_SIZE_MAX)) > 0)
-        evalResult[ii] = '\0';
+    ii = meBUF_SIZE_MAX;
+    if (_NSGetExecutablePath((char *)resultStr, (uint32_t *)&ii) == 0)
+        fileNameCorrect(resultStr, evalResult, NULL);
     else
         ii = 0;
-    if (ii == 0)
-        ii = execFilename(progname, (char *)evalResult, sizeof(evalResult));
-#else
-    ii = execFilename(progname, (char *)evalResult, sizeof(evalResult));
-#endif
 
     if (ii == 0)
         ii = executableLookup((meUByte *)progname, evalResult);

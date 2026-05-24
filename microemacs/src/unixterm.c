@@ -362,28 +362,15 @@ static void meSetIconState (Display *display, Window window);
  **************************************************************************/
 #if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
-/* mouseState - An integer interpreted as a bit mask that holds the current state of the mouse interaction. */
-#define MOUSE_STATE_LEFT         0x0001 /* Left mouse button is pressed */
-#define MOUSE_STATE_MIDDLE       0x0002 /* Middle mouse button is pressed */
-#define MOUSE_STATE_RIGHT        0x0004 /* Right mouse button is pressed */
-#define MOUSE_STATE_BUT4         0x0008 /* Button 4 (can be used by wheel) */
-#define MOUSE_STATE_BUT5         0x0010 /* Button 5 (can be used by wheel) */
-#define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT|MOUSE_STATE_BUT4|MOUSE_STATE_BUT5)
-
 /* mouseKeyState - The state of the control keys when the mouse was pressed. */
 meUShort mouseKeyState;          /* State of keyboard control */
 
 static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
-#define mouseButtonPick(bb) (mouseState |=  (1<<((bb)-1)))
-#define mouseButtonDrop(bb) (mouseState &= ~(1<<((bb)-1)))
-
-#define mouseButtonGetPick()                                                 \
-((mouseState == 0)                 ? 0:                                      \
- (mouseState & MOUSE_STATE_LEFT)   ? 1:                                      \
- (mouseState & MOUSE_STATE_MIDDLE) ? 2:                                      \
- (mouseState & MOUSE_STATE_RIGHT)  ? 3:                                      \
- (mouseState & MOUSE_STATE_BUT4)   ? 4:                                      \
- (mouseState & MOUSE_STATE_BUT5)   ? 5:0)
+#define mouseButtonPick(bb)  (mouseState |=  (1<<((bb)-1)))
+#define mouseButtonDrop(bb)  (mouseState &= ~(1<<((bb)-1)))
+#define mouseButtonGetPick() (((mouseState & MOUSE_STATE_BUTTONS) == 0) ? 0 : \
+     (mouseState & MOUSE_STATE_LEFT)   ? 1 : (mouseState & MOUSE_STATE_RIGHT) ? 3 : \
+     (mouseState & MOUSE_STATE_MIDDLE) ? 2 : (mouseState & MOUSE_STATE_BUT4)  ? 4 : 5)
 
 #endif
 

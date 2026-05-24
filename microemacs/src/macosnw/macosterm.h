@@ -18,30 +18,30 @@
  *
  * Architecture overview:
  *
- *   ┌─────────────────────────────────────────────────────────┐
- *   │  Swift (MEView / MEWindowController / MEAppDelegate)    │
- *   │  • Owns NSWindow + NSView (MEView)                      │
- *   │  • Renders directly from the ME frame store at          │
- *   │    flush time (meNativeFlushDirty)                      │
- *   │  • Converts NSEvent keyboard/mouse → ME key codes       │
- *   │  • Calls meStartEngine() on a background thread         │
- *   └────────────────┬────────────────────────────────────────┘
- *                    │  C entry points declared below
- *   ┌────────────────▼────────────────────────────────────────┐
- *   │  macosterm.c  (implements the ME terminal interface)    │
- *   │  • TTputs / TTapplyArea  – accumulate per-row dirty     │
- *   │    column ranges (no drawing at this point)             │
- *   │  • TTflush               – calls meNativeFlushDirty,    │
- *   │    which (via main.sync) copies dirty rows from         │
- *   │    frameCur->store into the Swift render buffer and     │
- *   │    schedules setNeedsDisplay                            │
- *   │  • TTaddColor            – stores RGB palette           │
- *   │  • mecm populated from Swift font metrics               │
- *   └────────────────┬────────────────────────────────────────┘
- *                    │ calls ME core (compiled from src/.c)
- *   ┌────────────────▼────────────────────────────────────────┐
- *   │  ME core C code  (display.c, eval.c, main.c, …)        │
- *   └─────────────────────────────────────────────────────────┘
+ *   +---------------------------------------------------------+
+ *   |  Swift (MEView / MEWindowController / MEAppDelegate)    |
+ *   |  - Owns NSWindow + NSView (MEView)                      |
+ *   |  - Renders directly from the ME frame store at          |
+ *   |    flush time (meNativeFlushDirty)                      |
+ *   |  - Converts NSEvent keyboard/mouse - ME key codes       |
+ *   |  - Calls meStartEngine() on a background thread         |
+ *   +----------------+----------------------------------------+
+ *                    |  C entry points declared below
+ *   +----------------+----------------------------------------+
+ *   |  macosterm.c  (implements the ME terminal interface)    |
+ *   |  - TTputs / TTapplyArea  - accumulate per-row dirty     |
+ *   |    column ranges (no drawing at this point)             |
+ *   |  - TTflush               - calls meNativeFlushDirty,    |
+ *   |    which (via main.sync) copies dirty rows from         |
+ *   |    frameCur->store into the Swift render buffer and     |
+ *   |    schedules setNeedsDisplay                            |
+ *   |  - TTaddColor            - stores RGB palette           |
+ *   |  - mecm populated from Swift font metrics               |
+ *   +----------------+----------------------------------------+
+ *                    | calls ME core (compiled from src/.c)
+ *   +----------------+----------------------------------------+
+ *   |  ME core C code  (display.c, eval.c, main.c, ...)       |
+ *   +---------------------------------------------------------+
  */
 
 #ifndef MACOSTERM_H
@@ -65,7 +65,7 @@ extern "C" {
 #define ME_ATTR_UNDERLINE  0x10
 
 /* -------------------------------------------------------------------------
- * C → Swift callbacks for cursor, bell, title, font.
+ * C - Swift callbacks for cursor, bell, title, font.
  * Registered via meNativeSetCallbacks at startup.
  * Drawing is no longer routed through callbacks; see meNativeFlushDirty.
  * ---------------------------------------------------------------------- */
@@ -82,32 +82,32 @@ typedef struct {
     /* Set the window title string (UTF-8). */
     void (*setTitle)(const char *title);
 
-    /* Apply a new monospace font.  Called on the ME engine thread.
-     * The Swift implementation MUST block until the font is applied and the
-     * window resized (use DispatchQueue.main.sync).
-     * name – PostScript font name, e.g. "Menlo-Regular".  Empty string means
-     *         show the system font picker panel (async, returns immediately).
-     * size – point size > 0.  0 means keep current size (dialog mode only). */
-    void (*applyFont)(const char *name, float size);
+    /* Change the font.  Called on the ME engine thread.
+     * n:    Arg n, if bits 1+8 set then show the system font-picker panel and
+     *       block until the user closes it; font changes are applied live.
+     * name: PostScript font name, e.g. "Menlo-Regular".
+     * size: point size > 0.  0 means keep current size (dialog mode only). */
+    void (*changeFont)(int n, const char *name, float size);
 } MENativeCallbacks;
 
 /* Register the Swift-side callbacks.  Must be called before meStartEngine(). */
 void meNativeSetCallbacks(const MENativeCallbacks *cbs);
 
 /* -------------------------------------------------------------------------
- * Swift → C: font / geometry initialisation.
+ * Swift - C: font / geometry initialisation.
  * Called by MEView once the NSFont has been measured or window resized.
  *
- *  cols, rows    – initial terminal dimensions in characters
- *  cellW, cellH  – cell size in points (== pixels on non-Retina)
- *  ascent        – font ascent
- *  isMono        – 1 if the font is monospaced, 0 if proportional
+ *  cols, rows:    initial terminal dimensions in characters
+ *  cellW, cellH:  cell size in points (== pixels on non-Retina)
+ *  ascent:        font ascent
+ *  isMono:        1 if the font is monospaced, 0 if proportional
  * ---------------------------------------------------------------------- */
-void meNativeReturnFontSize(int cols, int rows, int cellW, int cellH, int ascent, int isMono);
+void meNativeReturnFontName(char *name, int ptSize);
+void meNativeReturnFontSize(int cellW, int cellH, int ascent, int isMono);
 void meNativeReturnFrameSize(int cols, int rows);
 
 /* -------------------------------------------------------------------------
- * Swift → C: deliver an input event.
+ * Swift - C: deliver an input event.
  * ---------------------------------------------------------------------- */
 void meNativePushKey(uint16_t keyCode);
 void meNativePushMouseMove(int col, int row, int dX, int dY, uint16_t modifiers);
@@ -115,14 +115,14 @@ void meNativePushMouseButton(int button, int pick, int col, int row, int dX, int
 void meNativeScrollWheel(int up, int col, int row, uint16_t modifiers);
 
 /* -------------------------------------------------------------------------
- * Swift → C: window lifecycle events.
+ * Swift - C: window lifecycle events.
  * ---------------------------------------------------------------------- */
 void meNativeQuit(void);
 void meNativeFocusGained(void);
 void meNativeFocusLost(void);
 
 /* -------------------------------------------------------------------------
- * Swift → C: start the ME engine on a background thread.
+ * Swift - C: start the ME engine on a background thread.
  * ---------------------------------------------------------------------- */
 void meStartEngine(int argc, char **argv);
 
@@ -131,11 +131,11 @@ void meStartEngine(int argc, char **argv);
  * These are called by Swift inside meNativeFlushDirty, while the ME engine
  * thread is blocked on DispatchQueue.main.sync, so access is safe.
  *
- *  meNativeGetRowText(row)    – pointer to frameCur->store[row].text
- *  meNativeGetRowScheme(row)  – pointer to frameCur->store[row].scheme
+ *  meNativeGetRowText(row)    - pointer to frameCur->store[row].text
+ *  meNativeGetRowScheme(row)  - pointer to frameCur->store[row].scheme
  *                               (uint16_t scheme indices)
- *  meNativeGetFrameCols()     – frameCur->width
- *  meNativeGetStyleTable()    – styleTable cast to const uint32_t *
+ *  meNativeGetFrameCols()     - frameCur->width
+ *  meNativeGetStyleTable()    - styleTable cast to const uint32_t *
  *                               Entry layout: fg=bits[7:0], bg=bits[15:8],
  *                               attrs=bits[23:16] (ME_ATTR_* flags)
  *                               Index with: scheme & 0x0fff
@@ -146,7 +146,7 @@ int             meNativeGetFrameCols(void);
 const uint32_t *meNativeGetStyleTable(void);
 
 /* -------------------------------------------------------------------------
- * C → Swift: flush dirty rows to the render buffer.
+ * C - Swift: flush dirty rows to the render buffer.
  * Implemented in MEView.swift with @_cdecl.
  *
  * Called by TTflush on the ME engine thread.  The Swift implementation
@@ -154,12 +154,12 @@ const uint32_t *meNativeGetStyleTable(void);
  * dirty rows from frameCur->store into the cells render buffer, then calls
  * setNeedsDisplay for the affected region.
  *
- *   rowMin, rowMax   – inclusive dirty row range
- *   colStart[r]      – first dirty column in row r  (INT_MAX if row clean)
- *   colEnd[r]        – one-past-last dirty column   (-1 if row clean)
- *                      arrays are valid for indices 0 … rowMax
- *   colorsDirty      – non-zero if the palette changed since last flush
- *   bgColor          – current background palette index
+ *   rowMin, rowMax   - inclusive dirty row range
+ *   colStart[r]      - first dirty column in row r  (INT_MAX if row clean)
+ *   colEnd[r]        - one-past-last dirty column   (-1 if row clean)
+ *                      arrays are valid for indices 0 ... rowMax
+ *   colorsDirty      - non-zero if the palette changed since last flush
+ *   bgColor          - current background palette index
  * ---------------------------------------------------------------------- */
 void meNativeFlushDirty(int rowMin, int rowMax,
                         const int *colStart, const int *colEnd,
@@ -202,21 +202,21 @@ typedef struct {
 extern MESKeyTable meSKeys;
 
 /* -------------------------------------------------------------------------
- * Colour palette – written by TTaddColor (C side), read by Swift.
+ * Colour palette - written by TTaddColor (C side), read by Swift.
  * ---------------------------------------------------------------------- */
 extern unsigned char meColorTable[ME_MAX_COLORS*3];
 
-/* Current cursor colour palette index – resolved in TTshowCur. */
+/* Current cursor colour palette index - resolved in TTshowCur. */
 extern unsigned char meCursorColor;
 
-/* Background palette index for the global scheme – updated by TTsetBgcol(). */
+/* Background palette index for the global scheme - updated by TTsetBgcol(). */
 extern unsigned char meNWBgColor;
 
 /* Set to 1 by TTaddColor when a palette entry changes; cleared by Swift. */
 extern int meNWColorsDirty;
 
 /* -------------------------------------------------------------------------
- * C → Swift: clipboard / pasteboard bridge.
+ * C  Swift: clipboard / pasteboard bridge.
  * Implemented in MEClipboard.swift with @_cdecl.
  * ---------------------------------------------------------------------- */
 int   meNativeGetPasteboardChangeCount(void);
