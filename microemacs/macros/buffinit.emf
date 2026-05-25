@@ -106,7 +106,6 @@ define-macro-file hktlsosd major-mode-tools-setup
   set-variable #l9 ""
   !iif &band @# 2  set-variable #l9 #p9
   buffer-command-setup
-  ml-write &spr "buffer-init %d: %s" &inc #g7 1 $buffer-fhook
   set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
   !if &set #l1 &reg &spr "/history/fhook/%s-tab-width" &set #l8 $buffer-major-mode "0"
     set-variable $buffer-tab-width #l1

@@ -56,9 +56,9 @@ define-macro-file hkipipe ishell gdb dbx perldb
     !endif
     ; try up to five times to increase/decrease font actual size (given in $result)
     2 change-font
-    set-variable #l5 &con &reg &spr "/history/%s/font-ymin" $platform "0" 33 1
     set-variable #l2 &lget $result 5
     set-variable #l3 5
+    set-variable #l5 &con &reg &spr "/history/%s/font-ymin" $platform "0" 33 1
     !repeat
       !iif &les &set #l0 &add .csz @# 5  -8 ml-write "[Text too small]"
       set-variable .csz #l0
@@ -74,6 +74,11 @@ define-macro-file hkipipe ishell gdb dbx perldb
   2 change-font
   set-variable .change-font-size.ofnt $result
   !iif &gre 1 &set .change-font-size.csz &lget .change-font-size.ofnt 7  set-variable .change-font-size.csz &lget .change-font-size.ofnt 5
+  !if &exi .change-font-size.font
+  !elif &seq "-" &lef &lget .change-font-size.ofnt 8 1
+  !elif &not &sin ":size=" &lget .change-font-size.ofnt 8 1
+    set-variable .change-font-size.font &cat &lget .change-font-size.ofnt 8 ":size=%%d"  &lget .change-font-size.ofnt 7
+  !endif
   global-bind-key change-font-size "C-="
   1 global-bind-key change-font-size "C-+"
   -1 global-bind-key change-font-size "C--"

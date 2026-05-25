@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd027.2,v 2.8 2026/05/19 21:27:02 jon Exp $
+.Id $Id: m2cmd027.2,v 2.8 2026/05/25 10:40:40 jon Exp $
 .Im MicroEmacs command|hilight
 .so me.tni
 .TH change-font 2
@@ -18,7 +18,13 @@ change-font \- Change the screen font
 .br
 .I n
 .B change-font
-[ "\fIfontName\fR" ]
+[ "\fIfont-name\fR" ]
+.sp
+.I "[macOS-App]"
+.br
+.I n
+.B change-font
+[ "\fIfont-name\fR" ]
 .sp
 .I "[IBM-PC / MS-DOS]"
 .br
@@ -33,7 +39,7 @@ change-font \- Change the screen font
 .br
 .I n
 .B change-font
-[ \fIcharSet\fR "\fIfontName\fR" \fIweight\fR \fIwidth\fR \fIheight\fR ]
+[ \fIcharSet\fR "\fIfont-name\fR" \fIweight\fR \fIwidth\fR \fIheight\fR ]
 .ad
 .SH DESCRIPTION
 .B change-font
@@ -51,12 +57,12 @@ of rows and  columns so ensure  that when  changing  to a larger font then there
 window which is larger than the actual screen.
 .PP
 On systems that support FreeType fonts, if the font name does not start with a '\fC-\fR' it is identified as a
-FreeType font, otherwise, if the font starts with a '\fC-\fR' it is treated as an X11 core font name. If the name is 
-an empty string ("") the default FreeType monospace font is used. 
+FreeType font, otherwise, if the font starts with a '\fC-\fR' it is treated as an X11 core font name. If the name is
+an empty string ("") the default FreeType monospace font is used.
 .PP
-FreeType font names can include attributes of the form \fC:<name>=value>\fR at the end of the font name, attributes 
-include \fC:lang\fR and \fC:style\fR etc. When specifying the font size the \fC:size=#\fR attribute should be used, 
-rather than the shorter '\fC<font-name>-#\fR', so that supporting macros can more reliably identify the name and size. 
+FreeType font names can include attributes of the form \fC:<name>=value>\fR at the end of the font name, attributes
+include \fC:lang\fR and \fC:style\fR etc. When specifying the font size the \fC:size=#\fR attribute should be used,
+rather than the shorter '\fC<font-name>-#\fR', so that supporting macros can more reliably identify the name and size.
 \*(mS uses the \fC:weight\fR and \fC:slant\fR attributes when bit \fB0x10\fR of
 .Ht $system 5
 is set, see \fBUse Font Styles\fR in
@@ -144,13 +150,13 @@ When set the command does not alter the value of variable
 .Ht $result 5 .
 When not set \fB$result\fR is set to the following information about the font in a \*(mS list format:
 .CS
-"|<flg>|||<pixel-width>|<pixel-height>||<font-size>|<fontName>|"
+"|<flg>|||<pixel-width>|<pixel-height>||<font-size>|<font-name>|"
 .CE 0
 .IP
 The  \fB<flg>\fR  is an  bitwise  integer  value  where bit 1  indicates  the font is not fixed  width,  i.e. the font
-spacing is proportional; the <flg> value is only given when the font name is given (i.e. bit \fB0x01\fR of 
-argument \fBn\fR is set). The \fB<font-size>\fR will be set to 0 for X11 core fonts, or the font size for FreeType 
-fonts, this field is empty on systems that do not support FreeType fonts.   
+spacing is proportional; the <flg> value is only given when the font name is given (i.e. bit \fB0x01\fR of
+argument \fBn\fR is set). The \fB<font-size>\fR will be set to 0 for X11 core fonts, or the font size for FreeType
+fonts, this field is empty on systems that do not support FreeType fonts.
 .IP \fB0x08\fR
 Not used by this platform.
 .IP \fB0x10\fR
@@ -158,7 +164,38 @@ Not used by this platform.
 .IP \fB0x20\fR
 When set and the reported font height and sum of the ascent and descent differ, the smaller of the two values is used,
 however this may cause rendering issues ('debris' in the window). When clear, the larger value is used to minimise
-rendering issues. 
+rendering issues.
+.SS "macOS-App"
+The  \s-1macOS\s0  native app,  distinct  from the X11 based  \fBmew\fR as it uses macOS  windowing  and drawing  APIs
+directly,  support a  composite  \fIfont-name\fR  consisting  of two parts, the font name and size. The  format of the
+string is  "\fI<font-name>\fC:size=\fI<font-size>\fR",  if the  \fI<font-name>\fR  is  omitted  the  system's  default
+monospaced font is used, if the  \fC:size=\fI<font-size>\fR is omitted a suitable size will be calculated based on the
+size of the primary  monitor. Note that only  monospaced  fonts should be used,  proportionally  fonts will not render
+correctly.
+.PP
+The numeric  argument  \fIn\fR is used to modify the default  behavior of the  command,  where the bits are defined as
+follows:
+.IP \fB0x01\fR
+Prompt the user for the new font name, either using a macOS font selection  dialog (see bit \fB0x08\fR) or by entering
+the font name manually. If this bit is not set then the current font is used.
+.IP \fB0x02\fR
+When set the new font is not applied, this bit is useful when information about a font is wanted.
+.IP \fB0x04\fR
+When set the command does not alter the value of variable
+.Ht $result 5 .
+When not set \fB$result\fR is set to the following information about the font in a \*(mS list format:
+.CS
+"|<flg>|||<pixel-width>|<pixel-height>||<font-size>|<font-name>|"
+.CE 0
+.IP
+The  \fB<flg>\fR  is an  bitwise  integer  value  where bit 1  indicates  the font is not fixed  width,  i.e. the font
+spacing is proportional. The \fB<font-size>\fR is set to the given or calculated font size.
+.IP \fB0x08\fR
+When set with bit \fB0x01\fR a macOS font selection dialog is opened to allow the user to select their required font.
+.IP \fB0x10\fR
+Not used by this platform.
+.IP \fB0x20\fR
+Not used by this platform.
 .SS "IBM-PC / MS-DOS"
 \s-1MS-DOS\s0 may only change the screen resolution, the standard screen resolution is either 80 columns by 25 rows or
 80 by 50. A more advanced  graphics card can typically  support up to 132 by 60, MicroEmacs in theory has no limit but
@@ -211,7 +248,7 @@ Time to start digging out your graphics card manual!
 The  Microsoft  Windows  console  version  does not  support  the  changing of fonts as the Windows  Console  does not
 officially  support such a feature. However the  \fBchange-font\fR  command can be used to inform \*(mS of the type of
 character set to use for copy text to and from the system clipboard.
-.PP 
+.PP
 The Microsoft Windows environments utilize font files to drive the display. When
 .B change-font
 is invoked, by default a font dialog is presented to the user to allow the
@@ -222,7 +259,7 @@ The numeric  argument  \fIn\fR is used to modify the default  behavior of the  c
 follows:
 .IP \fB0x01\fR
 Prompt the user for the new font details,  either using a Windows font  selection  dialog (see bit  \fB0x08\fR)  or by
-entering the font details manually, see below.
+entering the font details manually, see below. If this bit is not set then the current font is used.
 .IP \fB0x02\fR
 When set the new font is not applied, this bit is useful when information about a font is wanted.
 .IP \fB0x04\fR
@@ -230,7 +267,7 @@ When set the command does not alter the value of variable
 .Ht $result 5 .
 When not set \fB$result\fR is set to the following information about the font in a \*(mS list format:
 .CS
-"|<flg>|<char-set>|<weight>|<pixel-width>|<pixel-height>|<width>|<height>|<fontName>|"
+"|<flg>|<char-set>|<weight>|<pixel-width>|<pixel-height>|<width>|<height>|<font-name>|"
 .CE 0
 .IP
 The  \fB<flg>\fR  is an bitwise integer value where bit 1 indicates the font is not fixed width, bit 2 indicates
@@ -261,7 +298,7 @@ The type of character set required, this is an integer value of:
 .br
 \fC255\fR \- OEM (or bitmapped)
 .RE
-.IP \fIfontName\fR
+.IP \fIfont-name\fR
 The name of the font - maximum of 32 characters, use fixed mono fonts only. Proportional fonts may be specified but
 the cursor will not align with the characters on the screen.
 .sp
