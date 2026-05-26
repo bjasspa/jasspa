@@ -28,10 +28,10 @@
  *                drainQueue() -> addKeyToBuffer().
  *
  *   - Drawing  - TTputs/TTapplyArea mark per-row dirty column ranges.
- *                TTflush calls meNativeFlushDirty (Swift @_cdecl) which,
- *                via DispatchQueue.main.sync, copies dirty rows from the
- *                frame store into the Swift cells[] render buffer and
- *                schedules setNeedsDisplay.
+ *                TTflush calls meNativeFlushDirtyView(frameCur->termData, ...)
+ *                (Swift @_cdecl) which, via DispatchQueue.main.sync, copies
+ *                dirty rows from the frame store into the Swift cells[] render
+ *                buffer and schedules setNeedsDisplay on that frame's view.
  */
 
 /* =========================================================================
@@ -158,11 +158,14 @@ static int             gInputCount = 0;
 static pthread_mutex_t gInputMutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* ---- Resize / quit / focus flags (written by Swift, read by ME engine) -*/
-static volatile int gQuitPending   = 0;
-static volatile int gFocusChange   = 0;
-static volatile int gResizePending = 0;
-static volatile int gResizeCols    = 80;
-static volatile int gResizeRows    = 24;
+static volatile int   gQuitPending      = 0;
+static volatile int   gFocusChange      = 0;
+static volatile void *gFocusedView      = NULL;
+static volatile int   gResizePending    = 0;
+static volatile int   gResizeCols       = 80;
+static volatile int   gResizeRows       = 24;
+static volatile void *gResizeView       = NULL;
+static volatile void *gDeleteFrameView  = NULL;
 
 /* ---- Self-pipe - used to wake select() from any thread or signal --------
  * gWakePipe[0] = read end (watched by ME engine in waitForEvent)
@@ -189,9 +192,9 @@ drainWakePipe(void)
 }
 
 /* ---- Per-row dirty column ranges - accumulated by TTputs/TTapplyArea ----
- * At TTflush time the accumulated ranges are handed to meNativeFlushDirty,
+ * At TTflush time the accumulated ranges are handed to meNativeFlushDirtyView,
  * which (via DispatchQueue.main.sync) copies the dirty cells from the frame
- * store into the Swift render buffer and schedules setNeedsDisplay.
+ * store into that frame's Swift render buffer and schedules setNeedsDisplay.
  *
  * colStart[r] = INT_MAX and colEnd[r] = -1 means row r is clean.
  * ---------------------------------------------------------------------- */
@@ -309,7 +312,7 @@ meNativeSetCallbacks(const MENativeCallbacks *cbs)
 }
 
 /* =========================================================================
- * Frame-store accessors - called from Swift inside meNativeFlushDirty
+ * Frame-store accessors - called from Swift inside meNativeFlushDirtyView
  * while the ME engine thread is blocked on DispatchQueue.main.sync.
  * ====================================================================== */
 
@@ -360,9 +363,10 @@ meNativeReturnFontSize(int cellW, int cellH, int ascent, int isMono)
 }
 
 void
-meNativeReturnFrameSize(int cols, int rows)
+meNativeReturnViewFrameSize(void *viewPtr, int cols, int rows)
 {
     pthread_mutex_lock(&gInputMutex);
+    gResizeView = viewPtr;
     gResizeCols = cols;
     gResizeRows = rows;
     gResizePending = 1;
@@ -443,16 +447,26 @@ meNativeQuit(void)
 }
 
 void
-meNativeFocusGained(void)
+meNativeViewFocusLost(void *viewPtr)
 {
+    if(gFocusedView == viewPtr)
+        gFocusedView = NULL;
     gFocusChange = 1;
     wakeSelect();
 }
 
 void
-meNativeFocusLost(void)
+meNativeViewFocusGained(void *viewPtr)
 {
-    gFocusChange = -1;
+    gFocusedView = viewPtr;
+    gFocusChange = 1;
+    wakeSelect();
+}
+
+void
+meNativeDeleteFrame(void *viewPtr)
+{
+    gDeleteFrameView = viewPtr;
     wakeSelect();
 }
 
@@ -616,12 +630,9 @@ TTflushClipboard(void)
 void
 TTcheckClipboard(void)
 {
-    if((clipState & CLIP_OWNER) &&
-       !(meSystemCfg & meSYSTEM_NOCLIPBRD) &&
-       !(clipState & CLIP_DISABLED)) {
-        if(meNativeGetPasteboardChangeCount() != gClipChangeCount)
-            clipState &= ~CLIP_OWNER;
-    }
+    if((clipState & CLIP_OWNER) && !(meSystemCfg & meSYSTEM_NOCLIPBRD) &&
+       !(clipState & CLIP_DISABLED) && (meNativeGetPasteboardChangeCount() != gClipChangeCount))
+        clipState &= ~CLIP_OWNER;
 }
 
 void
@@ -630,15 +641,8 @@ TTgetClipboard(int flag)
     char       *utf8text;
     meKillNode *kn = NULL;
 
-    if((meSystemCfg & meSYSTEM_NOCLIPBRD) ||
-       (clipState  & CLIP_DISABLED)        ||
-       !((flag & 1) ||
-         ((clexec == meFALSE) && (kbdmode != mePLAY) &&
-          !(frameCur && (frameCur->flags & meFRAME_NOT_FOCUS)))))
-        return;
-
-    /* ME owns the kill buffer - use it directly without touching NSPasteboard */
-    if(clipState & CLIP_OWNER)
+    if((clipState & (CLIP_OWNER|CLIP_DISABLED)) || (meSystemCfg & meSYSTEM_NOCLIPBRD) || 
+       (((flag & 1) == 0) && ((clexec != meFALSE) || (kbdmode == mePLAY) || (frameCur->flags & meFRAME_NOT_FOCUS))))
         return;
 
     if((utf8text = meNativeGetClipboard()) == NULL)
@@ -790,7 +794,8 @@ TTinitMouse(meInt nCfg)
 void
 waitForEvent(int mode)
 {
-    for (;;) {
+    for(;;)
+    {
         /* ---- Check conditions for immediate return ---- */
         if (isTimerExpired(AUTOS_TIMER_ID)  ||
 #if MEOPT_CALLBACK
@@ -804,7 +809,7 @@ waitForEvent(int mode)
 #if MEOPT_SOCKET
             isTimerExpired(SOCKET_TIMER_ID) ||
 #endif
-            (sgarbf == meTRUE) || gResizePending || gQuitPending || gFocusChange)
+            (sgarbf == meTRUE) || gResizePending || gQuitPending || gFocusChange || gDeleteFrameView != NULL)
             return;
 
         if ((mode & 2) == 0 && TTahead())
@@ -817,18 +822,21 @@ waitForEvent(int mode)
         {
             meIPipe *ip = ipipes;
             int ipipeEvent = 0;
-            while (ip) {
+            while(ip)
+            {
                 meIPipe *next = ip->next;
-                if (ip->pid < 0) {
+                if(ip->pid < 0)
+                {
                     ipipeRead(ip);
                     ipipeEvent = 1;
                 }
                 ip = next;
             }
             drainQueue();
-            if (ipipeEvent) {
-                if (mode) return;
-                if (TTnoKeys > 0) return;
+            if(ipipeEvent)
+            {
+                if(mode || (TTnoKeys > 0))
+                    return;
                 continue;
             }
         }
@@ -847,10 +855,13 @@ waitForEvent(int mode)
 #if MEOPT_IPIPES
             {
                 meIPipe *ip = ipipes;
-                while (ip) {
-                    if (ip->pid >= 0) {
+                while(ip)
+                {
+                    if(ip->pid >= 0)
+                    {
                         FD_SET(ip->rfd, &rset);
-                        if (ip->rfd > maxfd) maxfd = ip->rfd;
+                        if(ip->rfd > maxfd)
+                            maxfd = ip->rfd;
                     }
                     ip = ip->next;
                 }
@@ -865,23 +876,27 @@ waitForEvent(int mode)
             drainQueue();
 
 #if MEOPT_IPIPES
-            if (rc > 0) {
+            if (rc > 0)
+            {
                 meIPipe *ip = ipipes;
                 int ipipeEvent = 0;
-                while (ip) {
+                while(ip)
+                {
                     meIPipe *next = ip->next;
-                    if (ip->pid < 0 || FD_ISSET(ip->rfd, &rset)) {
+                    if(ip->pid < 0 || FD_ISSET(ip->rfd, &rset))
+                    {
                         ipipeRead(ip);
                         ipipeEvent = 1;
                     }
                     ip = next;
                 }
-                if (ipipeEvent && mode) return;
+                if(ipipeEvent && mode)
+                    return;
             }
 #endif
         }
 
-        if ((mode & 2) == 0 && TTnoKeys > 0)
+        if((mode & 2) == 0 && TTnoKeys > 0)
             return;
     }
 }
@@ -909,15 +924,33 @@ TTahead(void)
     return TTnoKeys;
 }
 
+#if MEOPT_MWFRAME
+/* Poke "[NOT FOCUS]" into focusFrame's message line and flush it to that
+ * frame's window.  frameCur is temporarily redirected so pokeScreen and
+ * TTflush both operate on focusFrame's store and view. */
+static void
+pokeNotFocus(meFrame *focusFrame)
+{
+    meUByte  scheme = (meUByte)(globScheme / meSCHEME_STYLES);
+    meFrame *fc = frameCur;
+    frameCur = focusFrame;
+    pokeScreen(0x10, frameCur->depth, (frameCur->width >> 1) - 5,
+               &scheme, (meUByte *)"[NOT FOCUS]");
+    TTflush();
+    frameCur = fc;
+}
+#endif
+
 /* TTwaitForChar - block until at least one key is in the ME key buffer */
 void
 TTwaitForChar(void)
 {
 #if MEOPT_MOUSE
     /* If a mouse button is held and a mouse-time binding exists, start timer */
-    if (!isTimerSet(MOUSE_TIMER_ID) && mouseState != 0) {
+    if (!isTimerSet(MOUSE_TIMER_ID) && mouseState != 0)
+    {
         meUShort mc;
-        meUInt   arg;
+        meUInt arg;
         mc = (meUShort)(ME_SPECIAL | mouseKeyState |
                         (SKEY_mouse_time + mouseKeys[mouseButtonGetPick()]));
         if ((!TTallKeys && decode_key(mc, &arg) != -1) || (TTallKeys & 0x2))
@@ -925,15 +958,16 @@ TTwaitForChar(void)
     }
 #endif
 #if MEOPT_CALLBACK
-    if (kbdmode == meIDLE)
+    if(kbdmode == meIDLE)
         doIdlePickEvent();
 #endif
 
-    for (;;) {
+    for(;;)
+    {
         handleTimerExpired();
         drainQueue();
 
-        if (TTahead())
+        if(TTahead())
             break;
 
         if(gQuitPending)
@@ -950,48 +984,110 @@ TTwaitForChar(void)
         if(gResizePending)
         {
             int cols, rows;
+            void *resizeView;
+            meFrame *resizeFrame;
             pthread_mutex_lock(&gInputMutex);
             cols = gResizeCols;
             rows = gResizeRows;
+            resizeView = (void *) gResizeView;
             gResizePending = 0;
             pthread_mutex_unlock(&gInputMutex);
 
-            if(cols != frameCur->width)
-                meFrameChangeWidth(frameCur,cols);
-            if(rows != frameCur->depth + 1)
-                meFrameChangeDepth(frameCur,rows);
-            meFrameSetWindowSize(frameCur);
-            if(!screenUpdateDisabledCount)
-                screenUpdate(meTRUE,2 - sgarbf);
-        }
-
-        /* Handle focus change - handle NOT_FOCUS flag, clipboard and cursor blink */
-        if(gFocusChange > 0)
-        {
-            gFocusChange = 0;
-            if(frameCur->flags & meFRAME_NOT_FOCUS)
+            /* Find the frame whose window was resized. */
+            resizeFrame = frameList;
+            while(resizeFrame != NULL)
             {
-                frameCur->flags &= ~meFRAME_NOT_FOCUS;
-#ifdef _CLIPBRD
-                TTcheckClipboard();
-#endif
-                if ((cursorState >= 0) && cursorBlink)
-                    TThandleBlink(2);
+                if(resizeFrame->termData == resizeView)
+                {
+                    if(cols != resizeFrame->width)
+                        meFrameChangeWidth(resizeFrame,cols);
+                    if(rows != resizeFrame->depth + 1)
+                        meFrameChangeDepth(resizeFrame,rows);
+                    meNativeSetViewWindowSize(resizeFrame->termData, cols, rows);
+                    if(resizeFrame == frameCur && !screenUpdateDisabledCount)
+                        screenUpdate(meTRUE,2 - sgarbf);
+                    break;
+                }
+                resizeFrame = resizeFrame->next;
             }
         }
-        else if(gFocusChange < 0)
+
+        /* Handle focus change - switch frame if needed, then handle NOT_FOCUS */
+        if(gFocusChange)
         {
+            void *focusedView = (void *)gFocusedView;
+            meFrame *ff = frameList;
             gFocusChange = 0;
-            if (!(frameCur->flags & meFRAME_NOT_FOCUS))
+            
+            while(ff != NULL)
             {
-#ifdef _CLIPBRD
-                TTflushClipboard();
+                if(ff->termData == focusedView)
+                {
+                    if(ff->flags & meFRAME_NOT_FOCUS)
+                    {
+                        /* Record the fact we have focus */
+                        ff->flags &= ~meFRAME_NOT_FOCUS;
+#if MEOPT_MWFRAME
+                        if(frameCur != ff)
+                            frameFocus = ff;
 #endif
-                frameCur->flags |= meFRAME_NOT_FOCUS;
-                timerKill(CURSOR_TIMER_ID);
-                /* Show a static cursor when unfocused */
-                TTshowCur();
-                TTflush();
+#ifdef _CLIPBRD
+                        TTcheckClipboard();
+#endif
+                        if(cursorState >= 0)
+                        {
+#if MEOPT_MWFRAME
+                            if(frameCur != ff)
+                            {
+                                /* another frame has input, we need to hide this frame's cursor and ensure
+                                 * frameCur's cursor is shown so the input location is visible */
+                                meFrameHideCursor(ff);
+                                meFrameShowCursor(frameCur);
+                                blinkState = 1;
+                            }
+                            else
+#endif
+                                if(cursorBlink)
+                                TThandleBlink(2);
+                            else
+                                meFrameShowCursor(ff);
+                        }
+                    }
+                }
+                else if((ff->flags & meFRAME_NOT_FOCUS) == 0)
+                {
+                    ff->flags |= meFRAME_NOT_FOCUS;
+#if MEOPT_MWFRAME
+                    if(frameFocus == ff)
+                        frameFocus = NULL;
+#endif
+                    if(cursorState >= 0)
+                    {
+                        /* because the cursor is a part of the solid cursor we must
+                         * remove the old one first and then redraw */
+                        if(blinkState)
+                            meFrameHideCursor(ff);
+                        meFrameShowCursor(ff);
+                    }
+                }
+                ff = ff->next;
+            }
+        }
+        /* Handle close-button delete-frame request */
+        if(gDeleteFrameView != NULL)
+        {
+            void *deleteView = (void *)gDeleteFrameView;
+            meFrame *ff;
+            gDeleteFrameView = NULL;
+            ff = frameList;
+            while(ff != NULL)
+            {
+                if(ff->termData == deleteView)
+                {
+                    meFrameDelete(ff, 3);
+                    break;
+                }
+                ff = ff->next;
             }
         }
         if(sgarbf == meTRUE)
@@ -999,6 +1095,14 @@ TTwaitForChar(void)
             update(meTRUE);
             mlerase(MWCLEXEC);
         }
+#if MEOPT_MWFRAME
+        if(frameFocus != NULL && frameFocus != frameCur)
+        {
+            /* Prompt still active: show [NOT FOCUS] in the OS-focused frame
+             * so the user knows keystrokes are being sent to the prompt. */
+            pokeNotFocus(frameFocus);
+        }
+#endif
         waitForEvent(0);
     }
 }
@@ -1078,21 +1182,31 @@ meFrameRepositionWindow(meFrame *frame, int resize)
 int
 meFrameTermInit(meFrame *frame, meFrame *sibling)
 {
-    frame->termData = NULL;   /* single NSWindow - no per-frame handle */
+    if(sibling != NULL)
+        /* Internal split: share the same window as the sibling. */
+        frame->termData = sibling->termData;
+    else if(frameList == NULL)
+        /* First frame: the primary NSWindow already exists; just wrap its view. */
+        frame->termData = meNativeGetPrimaryView();
+    else
+        /* Additional external frame: open a new NSWindow. */
+        frame->termData = meNativeCreateWindow(frame->width, frame->depth + 1);
     return meTRUE;
 }
 
 void
 meFrameTermFree(meFrame *frame, meFrame *sibling)
 {
-    (void)frame;
-    (void)sibling;
+    /* Destroy the window only when this is the last frame using it.
+     * Sibling frames share termData (same window) and must not close it. */
+    if(sibling == NULL)
+        meNativeDestroyWindow(frame->termData);
 }
 
 void
 meFrameTermMakeCur(meFrame *frame)
 {
-    (void)frame;   /* single window - nothing to raise */
+    meNativeSetActiveView(frame->termData);
 }
 
 /* =========================================================================
@@ -1100,20 +1214,19 @@ meFrameTermMakeCur(meFrame *frame)
  * ====================================================================== */
 
 void
-TTshowCur(void)
+meFrameShowCursor(meFrame *frame)
 {
     if (gCbsReady && gCbs.setCursor) {
-        meCursorColor = cursorColor[
-            meModeTest(frameCur->windowCur->buffer->mode, MDOVER) ? 1 : 0];
-        gCbs.setCursor(frameCur->cursorColumn, frameCur->cursorRow);
+        meCursorColor = cursorColor[meModeTest(frame->windowCur->buffer->mode, MDOVER) ? 1 : 0];
+        gCbs.setCursor(frame->termData,frame->cursorColumn,frame->cursorRow);
     }
 }
 
 void
-TThideCur(void)
+meFrameHideCursor(meFrame *frame)
 {
     if (gCbsReady && gCbs.hideCursor)
-        gCbs.hideCursor();
+        gCbs.hideCursor(frame->termData);
 }
 
 /* =========================================================================
@@ -1124,9 +1237,10 @@ void TTflush(void)
 {
     if (gDirtyRowMax < 0)
         return;
-    meNativeFlushDirty(gDirtyRowMin, gDirtyRowMax,
-                       gDirtyColStart, gDirtyColEnd,
-                       meNWColorsDirty, meNWBgColor);
+    meNativeFlushDirtyView(frameCur->termData,
+                           gDirtyRowMin, gDirtyRowMax,
+                           gDirtyColStart, gDirtyColEnd,
+                           meNWColorsDirty, meNWBgColor);
     meNWColorsDirty = 0;
     clearDirty();
 }
@@ -1137,8 +1251,6 @@ void TTNbell(void)
         gCbs.bell();
 }
 
-void TTbeep(void) { TTNbell(); }
-
 /* meFrameSetWindowSize - called when $frame-width or $frame-depth is set
  * programmatically.  Notify Swift so it resizes both the render buffer and
  * the NSWindow to match the new frame dimensions. */
@@ -1147,7 +1259,7 @@ meFrameSetWindowSize(meFrame *frame)
 {
     if (!gCbsReady || !gCbs.setWindowSize)
         return;
-    gCbs.setWindowSize(frame->width, frame->depth + 1);
+    gCbs.setWindowSize(frame,frame->width,frame->depth + 1);
 }
 
 void
@@ -1194,7 +1306,7 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
             meStrcat(buf,": ");
             meStrcat(buf,str);
         }
-        gCbs.setTitle((const char *) buf);
+        gCbs.setTitle(frame->termData,(const char *) buf);
     }
 }
 
@@ -1233,7 +1345,7 @@ changeFont(int f, int n)
             /* Dialog mode: pass empty name to Swift which shows NSFontPanel.
              * Blocks here until the user closes the panel; font changes are
              * applied live as the user browses. */
-            gCbs.changeFont(n,"",0.0f);
+            gCbs.changeFont(frameCur->termData,n,"",0.0f);
         }
         else
         {
@@ -1254,22 +1366,19 @@ changeFont(int f, int n)
             else
                 snprintf(mecm.fontName,meFONTNAME_MAX,"%s:size=%d",(char *) fontBuf,sz);
             mecm.fontSize = sz;
-            gCbs.changeFont(n,(const char *)fontBuf,sz);
+            gCbs.changeFont(frameCur->termData,n,(const char *)fontBuf,sz);
         }
     }
     if((n & 0x04) == 0)
     {
         /* Return current font info in $result.
-         * Format mirrors Windows TTchangeFont:
-         *   |pitch|charset|weight|sizeX|sizeY|reqX|reqY|name|
+         * Format mirrors XTerm TTchangeFont:
+         *   |pitch|||sizeX|sizeY||reqY|name|
          * pitch:   '0'=fixed  '1'=proportional
-         * charset: 0 (not meaningful on macOS)
-         * weight:  4 (normal) - we do not track weight separately yet
          * sizeX:   mecm.fwidth   (actual cell width in pixels)
          * sizeY:   mecm.fdepth   (actual cell height in pixels)
-         * reqX:    0 (auto)
          * name:    mecm.fontName (Xft-style, e.g. "Menlo:size=13") */
-        sprintf((char *) resultStr, "|%c|0|4|%d|%d|0|%d|%s|",(mecm.fontMono ? '0':'1'),
+        sprintf((char *) resultStr, "|%c|||%d|%d||%d|%s|",(mecm.fontMono ? '0':'1'),
                 mecm.fwidth,mecm.fdepth,mecm.fontSize,mecm.fontName);
     }
     /* if not applying prompted font, restore font details */

@@ -145,7 +145,7 @@ TTdoBell(int n)
     }
     else
     {
-        TTNbell() ;
+        TTNbell();
     }
 }
 void
@@ -516,6 +516,13 @@ handleTimerExpired(void)
         mlerase(MWCLEXEC);
         frameCur = frameFocus;
         frameFocus = NULL;
+        if(cursorState >= 0)
+        {
+            if(cursorBlink)
+                TThandleBlink(2);
+            else
+                meFrameShowCursor(frameCur);
+        }
     }
 #endif
     
@@ -1215,12 +1222,12 @@ addKeyToBuffer(meUShort cc)
 #if MEOPT_CALLBACK
     /* Flag the end of the idle if necessary */
     if(meTimerState[IDLE_TIMER_ID] != 0)
-        doIdleDropEvent() ;
+        doIdleDropEvent();
 #endif
     
     /* If cursor is blinking, ensure the cursor is visible */
     if((cursorState >= 0) && cursorBlink)
-        TThandleBlink(1) ;
+        TThandleBlink(1);
 	
     /* Add the key to the buffer */
     if (TTnoKeys < KEYBUFSIZ)
@@ -1231,7 +1238,7 @@ addKeyToBuffer(meUShort cc)
         TTnoKeys++;
     }
     else
-        TTNbell() ;
+        TTNbell();
 }
 
 /*

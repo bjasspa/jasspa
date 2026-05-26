@@ -52,12 +52,10 @@ extern int  TTstart(void);
 extern int  TTopen(void);
 extern int  TTclose(void);
 extern void TTflush(void);
-extern void TTshowCur(void);
-extern void TThideCur(void);
+#define TTshowCur() meFrameShowCursor(frameCur)
+#define TThideCur() meFrameHideCursor(frameCur)
 #undef TTNbell
-#undef TTbeep
 extern void TTNbell(void);
-extern void TTbeep(void);
 extern int  TTaddColor(meColor index, meUByte r, meUByte g, meUByte b);
 extern void TTsetBgcol(void);
 extern int  meMain(int argc, char *argv[]);
@@ -67,6 +65,8 @@ extern void meFrameRepositionWindow(meFrame *frame, int resize);
 extern int  meFrameTermInit(meFrame *frame, meFrame *sibling);
 extern void meFrameTermFree(meFrame *frame, meFrame *sibling);
 extern void meFrameTermMakeCur(meFrame *frame);
+extern void meFrameShowCursor(meFrame *frame);
+extern void meFrameHideCursor(meFrame *frame);
 #define meXFONT_MASK         (meFONT_BOLD|meFONT_ITALIC|meFONT_LIGHT)
 #define meStyleGetXFont(ss)  (((ss)>>16) & meXFONT_MASK)
 #define meFONTNAME_MAX       128

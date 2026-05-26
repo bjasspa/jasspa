@@ -69,8 +69,9 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
         win.contentView!.addSubview(view)
         meView = view
 
-        // Expose to C trampolines
+        // Expose to C trampolines; add to keeper so ARC doesn't collect this controller.
         gMEView = view
+        gWindowControllers.append(self)
 
         // ---- Configure view (measures font, sets mecm) -------------------
         let font = resolveFont()
@@ -112,9 +113,9 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
         let newOrigin = NSPoint(x: curFrame.minX,
                                 y: curFrame.maxY - frameSize.height)
         win.setFrame(NSRect(origin: newOrigin, size: frameSize), display: false)
-        win.resizeIncrements = NSSize(width: view.cellW, height: view.cellH)
-        win.minSize = NSSize(width:  CGFloat(view.cellW  * 10),
-                             height: CGFloat(view.cellH  *  4))
+        win.resizeIncrements = NSSize(width: MEView.cellW, height: MEView.cellH)
+        win.minSize = NSSize(width:  CGFloat(MEView.cellW  * 10),
+                             height: CGFloat(MEView.cellH  *  4))
     }
 
     // =========================================================================
@@ -143,6 +144,35 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     }
 
     // =========================================================================
+    // MARK: - Secondary window (Chunk 1)
+    // =========================================================================
+
+    /// Creates window+view for a secondary external frame.
+    /// Copies font metrics from the primary view; does NOT start an engine
+    /// thread and does NOT call back into C (no meNativeReturnFrameSize etc.).
+    /// Returns the new MEView (caller retains it via Unmanaged.passRetained).
+    func setupSecondary(cols: Int, rows: Int) -> MEView {
+        guard let win = window, let primaryView = gMEView else {
+            fatalError("setupSecondary: called before primary window is ready")
+        }
+        win.delegate = self
+
+        let view = MEView(secondaryFrame: win.contentView!.bounds)
+        view.autoresizingMask = [.width, .height]
+        win.contentView!.addSubview(view)
+        meView = view
+
+        // Copy font and cell geometry from primary without triggering C callbacks.
+        view.copyMetrics(from: primaryView, cols: cols, rows: rows)
+
+        sizeWindow(to: view)
+        win.center()
+        win.makeKeyAndOrderFront(nil)
+
+        return view
+    }
+
+    // =========================================================================
     // MARK: - NSWindowDelegate
     // =========================================================================
 
@@ -154,8 +184,8 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     func windowDidResize(_ notification: Notification) {
         guard let view = meView, let win = window else { return }
         let contentSize = win.contentView!.bounds.size
-        let newCols = max(10, Int(contentSize.width)  / view.cellW)
-        let newRows = max(4,  Int(contentSize.height) / view.cellH)
+        let newCols = max(10, Int(contentSize.width)  / MEView.cellW)
+        let newRows = max(4,  Int(contentSize.height) / MEView.cellH)
 
         guard newCols != view.cols || newRows != view.rows else { return }
 
@@ -174,8 +204,13 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        // Ask ME to do an orderly shutdown; let it close the window
-        meNativeQuit()
-        return false   // ME will call NSApp.terminate when ready
+        if gWindowControllers.count > 1, let view = meView {
+            // Other windows exist: ask ME to delete just this frame.
+            meNativeDeleteFrame(Unmanaged.passUnretained(view).toOpaque())
+        } else {
+            // Last window: ask ME for an orderly shutdown.
+            meNativeQuit()
+        }
+        return false   // ME owns the window lifecycle
     }
 }

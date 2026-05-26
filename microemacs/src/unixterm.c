@@ -1585,20 +1585,20 @@ meFrameGainFocus(meFrame *frame)
     /* have we not got the focus? */
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
-        frame->flags &= ~meFRAME_NOT_FOCUS ;
+        frame->flags &= ~meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
         if(frameCur != frame)
-            frameFocus = frame ;
+            frameFocus = frame;
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XSetICFocus(meFrameGetXIC(frame));
         if((cursorState >= 0) && blinkState)
         {
             if(cursorBlink)
-                TThandleBlink(2) ;
+                TThandleBlink(2);
             else
-                meFrameXTermShowCursor(frame) ;
-            XFlush(mecm.xdisplay) ;
+                meFrameXTermShowCursor(frame);
+            XFlush(mecm.xdisplay);
         }
     }
 }

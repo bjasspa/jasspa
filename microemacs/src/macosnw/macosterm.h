@@ -22,7 +22,7 @@
  *   |  Swift (MEView / MEWindowController / MEAppDelegate)    |
  *   |  - Owns NSWindow + NSView (MEView)                      |
  *   |  - Renders directly from the ME frame store at          |
- *   |    flush time (meNativeFlushDirty)                      |
+ *   |    flush time (meNativeFlushDirtyView)                  |
  *   |  - Converts NSEvent keyboard/mouse - ME key codes       |
  *   |  - Calls meStartEngine() on a background thread         |
  *   +----------------+----------------------------------------+
@@ -31,10 +31,10 @@
  *   |  macosterm.c  (implements the ME terminal interface)    |
  *   |  - TTputs / TTapplyArea  - accumulate per-row dirty     |
  *   |    column ranges (no drawing at this point)             |
- *   |  - TTflush               - calls meNativeFlushDirty,    |
+ *   |  - TTflush  - calls meNativeFlushDirtyView(termData,..) |
  *   |    which (via main.sync) copies dirty rows from         |
- *   |    frameCur->store into the Swift render buffer and     |
- *   |    schedules setNeedsDisplay                            |
+ *   |    frameCur->store into that frame's render buffer and  |
+ *   |    schedules setNeedsDisplay on the correct view        |
  *   |  - TTaddColor            - stores RGB palette           |
  *   |  - mecm populated from Swift font metrics               |
  *   +----------------+----------------------------------------+
@@ -67,34 +67,34 @@ extern "C" {
 /* -------------------------------------------------------------------------
  * C - Swift callbacks for cursor, bell, title, font.
  * Registered via meNativeSetCallbacks at startup.
- * Drawing is no longer routed through callbacks; see meNativeFlushDirty.
+ * Drawing is no longer routed through callbacks; see meNativeFlushDirtyView.
  * ---------------------------------------------------------------------- */
 typedef struct {
-    /* Move the text cursor to (col, row) in cell coordinates. */
-    void (*setCursor)(int col, int row);
-
-    /* Hide the text cursor (blink-off phase). */
-    void (*hideCursor)(void);
-
     /* Ring the terminal bell. */
     void (*bell)(void);
-
-    /* Set the window title string (UTF-8). */
-    void (*setTitle)(const char *title);
 
     /* Change the font.  Called on the ME engine thread.
      * n:    Arg n, if bits 1+8 set then show the system font-picker panel and
      *       block until the user closes it; font changes are applied live.
      * name: PostScript font name, e.g. "Menlo-Regular".
      * size: point size > 0.  0 means keep current size (dialog mode only). */
-    void (*changeFont)(int n, const char *name, float size);
+    void (*changeFont)(void *viewPtr, int n, const char *name, float size);
+
+    /* Set the window title string (UTF-8). */
+    void (*setTitle)(void *viewPtr, const char *title);
+
+    /* Move the text cursor to (col, row) in cell coordinates. */
+    void (*setCursor)(void *viewPtr, int col, int row);
+
+    /* Hide the text cursor (blink-off phase). */
+    void (*hideCursor)(void *viewPtr);
 
     /* Resize the terminal to (cols x rows) characters.
      * Called on the ME engine thread when $frame-width or $frame-depth is set
      * programmatically.  The implementation must update the render buffer and
      * resize the NSWindow to match.  Called synchronously; the engine blocks
      * until this returns so the next TTflush sees a consistent buffer size. */
-    void (*setWindowSize)(int cols, int rows);
+    void (*setWindowSize)(void *viewPtr, int cols, int rows);
 } MENativeCallbacks;
 
 /* Register the Swift-side callbacks.  Must be called before meStartEngine(). */
@@ -111,7 +111,8 @@ void meNativeSetCallbacks(const MENativeCallbacks *cbs);
  * ---------------------------------------------------------------------- */
 void meNativeReturnFontName(char *name, int ptSize);
 void meNativeReturnFontSize(int cellW, int cellH, int ascent, int isMono);
-void meNativeReturnFrameSize(int cols, int rows);
+/* viewPtr identifies which frame to resize; NULL during initial startup. */
+void meNativeReturnViewFrameSize(void *viewPtr, int cols, int rows);
 
 /* -------------------------------------------------------------------------
  * Swift - C: deliver an input event.
@@ -125,8 +126,59 @@ void meNativeScrollWheel(int up, int col, int row, uint16_t modifiers);
  * Swift - C: window lifecycle events.
  * ---------------------------------------------------------------------- */
 void meNativeQuit(void);
-void meNativeFocusGained(void);
-void meNativeFocusLost(void);
+void meNativeViewFocusLost(void *viewPtr);
+
+/* -------------------------------------------------------------------------
+ * C - Swift: return a retained pointer to the already-created primary view.
+ * Called by meFrameTermInit for the very first frame (frameList==NULL).
+ * Every frame's termData is always a valid non-NULL MEView pointer.
+ * ---------------------------------------------------------------------- */
+void *meNativeGetPrimaryView(void);
+
+/* -------------------------------------------------------------------------
+ * C - Swift: create a new NSWindow+MEView for an additional external frame.
+ * Called by meFrameTermInit when frameList!=NULL and sibling==NULL.
+ * Returns a retained opaque pointer stored in frame->termData.
+ * ---------------------------------------------------------------------- */
+void *meNativeCreateWindow(int cols, int rows);
+
+/* -------------------------------------------------------------------------
+ * C - Swift: destroy the NSWindow+MEView owned by this frame.
+ * Called by meFrameTermFree when sibling==NULL.
+ * Hides the window, removes its controller from the keeper registry, and
+ * releases the retained MEView pointer stored in frame->termData.
+ * ---------------------------------------------------------------------- */
+void meNativeDestroyWindow(void *viewPtr);
+
+/* -------------------------------------------------------------------------
+ * C - Swift: redirect rendering to the view owned by the given frame.
+ * Called by meFrameTermMakeCur on the ME engine thread.
+ * viewPtr is always a valid non-NULL MEView pointer.
+ * ---------------------------------------------------------------------- */
+void meNativeSetActiveView(void *viewPtr);
+
+/* -------------------------------------------------------------------------
+ * C - Swift: resize the render buffer of a specific view.
+ * Called from the TTwaitForChar resize handler to update the correct view
+ * when a secondary window is resized while it is not the active frame.
+ * Routes cSetWindowSize to viewPtr rather than the global gMEView.
+ * ---------------------------------------------------------------------- */
+void meNativeSetViewWindowSize(void *viewPtr, int cols, int rows);
+
+/* -------------------------------------------------------------------------
+ * Swift - C: a view just gained keyboard focus.
+ * Called by MEView.startCursorBlink on the main thread.
+ * viewPtr is an unretained pointer to the view that received focus; the
+ * engine uses it to switch frameCur when a different frame owns that view.
+ * ---------------------------------------------------------------------- */
+void meNativeViewFocusGained(void *viewPtr);
+
+/* -------------------------------------------------------------------------
+ * Swift - C: user clicked the close button on a window that is not the last.
+ * Called by windowShouldClose on the main thread when other frames exist.
+ * The engine finds the frame owning viewPtr and runs delete-frame on it.
+ * ---------------------------------------------------------------------- */
+void meNativeDeleteFrame(void *viewPtr);
 
 /* -------------------------------------------------------------------------
  * Swift - C: start the ME engine on a background thread.
@@ -147,13 +199,13 @@ void meStartEngine(int argc, char **argv);
  *                               attrs=bits[23:16] (ME_ATTR_* flags)
  *                               Index with: scheme & 0x0fff
  * ---------------------------------------------------------------------- */
-const uint8_t  *meNativeGetRowText  (int row);
+const uint8_t  *meNativeGetRowText(int row);
 const uint16_t *meNativeGetRowScheme(int row);
 int             meNativeGetFrameCols(void);
 const uint32_t *meNativeGetStyleTable(void);
 
 /* -------------------------------------------------------------------------
- * C - Swift: flush dirty rows to the render buffer.
+ * C - Swift: flush view dirty rows to the render buffer.
  * Implemented in MEView.swift with @_cdecl.
  *
  * Called by TTflush on the ME engine thread.  The Swift implementation
@@ -168,9 +220,9 @@ const uint32_t *meNativeGetStyleTable(void);
  *   colorsDirty      - non-zero if the palette changed since last flush
  *   bgColor          - current background palette index
  * ---------------------------------------------------------------------- */
-void meNativeFlushDirty(int rowMin, int rowMax,
-                        const int *colStart, const int *colEnd,
-                        int colorsDirty, unsigned char bgColor);
+void meNativeFlushDirtyView(void *viewPtr, int rowMin, int rowMax,
+                            const int *colStart, const int *colEnd,
+                            int colorsDirty, unsigned char bgColor);
 
 extern unsigned short mouseKeyState;
 
