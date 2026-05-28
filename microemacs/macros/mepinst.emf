@@ -135,3 +135,37 @@
   !return &not #l2
 !emacro
 set-variable .me-pinstall.purl "http://docs.jasspa.com/packages/"
+define-macro check-for-updates
+  !force 0 delete-buffer "*microemacs-update*"
+  find-buffer "*microemacs-update*"
+  insert-file &rep .me-pinstall.purl "packages/" "microemacs_release.txt"
+  beginning-of-buffer
+  !if &not &xse @wl "\\d\\{8\\}"
+    insert-string "ERROR: Failed to get latest release information ("
+    end-of-line
+    insert-string ")."
+  !elif &equ @wl $version
+    insert-string "Release "
+    end-of-line
+    insert-string " is now available!\n\n"
+    !if &seq "ERROR" &set #l1 &whi &set #g1 &cat &lef $progname &rsin "/" $progname "microemacs-update"
+      insert-string "Warning: failed to find microemacs-update script."
+    !else
+      insert-string "Run \""
+      insert-string #l1
+      insert-string "\" to upgrade."
+    !endif
+  !elif &gre $version @wl
+    insert-string "Warning: Current release is "
+    end-of-line
+    insert-string ", you appear to be usings a newer version/build."
+  !else
+    insert-string "Latest release is "
+    end-of-line
+    insert-string " - you are up-to-date! :-)"
+  !endif
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  beginning-of-buffer
+!emacro

@@ -18,6 +18,7 @@
 ; define some external macros which are used first.
 0 define-macro-file osdmisc osd-find-tag osd-search osd-goto-line line-scheme
 0 define-macro-file insdate osd-insert-date
+define-macro-file mepinst check-for-updates
 define-macro-file osdhelp osd-help
 ;
 ; define a main menu initialisation macro - main use of this is to insert the
@@ -481,7 +482,8 @@ osd 9 150 ""  "Help on Variab\Hle...  C-h C-v"    f help-variable
 osd 9 160 "-"
 osd 9 170 "M" "\HGames"                          21
 osd 9 180 "i" "\HProduct Support"                 f "help-item \"Contact\""
-osd 9 190 ""  "\HAbout MicroEmacs"                f about
+osd 9 190 ""  "Check for \HUpdates"               f check-for-updates
+osd 9 200 ""  "\HAbout MicroEmacs"                f about
 ;
 ; MENU #11 (12 & 17) - File type Quick-open file
 ; MENU #14 (15 & 17) - Buffer (by type)
