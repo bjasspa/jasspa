@@ -74,7 +74,6 @@ private struct Cell {
     var fg:     UInt8  = 0
     var bg:     UInt8  = 1
     var attrs:  UInt8  = 0
-    var isSpec: Bool   = false
 }
 
 // ---------------------------------------------------------------------------
@@ -271,11 +270,6 @@ final class MEView: NSView {
                       bb = CGFloat($0[idx+2])
                         }
         }
-/*        meColorTable.withUnsafeBytes {*/
-/*            rr = CGFloat($0.baseAddress![idx])*/
-/*            gg = CGFloat($0.baseAddress![idx+1])*/
-/*            bb = CGFloat($0.baseAddress![idx+2])*/
-/*              }*/
         let c = NSColor(srgbRed:  rr/255.0,
                         green:    gg/255.0,
                         blue:     bb/255.0,
@@ -335,17 +329,21 @@ final class MEView: NSView {
         // by pass 1 and will be drawn over in pass 3).
         col = 0
         while col < cols {
-            let cell0  = cells[rowBase + col]
-            let attrs0 = cell0.attrs & 0x03   // bold + italic bits
-            let fg0    = Int(cell0.fg)
-            let gtable = glyphTable(for: attrs0)
+            let cell0  = cells[rowBase + col];
+            let attrs0 = cell0.attrs & 0x03;   // bold + italic bits
+            let fg0    = cell0.fg;
+            let gtable = glyphTable(for: attrs0);
 
-            var runCount = 0
-            var c = col
-            while c < cols && runCount < scratchGlyphs.count {
-                let cell = cells[rowBase + c]
-                guard (cell.attrs & 0x03) == attrs0 && Int(cell.fg) == fg0 else { break }
-                if !cell.isSpec && cell.char8 > 0x20 {
+            var runCount = 0;
+            var c = col;
+            while((c < cols) && (runCount < scratchGlyphs.count))
+            {
+                let cell = cells[rowBase + c];
+                if(((cell.attrs & 0x03) != attrs0) || (cell.fg != fg0)) {
+                    break;
+                }
+                if(cell.char8 > 0x20)
+                {
                     let g = gtable[Int(cell.char8)]
                     if g != 0 {
                         scratchGlyphs[runCount]    = g
@@ -357,7 +355,7 @@ final class MEView: NSView {
             }
 
             if runCount > 0 {
-                ctx.setFillColor(nsColor(index: fg0).cgColor)
+                ctx.setFillColor(nsColor(index: Int(fg0)).cgColor)
                 CTFontDrawGlyphs(ctFontVariant(attrs: attrs0),
                                  scratchGlyphs, scratchPositions, runCount, ctx)
             }
@@ -366,13 +364,14 @@ final class MEView: NSView {
 
         // ---- Pass 3: specials and underlines --------------------------------
         for col in 0..<cols {
-            let cell = cells[rowBase + col]
-            if cell.isSpec {
+            let cell = cells[rowBase + col];
+            if(cell.char8 < 0x20) {
                 drawSpecial(cell.char8,
                             rect: cellRect(col: col, row: row, rows: rows),
                             fg: Int(cell.fg), in: ctx)
             }
-            if cell.attrs & 0x10 != 0 {
+            if((cell.attrs & 0x10) != 0)
+            {
                 let ulY = cellY + 1
                 ctx.setFillColor(nsColor(index: Int(cell.fg)).cgColor)
                 ctx.fill(CGRect(x: CGFloat(col * MEView.cellW), y: ulY,
@@ -612,34 +611,39 @@ final class MEView: NSView {
         guard cursorCol >= 0 && cursorCol < cols &&
               cursorRow >= 0 && cursorRow < rows else { return }
 
-        let rect = cellRect(col: cursorCol, row: cursorRow, rows: rows)
-        let cursorNSColor = nsColor(index: Int(meCursorColor))
+        let rect = cellRect(col: cursorCol, row: cursorRow, rows: rows);
+        let cursorNSColor = nsColor(index: Int(meCursorColor));
 
-        if hasFocus {
+        if(hasFocus)
+        {
             // Focused: filled block, character redrawn in cell background colour
-            ctx.setFillColor(cursorNSColor.cgColor)
-            ctx.fill(rect)
-            let idx  = cursorRow * cols + cursorCol
-            if idx < cells.count {
-                let cell = cells[idx]
-                if !cell.isSpec && cell.char8 > 0x20 {
-                    let g = glyphTable(for: cell.attrs)[Int(cell.char8)]
-                    if g != 0 {
-                        let cellY    = CGFloat((rows - 1 - cursorRow) * MEView.cellH)
-                        let baseline = cellY - CGFloat(MEView.font.descender)
-                        var glyph    = g
-                        var position = CGPoint(x: rect.minX, y: baseline)
-                        ctx.setFillColor(nsColor(index: Int(cell.bg)).cgColor)
-                        CTFontDrawGlyphs(ctFontVariant(attrs: cell.attrs),
-                                         &glyph, &position, 1, ctx)
+            ctx.setFillColor(cursorNSColor.cgColor);
+            ctx.fill(rect);
+            let idx  = cursorRow * cols + cursorCol;
+            if(idx < cells.count)
+            {
+                let cell = cells[idx];
+                if (cell.char8 > 0x20)
+                {
+                    let g = glyphTable(for: cell.attrs)[Int(cell.char8)];
+                    if(g != 0)
+                    {
+                        let cellY    = CGFloat((rows - 1 - cursorRow) * MEView.cellH);
+                        let baseline = cellY - CGFloat(MEView.font.descender);
+                        var glyph    = g;
+                        var position = CGPoint(x: rect.minX, y: baseline);
+                        ctx.setFillColor(nsColor(index: Int(cell.bg)).cgColor);
+                        CTFontDrawGlyphs(ctFontVariant(attrs: cell.attrs),&glyph,&position,1,ctx);
                     }
                 }
             }
-        } else {
+        }
+        else
+        {
             // Unfocused: 1-pixel outline rectangle in cursor colour, no fill
-            ctx.setStrokeColor(cursorNSColor.cgColor)
-            ctx.setLineWidth(1.0)
-            ctx.stroke(rect.insetBy(dx: 0.5, dy: 0.5))
+            ctx.setStrokeColor(cursorNSColor.cgColor);
+            ctx.setLineWidth(1.0);
+            ctx.stroke(rect.insetBy(dx: 0.5, dy: 0.5));
         }
     }
 
@@ -648,15 +652,15 @@ final class MEView: NSView {
     // cursorOn=true, TThideCur -> cHideCursor sets cursorOn=false.
 
     func startCursorBlink() {
-        hasFocus = true
-        setNeedsDisplay(cellRect(col: cursorCol, row: cursorRow))
-        meNativeViewFocusGained(Unmanaged.passUnretained(self).toOpaque())
+        hasFocus = true;
+        setNeedsDisplay(cellRect(col: cursorCol, row: cursorRow));
+        meNativeViewFocusGained(Unmanaged.passUnretained(self).toOpaque());
     }
 
     func stopCursorBlink() {
-        hasFocus = false
-        setNeedsDisplay(cellRect(col: cursorCol, row: cursorRow))
-        meNativeViewFocusLost(Unmanaged.passUnretained(self).toOpaque())
+        hasFocus = false;
+        setNeedsDisplay(cellRect(col: cursorCol, row: cursorRow));
+        meNativeViewFocusLost(Unmanaged.passUnretained(self).toOpaque());
     }
 
     // MARK: - Flush: copy dirty rows from the C frame store into cells[]
@@ -707,8 +711,7 @@ final class MEView: NSView {
                     char8:  ch,
                     fg:     UInt8(st & 0xff),
                     bg:     UInt8((st >> 8) & 0xff),
-                    attrs:  UInt8((st >> 16) & 0xff),
-                    isSpec: (ch & 0xe0) == 0)
+                    attrs:  UInt8((st >> 16) & 0xff));
             }
 
             let cellMinY = CGFloat((rows - 1 - row) * MEView.cellH)
