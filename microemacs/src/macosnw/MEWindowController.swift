@@ -75,7 +75,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
 
         // ---- Configure view (measures font, sets mecm) -------------------
         let font = resolveFont()
-        view.setFont(n: 2, font: font);
+        view.setFont(n: 1, font: font);
         view.setSize(cols: termCols, rows: termRows);
 
         // ---- Size window to terminal dimensions --------------------------

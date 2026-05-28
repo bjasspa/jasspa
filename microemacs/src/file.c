@@ -555,14 +555,26 @@ mePathAddSearchPath(int index, meUByte *path_name, meUByte *path_base, int flags
         {
             /* If this is the program path, in a <bpth>/bin/ or <bpth>/bin/sub-dir/ and <bpth>/macros exists then add <bpth>/<sub-dirs> to the search path */
             if((flags & 8) && ((gotPaths & 0x0f) != 0x0f) && (ll > 4) &&
-               (!memcmp((ss=base_name+ll-4),"/bin",4) || (((ss=meStrrchr(base_name+4,DIR_CHAR)) != NULL) && !memcmp((ss-=4),"/bin",4))))
+               (!memcmp((ss=base_name+ll-4),"/bin",4) ||
+#ifdef _ME_MACOSNW
+                ((ll > 6) && !memcmp((ss=base_name+ll-6),"/MacOS",4)) ||
+#endif
+                (((ss=meStrrchr(base_name+4,DIR_CHAR)) != NULL) && !memcmp((ss-=4),"/bin",4))))
             {
-                meUByte sp[256];
+                meUByte *dd,sp[256];
                 meStrcpy(sp,++ss);
-                meStrcpy(ss,subdirs[1]);
+                dd = ss;
+#ifdef _ME_MACOSNW
+                if(*ss == 'M')
+                {
+                    memcpy(dd,"Resources/",10);
+                    dd += 10;
+                }
+#endif
+                meStrcpy(dd,subdirs[1]);
                 if(!meTestDir(base_name))
                 {
-                    *ss = '\0';
+                    *dd = '\0';
                     index = mePathAddSearchPath(index,path_name,base_name,6,&gotPaths);
                 }
                 meStrcpy(ss,sp);
