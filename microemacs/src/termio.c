@@ -521,7 +521,7 @@ handleTimerExpired(void)
             if(cursorBlink)
                 TThandleBlink(2);
             else
-                meFrameShowCursor(frameCur);
+                TTshowCur();
         }
     }
 #endif
@@ -662,7 +662,7 @@ TTmove(int row, int col)
         frameCur->cursorColumn = col ;
     }
     if((cursorState >= 0) && blinkState)
-        TTshowCur() ;
+        TTshowCur();
 }
 
 

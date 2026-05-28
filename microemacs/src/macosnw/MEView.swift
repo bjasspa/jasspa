@@ -114,7 +114,8 @@ final class MEView: NSView {
 
     // ---- Layer background tracking - updated in cFlushDirty (main thread) --
     private var layerBgIndex: Int = -1
-
+    
+    // TODO SSP - this should be the current ME charset. 
     // ---- Glyph cache - pre-computed for all 256 ISO-8859-1 chars ---------
     // Built once per font change; shared across all windows.
     private static var glyphs:           [CGGlyph] = Array(repeating: 0, count: 256)

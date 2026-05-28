@@ -1443,30 +1443,30 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
             tcol = col = scol;
             schm = fssp[col];
             lc = meStyleGetBColor(meSchemeGetStyle(schm));
-            meFrameXTermSetScheme(frameCur,schm);
+            meFrameXTermSetScheme(frame,schm);
             while(++col < ecol)
             {
                 schm = fssp[col];
                 cc = meStyleGetBColor(meSchemeGetStyle(schm));
                 if(cc != lc)
                 {
-                    meFrameXftDrawBackground(frameCur,colToClient(tcol),row,col-tcol);
-                    meFrameXTermSetScheme(frameCur,schm);
+                    meFrameXftDrawBackground(frame,colToClient(tcol),row,col-tcol);
+                    meFrameXTermSetScheme(frame,schm);
                     tcol = col;
                     lc = cc;
                 }
             }
-            meFrameXftDrawBackground(frameCur,colToClient(tcol),row,col-tcol);
+            meFrameXftDrawBackground(frame,colToClient(tcol),row,col-tcol);
             tcol = col = scol;
             schm = fssp[col];
-            meFrameXTermSetScheme(frameCur,schm);
+            meFrameXTermSetScheme(frame,schm);
             for(;;)
             {
                 cc = fstp[col];
                 if((cc & 0xe0) == 0)
                 {
                     /* as the bg has been drawn and a space can sit on top, we can draw the spec char now */
-                    meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,cc);
+                    meFrameXftDrawSpecialChar(frame,colToClient(col),row,cc);
                     wb[col] = ' ';
                 }
                 else if((cc & 0x80) == 0)
@@ -1474,7 +1474,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
 #if MEOPT_EXTENDED
                 else if((wc = charToUnicode[cc & 0x7f]) == 0)
                 {
-                    meFrameXftDrawSpecialChar(frameCur,colToClient(col),row,meCHAR_UNDEF);
+                    meFrameXftDrawSpecialChar(frame,colToClient(col),row,meCHAR_UNDEF);
                     wb[col] = ' ';
                 }
 #endif /* MEOPT_EXTENDED */
@@ -1483,11 +1483,11 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
                 col++;
                 if((col == ecol) || (fssp[col] != schm))
                 {
-                    meFrameXftDrawWString(frameCur,colToClient(tcol),row,wb+tcol,col-tcol);
+                    meFrameXftDrawWString(frame,colToClient(tcol),row,wb+tcol,col-tcol);
                     if(col == ecol)
                         break;
                     schm = fssp[col];
-                    meFrameXTermSetScheme(frameCur,schm);
+                    meFrameXTermSetScheme(frame,schm);
                     tcol = col;
                 }
             }
@@ -1592,9 +1592,20 @@ meFrameGainFocus(meFrame *frame)
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XSetICFocus(meFrameGetXIC(frame));
-        if((cursorState >= 0) && blinkState)
+        if(cursorState >= 0)
         {
-            if(cursorBlink)
+#if MEOPT_MWFRAME
+            if(frameCur != frame)
+            {
+                /* another frame has input, we need to hide this frame's cursor and ensure
+                 * frameCur's cursor is shown so the input location is visible */
+                meFrameXTermHideCursor(frame);
+                meFrameXTermShowCursor(frameCur);
+                blinkState = 1;
+            }
+            else
+#endif
+                if(cursorBlink)
                 TThandleBlink(2);
             else
                 meFrameXTermShowCursor(frame);
@@ -1612,7 +1623,7 @@ meFrameKillFocus(meFrame *frame)
         frame->flags |= meFRAME_NOT_FOCUS ;
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
-            frameFocus = NULL ;
+            frameFocus = NULL;
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XUnsetICFocus(meFrameGetXIC(frame));
@@ -1836,8 +1847,8 @@ meXEventHandler(void)
                 }
             }
             if((cursorState >= 0) && blinkState)
-                meFrameXTermShowCursor(frame) ;
-            XFlush(mecm.xdisplay) ;
+                meFrameXTermShowCursor(frame);
+            XFlush(mecm.xdisplay);
         }
         break;
         
@@ -3658,8 +3669,8 @@ XTERMsetFont(int n, char *fontName)
             
             sizeHints.width_inc = ii;
             sizeHints.height_inc = jj;
-            sizeHints.min_width = ii*10;
-            sizeHints.min_height = jj*4;
+            sizeHints.min_width = ii*12;
+            sizeHints.min_height = jj*6;
             sizeHints.base_width = 0;
             sizeHints.base_height = 0;
             sizeHints.width = TTwidthDefault*ii;
@@ -3795,8 +3806,8 @@ XTERMsetFont(int n, char *fontName)
     
     sizeHints.width_inc  = ii;
     sizeHints.height_inc = jj;
-    sizeHints.min_width  = ii*10;
-    sizeHints.min_height = jj*4;
+    sizeHints.min_width  = ii*12;
+    sizeHints.min_height = jj*6;
     sizeHints.base_width = 0;
     sizeHints.base_height = 0;
     sizeHints.width = TTwidthDefault*ii;
@@ -4225,17 +4236,17 @@ meFrameXTermHideCursor(meFrame *frame)
         {
             meUShort wc;
             
-            meFrameXftDrawBackground(frameCur,cl,rw,1);
+            meFrameXftDrawBackground(frame,cl,rw,1);
             if((cc & 0xe0) == 0)
-                meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
+                meFrameXftDrawSpecialChar(frame,cl,rw,cc);
             else if(((wc = cc) & 0x80) 
 #if MEOPT_EXTENDED
                     && ((wc = charToUnicode[cc-128]) == 0)
 #endif /* MEOPT_EXTENDED */
                     )
-                meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
+                meFrameXftDrawSpecialChar(frame,cl,rw,meCHAR_UNDEF);
             else
-                meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
+                meFrameXftDrawWString(frame,cl,rw,&wc,1);
         }
         else
 #endif /* MEOPT_XFT */
@@ -4323,19 +4334,19 @@ meFrameXTermShowCursor(meFrame *frame)
             {
                 meUShort wc;
                 
-                meFrameXftDrawBackground(frameCur,cl,rw,1);
+                meFrameXftDrawBackground(frame,cl,rw,1);
                 if((cc & 0xe0) == 0)
-                    meFrameXftDrawSpecialChar(frameCur,cl,rw,cc);
+                    meFrameXftDrawSpecialChar(frame,cl,rw,cc);
                 else if(((wc = cc) & 0x80) 
 #if MEOPT_EXTENDED
                         && ((wc = charToUnicode[cc-128]) == 0)
 #endif /* MEOPT_EXTENDED */
                         )
                 {
-                    meFrameXftDrawSpecialChar(frameCur,cl,rw,meCHAR_UNDEF);
+                    meFrameXftDrawSpecialChar(frame,cl,rw,meCHAR_UNDEF);
                 }
                 else
-                    meFrameXftDrawWString(frameCur,cl,rw,&wc,1);
+                    meFrameXftDrawWString(frame,cl,rw,&wc,1);
             }
             else
 #endif /* MEOPT_XFT */

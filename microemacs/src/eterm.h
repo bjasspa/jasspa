@@ -341,20 +341,20 @@ do {                                                                            
 #define meFrameXftDrawBackground(ff,cl,rw,ll)                                      \
     XftDrawRect(meFrameGetXftDraw(ff),meFrameGetBgColor(ff),(cl),(rw),colToClient(ll),mecm.fdepth)
 #define meFrameXftDrawString8(ff,cl,rw,ss,ll)                                      \
-    XftDrawString8(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(ss),(ll))
+    XftDrawString8(meFrameGetXftDraw(ff),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(ss),(ll))
 #define meFrameXftDrawString(ff,cl,rw,ss,ll)                                       \
 do {                                                                               \
     meFrameXftDrawString8(ff,cl,(rw),ss,ll);                                       \
     if(meFrameGetXGCFont(ff) & meFONT_UNDERLINE)                                   \
-        XftDrawRect(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),(cl),(rw)+mecm.underline,colToClient(ll),1); \
+        XftDrawRect(meFrameGetXftDraw(ff),meFrameGetFgColor(ff),(cl),(rw)+mecm.underline,colToClient(ll),1); \
 } while(0)
 #define meFrameXftDrawString16(ff,cl,rw,ss,ll)                                     \
-    XftDrawString16(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(ss),(ll))
+    XftDrawString16(meFrameGetXftDraw(ff),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(ss),(ll))
 #define meFrameXftDrawWString(ff,cl,rw,ss,ll)                                      \
 do {                                                                               \
     meFrameXftDrawString16(ff,cl,rw,ss,ll);                                        \
     if(meFrameGetXGCFont(ff) & meFONT_UNDERLINE)                                   \
-        XftDrawRect(meFrameGetXftDraw(frameCur),meFrameGetFgColor(ff),cl,(rw)+mecm.underline,colToClient(ll),1); \
+        XftDrawRect(meFrameGetXftDraw(ff),meFrameGetFgColor(ff),cl,(rw)+mecm.underline,colToClient(ll),1); \
 } while(0)
 #define meFrameXftDrawSpecialChar meFrameXTermDrawSpecialChar
 #endif
