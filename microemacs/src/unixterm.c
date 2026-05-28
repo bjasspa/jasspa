@@ -1623,7 +1623,14 @@ meFrameKillFocus(meFrame *frame)
         frame->flags |= meFRAME_NOT_FOCUS ;
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
+        {
+            meUByte scheme=mlScheme;
+            meFrame *fc=frameCur;
             frameFocus = NULL;
+            frameCur = frame;
+            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+            frameCur = fc;
+        }
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XUnsetICFocus(meFrameGetXIC(frame));
@@ -1633,10 +1640,10 @@ meFrameKillFocus(meFrame *frame)
              * remove the old one first and then redraw
              */
             if(blinkState)
-                meFrameXTermHideCursor(frame) ;
-            blinkState = 1 ;
-            meFrameXTermShowCursor(frame) ;
-            XFlush(mecm.xdisplay) ;
+                meFrameXTermHideCursor(frame);
+            blinkState = 1;
+            meFrameXTermShowCursor(frame);
+            XFlush(mecm.xdisplay);
         }
     }
 }
@@ -4898,8 +4905,7 @@ TTwaitForChar(void)
             meUByte scheme=(globScheme/meSCHEME_STYLES);
             meFrame *fc=frameCur;
             frameCur = frameFocus;
-            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,
-                       (meUByte *) "[NOT FOCUS]");
+            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
             frameCur = fc;
         }
 #endif
