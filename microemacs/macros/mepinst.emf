@@ -141,26 +141,30 @@ define-macro check-for-updates
   insert-file &rep .me-pinstall.purl "packages/" "microemacs_release.txt"
   beginning-of-buffer
   !if &not &xse @wl "\\d\\{8\\}"
-    insert-string "ERROR: Failed to get latest release information ("
+    insert-string "\nERROR: Failed to get latest release information ("
     end-of-line
     insert-string ")."
-  !elif &equ @wl $version
-    insert-string "Release "
+  !elif &gre @wl $version
+    insert-string "\nRelease "
     end-of-line
     insert-string " is now available!\n\n"
-    !if &seq "ERROR" &set #l1 &whi &set #g1 &cat &lef $progname &rsin "/" $progname "microemacs-update"
-      insert-string "Warning: failed to find microemacs-update script."
-    !else
-      insert-string "Run \""
+    !if &not &seq "R" &stat t &set #l1 &cat &lef $progname &rsin "/" $progname &set #l2 &cat "microemacs-update" &con &band $system 0x80 "" ".ps1"
+      insert-string &spr "Warning: failed to find %s script." #l2
+    !elif &band $system 0x80
+      insert-string "Run script \""
       insert-string #l1
       insert-string "\" to upgrade."
+    !else
+      insert-string "To upgrade, exit MicroEmacs and then run the following in a PowerShell or Cmd prompt:\n\n    powershell -ExecutionPolicy Bypass -File \""
+      insert-string #l1
+      insert-string "\""
     !endif
   !elif &gre $version @wl
-    insert-string "Warning: Current release is "
+    insert-string "\nWarning: Current release is "
     end-of-line
     insert-string ", you appear to be usings a newer version/build."
   !else
-    insert-string "Latest release is "
+    insert-string "\nLatest release is "
     end-of-line
     insert-string " - you are up-to-date! :-)"
   !endif
