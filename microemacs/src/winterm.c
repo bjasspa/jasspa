@@ -1656,7 +1656,7 @@ meFrameDraw(meFrame *frame)
         ecol = frame->width;
     
     /* Redraw the cursor if we have zapped it */
-    if((cursorState >= 0) && blinkState)
+    if((cursorState >= 0) && blinkState && ((frame != frameFocus) || (frame == frameCur)))
         drawCursor = ((srow <= frame->cursorRow) && (erow >= frame->cursorRow) &&
                       (scol <= frame->cursorColumn) && (ecol > frame->cursorColumn));
     else
@@ -4449,9 +4449,10 @@ TTwaitForChar(void)
             meUByte scheme=(globScheme/meSCHEME_STYLES);
             meFrame *fc=frameCur;
             frameCur = frameFocus;
-            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,
+            pokeScreen(0x12,frameCur->depth,(frameCur->width >> 1)-5,&scheme,
                        (meUByte *) "[NOT FOCUS]");
             frameCur = fc;
+            UpdateWindow(meFrameGetWinHandle(frameFocus));
         }
 #endif
         
@@ -5848,7 +5849,15 @@ meFrameKillFocus(meFrame *frame)
         frame->flags |= meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
+        {
+            meUByte scheme=mlScheme;
+            meFrame *fc=frameCur;
             frameFocus = NULL;
+            frameCur = frame;
+            pokeScreen(0x12,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+            frameCur = fc;
+            UpdateWindow(meFrameGetWinHandle(frame));
+        }
 #endif
         
         if(cursorState >= 0)
