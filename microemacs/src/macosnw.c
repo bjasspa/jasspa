@@ -1061,6 +1061,9 @@ TTwaitForChar(void)
                     if(frameFocus == ff)
                         frameFocus = NULL;
 #endif
+#ifdef _CLIPBRD
+                    TTflushClipboard();
+#endif
                     if(cursorState >= 0)
                     {
                         /* because the cursor is a part of the solid cursor we must

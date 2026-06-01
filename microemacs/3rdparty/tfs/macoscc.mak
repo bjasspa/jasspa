@@ -23,6 +23,7 @@ RMDIR    = rm -rf
 
 TOOLKIT  = cc
 TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
+DEPLOY_TARGET = 10.15
 
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -p)" "i386"
@@ -52,10 +53,10 @@ OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ..
 
-CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -I.
+CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -mmacosx-version-min=$(DEPLOY_TARGET) -D_MACOS -D_$(BIT_SIZE)BIT -DZ7_ST -Wall -I.
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g
-LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS)
+LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -mmacosx-version-min=$(DEPLOY_TARGET)
 LDFLAGSR = -O3 -flto
 LDFLAGSD = -g
 ARFLAGSR = rcs

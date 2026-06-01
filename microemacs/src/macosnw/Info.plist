@@ -20,5 +20,7 @@
     <string>2.0</string>
     <key>NSPrincipalClass</key>
     <string>MicroEmacs.MEApplication</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.15</string>
   </dict>
 </plist>

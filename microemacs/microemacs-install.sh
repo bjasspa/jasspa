@@ -1,7 +1,10 @@
 #!/bin/sh
 # Jasspa MicroEmacs install/update script - version <VERSION>
 MEBASEURL=https://github.com/bjasspa/jasspa
+INSTTYPE=""
 INSTPATH=""
+INSTRPTH=""
+INSTBPTH="/bin"
 BINPATH=""
 ERRMSG=""
 RC=""
@@ -93,32 +96,60 @@ install_path_check(){
   fi
   return $RC
 }
-install_package(){
-  case $2 in
-  binaries) ip=bin_${MEPLATPKG}_$2;;
-  openssl) ip=bin_${MEPLATPKG}_$2;;
-  *) ip=$2;;
-  esac
+install_macos_app(){
+  ip=bin_${MEPLATPKG}_app
   echo "Installing: MicroEmacs_${MEVER}_$ip..."
   curl -fsSL -o Jasspa_MicroEmacs_${MEVER}_$ip.zip ${MEURL}/Jasspa_MicroEmacs_${MEVER}_$ip.zip
   if [ $? -ne 0 ]; then
     echo "Error: Failed to download install package \"${MEURL}/Jasspa_MicroEmacs_${MEVER}_$ip.zip\"."
     exit 1
   fi
-  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$ip.zip -d ${INSTPATH}
+  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$ip.zip -d ${INSTPATH}/../
   if [ $? -ne 0 ]; then
     echo "Error: Failed to extract install package \"/tmp/Jasspa_MicroEmacs_${MEVER}_$ip.zip\"."
     exit 1
   fi
   rm Jasspa_MicroEmacs_${MEVER}_$ip.zip
-  if [ $ip != $2 ]; then
-    mv ${INSTPATH}/bin/${MEPLATMSK}/* ${INSTPATH}/bin/
-    rmdir ${INSTPATH}/bin/${MEPLATMSK}
+  INSTRPTH="/Contents/Resources"
+  INSTBPTH="/Contents/MacOS"
+  if [ ! -f "${INSTPATH}/meinfo$1" ] ; then
+    echo ${MEVER} > "${INSTPATH}${INSTRPTH}/meinfo$1"
   fi
-  if grep -q $2 ${INSTPATH}/meinfo$1; then
+  if grep -q app "${INSTPATH}${INSTRPTH}/meinfo$1"; then
     :
   else
-    echo $2 >> ${INSTPATH}/meinfo$1
+    echo app >> "${INSTPATH}${INSTRPTH}/meinfo$1"
+  fi    
+  
+}
+install_package(){
+  case $2 in
+  binaries|openssl)
+     pid=bin_${MEPLATPKG}_$2
+     ipth=${INSTPATH}${INSTBPTH};;
+  *) pid=$2
+     ipth=${INSTPATH}${INSTRPTH};;
+  esac
+  echo "Installing: MicroEmacs_${MEVER}_$pid..."
+  curl -fsSL -o Jasspa_MicroEmacs_${MEVER}_$pid.zip ${MEURL}/Jasspa_MicroEmacs_${MEVER}_$pid.zip
+  if [ $? -ne 0 ]; then
+    echo "Error: Failed to download install package \"${MEURL}/Jasspa_MicroEmacs_${MEVER}_$pid.zip\"."
+    exit 1
+  fi
+  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$pid.zip -d ${ipth}
+  if [ $? -ne 0 ]; then
+    echo "Error: Failed to extract install package \"/tmp/Jasspa_MicroEmacs_${MEVER}_$pid.zip\"."
+    exit 1
+  fi
+  rm Jasspa_MicroEmacs_${MEVER}_$pid.zip
+  if [ $pid != $2 ]; then
+    mv ${ipth}/bin/${MEPLATMSK}/* ${ipth}/
+    rm -rf ${ipth}/bin
+  fi
+  if grep -q $2 ${INSTPATH}${INSTRPTH}/meinfo$1; then
+    :
+  else
+    echo $2 >> ${INSTPATH}${INSTRPTH}/meinfo$1
   fi    
 }
 
@@ -189,12 +220,24 @@ if [ ${#MEVER} -ne 8 ] ; then
   exit 1
 fi
 MEURL=$MEBASEURL/releases/download/me_${MEVER}
-
 # Now work out where to install/upgrade
 if [ -n "${INSTPATH}" ] ; then
   # Remove trailing '/' then check for standard install paths, e.g. .../microemacs, and if not present append /jasspa  
   INSTPATH="${INSTPATH%/}"
   case "${INSTPATH}" in
+  */Applications)
+    if [ $PLATFORM = "Darwin" ] ; then
+      INSTTYPE="App "
+      INSTPATH="${INSTPATH}/MicroEmacs.app"
+    else
+      INSTPATH="${INSTPATH}/jasspa"
+    fi;;
+  */Applications/MicroEmacs.app)
+    if [ $PLATFORM = "Darwin" ] ; then
+      INSTTYPE="App "
+    else
+      INSTPATH="${INSTPATH}/jasspa"
+    fi;;
   */jasspa|*/Jasspa|*/MicroEmacs|*/microemacs|*/me) ;;
   *) INSTPATH="${INSTPATH}/jasspa";;
   esac
@@ -250,21 +293,50 @@ elif [ $ISUPDT -ne 0 ] ; then
 
 else
 
-  # No path given, this is an install, check /usr/local/share and ~/.local
-  install_path_check "/usr/local/share/jasspa" "    "
-  aicerr=$?
-  aermsg=$ERRMSG
-  ainpth=$INSTPATH
-  abnpth=$BINPATH
-  install_path_check "${HOME}/.local/share/jasspa" "    "
-  uicerr=$?
-  uermsg=$ERRMSG
-  uinpth=$INSTPATH
-  ubnpth=$BINPATH
-
+  # No path given, this is an install - on macOS we need to ask if app or standard
+  if [ $PLATFORM = "Darwin" ] ; then
+    printf "\nOn macOS Jasspa MicroEmacs supports a native app, or the standard mec & mew (terminal & X11 based) programmes. Which do you wish to install:\n\n" | fold -s
+    while true; do
+      read -p "Select (n) for native app, (s) for standard or (q) to quit? (n/s/q) " nsq
+      case $nsq in 
+      n) INSTTYPE="App "
+         break;;
+      s) break;;
+      q) exit 1;;
+      *) echo Invalid response...;;
+      esac
+    done
+    echo
+  fi
+  
+  if [ "${INSTTYPE}" = "App " ] ; then
+    install_path_check "/Applications/MicroEmacs.app" "    "
+    aicerr=$?
+    aermsg=$ERRMSG
+    ainpth=$INSTPATH
+    abnpth=$BINPATH
+    install_path_check "${HOME}/Applications/MicroEmacs.app" "    "
+    uicerr=$?
+    uermsg=$ERRMSG
+    uinpth=$INSTPATH
+    ubnpth=$BINPATH
+  else
+    # check /usr/local/share and ~/.local
+    install_path_check "/usr/local/share/jasspa" "    "
+    aicerr=$?
+    aermsg=$ERRMSG
+    ainpth=$INSTPATH
+    abnpth=$BINPATH
+    install_path_check "${HOME}/.local/share/jasspa" "    "
+    uicerr=$?
+    uermsg=$ERRMSG
+    uinpth=$INSTPATH
+    ubnpth=$BINPATH
+  fi
+  
   if [ $aicerr -eq 1 ] ; then
     printf "Cannot install to \"${ainpth}\" for all users:\n${aermsg}\n\n" | fold -s
-
+    
     if [ $uicerr -eq 1 ] ; then
       printf "Cannot install to \"${uinpth}\" for current user:\n${uermsg}\n\n" | fold -s
       printf "Please resolve issues for one of the above or use --prefix option to set install location\n\n" | fold -s
@@ -279,12 +351,12 @@ else
     while true; do
       read -p "Do you want to continue? (y/n) " yn
       case $yn in 
-      y) break;;
-      n) exit 1;;
-      *) echo Invalid response...;;
+        y) break;;
+        n) exit 1;;
+        *) echo Invalid response...;;
       esac
     done
-
+    
   elif [ $uicerr -eq 1 ] ; then
     printf "Cannot install to \"${uinpth}\" for current user:\n${uermsg}\n\n" | fold -s
     INSTPATH=${ainpth}
@@ -296,14 +368,14 @@ else
     while true; do
       read -p "Do you want to continue? (y/n) " yn
       case $yn in 
-      y) break;;
-      n) exit 1;;
-      *) echo Invalid response...;;
+        y) break;;
+        n) exit 1;;
+        *) echo Invalid response...;;
       esac
     done
-
+    
   else
-  
+
     printf "Jasspa MicroEmacs v${MEVER} can be installed for all users or for just the current user:\n\n" | fold -s
     if [ $aicerr -ne 0 ] ; then
       printf "Select (a) to install to \"${ainpth}\" for all users, however note:\n${aermsg}\n\n" | fold -s
@@ -318,17 +390,17 @@ else
     while true; do
       read -p "How do you want to continue or (q) to quit? (a/u/q) " auq
       case $auq in 
-      a) INSTPATH=${ainpth}
-         BINPATH=${abnpth}
-         break;;
-      u) INSTPATH=${uinpth}
-         BINPATH=${ubnpth}
-         break;;
-      q) exit 1;;
-      *) echo Invalid response...;;
+        a) INSTPATH=${ainpth}
+        BINPATH=${abnpth}
+        break;;
+        u) INSTPATH=${uinpth}
+        BINPATH=${ubnpth}
+        break;;
+        q) exit 1;;
+        *) echo Invalid response...;;
       esac
     done
-    
+  
   fi
 fi
 
@@ -366,64 +438,77 @@ if [ -z "${INSTPKG}" ] ; then
   
   else
   
-    printf "\nInstallating Jasspa MicroEmacs v${MEVER} to \"${INSTPATH}\"\n" | fold -s
+    printf "\nInstallating Jasspa MicroEmacs ${INSTTYPE}v${MEVER} to \"${INSTPATH}\"\n" | fold -s
     mkdir -p "${INSTPATH}"
     if [ ! -d ${INSTPATH} ] ; then
       printf "\nError: Failed to create install path \"${INSTPATH}\", either create directory \"${INSTPATH}\" or rerun with sudo.\n\n" | fold -s
       return 1
     fi
-    echo ${MEVER} > ${INSTPATH}/meinfo
   
     #install the core
-    install_package "" binaries
+    if [ "${INSTTYPE}" = "App " ] ; then
+      install_macos_app ""
+    else
+      echo ${MEVER} > ${INSTPATH}${INSTRPTH}/meinfo
+      install_package "" binaries
+    fi
     install_package "" macros
     install_package "" help_ehf
-    curl -fsSL -o ${INSTPATH}/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    curl -fsSL -o ${INSTPATH}${INSTBPTH}/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."
       exit 1
     fi
-    chmod 755 ${INSTPATH}/bin/microemacs-update
+    chmod 755 ${INSTPATH}${INSTBPTH}/microemacs-update
   
-    if [ -z "${BINPATH}" ] ; then
-      BINPATH=${INSTPATH}
+    if [ "${INSTTYPE}" = "App " ] ; then
+        echo "Installation complete."
+        BINPATH="${INSTPATH}${INSTBPTH}/"
     else
-      if [ ! -e ${BINPATH}/bin ] ; then
-        mkdir -p "${BINPATH}/bin" >/dev/null 2>&1
-      fi
-      if [ ! -d ${BINPATH}/bin -o ! -w ${BINPATH}/bin ] ; then
-        printf "\nWarning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/bin\", either add ${INSTPATH}/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo.\n\n" | fold -s
+      
+      if [ -z "${BINPATH}" ] ; then
         BINPATH=${INSTPATH}
       else
-        rm -f ${BINPATH}/bin/mec
-        ln -s ${INSTPATH}/bin/mec ${BINPATH}/bin/mec
-        rm -f ${BINPATH}/bin/mew
-        ln -s ${INSTPATH}/bin/mew ${BINPATH}/bin/mew
-        rm -f ${BINPATH}/bin/tfs
-        ln -s ${INSTPATH}/bin/tfs ${BINPATH}/bin/tfs
-        rm -f ${BINPATH}/bin/microemacs-update
-        ln -s ${INSTPATH}/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+        if [ ! -e ${BINPATH}/bin ] ; then
+          mkdir -p "${BINPATH}/bin" >/dev/null 2>&1
+        fi
+        if [ ! -d ${BINPATH}/bin -o ! -w ${BINPATH}/bin ] ; then
+          printf "\nWarning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/bin\", either add ${INSTPATH}/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo.\n\n" | fold -s
+          BINPATH=${INSTPATH}
+        else
+          rm -f ${BINPATH}/bin/mec
+          ln -s ${INSTPATH}/bin/mec ${BINPATH}/bin/mec
+          rm -f ${BINPATH}/bin/mew
+          ln -s ${INSTPATH}/bin/mew ${BINPATH}/bin/mew
+          rm -f ${BINPATH}/bin/tfs
+          ln -s ${INSTPATH}/bin/tfs ${BINPATH}/bin/tfs
+          rm -f ${BINPATH}/bin/microemacs-update
+          ln -s ${INSTPATH}/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+        fi
       fi
-    fi
-    while true; do
-      read -p "Create Application launcher for mew ? (y/n) " rin
-      case $rin in 
-      y) ${INSTPATH}/bin/mec -p @crtappln -f ${INSTPATH}/bin/mew
-         break;;
-      n) break;;
-      *) echo Invalid response...;;
-      esac
-    done
-
-    if [ `which mec` = "${BINPATH}/bin/mec" ] ; then
-      echo "Installation complete and programmes are in your \$PATH."
-      BINPATH=""
-    else
-      echo "Installation complete, but the programmes are not in your \$PATH. We recommend"
-      echo "adding ${BINPATH}/bin to your \$PATH environment variable, e.g. add"
-      echo "    PATH=\"${BINPATH}/bin:\$PATH\""
-      echo "to the end of your ~/.profile (or .bash_profile, .zprofile etc) file."
-      BINPATH="${BINPATH}/bin/"
+      
+      if [ $PLATFORM != "Darwin" ] ; then
+        while true; do
+          read -p "Create Application launcher for mew ? (y/n) " rin
+          case $rin in 
+          y) ${INSTPATH}/bin/mec -p @crtappln -f ${INSTPATH}/bin/mew
+             break;;
+          n) break;;
+          *) echo Invalid response...;;
+          esac
+        done
+      fi
+      
+      if [ `which mec` = "${BINPATH}/bin/mec" ] ; then
+        echo "Installation complete and programmes are in your \$PATH."
+        BINPATH=""
+      else
+        echo "Installation complete, but the programmes are not in your \$PATH. We recommend"
+        echo "adding ${BINPATH}/bin to your \$PATH environment variable, e.g. add"
+        echo "    PATH=\"${BINPATH}/bin:\$PATH\""
+        echo "to the end of your ~/.profile (or .bash_profile, .zprofile etc) file."
+        BINPATH="${BINPATH}/bin/"
+        fi
     fi
     echo "To install spelling support for a language run:"
     echo ""
@@ -434,17 +519,18 @@ if [ -z "${INSTPKG}" ] ; then
     echo ""
     echo "   ${BINPATH}microemacs-update openssl"
     echo ""
-    echo "To start using Jasspa MicroEmacs run:"
-    echo ""
-    echo "   ${BINPATH}mec"
-    echo ""
-    echo "in a console/terminal, or run:"
-    echo ""
-    echo "   ${BINPATH}mew"
-    echo ""
-    echo "for the GUI version, requires a working X (install XQuartz on macOS)."
-    echo ""
-  
+    if [ "${INSTTYPE}" != "App " ] ; then
+      echo "To start using Jasspa MicroEmacs run:"
+      echo ""
+      echo "   ${BINPATH}mec"
+      echo ""
+      echo "in a console/terminal, or run:"
+      echo ""
+      echo "   ${BINPATH}mew"
+      echo ""
+      echo "for the GUI version, requires a working X (install XQuartz on macOS)."
+      echo ""
+    fi
   fi
        
 elif [ "${INSTPKG}" = "openssl" ] ; then

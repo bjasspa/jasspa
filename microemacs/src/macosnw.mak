@@ -45,6 +45,7 @@ include $(TOPDIR)/etc/makeinc.ver
 
 TOOLKIT  = cc
 TOOLKIT_VER = $(shell $(CC) -dumpversion | cut -f 1 -d .)
+DEPLOY_TARGET = 10.15
 
 ifneq "$(ARCHITEC)" ""
 else ifeq "$(shell uname -p)" "i386"
@@ -54,14 +55,17 @@ ARCHITEC = apple
 endif
 ifeq "$(ARCHITEC)" "intel"
 ARCFLAGS = -arch x86_64
+SWTARGET = x86_64-apple-macosx$(DEPLOY_TARGET)
 else
 ARCFLAGS = -arch arm64
+SWTARGET = arm64-apple-macosx$(DEPLOY_TARGET)
 endif
 ifeq "$(BIT_SIZE)" ""
 BIT_SIZE = $(shell getconf LONG_BIT)
 endif
-SDK_PATH = $(shell xcrun --show-sdk-path)
-SWLIBDIR := $(SDK_PATH)/usr/lib/swift
+SDK_PATH    = $(shell xcrun --show-sdk-path)
+SWLIBDIR   := $(SDK_PATH)/usr/lib/swift
+SWCOMPATDIR := $(shell xcrun --find swiftc | sed 's|/bin/swiftc|/lib/swift/macosx|')
 
 PLATFORM = macos
 PLATFORM_VER = $(shell sw_vers -productVersion | cut -f 1 -d .)
@@ -79,12 +83,12 @@ TRDPARTY = ../3rdparty
 TRDPMKFL = $(PLATFORM)$(TOOLKIT)
 NWDIR    = $(PLATFORM)$(BTYP)
 
-CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
+CCDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -mmacosx-version-min=$(DEPLOY_TARGET) -D_MACOS -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -flto -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g -O0
-SWDEFS   = -sdk $(SDK_PATH) -import-objc-header $(NWDIR)/ME-Bridging-Header.h -module-name MicroEmacs
-SWLDEFS  = -framework Cocoa -framework CoreText -framework CoreGraphics -framework CoreFoundation -L$(SWLIBDIR) -Wl,-rpath,/usr/lib/swift -lpthread
-LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS)
+SWDEFS   = -sdk $(SDK_PATH) -target $(SWTARGET) -import-objc-header $(NWDIR)/ME-Bridging-Header.h -module-name MicroEmacs
+SWLDEFS  = -framework Cocoa -framework CoreText -framework CoreGraphics -framework CoreFoundation -L$(SWLIBDIR) -L$(SWCOMPATDIR) -Wl,-rpath,/usr/lib/swift -lpthread
+LDDEFS   = -m$(BIT_SIZE) $(ARCFLAGS) -mmacosx-version-min=$(DEPLOY_TARGET)
 LDFLAGSR = -O3 -flto=auto
 LDFLAGSD = -g -O0
 LDLIBS   = 
