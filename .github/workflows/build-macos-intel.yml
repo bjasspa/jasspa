@@ -88,7 +88,6 @@ jobs:
           cp ../../LICENSE ./MicroEmacs.app/Contents/Resources
           cp ../../readme.txt ./MicroEmacs.app/Contents/Resources
           zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_app MicroEmacs.app
-          
 
       - name: Create macos-intel OpenSSL download
         run: |

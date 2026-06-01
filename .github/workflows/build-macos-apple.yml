@@ -80,6 +80,16 @@ jobs:
           ../bin/macos15-apple64/mec -p "@./mesgen" -f -p ../bin/macos15-apple64/mew -t ../bin/macos15-apple64/tfs -o bin/macos15-apple64/mesw
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin LICENSE readme.txt
 
+      - name: Compile macos-apple MicroEmacs.app
+        run: |
+          export MEVER=`./microemacs/bin/macos15-apple64/mec -p @microemacs/contribs/ver.emf`
+          cd ./microemacs/src
+          ./build.sh -t nw -a apple
+          cd ../bin/macos15-apple64-*
+          cp ../../LICENSE ./MicroEmacs.app/Contents/Resources
+          cp ../../readme.txt ./MicroEmacs.app/Contents/Resources
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_app MicroEmacs.app
+
       - name: Create macos-apple OpenSSL download
         run: |
           cd ./microemacs/
