@@ -108,7 +108,7 @@ SWFLAGS  = -O
 LDFLAGS  = $(LDFLAGSR)
 ARFLAGS  = $(ARFLAGSR)
 INSTDIR  = ../bin/$(BUILDID)
-INSTPRG  = cp
+INSTPRG  = cp -rf
 DCP      = - echo No cp - release
 endif
 
@@ -197,6 +197,8 @@ $(OUTDIR)/$(APPPATH)/Contents/MacOS/$(APPNAME): $(OUTDIR)/$(PRGFILE) $(OUTDIR)/$
 	$(RM) $@
 	$(CP) $(OUTDIR)/$(PRGFILE) $@
 	$(DCP) $(OUTDIR)/$(APPNAME).swiftmodule $(OUTDIR)/$(APPPATH)/Contents/MacOS/$(APPNAME).swiftmodule
+	$(RMDIR) $(INSTDIR)/$(APPPATH)
+	$(INSTPRG) $(OUTDIR)/$(APPPATH) $(INSTDIR)
 	
 $(OUTDIR)/$(APPPATH)/Contents/Info.plist: $(NWDIR)/Info.plist $(OUTDIR)/$(APPPATH)/Contents
 	$(RM) $@

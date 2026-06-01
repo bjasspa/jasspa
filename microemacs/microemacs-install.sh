@@ -14,74 +14,81 @@ install_path_check(){
   RC=0
   #echo "Checking install path: $1"
   if [ $ISUPDT -ne 0 ] ; then
-    
-    if [ ! -e $1/jasspa/meinfo ] ; then
-      ERRMSG="\n${2}Error: Installation found at \"$1/jasspa\" was not created by the microemacs-install script, please re-install first."
+    if [ ! -e "${INSTPATH}" ] ; then
+      ERRMSG="\n${2}Error: Installation path \"${INSTPATH}\" not found, please re-install first."
       return 1
-    elif [ ! -w $1/jasspa ] ; then
-      ERRMSG="\n${2}Error: Cannot write to install path \"$1/jasspa\", either change ownership/permissions or rerun with sudo."
-      return 1
+    elif [ ! -e "${INSTPATH}/meinfo" ] ; then
+      ERRMSG="\n${2}Error: Installation found at \"${INSTPATH}\" was not created by the microemacs-install script, please re-install first."
+      return 2
+    elif [ ! -w "${INSTPATH}" ] ; then
+      ERRMSG="\n${2}Error: Cannot write to install path \"${INSTPATH}\", either change ownership/permissions or rerun with sudo."
+      return 2
     fi
-    INSTPATH=`cd -- "$1" >/dev/null 2>&1 ; pwd -P`
+    INSTPATH=`cd -- "${INSTPATH}" >/dev/null 2>&1 ; pwd -P`
     return 0
+  fi  
 
-  elif [ -e $1/jasspa ] ; then
+  INSPPATH=`dirname ${INSTPATH}`
+  #echo "Checking install parent path: ${INSPPATH}"
+  if [ -e "${INSTPATH}" ] ; then
   
-    if [ ! -d $1/jasspa ] ; then
-      ERRMSG="\n${2}Error: Install path \"$1/jasspa\" already exists but isn't a directory."
+    if [ ! -d "${INSTPATH}" ] ; then
+      ERRMSG="\n${2}Error: Install path \"${INSTPATH}\" already exists but isn't a directory."
       return 1
-    elif [ ! -w $1/jasspa ] ; then
-      ERRMSG="\n${2}Error: Cannot write to install path \"$1/jasspa\", either change ownership/permissions or rerun with sudo."
+    elif [ ! -w "${INSTPATH}" ] ; then
+      ERRMSG="\n${2}Error: Cannot write to install path \"${INSTPATH}\", either change ownership/permissions or rerun with sudo."
       return 1
-    elif [ -e $1/jasspa/meinfo ] ; then
-      ERRMSG="\n${2}Warning: MicroEmacs already installed to \"$1/jasspa\", consider using microemacs-update instead."
+    elif [ -e "${INSTPATH}/meinfo" ] ; then
+      ERRMSG="\n${2}Warning: MicroEmacs already installed to \"${INSTPATH}\", consider using microemacs-update instead."
       RC=2
-    elif [ -e $1/jasspa/macros -o -e $1/jasspa/bin ] ; then
-      ERRMSG="\n${2}Warning: Install path \"$1/jasspa\" was not created by this installer, continuing will overwrite existing installation."
+    elif [ -e "${INSTPATH}/macros" -o -e "${INSTPATH}/bin" ] ; then
+      ERRMSG="\n${2}Warning: Install path \"${INSTPATH}\" was not created by this installer, continuing will overwrite existing installation."
       RC=2
     fi
   
-  elif [ -e $1 ] ; then
+  elif [ -e "${INSPPATH}" ] ; then
 
-    if [ ! -d $1 ] ; then
-      ERRMSG="\n${2}Error: Install path \"$1\" already exists but isn't a directory."
+    if [ ! -d "${INSPPATH}" ] ; then
+      ERRMSG="\n${2}Error: Install path \"${INSPPATH}\" already exists but isn't a directory."
       return 1
-    elif [ ! -w $1 ] ; then
-      ERRMSG="\n${2}Error: Cannot write to path \"$1\", either create directory \"$1/jasspa\" or rerun with sudo."
+    elif [ ! -w "${INSPPATH}" ] ; then
+      ERRMSG="\n${2}Error: Cannot write to path \"${INSPPATH}\", either create directory \"${INSTPATH}\" or rerun with sudo."
       return 1
     fi
 
   else
 
     # dont like creating the dir here, but it could be a relative path so until it exists its abolute path cannot be obtained (sanely) 
-    mkdir -p $1 >/dev/null 2>&1
-    if [ ! -d $1 ] ; then
-      ERRMSG="\n${2}Error: Cannot create install base path \"$1\", either create directory \"$1/jasspa\" or rerun with sudo."
+    mkdir -p "${INSPPATH}" >/dev/null 2>&1
+    if [ ! -d "${INSPPATH}" ] ; then
+      ERRMSG="\n${2}Error: Cannot create install base path \"${INSPPATH}\", either create directory \"${INSTPATH}\" or rerun with sudo."
       return 1
-    elif [ ! -w $1 ] ; then
-      ERRMSG="\n${2}Error: Cannot create install base path \"$1\", either create directory \"$1/jasspa\" or rerun with sudo."
+    elif [ ! -w "${INSPPATH}" ] ; then
+      ERRMSG="\n${2}Error: Cannot create install base path \"${INSPPATH}\", either create directory \"${INSTPATH}\" or rerun with sudo."
       return 1
     fi
-      
+    
   fi
   # turn path into an absolute path
-  INSTPATH=`cd -- "$1" >/dev/null 2>&1 ; pwd -P`
+  INSPPATH=`cd -- "${INSPPATH}" >/dev/null 2>&1 ; pwd -P`
+  INSTPATH="${INSPPATH}/$(basename "${INSTPATH}")"
+  
   # calc the non-jasspa bin path
-  case "${INSTPATH}" in
-    *share) BINPATH=`dirname "${INSTPATH}"`;;
-    *) BINPATH="${INSTPATH}";;
+  case "${INSPPATH}" in
+    *share) BINPATH=`dirname "${INSPPATH}"`;;
+    *) BINPATH="${INSPPATH}";;
   esac
   
   # as ${BINPATH} is ${INSTPATH} or its parent it must exist by now 
   if [ -e ${BINPATH}/bin ] ; then
   
     if [ ! -d ${BINPATH}/bin -o ! -w ${BINPATH}/bin ] ; then
-      ERRMSG="${ERRMSG}\n${2}Warning: Cannot create links in \"${BINPATH}/bin\" to binaries in \"${INSTPATH}/jasspa/bin\"."
+      ERRMSG="${ERRMSG}\n${2}Warning: Cannot create links in \"${BINPATH}/bin\" to binaries in \"${INSTPATH}/bin\"."
       RC=2
     fi
   
   elif [ ! -d ${BINPATH} -o ! -w ${BINPATH} ] ; then
-    ERRMSG="${ERRMSG}\n${2}Warning: Cannot create links in \"${BINPATH}/bin\" to binaries in \"${INSTPATH}/jasspa/bin\"."
+    ERRMSG="${ERRMSG}\n${2}Warning: Cannot create links in \"${BINPATH}/bin\" to binaries in \"${INSTPATH}/bin\"."
     RC=2
   fi
   return $RC
@@ -98,20 +105,20 @@ install_package(){
     echo "Error: Failed to download install package \"${MEURL}/Jasspa_MicroEmacs_${MEVER}_$ip.zip\"."
     exit 1
   fi
-  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$ip.zip -d ${INSTPATH}/jasspa
+  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$ip.zip -d ${INSTPATH}
   if [ $? -ne 0 ]; then
     echo "Error: Failed to extract install package \"/tmp/Jasspa_MicroEmacs_${MEVER}_$ip.zip\"."
     exit 1
   fi
   rm Jasspa_MicroEmacs_${MEVER}_$ip.zip
   if [ $ip != $2 ]; then
-    mv ${INSTPATH}/jasspa/bin/${MEPLATMSK}/* ${INSTPATH}/jasspa/bin/
-    rmdir ${INSTPATH}/jasspa/bin/${MEPLATMSK}
+    mv ${INSTPATH}/bin/${MEPLATMSK}/* ${INSTPATH}/bin/
+    rmdir ${INSTPATH}/bin/${MEPLATMSK}
   fi
-  if grep -q $2 ${INSTPATH}/jasspa/meinfo$1; then
+  if grep -q $2 ${INSTPATH}/meinfo$1; then
     :
   else
-    echo $2 >> ${INSTPATH}/jasspa/meinfo$1
+    echo $2 >> ${INSTPATH}/meinfo$1
   fi    
 }
 
@@ -152,8 +159,9 @@ case $0 in
 esac
 
 # Go through the command line arguments
+INSTPKG=""
 while [ -n "$1" ] ; do
-  case $1 in 
+  case "$1" in 
   --help|-h)
       echo "Usage: $0 [-h | --help] [ --prefix=<path> ] [ <package> ]"
       echo "Where:"
@@ -168,7 +176,8 @@ while [ -n "$1" ] ; do
       break;;
   -*) echo "Invalid option $1, use option -h for more information"
       exit 1;;
-  *)  break;;
+  *)  INSTPKG="$1"
+      break;;
   esac
   shift
 done
@@ -183,14 +192,12 @@ MEURL=$MEBASEURL/releases/download/me_${MEVER}
 
 # Now work out where to install/upgrade
 if [ -n "${INSTPATH}" ] ; then
-
-  # Install path given by user - remove trailing '/jasspa/' '/' & check permissions etc
-  case ${INSTPATH} in
-  */jasspa/) INSTPATH=${INSTPATH%"/jasspa/"};;
-  */jasspa) INSTPATH=${INSTPATH%"/jasspa"};;
-  */) INSTPATH=${INSTPATH%"/"};;
+  # Remove trailing '/' then check for standard install paths, e.g. .../microemacs, and if not present append /jasspa  
+  INSTPATH="${INSTPATH%/}"
+  case "${INSTPATH}" in
+  */jasspa|*/Jasspa|*/MicroEmacs|*/microemacs|*/me) ;;
+  *) INSTPATH="${INSTPATH}/jasspa";;
   esac
-
   install_path_check "${INSTPATH}" ""
   icerr=$?
   if [ $icerr -eq 1 ] ; then
@@ -198,9 +205,9 @@ if [ -n "${INSTPATH}" ] ; then
     exit 1
   fi
   if [ $ISUPDT -ne 0 ] ; then
-    printf "Jasspa MicroEmacs - Updating \"${INSTPATH}/jasspa\" to version ${MEVER}\n" | fold -s
+    printf "Jasspa MicroEmacs - Updating \"${INSTPATH}\" to version ${MEVER}\n" | fold -s
   else
-    printf "Jasspa MicroEmacs - Installing version ${MEVER} to \"${INSTPATH}/jasspa\"\n" | fold -s
+    printf "Jasspa MicroEmacs - Installing version ${MEVER} to \"${INSTPATH}\"\n" | fold -s
     if [ $icerr -ne 0 ] ; then
       printf "${ERRMSG}\n\n" | fold -s
     fi
@@ -218,56 +225,54 @@ elif [ $ISUPDT -ne 0 ] ; then
   
   # No path given, this is an update so get the path from the location of the script
   inspth=`cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P`
-  # script should be in a bin directory, remove that then try ${INSTPATH}/share first and then ${INSTPATH} 
+  # script should be in a bin directory, remove that then try ${INSTPATH} first and then ${INSTPATH}/share 
   case ${inspth} in
   */bin) inspth=${inspth%"/bin"};;
   esac
-  install_path_check "${inspth}/share" ""
+  install_path_check "${inspth}" ""
   icerr=$?
-  if [ $icerr -ne 0 ] ; then
-    install_path_check "${inspth}" ""
+  if [ $icerr -gt 1 ] ; then
+    printf "${ERRMSG}\n\n"
+    exit 1
+  elif [ $icerr -ne 0 ] ; then
+    install_path_check "${inspth}/share/jasspa" ""
     icerr=$?
     if [ $icerr -ne 0 ] ; then
-      # script not run from within the release, check the 2 default places before giving up
-      install_path_check "/usr/local/share" ""
+      install_path_check "${inspth}/share/microemacs" ""
       icerr=$?
       if [ $icerr -ne 0 ] ; then
-        install_path_check "${HOME}/.local/share" ""
-        icerr=$?
-        if [ $icerr -ne 0 ] ; then
-          printf "\nError: Failed to locate the Jasspa MicroEmacs installation directory, run with --prefix to set the location.\n\n" | fold -s
-          exit 1
-        fi
+        printf "\nError: Failed to locate the Jasspa MicroEmacs installation directory, run with --prefix to set the location.\n\n" | fold -s
+        exit 1
       fi
     fi
   fi
-  printf "Jasspa MicroEmacs - Updating \"${INSTPATH}/jasspa\" to version ${MEVER}\n" | fold -s
+  printf "Jasspa MicroEmacs - Updating \"${INSTPATH}\" to version ${MEVER}\n" | fold -s
 
 else
 
   # No path given, this is an install, check /usr/local/share and ~/.local
-  install_path_check "/usr/local/share" "    "
+  install_path_check "/usr/local/share/jasspa" "    "
   aicerr=$?
   aermsg=$ERRMSG
   ainpth=$INSTPATH
   abnpth=$BINPATH
-  install_path_check "${HOME}/.local/share" "    "
+  install_path_check "${HOME}/.local/share/jasspa" "    "
   uicerr=$?
   uermsg=$ERRMSG
   uinpth=$INSTPATH
   ubnpth=$BINPATH
 
   if [ $aicerr -eq 1 ] ; then
-    printf "Cannot install to \"${ainpth}/jasspa\" for all users:\n${aermsg}\n\n" | fold -s
+    printf "Cannot install to \"${ainpth}\" for all users:\n${aermsg}\n\n" | fold -s
 
     if [ $uicerr -eq 1 ] ; then
-      printf "Cannot install to \"${uinpth}/jasspa\" for current user:\n${uermsg}\n\n" | fold -s
+      printf "Cannot install to \"${uinpth}\" for current user:\n${uermsg}\n\n" | fold -s
       printf "Please resolve issues for one of the above or use --prefix option to set install location\n\n" | fold -s
       exit 1
     fi
     INSTPATH=${uinpth}
     BINPATH=${ubnpth}
-    printf "Install Jasspa MicroEmacs version ${MEVER} to \"${INSTPATH}/jasspa\":\n" | fold -s
+    printf "Install Jasspa MicroEmacs version ${MEVER} to \"${INSTPATH}\":\n" | fold -s
     if [ $uicerr -ne 0 ] ; then
       printf "${uermsg}\n\n" | fold -s
     fi
@@ -281,10 +286,10 @@ else
     done
 
   elif [ $uicerr -eq 1 ] ; then
-    printf "Cannot install to \"${uinpth}/jasspa\" for current user:\n${uermsg}\n\n" | fold -s
+    printf "Cannot install to \"${uinpth}\" for current user:\n${uermsg}\n\n" | fold -s
     INSTPATH=${ainpth}
     BINPATH=${abnpth}
-    printf "Install Jasspa MicroEmacs version ${MEVER} to \"${INSTPATH}/jasspa\":\n" | fold -s
+    printf "Install Jasspa MicroEmacs version ${MEVER} to \"${INSTPATH}\":\n" | fold -s
     if [ $aicerr -ne 0 ] ; then
       printf "${aermsg}\n\n" | fold -s
     fi
@@ -329,11 +334,11 @@ fi
 
 cd /tmp
 
-if [ -z "$1" ] ; then
+if [ -z "${INSTPKG}" ] ; then
 
   if [ $ISUPDT -ne 0 ] ; then
   
-    read -r MECRL < ${INSTPATH}/jasspa/meinfo
+    read -r MECRL < ${INSTPATH}/meinfo
     if [ "${MECRL}" = "${MEVER}" ] ; then
       printf "\nNote: Installation is already version ${MEVER} - nothing to do.\n\n" | fold -s
       exit 0
@@ -341,69 +346,69 @@ if [ -z "$1" ] ; then
   
     echo "Updating Jasspa MicroEmacs installation from v${MECRL} to v${MEVER}"
   
-    echo ${MEVER} > ${INSTPATH}/jasspa/meinfo.upd
+    echo ${MEVER} > ${INSTPATH}/meinfo.upd
     skipped1=0    
     while read ln; do
       if [ $skipped1 -ne 0 ] ; then
         install_package ".upd" $ln
       fi
       skipped1=1    
-    done <${INSTPATH}/jasspa/meinfo
+    done <${INSTPATH}/meinfo
   
-    mv ${INSTPATH}/jasspa/meinfo.upd ${INSTPATH}/jasspa/meinfo  
-    curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    mv ${INSTPATH}/meinfo.upd ${INSTPATH}/meinfo  
+    curl -fsSL -o ${INSTPATH}/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       printf "Error: Failed to download latest update script:\n    \"$MEBASEURL/releases/latest/download/microemacs-install\".\n\n" | fold -s
       exit 1
     fi
-    chmod 755 ${INSTPATH}/jasspa/bin/microemacs-update
+    chmod 755 ${INSTPATH}/bin/microemacs-update
     printf "Update to ${MEVER} complete and successful.\n\n"
   
   else
   
-    printf "\nInstallating Jasspa MicroEmacs v${MEVER} to \"${INSTPATH}/jasspa\"\n" | fold -s
-    mkdir -p "${INSTPATH}/jasspa"
-    if [ ! -d ${INSTPATH}/jasspa ] ; then
-      printf "\nError: Failed to create install path \"${INSTPATH}/jasspa\", either create directory \"${INSTPATH}/jasspa\" or rerun with sudo.\n\n" | fold -s
+    printf "\nInstallating Jasspa MicroEmacs v${MEVER} to \"${INSTPATH}\"\n" | fold -s
+    mkdir -p "${INSTPATH}"
+    if [ ! -d ${INSTPATH} ] ; then
+      printf "\nError: Failed to create install path \"${INSTPATH}\", either create directory \"${INSTPATH}\" or rerun with sudo.\n\n" | fold -s
       return 1
     fi
-    echo ${MEVER} > ${INSTPATH}/jasspa/meinfo
+    echo ${MEVER} > ${INSTPATH}/meinfo
   
     #install the core
     install_package "" binaries
     install_package "" macros
     install_package "" help_ehf
-    curl -fsSL -o ${INSTPATH}/jasspa/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    curl -fsSL -o ${INSTPATH}/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."
       exit 1
     fi
-    chmod 755 ${INSTPATH}/jasspa/bin/microemacs-update
+    chmod 755 ${INSTPATH}/bin/microemacs-update
   
     if [ -z "${BINPATH}" ] ; then
-      BINPATH=${INSTPATH}/jasspa
+      BINPATH=${INSTPATH}
     else
       if [ ! -e ${BINPATH}/bin ] ; then
         mkdir -p "${BINPATH}/bin" >/dev/null 2>&1
       fi
       if [ ! -d ${BINPATH}/bin -o ! -w ${BINPATH}/bin ] ; then
-        printf "\nWarning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/jasspa/bin\", either add ${INSTPATH}/jasspa/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo.\n\n" | fold -s
-        BINPATH=${INSTPATH}/jasspa
+        printf "\nWarning: Cannot create links in \"${BINPATH}\" to binaries in \"${INSTPATH}/bin\", either add ${INSTPATH}/bin to your PATH, or copy the scripts to somewhere in your PATH, or rerun with sudo.\n\n" | fold -s
+        BINPATH=${INSTPATH}
       else
         rm -f ${BINPATH}/bin/mec
-        ln -s ${INSTPATH}/jasspa/bin/mec ${BINPATH}/bin/mec
+        ln -s ${INSTPATH}/bin/mec ${BINPATH}/bin/mec
         rm -f ${BINPATH}/bin/mew
-        ln -s ${INSTPATH}/jasspa/bin/mew ${BINPATH}/bin/mew
+        ln -s ${INSTPATH}/bin/mew ${BINPATH}/bin/mew
         rm -f ${BINPATH}/bin/tfs
-        ln -s ${INSTPATH}/jasspa/bin/tfs ${BINPATH}/bin/tfs
+        ln -s ${INSTPATH}/bin/tfs ${BINPATH}/bin/tfs
         rm -f ${BINPATH}/bin/microemacs-update
-        ln -s ${INSTPATH}/jasspa/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+        ln -s ${INSTPATH}/bin/microemacs-update ${BINPATH}/bin/microemacs-update
       fi
     fi
     while true; do
       read -p "Create Application launcher for mew ? (y/n) " rin
       case $rin in 
-      y) ${INSTPATH}/jasspa/bin/mec -p @crtappln -f ${INSTPATH}/jasspa/bin/mew
+      y) ${INSTPATH}/bin/mec -p @crtappln -f ${INSTPATH}/bin/mew
          break;;
       n) break;;
       *) echo Invalid response...;;
@@ -442,26 +447,26 @@ if [ -z "$1" ] ; then
   
   fi
        
-elif [ $1 = "openssl" ] ; then
+elif [ "${INSTPKG}" = "openssl" ] ; then
 
   echo "Jasspa MicroEmacs - Installing OpenSSL libraries"
   install_package "" openssl
 
-elif [ ${#1} -eq 4 ] ; then
+elif [ "${INSTPKG}" -eq 4 ] ; then
 
-  echo "Jasspa MicroEmacs - Installing spelling $1"
-  install_package "" spelling_$1
+  echo "Jasspa MicroEmacs - Installing spelling ${INSTPKG}"
+  install_package "" spelling_${INSTPKG}
 
 else
 
-  pkg=`echo "$1" | sed "s/-/_/g"`
+  pkg=`echo "${INSTPKG}" | sed "s/-/_/g"`
 
   case $pkg in
     binaries | help_ehf | macros | spelling_*)
       echo "Jasspa MicroEmacs - Installing package $pkg"
       install_package "" $pkg;;
     *)
-      echo "Error: Unknown install package \"$1\"."
+      echo "Error: Unknown install package \"${INSTPKG}\"."
       exit 1;;
   esac
 

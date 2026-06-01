@@ -81,8 +81,14 @@ jobs:
 
       - name: Compile macos-intel MicroEmacs.app
         run: |
+          export MEVER=`./microemacs/bin/macos15-intel64/mec -p @microemacs/contribs/ver.emf`
           cd ./microemacs/src
           ./build.sh -t nw -a intel
+          cd ../bin/macos15-intel64-*
+          cp ../../LICENSE ./MicroEmacs.app/Contents/Resources
+          cp ../../readme.txt ./MicroEmacs.app/Contents/Resources
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_intel_app MicroEmacs.app
+          
 
       - name: Create macos-intel OpenSSL download
         run: |
