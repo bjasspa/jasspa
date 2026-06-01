@@ -267,7 +267,11 @@ if [ -n "${INSTPATH}" ] ; then
 elif [ $ISUPDT -ne 0 ] ; then
   
   # No path given, this is an update so get the path from the location of the script
-  inspth=`cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P`
+  inspth="$0"
+  if [ -L "${inspth}" ]; then
+    inspth=$(readlink "${inspth}")
+  fi
+  inspth=`cd -- "$(dirname "${inspth}")" >/dev/null 2>&1 ; pwd -P`
   # script should be in a bin directory, remove that then try ${INSTPATH} first and then ${INSTPATH}/share 
   case ${inspth} in
   */bin) inspth=${inspth%"/bin"};;
@@ -434,7 +438,7 @@ if [ -z "${INSTPKG}" ] ; then
       exit 1
     fi
     chmod 755 ${INSTPATH}/bin/microemacs-update
-    printf "Update to ${MEVER} complete and successful.\n\n"
+    printf "Update to ${MEVER} complete.\n\n"
   
   else
   
@@ -537,11 +541,13 @@ elif [ "${INSTPKG}" = "openssl" ] ; then
 
   echo "Jasspa MicroEmacs - Installing OpenSSL libraries"
   install_package "" openssl
+  echo "Package installation complete."
 
-elif [ "${INSTPKG}" -eq 4 ] ; then
+elif [ ${#INSTPKG} -eq 4 ] ; then
 
   echo "Jasspa MicroEmacs - Installing spelling ${INSTPKG}"
   install_package "" spelling_${INSTPKG}
+  echo "Package installation complete."
 
 else
 
@@ -550,7 +556,8 @@ else
   case $pkg in
     binaries | help_ehf | macros | spelling_*)
       echo "Jasspa MicroEmacs - Installing package $pkg"
-      install_package "" $pkg;;
+      install_package "" $pkg
+      echo "Package installation complete.";;
     *)
       echo "Error: Unknown install package \"${INSTPKG}\"."
       exit 1;;
