@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd099.2,v 2.6 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd099.2,v 2.6 2026/06/01 22:35:33 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH screen-poke 2
@@ -34,16 +34,16 @@ is erased on the next screen update. The \fIstring\fR is clipped to the screen
 area  hence the caller  need not  continually  check on the size of the client
 area.
 .PP
-The numeric argument \fIn\fR is a bitwise flag which has the following meaning
-.nf
-.na
-\fC0x01\fR Don't mark the poke area for update.
-\fC0x02\fR Don't flush poke to screen.
-\fC0x04\fR colorScheme is an array of values, one for each letter.
-\fC0xf0\fR colorScheme pair offset to use.
-.fi
-.ad
-.LP
+The numeric argument \fIn\fR is a bitwise flag which has the following meaning:
+.IP \fB0x01\fR
+Don't mark the poke area for update.
+.IP \fB0x02\fR
+Don't flush poke to screen.
+.IP \fB0x04\fR
+colorScheme is an array of values, one for each letter.
+.IP \fB0xf0\fR
+colorScheme pair offset to use.
+.PP
 If the \fB0x01\fR  flag is absent then the parts of the screen over written by
 \fBscreen-poke\fR  are marked and  refreshed  on the next  \fBscreen-update\fR
 operation,  thereby erasing the poked  information. If the flag is present the

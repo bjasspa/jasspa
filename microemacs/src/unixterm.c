@@ -1588,7 +1588,16 @@ meFrameGainFocus(meFrame *frame)
         frame->flags &= ~meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
         if(frameCur != frame)
+        {
+            /* if the user has changed the window focus using the OS but ME can swap to this frame
+             * because there is an active frame then give a warning */
+            meUByte scheme=(globScheme/meSCHEME_STYLES);
+            meFrame *fc=frameCur;
             frameFocus = frame;
+            frameCur = frame;
+            pokeScreen(0x11,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
+            frameCur = fc;
+        }
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XSetICFocus(meFrameGetXIC(frame));
@@ -1624,11 +1633,11 @@ meFrameKillFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
         {
-            meUByte scheme=mlScheme;
+            meUByte scheme=(mlScheme/meSCHEME_STYLES);
             meFrame *fc=frameCur;
             frameFocus = NULL;
             frameCur = frame;
-            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+            pokeScreen(0x01,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
             frameCur = fc;
         }
 #endif
@@ -4896,19 +4905,6 @@ TTwaitForChar(void)
             update(meTRUE);
             mlerase(MWCLEXEC);
         }
-#if MEOPT_MWFRAME
-        /* if the user has changed the window focus using the OS
-         * but ME can swap to this frame because there is an active frame
-         * then give a warning */
-        if((frameFocus != NULL) && (frameFocus != frameCur))
-        {
-            meUByte scheme=(globScheme/meSCHEME_STYLES);
-            meFrame *fc=frameCur;
-            frameCur = frameFocus;
-            pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
-            frameCur = fc;
-        }
-#endif
         waitForEvent(0);
     }
 }

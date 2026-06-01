@@ -2440,8 +2440,7 @@ update(int flag)    /* force=meTRUE update past type ahead? */
 #endif /* _ME_WINDOW */
 #endif /* _WIN32 */
 void
-pokeScreen(int flags, int row, int col, meUByte *scheme,
-           meUByte *str)
+pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
 {
     meUByte  cc, *ss ;
     meScheme *fssp;               /* Frame store scheme pointer */

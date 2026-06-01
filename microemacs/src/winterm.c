@@ -4449,8 +4449,7 @@ TTwaitForChar(void)
             meUByte scheme=(globScheme/meSCHEME_STYLES);
             meFrame *fc=frameCur;
             frameCur = frameFocus;
-            pokeScreen(0x12,frameCur->depth,(frameCur->width >> 1)-5,&scheme,
-                       (meUByte *) "[NOT FOCUS]");
+            pokeScreen(0x12,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
             frameCur = fc;
             UpdateWindow(meFrameGetWinHandle(frameFocus));
         }
@@ -5850,11 +5849,11 @@ meFrameKillFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
         {
-            meUByte scheme=mlScheme;
+            meUByte scheme=(mlScheme/meSCHEME_STYLES);
             meFrame *fc=frameCur;
             frameFocus = NULL;
             frameCur = frame;
-            pokeScreen(0x12,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+            pokeScreen(0x02,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
             frameCur = fc;
             UpdateWindow(meFrameGetWinHandle(frame));
         }

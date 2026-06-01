@@ -934,8 +934,7 @@ pokeNotFocus(meFrame *focusFrame)
     meUByte  scheme = (meUByte)(globScheme / meSCHEME_STYLES);
     meFrame *fc = frameCur;
     frameCur = focusFrame;
-    pokeScreen(0x10, frameCur->depth, (frameCur->width >> 1) - 5,
-               &scheme, (meUByte *)"[NOT FOCUS]");
+    pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *)"[NOT FOCUS]");
     TTflush();
     frameCur = fc;
 }
