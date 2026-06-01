@@ -506,6 +506,7 @@ handleTimerExpired(void)
      * and this is the top level then change frames */
     if((frameFocus != NULL) && (frameFocus != frameCur) && (commandDepth == 0))
     {
+        meUByte scheme=(meUByte)(globScheme / meSCHEME_STYLES);
         if(frameCur->mlLine->length > 0)
         {
             /* erase the ml line of old current frame */
@@ -516,6 +517,7 @@ handleTimerExpired(void)
         mlerase(MWCLEXEC);
         frameCur = frameFocus;
         frameFocus = NULL;
+        pokeScreen(0x01,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
         if(cursorState >= 0)
         {
             if(cursorBlink)

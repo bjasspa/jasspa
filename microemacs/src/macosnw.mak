@@ -176,7 +176,6 @@ PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 APPNAME  = MicroEmacs
 APPPATH  = $(APPNAME).app
-# TODO mak name wrong
 PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h evar.h evers.h eopt.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def macos$(BTYP).h $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \

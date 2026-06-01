@@ -924,22 +924,6 @@ TTahead(void)
     return TTnoKeys;
 }
 
-#if MEOPT_MWFRAME
-/* Poke "[NOT FOCUS]" into focusFrame's message line and flush it to that
- * frame's window.  frameCur is temporarily redirected so pokeScreen and
- * TTflush both operate on focusFrame's store and view. */
-static void
-pokeNotFocus(meFrame *focusFrame)
-{
-    meUByte  scheme = (meUByte)(globScheme / meSCHEME_STYLES);
-    meFrame *fc = frameCur;
-    frameCur = focusFrame;
-    pokeScreen(0x10,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *)"[NOT FOCUS]");
-    TTflush();
-    frameCur = fc;
-}
-#endif
-
 /* TTwaitForChar - block until at least one key is in the ME key buffer */
 void
 TTwaitForChar(void)
@@ -1028,7 +1012,14 @@ TTwaitForChar(void)
                         ff->flags &= ~meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
                         if(frameCur != ff)
+                        {
+                            meUByte scheme=(meUByte)(globScheme / meSCHEME_STYLES);
+                            meFrame *fc=frameCur;
                             frameFocus = ff;
+                            frameCur = ff;
+                            pokeScreen(0x11,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *)"[NOT FOCUS]");
+                            frameCur = fc;
+                        }
 #endif
 #ifdef _CLIPBRD
                         TTcheckClipboard();
@@ -1058,7 +1049,14 @@ TTwaitForChar(void)
                     ff->flags |= meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
                     if(frameFocus == ff)
+                    {
+                        meUByte scheme=(mlScheme/meSCHEME_STYLES);
+                        meFrame *fc=frameCur;
                         frameFocus = NULL;
+                        frameCur = ff;
+                        pokeScreen(0x01,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *) "           ");
+                        frameCur = fc;
+                    }
 #endif
 #ifdef _CLIPBRD
                     TTflushClipboard();
@@ -1097,14 +1095,6 @@ TTwaitForChar(void)
             update(meTRUE);
             mlerase(MWCLEXEC);
         }
-#if MEOPT_MWFRAME
-        if(frameFocus != NULL && frameFocus != frameCur)
-        {
-            /* Prompt still active: show [NOT FOCUS] in the OS-focused frame
-             * so the user knows keystrokes are being sent to the prompt. */
-            pokeNotFocus(frameFocus);
-        }
-#endif
         waitForEvent(0);
     }
 }

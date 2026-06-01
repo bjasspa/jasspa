@@ -20,8 +20,8 @@ install_path_check(){
     if [ ! -e "${INSTPATH}" ] ; then
       ERRMSG="\n${2}Error: Installation path \"${INSTPATH}\" not found, please re-install first."
       return 1
-    elif [ ! -e "${INSTPATH}/meinfo" ] ; then
-      ERRMSG="\n${2}Error: Installation found at \"${INSTPATH}\" was not created by the microemacs-install script, please re-install first."
+    elif [ ! -e "${INSTPATH}${INSTRPTH}/meinfo" ] ; then
+      ERRMSG="\n${2}Error: Installation found at \"${INSTPATH}${INSTRPTH}\" was not created by the microemacs-install script, please re-install first."
       return 2
     elif [ ! -w "${INSTPATH}" ] ; then
       ERRMSG="\n${2}Error: Cannot write to install path \"${INSTPATH}\", either change ownership/permissions or rerun with sudo."
@@ -96,7 +96,7 @@ install_path_check(){
   fi
   return $RC
 }
-install_macos_app(){
+install_app(){
   ip=bin_${MEPLATPKG}_app
   echo "Installing: MicroEmacs_${MEVER}_$ip..."
   curl -fsSL -o Jasspa_MicroEmacs_${MEVER}_$ip.zip ${MEURL}/Jasspa_MicroEmacs_${MEVER}_$ip.zip
@@ -272,9 +272,17 @@ elif [ $ISUPDT -ne 0 ] ; then
     inspth=$(readlink "${inspth}")
   fi
   inspth=`cd -- "$(dirname "${inspth}")" >/dev/null 2>&1 ; pwd -P`
+  
   # script should be in a bin directory, remove that then try ${INSTPATH} first and then ${INSTPATH}/share 
   case ${inspth} in
   */bin) inspth=${inspth%"/bin"};;
+  */Contents/MacOS)
+    if [ $PLATFORM = "Darwin" ] ; then
+      inspth=${inspth%"/Contents/MacOS"}
+      INSTRPTH="/Contents/Resources"
+      INSTBPTH="/Contents/MacOS"
+    fi
+    ;;
   esac
   install_path_check "${inspth}" ""
   icerr=$?
@@ -293,8 +301,10 @@ elif [ $ISUPDT -ne 0 ] ; then
       fi
     fi
   fi
-  printf "Jasspa MicroEmacs - Updating \"${INSTPATH}\" to version ${MEVER}\n" | fold -s
-
+  if [ -z "${INSTPKG}" ] ; then
+    printf "Jasspa MicroEmacs - Updating \"${INSTPATH}\" to version ${MEVER}\n" | fold -s
+  fi
+  
 else
 
   # No path given, this is an install - on macOS we need to ask if app or standard
@@ -414,7 +424,7 @@ if [ -z "${INSTPKG}" ] ; then
 
   if [ $ISUPDT -ne 0 ] ; then
   
-    read -r MECRL < ${INSTPATH}/meinfo
+    read -r MECRL < ${INSTPATH}${INSTRPTH}/meinfo
     if [ "${MECRL}" = "${MEVER}" ] ; then
       printf "\nNote: Installation is already version ${MEVER} - nothing to do.\n\n" | fold -s
       exit 0
@@ -422,22 +432,25 @@ if [ -z "${INSTPKG}" ] ; then
   
     echo "Updating Jasspa MicroEmacs installation from v${MECRL} to v${MEVER}"
   
-    echo ${MEVER} > ${INSTPATH}/meinfo.upd
-    skipped1=0    
+    echo ${MEVER} > ${INSTPATH}${INSTRPTH}/meinfo.upd
+    skipped1=0
     while read ln; do
-      if [ $skipped1 -ne 0 ] ; then
+      if [ $skipped1 -eq 0 ] ; then
+        skipped1=1    
+      elif [ "${ln}" = "app" ] ; then
+        install_app ".upd" $ln
+      else
         install_package ".upd" $ln
       fi
-      skipped1=1    
-    done <${INSTPATH}/meinfo
+    done <${INSTPATH}${INSTRPTH}/meinfo
   
-    mv ${INSTPATH}/meinfo.upd ${INSTPATH}/meinfo  
-    curl -fsSL -o ${INSTPATH}/bin/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    mv ${INSTPATH}${INSTRPTH}/meinfo.upd ${INSTPATH}${INSTRPTH}/meinfo  
+    curl -fsSL -o ${INSTPATH}${INSTBPTH}/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       printf "Error: Failed to download latest update script:\n    \"$MEBASEURL/releases/latest/download/microemacs-install\".\n\n" | fold -s
       exit 1
     fi
-    chmod 755 ${INSTPATH}/bin/microemacs-update
+    chmod 755 ${INSTPATH}${INSTBPTH}/microemacs-update
     printf "Update to ${MEVER} complete.\n\n"
   
   else
@@ -451,7 +464,7 @@ if [ -z "${INSTPKG}" ] ; then
   
     #install the core
     if [ "${INSTTYPE}" = "App " ] ; then
-      install_macos_app ""
+      install_app ""
     else
       echo ${MEVER} > ${INSTPATH}${INSTRPTH}/meinfo
       install_package "" binaries
