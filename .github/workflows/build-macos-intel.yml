@@ -79,6 +79,11 @@ jobs:
           ../bin/macos15-intel64/mec -p "@./mesgen" -f -p ../bin/macos15-intel64/mew -t ../bin/macos15-intel64/tfs -o bin/macos15-intel64/mesw
           zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_intel_mesw bin LICENSE readme.txt
 
+      - name: Compile macos-intel MicroEmacs.app
+        run: |
+          cd ./microemacs/src
+          ./build.sh -t nw -a intel
+
       - name: Create macos-intel OpenSSL download
         run: |
           cd ./microemacs/
