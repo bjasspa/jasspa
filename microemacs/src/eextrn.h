@@ -726,9 +726,7 @@ extern	int	resterr(void);
 extern	int	prefixFunc(int f, int n);
 extern	int	uniArgument(int f, int n);
 extern  void    mesetup(int argc, char *argv[]);
-#if (defined _UNIX) || (defined _WIN32)
 extern  int     meDie(void);
-#endif
 extern  void    autoSaveHandler(void);
 #if MEOPT_EXTENDED
 extern	int     commandWait(int f, int n);

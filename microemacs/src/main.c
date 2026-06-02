@@ -1103,19 +1103,16 @@ sigchild(SIGNAL_PROTOTYPE)
 }
 #endif
 
-#if (defined _UNIX) || (defined _WIN32)
 int
 meDie(void)
 {
-    /* To get here we have received a signal and am about to die! Ensure that
-     * we are in a DIE state to prevent any output on the display which is
-     * being torn down. Our main purpose is to preserve the session
-     * information and history. */
+    /* To get here we have a serious internal error or received a signal and am about to die!
+     * Ensure that we are in a DIE state to prevent any output on the display which is being torn
+     * down. Our main purpose is to preserve the session information and history. */
     alarmState = meALARM_DIE;
     
     return exitEmacs(1,0x28);
 }
-#endif
 
 void
 autoSaveHandler(void)
