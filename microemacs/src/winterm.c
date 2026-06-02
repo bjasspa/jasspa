@@ -4440,21 +4440,6 @@ TTwaitForChar(void)
          * before we wait for the next message */
         handleTimerExpired();
         
-#if MEOPT_MWFRAME
-        /* if the user has changed the window focus using the OS
-         * but ME can swap to this frame because there is an active frame
-         * then give a warning */
-        if((frameFocus != NULL) && (frameFocus != frameCur))
-        {
-            meUByte scheme=(globScheme/meSCHEME_STYLES);
-            meFrame *fc=frameCur;
-            frameCur = frameFocus;
-            pokeScreen(0x12,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
-            frameCur = fc;
-            UpdateWindow(meFrameGetWinHandle(frameFocus));
-        }
-#endif
-        
         if(sgarbf == meTRUE)
         {
             update(meFALSE);
@@ -5821,7 +5806,15 @@ meFrameGainFocus(meFrame *frame)
         frame->flags &= ~meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
         if(frameCur != frame)
+        {
+            meUByte scheme=(globScheme/meSCHEME_STYLES);
+            meFrame *fc=frameCur;
             frameFocus = frame;
+            frameCur = frame;
+            pokeScreen(0x13,frame->depth,(frame->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
+            frameCur = fc;
+            UpdateWindow(meFrameGetWinHandle(frame));
+        }
 #endif
         
         /* Mark the screen as invalid */
@@ -5853,7 +5846,7 @@ meFrameKillFocus(meFrame *frame)
             meFrame *fc=frameCur;
             frameFocus = NULL;
             frameCur = frame;
-            pokeScreen(0x02,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+            pokeScreen(0x03,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
             frameCur = fc;
             UpdateWindow(meFrameGetWinHandle(frame));
         }
