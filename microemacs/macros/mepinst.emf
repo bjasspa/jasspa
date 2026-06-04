@@ -10,14 +10,22 @@
 ;
 0 define-macro me-pinstall-comp
   set-variable $file-names &spr "tfs://%s?%s" &set #l1 @1 &set #l2 @2
-  !iif &seq $file-names ""  !return
+  !iif &seq &set #l4 $file-names ""  !return
   !if &len &set #l3 @3
-    set-variable #l0 &spr "%s%s%s" &set #l9 &con &band $system 0x200 ";" ":" $search-path #l9
-    set-variable #l4 0
-    !while &len &set #l5 &lget #l0 &inc #l4 1
-      !iif &not &seq &rig #l5 -1 "/"  set-variable #l5 &cat #l5 "/"
-      !iif &xseq #l5 &spr ".*/%s/" #l3  !break
-    !done
+    !if &seq #l3 "bin"
+      set-variable #l5 &lget $build 1
+      !while &not &seq #l5 &lef #l4 &len #l5
+      !until &seq &set #l4 $file-names ""
+      !iif &len #l4  set-variable #l2 &spr "/bin/%s.*" #l4
+      set-variable #l5 &lef $progname &rsin "/" $progname
+    !else
+      set-variable #l0 &spr "%s%s%s" &set #l9 &con &band $system 0x200 ";" ":" $search-path #l9
+      set-variable #l4 0
+      !while &len &set #l5 &lget #l0 &inc #l4 1
+        !iif &not &seq &rig #l5 -1 "/"  set-variable #l5 &cat #l5 "/"
+        !iif &xseq #l5 &spr ".*/%s/" #l3  !break
+      !done
+    !endif
     !if &len #l5
       ; found a directory of the right type, attempt to extract
       !force 0xf7 copy-file &spr "tfs://%s?%s" #l1 #l2 &stat a &cat "file:" #l5
@@ -162,7 +170,9 @@ define-macro check-for-updates
   !elif &gre $version @wl
     insert-string "\nWarning: Current release is "
     end-of-line
-    insert-string ", you appear to be usings a newer version/build."
+    insert-string ", you appear to be usings a newer build ("
+    insert-string $version
+    insert-string ")."
   !else
     insert-string "\nLatest release is "
     end-of-line
