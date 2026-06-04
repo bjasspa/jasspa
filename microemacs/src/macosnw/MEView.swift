@@ -707,11 +707,13 @@ final class MEView: NSView {
                 let ch = textPtr[col]
                 let sc = schemePtr[col]
                 let st = stPtr[Int(sc) & 0x0fff]
+                // meSCHEME_NOFONT (0x1000) suppresses font styling (bold/italic/underline)
+                // for trailing spaces and other positions where ME strips font attributes.
                 cells[rowBase + col] = Cell(
                     char8:  ch,
                     fg:     UInt8(st & 0xff),
                     bg:     UInt8((st >> 8) & 0xff),
-                    attrs:  UInt8((st >> 16) & 0xff));
+                    attrs:  (sc & 0x1000) != 0 ? 0 : UInt8((st >> 16) & 0xff));
             }
 
             let cellMinY = CGFloat((rows - 1 - row) * MEView.cellH)
