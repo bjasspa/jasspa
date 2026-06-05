@@ -88,13 +88,13 @@ jobs:
           ./bin/linux5-intel64/tfs ../packages/Jasspa_MicroEmacs_${MEVER}_openssl_linux5_intel64.tfs tfs
 
       - name: Upload linux5-intel downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: linux5-intel-downloads
           path: downloads
           
       - name: Upload linux5-intel packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: linux5-intel-packages
           path: packages

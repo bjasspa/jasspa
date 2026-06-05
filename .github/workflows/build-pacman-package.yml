@@ -59,7 +59,7 @@ jobs:
             mesc -V
 
       - name: Upload Windows Msys 2 downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: microemacs-${{ env.VRS }}-1-x86_64.pkg.tar.zst
           path: microemacs/packages/msys2/microemacs-package/microemacs-${{ env.VRS }}-1-x86_64.pkg.tar.zst

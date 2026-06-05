@@ -52,13 +52,13 @@ jobs:
           done
 
       - name: Upload spelling downloads
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: spelling-downloads
           path: downloads
           
       - name: Upload spelling packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: spelling-packages
           path: packages
