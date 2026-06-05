@@ -529,7 +529,10 @@ set-variable .user-set-mouse.A ""
         set-position "\x82"
         !force 0 delete-buffer "*xftl-tmp*"
         !force 66 pipe-shell-command &cat "fc-list :spacing=100:lang=" &lef &cat &con &exi .spell.language .spell.language "" "en" 2 "*xftl-tmp*"
-        !if &set #l1 &not $result
+        !if &set #l1 $result
+          osd-dialog "User Setup Error" &spr "  Failed to run fc-lst, system returned error (%d).  " #l1 "  \HOK  "
+          set-variable #l1 0
+        !else
           find-buffer "*xftl-tmp*"
           -1 buffer-mode "view"
           beginning-of-buffer

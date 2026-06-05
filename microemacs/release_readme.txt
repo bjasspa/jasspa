@@ -25,7 +25,8 @@ For your platform download the single-file binary zip file:
 Extract the executable from the zip and run.
 
 The console/terminal version should work on all computers of the given platform, whereas the GUI version may not work
-on all computers (particularly macOS where XQuartz is required) but will give the best user experience.
+on all computers (particularly macOS where XQuartz is required - see next section for details of a native GUI version)
+but will give the best user experience.
 
 This is a truly portable version, it will not alter/add to your environment or registry and will only create/edit
 files you explicitly ask it to. So this version is ideal for trying MicroEmacs without affecting your computer.
@@ -45,6 +46,9 @@ INSTALLERS
   Or download the script first and run locally, note that this will always install the latest release. If the script
   encounters issues during the installation processes, typically insufficient permissions, please follow the
   instructions given.
+
+  Note: MicroEmacs supports a native MacOS GUI version, i.e. it does not require X11, the installer will first prompt
+  you for which type of MicroEmacs you wish to install. 
 
 - Windows: All Windows platforms can use the microemacs-install.ps1 PowerShell script, run the following in a PowerShell:
 

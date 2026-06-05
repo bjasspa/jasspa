@@ -155,7 +155,8 @@ install_package(){
 
 # First work out the platform and if this is an upgrade
 PLATFORM=`uname`
-if [ $PLATFORM = "Darwin" ] ; then
+case "$PLATFORM" in
+Darwin)
   VERSION=`uname -r | cut -f 1 -d .`
   if [ $VERSION -gt 15 ] ; then
     if [ `uname -p` = "i386" ] ; then
@@ -165,21 +166,25 @@ if [ $PLATFORM = "Darwin" ] ; then
       MEPLATPKG=macos_apple
       MEPLATMSK=macos*-apple64
     fi
-  fi
-elif [ $PLATFORM = "Linux" ] ; then
+  fi;;
+Linux)
   if [ `uname -m` = "x86_64" ] ; then
     if [ `uname -r | grep -Eo "^[0-9]"` = "5" ]; then
-       MEPLATPKG=linux5_intel
-       MEPLATMSK=linux*-intel64
+      MEPLATPKG=linux5_intel
+      MEPLATMSK=linux*-intel64
     else
-        MEPLATPKG=linux_intel
-        MEPLATMSK=linux*-intel64
+      MEPLATPKG=linux_intel
+      MEPLATMSK=linux*-intel64
     fi
   else
     MEPLATPKG=linux_aarch
     MEPLATMSK=linux*-aarch64
-  fi
-fi
+  fi;;
+CYGWIN_NT*)
+  MEPLATPKG=cygwin_intel
+  MEPLATMSK=cygwin*-intel64
+  ;;
+esac
 if [ -z "$MEPLATPKG" ] ; then
   echo "Error: Platform '${PLATFORM}' is not currently supported - please request suport."
   exit 1
@@ -445,12 +450,13 @@ if [ -z "${INSTPKG}" ] ; then
     done <${INSTPATH}${INSTRPTH}/meinfo
   
     mv ${INSTPATH}${INSTRPTH}/meinfo.upd ${INSTPATH}${INSTRPTH}/meinfo  
-    curl -fsSL -o ${INSTPATH}${INSTBPTH}/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    curl -fsSL -o microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       printf "Error: Failed to download latest update script:\n    \"$MEBASEURL/releases/latest/download/microemacs-install\".\n\n" | fold -s
       exit 1
     fi
-    chmod 755 ${INSTPATH}${INSTBPTH}/microemacs-update
+    chmod 755 microemacs-update
+    mv microemacs-update ${INSTPATH}${INSTBPTH}/microemacs-update
     printf "Update to ${MEVER} complete.\n\n"
   
   else
@@ -471,12 +477,13 @@ if [ -z "${INSTPKG}" ] ; then
     fi
     install_package "" macros
     install_package "" help_ehf
-    curl -fsSL -o ${INSTPATH}${INSTBPTH}/microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
+    curl -fsSL -o microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."
       exit 1
     fi
-    chmod 755 ${INSTPATH}${INSTBPTH}/microemacs-update
+    chmod 755 microemacs-update
+    mv microemacs-update ${INSTPATH}${INSTBPTH}/microemacs-update
   
     if [ "${INSTTYPE}" = "App " ] ; then
         echo "Installation complete."
@@ -504,7 +511,7 @@ if [ -z "${INSTPKG}" ] ; then
         fi
       fi
       
-      if [ $PLATFORM != "Darwin" ] ; then
+      if [ $PLATFORM == "Linux" ] ; then
         while true; do
           read -p "Create Application launcher for mew ? (y/n) " rin
           case $rin in 

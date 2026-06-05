@@ -24,12 +24,13 @@ For your platform download the single-file binary zip file:
 | MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_macos_intel_mesw.zip)   |
 | Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesw.zip) |
 | Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesw.zip)   |
+| Cygwin intel  | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_cygwin_intel_mesc.zip)  | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_cygwin_intel_mesw.zip)  |
 | **Legacy platforms**  | **Console/Terminal** | **GUI (X11 on Linux/Mac)** |
 | Linux intel v5 kernel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux5_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux5_intel_mesw.zip)   |
 
 Extract the executable from the zip and run.
 
-The console/terminal version should work on all computers of the given platform, whereas the GUI version may not work on all computers (particularly macOS where XQuartz is required) but will give the best user experience.
+The console/terminal version should work on all computers of the given platform, whereas the GUI version may not work on all computers (particularly macOS where XQuartz is required - see next section for details of a native GUI version) but will give the best user experience.
 
 This is a truly portable version, it will not alter/add to your environment or registry and will only create/edit files you explicitly ask it to. So this version is ideal for trying MicroEmacs without affecting your computer.
 
@@ -43,6 +44,8 @@ For a more complete experience execute command **init-session**, this creates a 
       /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
     
   Or download the script first and run locally, note that this will always install the latest release. If the script encounters issues during the installation processes, typically insufficient permissions, please follow the instructions given.
+  
+  Note: MicroEmacs supports a native MacOS GUI version, i.e. does not require X11, the installer will first prompt for which type of MicroEmacs you wish to install. 
 
 - **Windows:** All Windows platforms can use the [microemacs-install.ps1](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install.ps1) PowerShell script, run the following in a PowerShell:
 
