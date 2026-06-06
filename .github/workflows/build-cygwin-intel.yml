@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    name: Build on ${{ runner.os }} ${{ runner.arch }}
+    name: Build Cygwin on windows-latest intel
 
     steps:
     - name: Find VS
