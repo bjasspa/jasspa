@@ -69,8 +69,6 @@ jobs:
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
       run: |
         cd /cygdrive/d/a/jasspa/jasspa
-        mkdir downloads
-        mkdir packages
         cd ./microemacs/src
         ./build.sh -t c
 
@@ -81,18 +79,6 @@ jobs:
         cd ./microemacs/src
         ./build.sh -t w
 
-    - name: Create cygwin-intel binaries download
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'        
-      run: |
-        cd /cygdrive/d/a/jasspa/jasspa
-        cd ./microemacs/bin
-        mv cygwin3-intel64-gcc13 cygwin3-intel64
-        rm ./.gitignore
-        cd ..
-        mv release_readme.txt readme.txt
-        export MEVER=`./bin/cygwin3-intel64/mec -p @contribs/ver.emf`
-        zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_cygwin_intel_binaries bin LICENSE readme.txt
-
     - name: Compile windows-intel mec
       shell: pwsh
       run: |
@@ -101,15 +87,29 @@ jobs:
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
         nmake -f winmsvc.mak BTYP=c
 
+    - name: Create cygwin-intel binaries download
+      shell: pwsh
+      run: |
+        mkdir -Path downloads
+        mkdir -Path packages
+        cd .\microemacs\bin
+        Remove-Item .gitignore
+        Rename-Item -Path cygwin3-intel64-gcc13 -NewName cygwin3-intel64
+        Move-Item -Path windows100-intel32-msvc17 -NewName ..\windows100-intel32
+        cd ..
+        Rename-Item -Path release_readme.txt -NewName readme.txt
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_cygwin_intel_binaries
+
     - name: Create cygwin-intel mesc
       shell: pwsh
       run: |
         cd /cygdrive/d/a/jasspa/jasspa
         cd .\microemacs
-        $env:MEVER=$(.\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
         mkdir -Path bin\cygwin-intel64
-        ..\bin\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mec.exe -t ..\bin\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesc.exe
+        ..\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mec.exe -t ..\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesc.exe
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
@@ -119,10 +119,10 @@ jobs:
       run: |
         cd /cygdrive/d/a/jasspa/jasspa
         cd .\microemacs
-        $env:MEVER=$(.\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
         Remove-Item bin\cygwin-intel64\mesc.exe
-        ..\bin\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mew.exe -t ..\bin\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesw.exe
+        ..\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mew.exe -t ..\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesw.exe
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
