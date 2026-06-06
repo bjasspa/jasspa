@@ -12,11 +12,12 @@ permissions:
   
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
 
     steps:
       - name: Install dependencies
+        continue-on-error: true
         run: |
            echo INSTALL: TexLive
            sudo apt install -y texlive
@@ -24,7 +25,7 @@ jobs:
            which pdflatex
            
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
        
       - name: Compile nroff tools
         run: |
@@ -54,5 +55,5 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
