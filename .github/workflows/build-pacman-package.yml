@@ -15,7 +15,7 @@ jobs:
             shell: msys2 {0}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
        
       - name: Msys setup
         uses: msys2/setup-msys2@v2

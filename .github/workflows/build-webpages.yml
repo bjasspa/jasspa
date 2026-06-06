@@ -25,7 +25,7 @@ jobs:
            which pdflatex
            
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
        
       - name: Compile nroff tools
         run: |
@@ -55,5 +55,5 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
