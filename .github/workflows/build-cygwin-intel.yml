@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on ${{ runner.os }} ${{ runner.arch }}
 
     steps:
     - name: Find VS
@@ -49,7 +49,6 @@ jobs:
           zip 
           unzip
         install-dir: C:\cygwin
-        platform: ${{ matrix.arch }}
 
     - name: Checkout code
       uses: actions/checkout@v6
