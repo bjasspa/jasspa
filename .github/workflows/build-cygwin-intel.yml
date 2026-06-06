@@ -2,13 +2,24 @@ name: Build windows cygwin intel 64 (cygwin-latest)
 
 on:
   workflow_dispatch:
-    branches: [ master ]
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
+
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        arch: [x86_64]    
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
     steps:
     - name: Find VS
       shell: pwsh
@@ -19,6 +30,7 @@ jobs:
         Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
+
     - name: Install Cygwin
       uses: cygwin/cygwin-install-action@v6
       with:
@@ -38,6 +50,12 @@ jobs:
           unzip
         install-dir: C:\cygwin
         platform: ${{ matrix.arch }}
+
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.refToBuild }}
+       
     - name: Modify PATH
       run: |
         echo "C:\cygwin\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -48,26 +66,9 @@ jobs:
         echo $PATH
         which bash
         bash --version
-
-    - name: Run your commands
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
-      run: |
-        # Your Cygwin commands here
         cygcheck -c
         make --version
         gcc --version
-        
-    - name: Install apt-cyg
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
-      run: |
-        wget https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
-        install apt-cyg /bin
-        chmod +x /bin/apt-cyg
-        apt-cyg install nano
-        
-    - name: Verify Python Installation
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
-      run: |
         python3 --version
         which python3
 
@@ -81,32 +82,25 @@ jobs:
         echo "CYGWIN_MACHINE=$CYGWIN_MACHINE" >> $GITHUB_ENV
         echo "Cygwin Machine: $CYGWIN_MACHINE"
 
-    - name: Clone MicroEmacs
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
-      run: |
-        mkdir workspace
-        cd workspace
-        git clone https://github.com/bjasspa/jasspa.git
-        echo `pwd`
-        cd ./jasspa/
-        mkdir downloads
     - name: Compile cygwin-intel mec
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
       run: |
         echo `pwd`
-        cd ./workspace/jasspa/microemacs/src
+        mkdir downloads
+        mkdir packages
+        cd ./microemacs/src
         ./build.sh -t c
+
     - name: Compile cygwin-intel mew
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
       run: |
-        echo `pwd`
-        cd ./workspace/jasspa/microemacs/src
+        cd ./microemacs/src
         ./build.sh -t w
+
     - name: Create cygwin-intel binaries download
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'        
       run: |
-        echo `pwd`
-        cd ./workspace/jasspa/microemacs/bin
+        cd ./microemacs/bin
         mv cygwin3-intel64-gcc13 cygwin3-intel64
         rm ./.gitignore
         cd ..
@@ -114,14 +108,6 @@ jobs:
         export MEVER=`./bin/cygwin3-intel64/mec -p @contribs/ver.emf`
         zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_cygwin_intel_binaries bin LICENSE readme.txt
 
-    - name: Download pre-built OpenSSL
-      shell: pwsh
-      run: |
-        cd c:\cygwin\home\runneradmin\workspace\jasspa\microemacs\3rdparty
-        Invoke-WebRequest https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-3.5.6.zip -OutFile openssl.zip
-        Expand-Archive -Path .\openssl.zip -DestinationPath openssl-3.5
-        dir .\openssl-3.5
-          
     - name: Compile windows-intel mec
       shell: pwsh
       run: |
@@ -129,7 +115,7 @@ jobs:
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
         nmake -f winmsvc.mak BTYP=c
-      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/microemacs/src
+      working-directory: c:/cygwin/home/runneradmin/microemacs/src
 
     - name: Create cygwin-intel mesc
       shell: pwsh
@@ -142,7 +128,7 @@ jobs:
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
-      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/
+      working-directory: c:/cygwin/home/runneradmin/
 
     - name: Create cygwin-intel mesw
       shell: pwsh
@@ -155,11 +141,11 @@ jobs:
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
-      working-directory: c:/cygwin/home/runneradmin/workspace/jasspa/
+      working-directory: c:/cygwin/home/runneradmin/
 
     - name: Upload cygwin-intel downloads
       uses: actions/upload-artifact@v6
       with: 
         name: cygwin-intel-downloads
-        path: c:\cygwin\home\runneradmin\workspace\jasspa\downloads
+        path: c:\cygwin\home\runneradmin\downloads
 
