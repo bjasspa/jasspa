@@ -96,7 +96,8 @@ jobs:
         cd .\microemacs\bin
         Remove-Item .gitignore
         Rename-Item -Path cygwin3-intel64-gcc13 -NewName cygwin3-intel64
-        Move-Item -Path windows100-intel32-msvc17 -NewName ..\windows100-intel32
+        Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
+        Move-Item -Path windows100-intel32 -Destination ..
         cd ..
         Rename-Item -Path release_readme.txt -NewName readme.txt
         $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
