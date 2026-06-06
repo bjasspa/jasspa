@@ -86,6 +86,7 @@ jobs:
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
         nmake -f winmsvc.mak BTYP=c
+      working-directory: ./microemacs/src
 
     - name: Create cygwin-intel binaries download
       shell: pwsh
