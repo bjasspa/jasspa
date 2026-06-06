@@ -106,7 +106,6 @@ jobs:
     - name: Create cygwin-intel mesc
       shell: pwsh
       run: |
-        cd /cygdrive/d/a/jasspa/jasspa
         cd .\microemacs
         $env:MEVER=$(.\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
@@ -119,7 +118,6 @@ jobs:
     - name: Create cygwin-intel mesw
       shell: pwsh
       run: |
-        cd /cygdrive/d/a/jasspa/jasspa
         cd .\microemacs
         $env:MEVER=$(.\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
