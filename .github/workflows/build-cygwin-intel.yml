@@ -107,10 +107,10 @@ jobs:
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
         cd .\mesingle
         mkdir -Path bin\cygwin-intel64
-        ..\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mec.exe -t ..\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesc.exe
+        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mec.exe -t ..\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesc.exe
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
@@ -119,10 +119,10 @@ jobs:
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
         cd .\mesingle
         Remove-Item bin\cygwin-intel64\mesc.exe
-        ..\windows100-intel32-msvc17\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mew.exe -t ..\windows100-intel32-msvc17\tfs.exe -o bin\cygwin-intel64\mesw.exe
+        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mew.exe -t ..\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesw.exe
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
