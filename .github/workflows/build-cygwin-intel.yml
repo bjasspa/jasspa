@@ -51,6 +51,12 @@ jobs:
     - name: Verify Cygwin installation
       shell: D:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
       run: |
+        CYGWIN_VER=$(uname -r | grep -oE '^[0-9]\.[0-9]+')
+        echo "CYGWIN_VER=$CYGWIN_VER" >> $GITHUB_ENV
+        echo "Cygwin version: $CYGWIN_VER"
+        CYGWIN_MACHINE=$(uname -m)
+        echo "CYGWIN_MACHINE=$CYGWIN_MACHINE" >> $GITHUB_ENV
+        echo "Cygwin Machine: $CYGWIN_MACHINE"
         echo `pwd`
         echo $PATH
         which bash
@@ -59,20 +65,10 @@ jobs:
         make --version
         gcc --version
 
-    - name: Capture Cygwin Version
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
-      run: |
-        CYGWIN_VER=$(uname -r | grep -oE '^[0-9]\.[0-9]+')
-        echo "CYGWIN_VER=$CYGWIN_VER" >> $GITHUB_ENV
-        echo "Cygwin version: $CYGWIN_VER"
-        CYGWIN_MACHINE=$(uname -m)
-        echo "CYGWIN_MACHINE=$CYGWIN_MACHINE" >> $GITHUB_ENV
-        echo "Cygwin Machine: $CYGWIN_MACHINE"
-
     - name: Compile cygwin-intel mec
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
       run: |
-        echo `pwd`
+        cd /cygdrive/d/a/jasspa/jasspa
         mkdir downloads
         mkdir packages
         cd ./microemacs/src
@@ -81,12 +77,14 @@ jobs:
     - name: Compile cygwin-intel mew
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
       run: |
+        cd /cygdrive/d/a/jasspa/jasspa
         cd ./microemacs/src
         ./build.sh -t w
 
     - name: Create cygwin-intel binaries download
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'        
       run: |
+        cd /cygdrive/d/a/jasspa/jasspa
         cd ./microemacs/bin
         mv cygwin3-intel64-gcc13 cygwin3-intel64
         rm ./.gitignore
@@ -102,11 +100,11 @@ jobs:
           | % { , ($_ -Split '=', 2) } `
           | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
         nmake -f winmsvc.mak BTYP=c
-      working-directory: c:/cygwin/home/runneradmin/microemacs/src
 
     - name: Create cygwin-intel mesc
       shell: pwsh
       run: |
+        cd /cygdrive/d/a/jasspa/jasspa
         cd .\microemacs
         $env:MEVER=$(.\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
@@ -115,11 +113,11 @@ jobs:
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
-      working-directory: c:/cygwin/home/runneradmin/
 
     - name: Create cygwin-intel mesw
       shell: pwsh
       run: |
+        cd /cygdrive/d/a/jasspa/jasspa
         cd .\microemacs
         $env:MEVER=$(.\bin\windows100-intel32-msvc17\mec -p @contribs/ver.emf)
         cd .\mesingle
@@ -128,11 +126,10 @@ jobs:
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
-      working-directory: c:/cygwin/home/runneradmin/
 
     - name: Upload cygwin-intel downloads
       uses: actions/upload-artifact@v6
       with: 
         name: cygwin-intel-downloads
-        path: c:\cygwin\home\runneradmin\downloads
+        path: downloads
 
