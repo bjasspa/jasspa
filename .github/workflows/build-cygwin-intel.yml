@@ -31,45 +31,33 @@ jobs:
           | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
         cat "${Env:GITHUB_ENV}"
 
-    - name: Install Cygwin
-      uses: cygwin/cygwin-install-action@v6
-      with:
-        packages: |
-          git
-          bash 
-          make 
-          gcc-core 
-          wget 
-          zlib-devel 
-          libncurses-devel 
-          libXt-devel
-          libXft-devel
-          libXpm-devel
-          libssl-devel 
-          zip 
-          unzip
-        install-dir: C:\cygwin
-
     - name: Checkout code
       uses: actions/checkout@v6
       with:
         ref: ${{ inputs.refToBuild }}
        
-    - name: Modify PATH
-      run: |
-        echo "C:\cygwin\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        
+    - name: Install Cygwin
+      uses: cygwin/cygwin-install-action@v6
+      with:
+        packages: |
+          make 
+          gcc-core 
+          libncurses-devel 
+          libXt-devel
+          libXft-devel
+          libXpm-devel
+          libssl-devel 
+
     - name: Verify Cygwin installation
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+      shell: D:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
       run: |
+        echo `pwd`
         echo $PATH
         which bash
         bash --version
         cygcheck -c
         make --version
         gcc --version
-        python3 --version
-        which python3
 
     - name: Capture Cygwin Version
       shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
