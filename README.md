@@ -21,6 +21,8 @@
 ![MacOS (intel)](https://github.com/bjasspa/jasspa/workflows/Build%20macos%20intel%2064%20(macos-15)/badge.svg)
 ![MacOS (apple)](https://github.com/bjasspa/jasspa/workflows/Build%20macos%20apple%2064%20(macos-latest)/badge.svg)
 
+![Windows Cygwin intel](https://github.com/bjasspa/jasspa/workflows/Build%20windows%20cygwin%20intel%2064%20(cygwin-latest)/badge.svg)
+
 MicroEmacs  text editor is an Emacs like text editor  suitable for 
 experienced programmers and as well beginners.
 
