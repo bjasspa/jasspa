@@ -12,8 +12,6 @@
  *
  * Synopsis:
  *   Implements the ME terminal interface for a native macOS NSWindow.
- *   All rendering and input is delegated through MENativeCallbacks, a vtable
- *   filled in by MEView.swift at startup.
  *
  *   Build flags required:
  *     -D_MACOS -D_UNIX -D_POSIX_SIGNALS -D_ME_WINDOW -D_ME_NATIVE -D_MOUSE
@@ -127,23 +125,6 @@ MESKeyTable meSKeys = {
 };
 
 meUByte meColorTable[ME_MAX_COLORS*3];
-
-/* Resolved cursor colour index - updated by TTshowCur, read by Swift. */
-meUByte meCursorColor = 0;
-
-/* Background palette index for the global scheme - updated by TTsetBgcol,
- * read by Swift to initialise blank cells and set the layer background. */
-meUByte meNWBgColor = 0;
-
-/* Palette-dirty flag - set by TTaddColor, cleared by Swift in cFlushDraw. */
-int meNWColorsDirty = 0;
-
-/* =========================================================================
- * Private state
- * ====================================================================== */
-
-static MENativeCallbacks gCbs;
-static int               gCbsReady = 0;
 
 /* ---- Thread-safe input queue -------------------------------------------
  * Swift event thread writes; ME engine thread reads.
@@ -301,25 +282,14 @@ drainQueue(void)
 #define ME_MAX_WAIT_MS 50
 
 /* =========================================================================
- * Public C API called from Swift  (all declared in macosterm.h)
- * ====================================================================== */
-
-void
-meNativeSetCallbacks(const MENativeCallbacks *cbs)
-{
-    gCbs      = *cbs;
-    gCbsReady = 1;
-}
-
-/* =========================================================================
- * Frame-store accessors - called from Swift inside meNativeFlushDirtyView
+ * Frame-store accessors - called from Swift inside meNativeViewFlush
  * while the ME engine thread is blocked on DispatchQueue.main.sync.
  * ====================================================================== */
 
 const uint8_t *
 meNativeGetRowText(int row)
 {
-    return ((row >= 0) && (row <= (int)frameCur->depth)) ? frameCur->store[row].text:NULL;
+    return ((row >= 0) && (row <= (int) frameCur->depth)) ? frameCur->store[row].text:NULL;
 }
 
 const uint16_t *
@@ -332,6 +302,21 @@ int
 meNativeGetFrameCols(void)
 {
     return frameCur->width;
+}
+
+uint8_t
+meNativeGetCursorColor(void *viewPtr)
+{
+    meFrame *ff;
+    if((ff=frameCur)->termData != viewPtr)
+    {
+        ff = frameList;
+        while((ff != NULL) && (ff->termData != viewPtr))
+            ff = ff->next;
+        if(ff == NULL)
+            ff=frameCur;
+    }
+    return (cursorColor[meModeTest(ff->windowCur->buffer->mode, MDOVER) ? 1 : 0]);
 }
 
 const uint32_t *
@@ -986,7 +971,7 @@ TTwaitForChar(void)
                         meFrameChangeWidth(resizeFrame,cols);
                     if(rows != resizeFrame->depth + 1)
                         meFrameChangeDepth(resizeFrame,rows);
-                    meNativeSetViewWindowSize(resizeFrame->termData, cols, rows);
+                    meNativeViewSetWindowSize(resizeFrame->termData,resizeFrame->width,resizeFrame->depth+1);
                     if(resizeFrame == frameCur && !screenUpdateDisabledCount)
                         screenUpdate(meTRUE,2 - sgarbf);
                     break;
@@ -1017,6 +1002,7 @@ TTwaitForChar(void)
                             meFrame *fc=frameCur;
                             frameFocus = ff;
                             frameCur = ff;
+                            // TODO this leads to a flash of [NOT FOCUS] when swapping windows even when ml not in use
                             pokeScreen(0x11,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *)"[NOT FOCUS]");
                             frameCur = fc;
                         }
@@ -1142,7 +1128,7 @@ TTsleep(int msec, int intable, meVariable **waitVarList)
 void
 TTsetBgcol(void)
 {
-    meNWBgColor = (meUByte) meStyleGetBColor(meSchemeGetStyle(globScheme));
+    meNativeSetBgColor((meUByte) meStyleGetBColor(meSchemeGetStyle(globScheme)));
 }
 
 int
@@ -1157,10 +1143,15 @@ TTaddColor(meColor index, meUByte r, meUByte g, meUByte b)
     meColorTable[ii] = b;
     if (noColors <= (int)index)
         noColors = (int)index + 1;
-    meNWColorsDirty = 1;
+    meNativeColorTableChanged();
     return meTRUE;
 }
 
+void
+TTcharsetChanged(void)
+{
+    meNativeCharsetChanged();
+}
 
 void
 meFrameRepositionWindow(meFrame *frame, int resize)
@@ -1208,39 +1199,33 @@ meFrameTermMakeCur(meFrame *frame)
 void
 meFrameShowCursor(meFrame *frame)
 {
-    if (gCbsReady && gCbs.setCursor) {
-        meCursorColor = cursorColor[meModeTest(frame->windowCur->buffer->mode, MDOVER) ? 1 : 0];
-        gCbs.setCursor(frame->termData,frame->cursorColumn,frame->cursorRow);
-    }
+    meNativeViewSetCursor(frame->termData,frame->cursorColumn,frame->cursorRow);
 }
 
 void
 meFrameHideCursor(meFrame *frame)
 {
-    if (gCbsReady && gCbs.hideCursor)
-        gCbs.hideCursor(frame->termData);
+    meNativeViewHideCursor(frame->termData);
 }
 
 /* =========================================================================
  * Miscellaneous terminal functions
  * ====================================================================== */
 
-void TTflush(void)
+void
+TTflush(void)
 {
     if (gDirtyRowMax < 0)
         return;
-    meNativeFlushDirtyView(frameCur->termData,
-                           gDirtyRowMin, gDirtyRowMax,
-                           gDirtyColStart, gDirtyColEnd,
-                           meNWColorsDirty, meNWBgColor);
-    meNWColorsDirty = 0;
+    meNativeViewFlush(frameCur->termData,gDirtyRowMin,gDirtyRowMax,
+                      gDirtyColStart,gDirtyColEnd);
     clearDirty();
 }
 
-void TTNbell(void)
+void
+TTNbell(void)
 {
-    if (gCbsReady && gCbs.bell)
-        gCbs.bell();
+    meNativeBell();
 }
 
 /* meFrameSetWindowSize - called when $frame-width or $frame-depth is set
@@ -1249,16 +1234,7 @@ void TTNbell(void)
 void
 meFrameSetWindowSize(meFrame *frame)
 {
-    if (!gCbsReady || !gCbs.setWindowSize)
-        return;
-    gCbs.setWindowSize(frame,frame->width,frame->depth + 1);
-}
-
-void
-meFrameXTermSetScheme(meFrame *frame, meScheme scheme)
-{
-    (void)frame;
-    (void)scheme;
+    meNativeViewSetWindowSize(frame->termData,frame->width,frame->depth + 1);
 }
 
 /* Dirty-region rectangle - accumulated by TTaddArea, consumed by TTapplyArea */
@@ -1271,7 +1247,7 @@ TTapplyArea(void)
     if (ttRect.bottom <= ttRect.top || !frameCur)
         return;
     for (r = ttRect.top; r < ttRect.bottom; r++)
-        meNativeMarkDirty(r, 0, frameCur->width);
+        meNativeMarkDirty(r,0,frameCur->width);
 }
 
 void
@@ -1283,23 +1259,20 @@ TTputs(int row, int col, int len)
 void
 meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 {
-    if (gCbsReady && gCbs.setTitle)
-    {
-        char buf[meBUF_SIZE_MAX];
-        
+    char buf[meBUF_SIZE_MAX];
+    
 #if MEOPT_EXTENDED
-        if(frameTitle != NULL)
-            meStrcpy(buf,frameTitle);
-        else
+    if(frameTitle != NULL)
+        meStrcpy(buf,frameTitle);
+    else
 #endif
-            meStrcpy(buf,ME_FULLNAME);
-        if(str != NULL)
-        {
-            meStrcat(buf,": ");
-            meStrcat(buf,str);
-        }
-        gCbs.setTitle(frame->termData,(const char *) buf);
+        meStrcpy(buf,ME_FULLNAME);
+    if(str != NULL)
+    {
+        meStrcat(buf,": ");
+        meStrcat(buf,str);
     }
+    meNativeViewSetTitle(frame->termData,(const char *) buf);
 }
 
 /* =========================================================================
@@ -1324,9 +1297,6 @@ changeFont(int f, int n)
     if(!f)
         n = 0x09;   /* default: open the font-picker dialog */
 
-    if(!gCbsReady || !gCbs.changeFont)
-        return notAvailable(f,n);
-          
     if(n & 0x01)
     {
         if(n & 0x02)
@@ -1337,7 +1307,7 @@ changeFont(int f, int n)
             /* Dialog mode: pass empty name to Swift which shows NSFontPanel.
              * Blocks here until the user closes the panel; font changes are
              * applied live as the user browses. */
-            gCbs.changeFont(frameCur->termData,n,"",0.0f);
+            meNativeViewChangeFont(frameCur->termData,n,"",0.0f);
         }
         else
         {
@@ -1358,7 +1328,7 @@ changeFont(int f, int n)
             else
                 snprintf(mecm.fontName,meFONTNAME_MAX,"%s:size=%d",(char *) fontBuf,sz);
             mecm.fontSize = sz;
-            gCbs.changeFont(frameCur->termData,n,(const char *)fontBuf,sz);
+            meNativeViewChangeFont(frameCur->termData,n,(const char *)fontBuf,sz);
         }
     }
     if((n & 0x04) == 0)

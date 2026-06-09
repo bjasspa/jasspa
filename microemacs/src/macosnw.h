@@ -58,6 +58,7 @@ extern void TTflush(void);
 extern void TTNbell(void);
 extern int  TTaddColor(meColor index, meUByte r, meUByte g, meUByte b);
 extern void TTsetBgcol(void);
+extern void TTcharsetChanged(void);
 extern int  meMain(int argc, char *argv[]);
 extern void meFrameSetWindowTitle(meFrame *frame, meUByte *title);
 extern void meFrameSetWindowSize(meFrame *frame);

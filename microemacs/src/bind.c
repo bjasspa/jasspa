@@ -525,6 +525,9 @@ setCharMask(int f, int n)
             }
             for( ; ii < 128 ; ii++)
                 charToUnicode[ii] = 0;
+#ifdef _ME_MACOSNW
+            TTcharsetChanged();
+#endif            
             return meTRUE;
         }
         if(flags & 0x20000)

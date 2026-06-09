@@ -4,7 +4,7 @@
 // Owns the NSView that ME renders into.  Responsibilities:
 //   - Measure the monospace font and tell macosterm.c the cell metrics
 //   - Register MENativeCallbacks (setCursor, bell, title, font)
-//   - Implement meNativeFlushDirtyView (@_cdecl): copies dirty rows from
+//   - Implement meNativeViewFlushDirty (@_cdecl): copies dirty rows from
 //     frameCur->store into the cells[] render buffer, then calls setNeedsDisplay
 //   - Translate NSEvent keyboard and mouse events into ME key codes
 //   - Forward events to macosterm.c via meNativePushKey / meNativePushMouseButton
@@ -87,6 +87,13 @@ final class MEView: NSView {
     private static var boldFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
     private static var italicFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
     private static var boldItalicFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
+    // ---- Glyph cache - pre-computed for all 256  chars ---------
+    // Built once per font change; shared across all windows.
+    private static var glyphs:           [CGGlyph] = Array(repeating: 0, count: 256)
+    private static var boldGlyphs:       [CGGlyph] = Array(repeating: 0, count: 256)
+    private static var italicGlyphs:     [CGGlyph] = Array(repeating: 0, count: 256)
+    private static var boldItalicGlyphs: [CGGlyph] = Array(repeating: 0, count: 256)
+    
     private var changeFontN: Int32 = 0
     private var fontPanelSemaphore: DispatchSemaphore? = nil
 
@@ -108,20 +115,6 @@ final class MEView: NSView {
     private var cursorOn:   Bool = true   // blink phase - driven by ME's TTshowCur/TThideCur
     var hasFocus: Bool = true             // window key state - controls filled vs outline cursor
 
-    // ---- Colour cache - NSColor objects keyed by MEColor palette index ---
-    private var colorCache: [Int: NSColor] = [:]
-
-    // ---- Layer background tracking - updated in cFlushDirty (main thread) --
-    private var layerBgIndex: Int = -1
-    
-    // TODO SSP - this should be the current ME charset. 
-    // ---- Glyph cache - pre-computed for all 256 ISO-8859-1 chars ---------
-    // Built once per font change; shared across all windows.
-    private static var glyphs:           [CGGlyph] = Array(repeating: 0, count: 256)
-    private static var boldGlyphs:       [CGGlyph] = Array(repeating: 0, count: 256)
-    private static var italicGlyphs:     [CGGlyph] = Array(repeating: 0, count: 256)
-    private static var boldItalicGlyphs: [CGGlyph] = Array(repeating: 0, count: 256)
-
     // ---- Scratch buffers reused each drawRow render call (main thread only) ------
     private var scratchGlyphs:    [CGGlyph] = Array(repeating: 0, count: 512)
     private var scratchPositions: [CGPoint] = Array(repeating: .zero, count: 512)
@@ -130,42 +123,23 @@ final class MEView: NSView {
 
     override init(frame: NSRect) {
         super.init(frame: frame)
-        commonInit(registerCallbacks: true)
-    }
-
-    /// Secondary init: no C callbacks registered (primary view owns them).
-    init(secondaryFrame frame: NSRect) {
-        super.init(frame: frame)
-        commonInit(registerCallbacks: false)
+        wantsLayer = true;
+        layer?.backgroundColor = NSColor.black.cgColor;
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        commonInit(registerCallbacks: true)
-    }
-
-    private func commonInit(registerCallbacks: Bool) {
         wantsLayer = true;
         layer?.backgroundColor = NSColor.black.cgColor;
-
-        guard registerCallbacks else { return }
-        var cbs = MENativeCallbacks();
-        cbs.bell          = meViewBell;
-        cbs.changeFont    = meViewChangeFont;
-        cbs.setTitle      = meViewSetTitle;
-        cbs.setCursor     = meViewSetCursor;
-        cbs.hideCursor    = meViewHideCursor;
-        cbs.setWindowSize = meViewSetWindowSize;
-        meNativeSetCallbacks(&cbs);
     }
 
     /// Initialise a secondary view's cell buffer; font/glyph/cell metrics are shared statics.
     func copyMetrics(from source: MEView, cols: Int, rows: Int) {
-        self.cols = cols
-        self.rows = rows
-        var blank = Cell()
-        blank.bg = UInt8(meNWBgColor)
-        cells = Array(repeating: blank, count: cols * rows)
+        self.cols = cols;
+        self.rows = rows;
+        var blank = Cell();
+        blank.bg = bgColorIdx;
+        cells = Array(repeating: blank, count: cols * rows);
     }
 
     func setSize(cols: Int, rows: Int)
@@ -174,7 +148,7 @@ final class MEView: NSView {
         if (sz > (self.cols * self.rows))
         {
             var blank = Cell();
-            blank.bg = UInt8(meNWBgColor);
+            blank.bg = bgColorIdx;
             cells = Array(repeating: blank, count: sz);
         }
         self.cols = cols;
@@ -198,21 +172,33 @@ final class MEView: NSView {
             MEView.boldFont = NSFontManager.shared.convert(font, toHaveTrait: .boldFontMask);
             MEView.italicFont = NSFontManager.shared.convert(font, toHaveTrait: .italicFontMask);
             MEView.boldItalicFont = NSFontManager.shared.convert(MEView.boldFont, toHaveTrait: .italicFontMask);
-            MEView.glyphs = makeGlyphTable(for: font);
-            MEView.boldGlyphs = makeGlyphTable(for: MEView.boldFont);
-            MEView.italicGlyphs = makeGlyphTable(for: MEView.italicFont);
-            MEView.boldItalicGlyphs = makeGlyphTable(for: MEView.boldItalicFont);
             MEView.cellW = w;
             MEView.cellH = h;
+            MEView.updateCharset()
         }
     }
 
-    private func makeGlyphTable(for nsFont: NSFont) -> [CGGlyph]
+    static func updateCharset()
     {
         var chars = (0..<256).map { UniChar($0) }
-        var g     = [CGGlyph](repeating: 0, count: 256)
-        CTFontGetGlyphsForCharacters(nsFont as CTFont, &chars, &g, 256)
-        return g
+        withUnsafeMutablePointer(to: &charToUnicode) { (tuplePtr) -> Void in
+                  tuplePtr.withMemoryRebound(to: UInt16.self, capacity: MemoryLayout.size(ofValue: charToUnicode)) {
+                      for ii in 0..<128 {
+                          chars[ii+128] = $0[ii];
+                      }
+                  }
+        }
+        MEView.glyphs = MEView.makeGlyphTable(for: font,uchrSet: chars);
+        MEView.boldGlyphs = makeGlyphTable(for: MEView.boldFont,uchrSet: chars);
+        MEView.italicGlyphs = makeGlyphTable(for: MEView.italicFont,uchrSet: chars);
+        MEView.boldItalicGlyphs = makeGlyphTable(for: MEView.boldItalicFont,uchrSet: chars);
+    }
+    
+    private static func makeGlyphTable(for nsFont: NSFont, uchrSet: [UniChar]) -> [CGGlyph]
+    {
+        var g = [CGGlyph](repeating: 0, count: 256);
+        CTFontGetGlyphsForCharacters(nsFont as CTFont,uchrSet, &g, 256);
+        return g;
     }
 
     private func ctFontVariant(attrs: UInt8) -> CTFont
@@ -252,30 +238,6 @@ final class MEView: NSView {
     // Convenience overload using self.rows (safe for cursor/focus callers on main thread)
     private func cellRect(col: Int, row: Int) -> NSRect {
         cellRect(col: col, row: row, rows: rows)
-    }
-
-    // MARK: - Colour helpers
-
-    private func nsColor(index: Int) -> NSColor {
-        if let c = colorCache[index] { return c }
-        let idx = index*3;
-        var rr: CGFloat = 0;
-        var gg: CGFloat = 0;
-        var bb: CGFloat = 0;
-        
-        withUnsafeMutablePointer(to: &meColorTable) { (tuplePtr) -> Void in
-                  tuplePtr.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: meColorTable)) {
-                      rr = CGFloat($0[idx])
-                      gg = CGFloat($0[idx+1])
-                      bb = CGFloat($0[idx+2])
-                        }
-        }
-        let c = NSColor(srgbRed:  rr/255.0,
-                        green:    gg/255.0,
-                        blue:     bb/255.0,
-                        alpha:    1.0)
-        colorCache[index] = c
-        return c
     }
 
     // MARK: - Drawing
@@ -612,7 +574,7 @@ final class MEView: NSView {
               cursorRow >= 0 && cursorRow < rows else { return }
 
         let rect = cellRect(col: cursorCol, row: cursorRow, rows: rows);
-        let cursorNSColor = nsColor(index: Int(meCursorColor));
+        let cursorNSColor = nsColor(index: Int(meNativeGetCursorColor(Unmanaged.passUnretained(self).toOpaque())));
 
         if(hasFocus)
         {
@@ -665,23 +627,12 @@ final class MEView: NSView {
 
     // MARK: - Flush: copy dirty rows from the C frame store into cells[]
 
-    // Called on the main thread (via DispatchQueue.main.sync from meNativeFlushDirtyView).
+    // Called on the main thread (via DispatchQueue.main.sync from meNativeViewFlushDirty).
     // The ME engine thread is blocked for the duration, so frameCur->store is stable.
     func cFlushDirty(rowMin: Int, rowMax: Int,
                      colStart: UnsafePointer<Int32>,
-                     colEnd:   UnsafePointer<Int32>,
-                     colorsDirty: Bool, bgColor: UInt8) {
-
-        if colorsDirty {
-            colorCache.removeAll()
-            layerBgIndex = -1
-        }
-        let bgIdx = Int(bgColor)
-        if bgIdx != layerBgIndex {
-            layerBgIndex = bgIdx
-            layer?.backgroundColor = nsColor(index: bgIdx).cgColor
-        }
-
+                     colEnd:   UnsafePointer<Int32>)
+    {
         let frameCols = Int(meNativeGetFrameCols())
         guard frameCols > 0, frameCols <= cols, rowMax < rows else { return }
 
@@ -767,13 +718,15 @@ final class MEView: NSView {
                 let fm = NSFontManager.shared;
                 fm.target  = self;
                 fm.action  = #selector(MEView.fontPanelFontChanged(_:));
-                fm.setSelectedFont(MEView.font, isMultiple: false);
                 NotificationCenter.default.addObserver(
                     self,
                     selector: #selector(MEView.fontPanelWillClose(_:)),
                     name: NSWindow.willCloseNotification,
                     object: NSFontPanel.shared);
+                // The font panel must exist before it can highlight a selection,
+                // so order it front first, then set the current font as selected.
                 fm.orderFrontFontPanel(nil);
+                fm.setSelectedFont(MEView.font, isMultiple: false);
             }
             sema.wait();
             fontPanelSemaphore = nil;
@@ -798,7 +751,8 @@ final class MEView: NSView {
     }
 
     /// Called by NSFontPanel when the user changes the font selection.
-    @objc func fontPanelFontChanged(_ sender: Any?) {
+    @objc func fontPanelFontChanged(_ sender: Any?)
+    {
         let fm = NSFontManager.shared;
         let newFont = fm.convert(MEView.font);
         let psName = newFont.fontName;
@@ -808,13 +762,14 @@ final class MEView: NSView {
     }
 
     /// Apply a resolved NSFont: update shared metrics once, then reset and resize all windows.
-    private func applyFont(_ newFont: NSFont) {
+    private func applyFont(_ newFont: NSFont)
+    {
         setFont(n: self.changeFontN, font: newFont);
-        if((self.changeFontN & 2) == 0)
-        {
+        if((self.changeFontN & 2) == 0) {
+            let bc = nsColor(index: Int(bgColorIdx)).cgColor;
             for wc in gWindowControllers {
                 if let view = wc.meView {
-                    view.layerBgIndex = -1;
+                    view.layer?.backgroundColor = bc;
                     wc.fontDidChange(in: view);
                 }
             }
@@ -823,28 +778,29 @@ final class MEView: NSView {
 
     /// Called from the ME engine thread when $frame-width or $frame-depth is set.
     /// Resizes the cells buffer and the NSWindow to match the new dimensions.
-    func cSetWindowSize(_ cols: Int, _ rows: Int) {
+    func cSetWindowSize(_ cols: Int, _ rows: Int)
+    {
         let block: () -> Void = { [weak self] in
             guard let self = self else { return }
             let sz = cols * rows
             if sz > self.cols * self.rows {
-                var blank = Cell()
-                blank.bg = UInt8(meNWBgColor)
-                self.cells = Array(repeating: blank, count: sz)
+                var blank = Cell();
+                blank.bg = bgColorIdx;
+                self.cells = Array(repeating: blank, count: sz);
             }
-            self.cols = cols
-            self.rows = rows
+            self.cols = cols;
+            self.rows = rows;
             if let wc = self.window?.windowController as? MEWindowController {
-                wc.sizeWindow(to: self)
+                wc.sizeWindow(to: self);
             }
-            self.needsDisplay = true
+            self.needsDisplay = true;
         }
         if Thread.isMainThread { block() } else { DispatchQueue.main.sync(execute: block) }
     }
 
     func cSetTitle(_ title: String) {
         DispatchQueue.main.async { [weak self] in
-            self?.window?.title = title
+                  self?.window?.title = title
         }
     }
 
@@ -1046,48 +1002,93 @@ var gMEView: MEView? = nil
 /// All MEWindowControllers (primary and secondary); keeps them alive.
 var gWindowControllers: [MEWindowController] = []
 
-private func meViewBell() {
+// ---- Colour cache - NSColor objects keyed by MEColor palette index ---
+var colorCache: [Int: NSColor] = [:]
+var bgColorIdx: UInt8 = 1
+
+func nsColor(index: Int) -> NSColor {
+    if let c = colorCache[index] { return c }
+    let idx = index*3;
+    var rr: CGFloat = 0;
+    var gg: CGFloat = 0;
+    var bb: CGFloat = 0;
+    
+    withUnsafeMutablePointer(to: &meColorTable) { (tuplePtr) -> Void in
+              tuplePtr.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: meColorTable)) {
+                  rr = CGFloat($0[idx]);
+                  gg = CGFloat($0[idx+1]);
+                  bb = CGFloat($0[idx+2]);
+              }
+    }
+    let c = NSColor(srgbRed: rr/255.0,green: gg/255.0,blue: bb/255.0,alpha: 1.0);
+    colorCache[index] = c;
+    return c
+}
+
+@_cdecl("meNativeBell")
+func meNativeBell()
+{
     DispatchQueue.main.async { NSSound.beep() }
 }
 
-private func meViewChangeFont(_ viewPtr: UnsafeMutableRawPointer?,_ n: Int32, _ name: UnsafePointer<CChar>?, _ size: Float) {
-    if let viewPtr = viewPtr {
-        let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
-        let nameStr = name.map { String(cString: $0) } ?? "";
-        view.cChangeFont(n: n, name: nameStr, size: size);
+
+@_cdecl("meNativeSetBgColor")
+func meNativeSetBgColor(_ bgColor: UInt8)
+{
+    bgColorIdx = bgColor;
+    let bc = nsColor(index: Int(bgColor)).cgColor;
+    for wc in gWindowControllers
+    {
+        if let view = wc.meView {
+            view.layer?.backgroundColor = bc;
+        }
     }
 }
 
-private func meViewSetTitle(_ viewPtr: UnsafeMutableRawPointer?,_ title: UnsafePointer<CChar>?) {
-    if let viewPtr = viewPtr, let title = title {
-        let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
-        view.cSetTitle(String(cString: title));
-    }
+@_cdecl("meNativeColorTableChanged")
+func meNativeColorTableChanged() {
+    colorCache.removeAll();
+    meNativeSetBgColor(bgColorIdx);
 }
 
-private func meViewSetCursor(_ viewPtr: UnsafeMutableRawPointer?,_ col: Int32,_ row: Int32) {
-    if let viewPtr = viewPtr {
-        let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
-        view.cSetCursor(Int(col), Int(row));
-    }
+@_cdecl("meNativeCharsetChanged")
+func meNativeCharsetChanged() {
+    MEView.updateCharset();
 }
 
-private func meViewHideCursor(_ viewPtr: UnsafeMutableRawPointer?) {
-    if let viewPtr = viewPtr {
-        let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
-        view.cHideCursor();
-    }
+@_cdecl("meNativeViewChangeFont")
+func meNativeViewChangeFont(_ viewPtr: UnsafeMutableRawPointer,_ n: Int32, _ name: UnsafePointer<CChar>?, _ size: Float) {
+    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
+    let nameStr = name.map { String(cString: $0) } ?? "";
+    view.cChangeFont(n: n, name: nameStr, size: size);
 }
 
-private func meViewSetWindowSize(_ viewPtr: UnsafeMutableRawPointer?,_ cols: Int32,_ rows: Int32) {
-    if let viewPtr = viewPtr {
-        let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
-        view.cSetWindowSize(Int(cols), Int(rows));
-    }
+@_cdecl("meNativeViewSetTitle")
+func meNativeViewSetTitle(_ viewPtr: UnsafeMutableRawPointer,_ title: UnsafePointer<CChar>) {
+    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
+    view.cSetTitle(String(cString: title));
+}
+
+@_cdecl("meNativeViewSetCursor")
+func meNativeViewSetCursor(_ viewPtr: UnsafeMutableRawPointer,_ col: Int32,_ row: Int32) {
+    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
+    view.cSetCursor(Int(col), Int(row));
+}
+
+@_cdecl("meNativeViewHideCursor")
+func meNativeViewHideCursor(_ viewPtr: UnsafeMutableRawPointer) {
+    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
+    view.cHideCursor();
+}
+
+@_cdecl("meNativeViewSetWindowSize")
+func meNativeViewSetWindowSize(_ viewPtr: UnsafeMutableRawPointer,_ cols: Int32,_ rows: Int32) {
+    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
+    view.cSetWindowSize(Int(cols), Int(rows));
 }
 
 // ---------------------------------------------------------------------------
-// MARK: - meNativeFlushDirtyView  (@_cdecl - called by C TTflush)
+// MARK: - meNativeViewFlush  (@_cdecl - called by C TTflush)
 //
 // TTflush calls this with frameCur->termData so every flush is routed to the
 // correct window even inside the screenUpdate multi-frame loop (where frameCur
@@ -1096,21 +1097,16 @@ private func meViewSetWindowSize(_ viewPtr: UnsafeMutableRawPointer?,_ cols: Int
 // OS-focused frame while frameCur->store holds that frame's data temporarily.
 // ---------------------------------------------------------------------------
 
-@_cdecl("meNativeFlushDirtyView")
-func meNativeFlushDirtyView(_ viewPtr: UnsafeMutableRawPointer,
-                            _ rowMin: Int32, _ rowMax: Int32,
-                            _ colStart: UnsafePointer<Int32>,
-                            _ colEnd:   UnsafePointer<Int32>,
-                            _ colorsDirty: Int32,
-                            _ bgColor: UInt8) {
-    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue()
-    let rm = Int(rowMin), rx = Int(rowMax)
-    let cd = colorsDirty != 0
-    let bg = bgColor
+@_cdecl("meNativeViewFlush")
+func meNativeViewFlush(_ viewPtr: UnsafeMutableRawPointer,
+                       _ rowMin: Int32, _ rowMax: Int32,
+                       _ colStart: UnsafePointer<Int32>,
+                       _ colEnd:   UnsafePointer<Int32>)
+{
+    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue();
+    let rm = Int(rowMin), rx = Int(rowMax);
     let block = {
-        view.cFlushDirty(rowMin: rm, rowMax: rx,
-                         colStart: colStart, colEnd: colEnd,
-                         colorsDirty: cd, bgColor: bg)
+        view.cFlushDirty(rowMin: rm, rowMax: rx, colStart: colStart, colEnd: colEnd)
     }
     if Thread.isMainThread { block() } else { DispatchQueue.main.sync(execute: block) }
 }
@@ -1123,12 +1119,6 @@ func meNativeFlushDirtyView(_ viewPtr: UnsafeMutableRawPointer,
 // Dispatches synchronously to the main thread so gMEView is consistent before
 // the next TTflush or callback on the engine thread.
 // ---------------------------------------------------------------------------
-
-@_cdecl("meNativeSetViewWindowSize")
-func meNativeSetViewWindowSize(_ viewPtr: UnsafeMutableRawPointer, _ cols: Int32, _ rows: Int32) {
-    let view = Unmanaged<MEView>.fromOpaque(viewPtr).takeUnretainedValue()
-    view.cSetWindowSize(Int(cols), Int(rows))
-}
 
 @_cdecl("meNativeSetActiveView")
 func meNativeSetActiveView(_ viewPtr: UnsafeMutableRawPointer) {

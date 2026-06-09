@@ -157,7 +157,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
         }
         win.delegate = self
 
-        let view = MEView(secondaryFrame: win.contentView!.bounds)
+        let view = MEView(frame: win.contentView!.bounds)
         view.autoresizingMask = [.width, .height]
         win.contentView!.addSubview(view)
         meView = view
