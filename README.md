@@ -118,7 +118,7 @@ menu after installation.
 
 > [!CAUTION]
 > If you get an error about a missing VC-runtime (vcruntime140.dll) you have to download 
-> and install the x86 (__not the x64!__) version of the Microsoft 
+> and install the x86 version of the VC redistributable (__not the x64 version!__) from the  Microsoft website
 > from https://aka.ms/vc14/vc_redist.x86.exe - older versions of that might be found [here](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170).
 
 
