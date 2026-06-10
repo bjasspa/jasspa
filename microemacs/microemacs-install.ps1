@@ -525,7 +525,10 @@ if($package -eq "") {
     Write-Host ""
     Write-Host "   ${binpath}mew"
     Write-Host ""
-    $vcv = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Installer\Dependencies\VC,redist.${mevcruntm},*" -Name Version).Version
+    $vcv = Get-ItemProperty -Path "HKLM:\SOFTWARE\Classes\Installer\Dependencies\VC,redist.${mevcruntm},*" -Name Version
+    if($vcv -ne $null) {
+        $vcv = $vcv.Version
+    }
     if($vcv -eq $null) {
         Write-Host "NOTE: You will need to install Microsoft Visual C++ runtime libraries for ${mevcruntm} before you can run Microemacs, see:`n`n    https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170`n`n"
     }
