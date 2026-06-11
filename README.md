@@ -71,50 +71,41 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 
 ## Installation
 
-### Linux/MacOS
+### Linux/MacOS/Cygwin
 
-You can compile the code yourself, or you pick one or two of the pre-compiled single file executables from the Release
-page or you install the usual mec/mew executables using the provided install scripts.
-
-Installation  using  curl for Linux and MacOS by copying and pasting the  following
-command into your terminal:
+Install by running the `miscroemacs-install` script, available in the latest release. This can be done by running the following command in a terminal:
 
 ```
 /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
 ```
 
-Thereafter  you have to add the folder  `~/.local/bin`  to your PATH variable.
-This is explained in the install  output on your terminal.  Thereafter you can
-check that the binaries are installed by typing in the terminal.
+This install method will provide you with the terminal version of MicroEmacs (mec) and the GUI version (mew). Please
+note that the mew GUI version requires X11, we recommend [MobaXterm](https://mobaxterm.mobatek.net/) for Cygwin and
+[XQuartz](https://www.xquartz.org/) for MacOS.
 
-```
-mec -V 
-```
-
-The install method above will provide you with the terminal version of MicroEmacs (mec) and the GUI version (mew),
-which requires X11 on Linux and macOS (using for instance [XQuartz](https://www.xquartz.org/).
+As of June 2026 there is a new native MacOS app version which does not require X11, this can be installed using the same install script.
 
 ### Windows 
 
-For Windows you have an installer which is available [here](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_installer_windows_intel.msi)
-or you can use as well the `microemacs-install.ps1` PowerShell script, run the following in a PowerShell:
+There is an MSI installer available for Windows [here](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_installer_windows_intel.msi)
+or you can run the `microemacs-install.ps1` PowerShell installer script, run the following in a PowerShell:
 
-`Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression`
+```
+Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression
+```
 
-Or download  the script  first and run locally, if you get the error cannot be
-loaded because  running  scripts is disabled on this system, run the script as
-follows:
+Alternatively download the script first and run the following in a Command prompt or PowerShell:
 
-`powershell -ExecutionPolicy Bypass -File microemacs-install.ps1`
+```
+powershell -ExecutionPolicy Bypass -File microemacs-install.ps1
+```
 
-Note that this will always  install the latest  release and to install for all
-users  the  PowerShell  needs  to be  run  as  Administrator.  If  the  script
-encounters issues during the installation  processes,  typically  insufficient
-permissions, please follow the instructions given.
+Note that this will always install the latest release and to install for all users the PowerShell needs to be run as
+Administrator. If the script encounters issues during the installation processes, typically insufficient permissions,
+please follow the instructions given.
 
-This will  install  as well a terminal  version of  MicroEmacs,  `mec` and GUI
-version,  `mew`. For the latter you should have as well an entry in your start
-menu after installation.
+This will install a Console version of MicroEmacs, `mec`, and GUI version, `mew`. For the latter you should have an
+entry in your start menu after installation.
 
 > [!CAUTION]
 > If you get an error about a missing VC-runtime (vcruntime140.dll) you have to download 
@@ -127,7 +118,7 @@ menu after installation.
 The MicroEmacs single file executables with macro files embedded come in two flavors:
 
 - mesc - terminal version ('s' for single file, 'c' stands for console)
-- mesw - GUI version ('w' stands for window, requires X11 on Linux and MacOS or Cygwin-Windows)
+- mesw - GUI version ('w' stands for window, which requires X11 on Linux, MacOS or Cygwin)
 
 Download one of the following zip archives with the binaries  inside and place
 the executables into a folder belonging to your PATH variable.
