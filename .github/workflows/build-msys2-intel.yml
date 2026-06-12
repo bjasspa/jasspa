@@ -75,12 +75,6 @@ jobs:
         cd ./microemacs/src
         ./build.sh -t c
 
-    - name: Compile msys2-intel mew
-      shell: msys2 {0}
-      run: |
-        cd ./microemacs/src
-        ./build.sh -t w
-
     - name: Compile windows-intel mec
       shell: pwsh
       run: |
@@ -118,18 +112,6 @@ jobs:
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_msys2_intel_mesc
 
-    - name: Create msys2-intel mesw
-      shell: pwsh
-      run: |
-        cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\mesingle
-        Remove-Item bin\msyswin2-intel64\mesc.exe
-        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\msyswin2-intel64\mew.exe -t ..\windows100-intel32\tfs.exe -o bin\msyswin2-intel64\mesw.exe
-        Copy-Item -Path ..\LICENSE -Destination .
-        Copy-Item -Path ..\readme.txt -Destination .
-        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_msys2_intel_mesw
-
     - name: Create msys2-intel openssl download
       shell: pwsh
       run: |
@@ -148,3 +130,9 @@ jobs:
       with:
         name: msys2-intel-downloads
         path: downloads
+
+    - name: Upload msys2-intel packages
+      uses: actions/upload-artifact@v6
+      with: 
+        name: msys2-intel-packages
+        path: packages
