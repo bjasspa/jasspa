@@ -1,4 +1,4 @@
-name: Build windows msys2 intel 64 (win-latest)
+name: Build msys2 intel 64 (windows-latest)
 
 on:
   workflow_dispatch:
@@ -44,6 +44,7 @@ jobs:
         install: >-
           gcc
           make
+          pkgconf
           ncurses-devel
           openssl-devel
 

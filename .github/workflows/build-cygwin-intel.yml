@@ -1,4 +1,4 @@
-name: Build windows cygwin intel 64 (cygwin-latest)
+name: Build cygwin intel 64 (windows-latest)
 
 on:
   workflow_dispatch:
@@ -147,3 +147,8 @@ jobs:
         name: cygwin-intel-downloads
         path: downloads
 
+    - name: Upload cygwin-intel packages
+      uses: actions/upload-artifact@v6
+      with: 
+        name: cygwin-intel-packages
+        path: packages
