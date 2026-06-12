@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04-arm
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on ubuntu-22.04-arm
 
     steps:
       - name: Install dependencies

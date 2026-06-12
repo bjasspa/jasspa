@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     runs-on: windows-11-arm
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on windows-11-arm
 
     steps:
       - name: Find VS

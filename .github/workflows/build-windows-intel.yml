@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on windows-latest
 
     steps:
       - name: Find VS

@@ -1,0 +1,149 @@
+name: Build windows msys2 intel 64 (win-latest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Build MSYS2 on windows-latest intel
+
+    steps:
+    - name: Find VS
+      shell: pwsh
+      run: |
+        $installationPath = Get-VSSetupInstance `
+          | Select-VSSetupInstance -Require Microsoft.VisualStudio.Workload.NativeDesktop -Latest `
+          | Select-Object -ExpandProperty InstallationPath
+        Write-Output "VSDEVCMD=${installationPath}\Common7\Tools\VsDevCmd.bat" `
+          | Out-File -FilePath "${Env:GITHUB_ENV}" -Append
+        cat "${Env:GITHUB_ENV}"
+
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.refToBuild }}
+
+    - name: Install MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MSYS
+        update: true
+        install: >-
+          gcc
+          make
+          ncurses-devel
+          openssl-devel
+
+    - name: Verify MSYS2 installation
+      shell: msys2 {0}
+      run: |
+        MSYS2_VER=$(uname -r | grep -oE '^[0-9]\.[0-9]+')
+        echo "MSYS2_VER=$MSYS2_VER" >> $GITHUB_ENV
+        echo "MSYS2 version: $MSYS2_VER"
+        MSYS2_MACHINE=$(uname -m)
+        echo "MSYS2_MACHINE=$MSYS2_MACHINE" >> $GITHUB_ENV
+        echo "MSYS2 Machine: $MSYS2_MACHINE"
+        GCC_VER=$(gcc -dumpversion)
+        echo "GCC_VER=$GCC_VER" >> $GITHUB_ENV
+        echo "GCC version: $GCC_VER"
+        echo `pwd`
+        echo $PATH
+        which bash
+        bash --version
+        make --version
+        gcc --version
+        pkg-config --modversion ncurses
+        pkg-config --modversion openssl
+
+    - name: Compile msys2-intel mec
+      shell: msys2 {0}
+      run: |
+        cd ./microemacs/src
+        ./build.sh -t c
+
+    - name: Compile msys2-intel mew
+      shell: msys2 {0}
+      run: |
+        cd ./microemacs/src
+        ./build.sh -t w
+
+    - name: Compile windows-intel mec
+      shell: pwsh
+      run: |
+        & "${Env:COMSPEC}" /s /c "`"${Env:VSDEVCMD}`" -arch=x86 -host_arch=x64 -no_logo && set" `
+          | % { , ($_ -Split '=', 2) } `
+          | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
+        nmake -f winmsvc.mak BTYP=c
+      working-directory: ./microemacs/src
+
+    - name: Create msys2-intel binaries download
+      shell: pwsh
+      run: |
+        mkdir -Path downloads
+        mkdir -Path packages
+        cd .\microemacs\bin
+        Remove-Item .gitignore
+        $MSYS2BIN = (Get-Item "msyswin2-intel64-gcc*").Name
+        Rename-Item -Path $MSYS2BIN -NewName msyswin2-intel64
+        Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
+        Move-Item -Path windows100-intel32 -Destination ..
+        cd ..
+        Rename-Item -Path release_readme.txt -NewName readme.txt
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_msys2_intel_binaries
+
+    - name: Create msys2-intel mesc
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        cd .\mesingle
+        mkdir -Path bin\msyswin2-intel64
+        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\msyswin2-intel64\mec.exe -t ..\windows100-intel32\tfs.exe -o bin\msyswin2-intel64\mesc.exe
+        Copy-Item -Path ..\LICENSE -Destination .
+        Copy-Item -Path ..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_msys2_intel_mesc
+
+    - name: Create msys2-intel mesw
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        cd .\mesingle
+        Remove-Item bin\msyswin2-intel64\mesc.exe
+        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\msyswin2-intel64\mew.exe -t ..\windows100-intel32\tfs.exe -o bin\msyswin2-intel64\mesw.exe
+        Copy-Item -Path ..\LICENSE -Destination .
+        Copy-Item -Path ..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_msys2_intel_mesw
+
+    - name: Create msys2-intel openssl download
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        mkdir -Path tfs\bin\msyswin2-intel64
+        Copy-Item -Path C:\msys64\usr\bin\msys-ssl-3.dll -Destination tfs\bin\msyswin2-intel64
+        Copy-Item -Path C:\msys64\usr\bin\msys-crypto-3.dll -Destination tfs\bin\msyswin2-intel64
+        cd tfs
+        Compress-Archive -Path bin -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_msys2_intel_openssl.zip
+        cd ..
+        .\windows100-intel32\tfs ../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_msyswin2-intel64.tfs tfs
+
+    - name: Upload msys2-intel downloads
+      uses: actions/upload-artifact@v6
+      with:
+        name: msys2-intel-downloads
+        path: downloads

@@ -64,16 +64,17 @@ jobs:
         cygcheck -c
         make --version
         gcc --version
+        ls -l /cygdrive/d/cygwin/bin
 
     - name: Compile cygwin-intel mec
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
+      shell: D:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
       run: |
         cd /cygdrive/d/a/jasspa/jasspa
         cd ./microemacs/src
         ./build.sh -t c
 
     - name: Compile cygwin-intel mew
-      shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'    
+      shell: D:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
       run: |
         cd /cygdrive/d/a/jasspa/jasspa
         cd ./microemacs/src
@@ -126,6 +127,19 @@ jobs:
         Copy-Item -Path ..\LICENSE -Destination .
         Copy-Item -Path ..\readme.txt -Destination .
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
+
+    - name: Create cygwin-intel openssl download
+      shell: pwsh
+      run: |
+        cd .\microemacs
+        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        mkdir -Path tfs\bin\cygwin3-intel64
+        Copy-Item -Path D:\cygwin\bin\cygssl-3.dll -Destination tfs\bin\cygwin3-intel64
+        Copy-Item -Path D:\cygwin\bin\cygcrypto-3.dll -Destination tfs\bin\cygwin3-intel64
+        cd tfs
+        Compress-Archive -Path bin -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_cygwin_intel_openssl.zip
+        cd ..
+        .\windows100-intel32\tfs ../packages/Jasspa_MicroEmacs_${env:MEVER}_openssl_cygwin3-intel64.tfs tfs
 
     - name: Upload cygwin-intel downloads
       uses: actions/upload-artifact@v6

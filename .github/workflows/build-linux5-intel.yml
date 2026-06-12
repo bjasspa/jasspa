@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20-01
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on ubuntu-20-01
 
     steps:
       - name: Install dependencies
