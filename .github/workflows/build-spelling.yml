@@ -1,4 +1,4 @@
-name: Build spelling (Ubuntu-22)
+name: Build spelling
 
 on:
   workflow_dispatch:

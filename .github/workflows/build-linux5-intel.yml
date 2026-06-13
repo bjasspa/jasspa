@@ -1,4 +1,4 @@
-name: Build linux5 intel 64 (ubuntu-20)
+name: Build linux5 intel 64
 
 on:
   workflow_dispatch:

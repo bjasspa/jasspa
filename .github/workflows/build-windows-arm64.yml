@@ -1,4 +1,4 @@
-name: Build windows arm 64 (Win-latest)
+name: Build windows arm 64
 
 on:
   workflow_dispatch:

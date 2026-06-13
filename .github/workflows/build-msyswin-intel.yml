@@ -1,4 +1,4 @@
-name: Build msyswin intel 64 (windows-latest)
+name: Build msyswin intel 64
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Build macos apple 64 (macos-latest)
+name: Build macos apple 64
 
 on:
   workflow_dispatch:

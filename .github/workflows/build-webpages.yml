@@ -1,4 +1,4 @@
-name: Build web-pages (Ubuntu-latest)
+name: Build web-pages
 
 on:
   workflow_dispatch:

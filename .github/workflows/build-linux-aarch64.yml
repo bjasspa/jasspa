@@ -1,4 +1,4 @@
-name: Build linux aarch 64 (ubuntu-22)
+name: Build linux aarch 64
 
 on:
   workflow_dispatch:

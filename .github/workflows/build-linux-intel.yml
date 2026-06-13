@@ -1,4 +1,4 @@
-name: Build linux intel 64 (ubuntu-22)
+name: Build linux intel 64
 
 on:
   workflow_dispatch:

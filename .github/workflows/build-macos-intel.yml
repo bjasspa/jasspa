@@ -1,4 +1,4 @@
-name: Build macos intel 64 (macos-15)
+name: Build macos intel 64
 
 on:
   workflow_dispatch:
