@@ -104,7 +104,7 @@ install_app(){
     echo "Error: Failed to download install package \"${MEURL}/Jasspa_MicroEmacs_${MEVER}_$ip.zip\"."
     exit 1
   fi
-  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$ip.zip -d ${INSTPATH}/../
+  ${UNZIPCL} Jasspa_MicroEmacs_${MEVER}_$ip.zip ${UNZIPOP} ${INSTPATH}/../
   if [ $? -ne 0 ]; then
     echo "Error: Failed to extract install package \"/tmp/Jasspa_MicroEmacs_${MEVER}_$ip.zip\"."
     exit 1
@@ -136,7 +136,8 @@ install_package(){
     echo "Error: Failed to download install package \"${MEURL}/Jasspa_MicroEmacs_${MEVER}_$pid.zip\"."
     exit 1
   fi
-  unzip -q -o Jasspa_MicroEmacs_${MEVER}_$pid.zip -d ${ipth}
+  mkdir -p "${ipth}"
+  ${UNZIPCL} Jasspa_MicroEmacs_${MEVER}_$pid.zip ${UNZIPOP} ${ipth}
   if [ $? -ne 0 ]; then
     echo "Error: Failed to extract install package \"/tmp/Jasspa_MicroEmacs_${MEVER}_$pid.zip\"."
     exit 1
@@ -181,8 +182,14 @@ Linux)
     MEPLATMSK=linux*-aarch64
   fi;;
 CYGWIN_NT*)
+  PLATFORM=CYGWIN
   MEPLATPKG=cygwin_intel
   MEPLATMSK=cygwin*-intel64
+  ;;
+MSYS_NT*)
+  PLATFORM=MSYS
+  MEPLATPKG=msyswin_intel
+  MEPLATMSK=msyswin*-intel64
   ;;
 esac
 if [ -z "$MEPLATPKG" ] ; then
@@ -217,6 +224,20 @@ while [ -n "$1" ] ; do
   esac
   shift
 done
+
+UNZIPCL=`which unzip 2>/dev/null`
+if [ -z "$UNZIPCL" ] ; then
+  UNZIPCL=`which bsdtar 2>/dev/null`
+  if [ -z "$UNZIPCL" ] ; then
+    echo "Error: Failed to locate unzip or bsdtar utility required for package extraction."
+    exit 1
+  fi
+  UNZIPCL="bsdtar -xf"
+  UNZIPOP="-C"
+else    
+  UNZIPCL="unzip -q -o"
+  UNZIPOP="-d"
+fi
 
 # Get the latest release version number - no point continuing if can't access github
 MEVER=`curl -s https://docs.jasspa.com/microemacs_release.txt | head -n 1`
@@ -501,13 +522,19 @@ if [ -z "${INSTPKG}" ] ; then
           BINPATH=${INSTPATH}
         else
           rm -f ${BINPATH}/bin/mec
-          ln -s ${INSTPATH}/bin/mec ${BINPATH}/bin/mec
           rm -f ${BINPATH}/bin/mew
-          ln -s ${INSTPATH}/bin/mew ${BINPATH}/bin/mew
           rm -f ${BINPATH}/bin/tfs
-          ln -s ${INSTPATH}/bin/tfs ${BINPATH}/bin/tfs
           rm -f ${BINPATH}/bin/microemacs-update
-          ln -s ${INSTPATH}/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+          if [ $PLATFORM = "MSYS" ] ; then
+            printf "#!/bin/sh\nPTH=%s\n%s/../share/jasspa/bin/mec %s\n" '$(dirname "$0")' '${PTH}' '$*' > ${BINPATH}/bin/mec
+            printf "#!/bin/sh\nPTH=%s\n%s/../share/jasspa/bin/tfs %s\n" '$(dirname "$0")' '${PTH}' '$*' > ${BINPATH}/bin/tfs
+            printf "#!/bin/sh\nPTH=%s\n%s/../share/jasspa/bin/microemacs-update %s\n" '$(dirname "$0")' '${PTH}' '$*' > ${BINPATH}/bin/microemacs-update
+          else
+            ln -s ${INSTPATH}/bin/mec ${BINPATH}/bin/mec
+            ln -s ${INSTPATH}/bin/mew ${BINPATH}/bin/mew
+            ln -s ${INSTPATH}/bin/tfs ${BINPATH}/bin/tfs
+            ln -s ${INSTPATH}/bin/microemacs-update ${BINPATH}/bin/microemacs-update
+          fi
         fi
       fi
       
@@ -548,11 +575,15 @@ if [ -z "${INSTPKG}" ] ; then
       echo ""
       echo "   ${BINPATH}mec"
       echo ""
-      echo "in a console/terminal, or run:"
-      echo ""
-      echo "   ${BINPATH}mew"
-      echo ""
-      echo "for the GUI version, requires a working X (install XQuartz on macOS)."
+      if [ $PLATFORM = "MSYS" ] ; then
+        echo "in an MSYS2 console/terminal."
+      else
+        echo "in a console/terminal, or run:"
+        echo ""
+        echo "   ${BINPATH}mew"
+        echo ""
+        echo "for the GUI version, requires a working X (install XQuartz on macOS)."
+      fi
       echo ""
     fi
   fi
