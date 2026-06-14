@@ -58,7 +58,12 @@ For a more complete experience execute command **init-session**, this creates a 
   Note that this will always install the latest release and to install for all users the PowerShell needs to be run as Administrator. If the script encounters issues during the installation processes, typically insufficient permissions, please follow the instructions given.
 
 - **Windows intel:** Download and run [Jasspa_MicroEmacs_<VERSION>_installer_windows.msi](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_installer_windows_intel.msi) installer (intel only), which contains the binaries, macros and help file, to create a fully working environment.
-  
+
+> [!NOTE]
+> If you get an error about a missing VC-runtime (vcruntime140.dll) you have to download and install the Microsoft [VC runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170).
+>
+> For Intel processors the **x86** architecture should be installed, *not* x64.
+
 Once successfully installed a `microemacs-update`  script (or `microemacs-update.ps1` on Windows) can be used to update the installation to the latest version or to install other components such as spelling languages, e.g. run:
   
       microemacs-update enus

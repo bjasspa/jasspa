@@ -108,10 +108,10 @@ please follow the instructions given.
 This will install a Console version of MicroEmacs, `mec`, and GUI version, `mew`. For the latter you should have an
 entry in your start menu after installation.
 
-> [!CAUTION]
-> If you get an error about a missing VC-runtime (vcruntime140.dll) you have to download 
-> and install the x86 version of the VC redistributable (__not the x64 version!__) from the  Microsoft website
-> from https://aka.ms/vc14/vc_redist.x86.exe - older versions of that might be found [here](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170).
+> [!NOTE]
+> If you get an error about a missing VC-runtime (vcruntime140.dll) you have to download and install the Microsoft [VC runtime](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170).
+>
+> For Intel processors the **x86** architecture should be installed, *not* x64.
 
 
 ### Single File Executables
