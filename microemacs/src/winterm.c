@@ -5799,6 +5799,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
 static void
 meFrameGainFocus(meFrame *frame)
 {
+    extern int commandDepth;
     /* have we not got the focus? */
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
@@ -5807,13 +5808,16 @@ meFrameGainFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameCur != frame)
         {
-            meUByte scheme=(globScheme/meSCHEME_STYLES);
-            meFrame *fc=frameCur;
             frameFocus = frame;
-            frameCur = frame;
-            pokeScreen(0x13,frame->depth,(frame->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
-            frameCur = fc;
-            UpdateWindow(meFrameGetWinHandle(frame));
+            if(commandDepth > 0)
+            {
+                meUByte scheme=(globScheme/meSCHEME_STYLES);
+                meFrame *fc=frameCur;
+                frameCur = frame;
+                pokeScreen(0x13,frame->depth,(frame->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
+                frameCur = fc;
+                UpdateWindow(meFrameGetWinHandle(frame));
+            }
         }
 #endif
         
@@ -5835,6 +5839,7 @@ meFrameGainFocus(meFrame *frame)
 static void
 meFrameKillFocus(meFrame *frame)
 {
+    extern int commandDepth;
     /* have we got the focus to loose it? */
     if(!(frame->flags & meFRAME_NOT_FOCUS))
     {
@@ -5842,13 +5847,16 @@ meFrameKillFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
         {
-            meUByte scheme=(mlScheme/meSCHEME_STYLES);
-            meFrame *fc=frameCur;
             frameFocus = NULL;
-            frameCur = frame;
-            pokeScreen(0x03,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
-            frameCur = fc;
-            UpdateWindow(meFrameGetWinHandle(frame));
+            if(commandDepth > 0)
+            {
+                meUByte scheme=(mlScheme/meSCHEME_STYLES);
+                meFrame *fc=frameCur;
+                frameCur = frame;
+                pokeScreen(0x03,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+                frameCur = fc;
+                UpdateWindow(meFrameGetWinHandle(frame));
+            }
         }
 #endif
         
