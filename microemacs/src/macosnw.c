@@ -983,6 +983,7 @@ TTwaitForChar(void)
         /* Handle focus change - switch frame if needed, then handle NOT_FOCUS */
         if(gFocusChange)
         {
+            extern int commandDepth;
             void *focusedView = (void *)gFocusedView;
             meFrame *ff = frameList;
             gFocusChange = 0;
@@ -998,13 +999,15 @@ TTwaitForChar(void)
 #if MEOPT_MWFRAME
                         if(frameCur != ff)
                         {
-                            meUByte scheme=(meUByte)(globScheme / meSCHEME_STYLES);
-                            meFrame *fc=frameCur;
                             frameFocus = ff;
-                            frameCur = ff;
-                            // TODO this leads to a flash of [NOT FOCUS] when swapping windows even when ml not in use
-                            pokeScreen(0x11,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *)"[NOT FOCUS]");
-                            frameCur = fc;
+                            if(commandDepth > 0)
+                            {
+                                meUByte scheme=(meUByte)(globScheme / meSCHEME_STYLES);
+                                meFrame *fc=frameCur;
+                                frameCur = ff;
+                                pokeScreen(0x11,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *)"[NOT FOCUS]");
+                                frameCur = fc;
+                            }
                         }
 #endif
 #ifdef _CLIPBRD
@@ -1036,12 +1039,15 @@ TTwaitForChar(void)
 #if MEOPT_MWFRAME
                     if(frameFocus == ff)
                     {
-                        meUByte scheme=(mlScheme/meSCHEME_STYLES);
-                        meFrame *fc=frameCur;
                         frameFocus = NULL;
-                        frameCur = ff;
-                        pokeScreen(0x01,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *) "           ");
-                        frameCur = fc;
+                        if(commandDepth > 0)
+                        {
+                            meUByte scheme=(mlScheme/meSCHEME_STYLES);
+                            meFrame *fc=frameCur;
+                            frameCur = ff;
+                            pokeScreen(0x01,ff->depth,(ff->width >> 1)-5,&scheme,(meUByte *) "           ");
+                            frameCur = fc;
+                        }
                     }
 #endif
 #ifdef _CLIPBRD

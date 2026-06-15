@@ -114,28 +114,38 @@
   set-variable #l3 &set #l5 &cat "file:" &stat a $user-path
   ml-write &spr "MicroEmacs Package %s: %s ... " #l1 &con &band @# 1 "Installing" "Updating"
   set-variable #l6 &set #l7 0
-  me-pinstall-comp #l4 "/macros/.*" "macros"
-  me-pinstall-comp #l4 "/spelling/.*" "spelling"
-  me-pinstall-comp #l4 "/bin/.*" "bin"
-  me-pinstall-comp #l4 "/.*[^/]" ""
+  !if &seq &rig $progname -41 "/MicroEmacs.app/Contents/MacOS/MicroEmacs"
+    set-variable #l2 "Resources/"
+    set-variable #l3 "MacOS"
+  !else
+    set-variable #l2 ""
+    set-variable #l3 "bin"
+  !endif
+  me-pinstall-comp #l4 "/macros/.*" &cat #l2 "macros"
+  me-pinstall-comp #l4 "/spelling/.*" &cat #l2 "spelling"
+  me-pinstall-comp #l4 "/bin/.*" #l3
+  me-pinstall-comp #l4 "/.*[^/]" &cat #l2 ""
   0x20 file-op #l4
   !if &set #l2 #l7
     set-variable #p9 &spr "  Failed to %s MicroEmacs Package %s (%d,%d)  " &con &band @# 1 "install" "update" #l1 #l6 #l7
   !elif &set #l2 &not #l6
     set-variable #p9 &spr "  Failed to find any content in MicroEmacs Package %s  " #l1
   !else
-    find-file &cat $user-path "jmp.lst"
-    beginning-of-buffer
-    insert-string &spr "%s\t%s\n" #l1 #l8
-    !force search-buffer "me" &spr "^%s\t" #l1
-    !if $status
-      beginning-of-line
-      set-mark
-      forward-line
-      -1 kill-region
+    ; try to locate an installation meinfo file so the package will be updated
+    !if &not &seq "ERROR" &set #l4 &find "me" ".emf"
+      !if &seq "R" &stat t &set #l4 &cat &lef #l4 -6 "../meinfo"
+        !iif &seq "ls" &lef &set #l5 #l1 2  set-variable #l5 &cat "spelling_" &rig #l1 2
+        find-file #l4
+        beginning-of-buffer
+        !force search-buffer "me" &cat "^" #l5
+        !if &not $status
+          end-of-buffer
+          insert-string #l5
+          save-buffer
+        !endif
+        delete-buffer $buffer-bname
+      !endif
     !endif
-    save-buffer
-    delete-buffer $buffer-bname
     ml-write &spr "MicroEmacs Package %s: %s complete" #l1 &con &band @# 1 "Install" "Update"
   !endif
   find-buffer #l9

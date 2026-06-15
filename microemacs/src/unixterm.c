@@ -1582,6 +1582,7 @@ meXEventGetFrame(XEvent *event)
 static void
 meFrameGainFocus(meFrame *frame)
 {
+    extern int commandDepth;
     /* have we not got the focus? */
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
@@ -1589,14 +1590,17 @@ meFrameGainFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameCur != frame)
         {
-            /* if the user has changed the window focus using the OS but ME can swap to this frame
-             * because there is an active frame then give a warning */
-            meUByte scheme=(globScheme/meSCHEME_STYLES);
-            meFrame *fc=frameCur;
             frameFocus = frame;
-            frameCur = frame;
-            pokeScreen(0x11,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
-            frameCur = fc;
+            if(commandDepth > 0)
+            {
+                /* if the user has changed the window focus using the OS but ME cant swap to this frame
+                 * because there is an active frame then give a warning */
+                meUByte scheme=(globScheme/meSCHEME_STYLES);
+                meFrame *fc=frameCur;
+                frameCur = frame;
+                pokeScreen(0x11,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
+                frameCur = fc;
+            }
         }
 #endif
         if(meFrameGetXIC(frame) != NULL)
@@ -1626,6 +1630,7 @@ meFrameGainFocus(meFrame *frame)
 static void
 meFrameKillFocus(meFrame *frame)
 {
+    extern int commandDepth;
     /* have we got the focus to loose it? */
     if(!(frame->flags & meFRAME_NOT_FOCUS))
     {
@@ -1633,12 +1638,15 @@ meFrameKillFocus(meFrame *frame)
 #if MEOPT_MWFRAME
         if(frameFocus == frame)
         {
-            meUByte scheme=(mlScheme/meSCHEME_STYLES);
-            meFrame *fc=frameCur;
             frameFocus = NULL;
-            frameCur = frame;
-            pokeScreen(0x01,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
-            frameCur = fc;
+            if(commandDepth > 0)
+            {
+                meUByte scheme=(mlScheme/meSCHEME_STYLES);
+                meFrame *fc=frameCur;
+                frameCur = frame;
+                pokeScreen(0x01,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
+                frameCur = fc;
+            }
         }
 #endif
         if(meFrameGetXIC(frame) != NULL)
