@@ -1,41 +1,20 @@
 # -*- Makefile -*-
 # Make rules for Mingw
 #
-# Windows definitions for things.
-#
-# Remove unconditionally + copy
-RM	= del /F /Q
-CP	= copy
-MV	= move
-#
-# Directory stuff
-#
-MKDIR	= mkdir
-RMDIR	= - rd /S /Q
-CD	= cd
-#
-# Archives - always full compression.
-#
-TAR	= tar
-ZIP	= zip -9
-UNZIP	= unzip -q -o
-GZIP	= gzip -9
-GUNZIP	= gunzip
-CAT	= cat
-SED	= sed
-#
-# Install
-#
-INSTALL		= install
-INSTALL_FIL	= $(INSTALL) -m 0666
-INSTALL_DIR	= $(INSTALL) -m 0755
-INSTALL_EXE	= $(INSTALL) -m 0777
-#
-# Use microemacs for conversions.
-#
-ME      = mec
-DOS2UNIX= $(ME) -p "@dos2unix"
-UNIX2DOS= $(ME) -p "@unix2dos"
+# MSYS 1 or 2?
+
+ifneq "$(shell uname -s | cut -c 1-7)" "MSYS_NT"
+
+$(error MSYS v1 no longer supported, use v2)
+
+else
+
+$(error MSYS2, use v2)
+
+endif
+
+# Use standard definitions
+include $(TOPDIR)/etc/makeinc.std
 #
 # Host specific definitions
 # 

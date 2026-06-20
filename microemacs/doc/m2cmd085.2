@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd085.2,v 2.12 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd085.2,v 2.12 2026/06/19 13:46:41 jon Exp $
 .Im MicroEmacs command|bind|message
 .so me.tni
 .TH ml-bind-key 2
@@ -30,15 +30,12 @@ ml-unbind-key \- Remove key binding from message line
 .ad
 .SH DESCRIPTION
 .B ml-bind-key
-creates a key  binding  local to the  message  line  input  buffer.  There are
-several  commands  that can be used in message  line input, each  command is
-associated with a main buffer editing command and inherits all that commands
-global  bindings,  i.e. moving  forward 1  character  is  associated  with the
-command
+creates a key binding local to the message line input buffer. There are several commands that can be used in message
+line input, each command is associated with a main buffer editing command and inherits all that commands global
+bindings, i.e. moving forward 1 character is associated with the command
 .Ht forward-char 2
-and thus inherits the binding  \fC\*cf\fR (as well as any other like the right
-cursor key). The following is a list of available  commands, what they do and
-their associated commands
+and thus inherits the binding \fC\*cf\fR (as well as any other like the right cursor key). The following is a list of
+available commands, what they do and their associated commands
 .SS "Cursor Movement"
 .BS
 move backwards 1 character, command:
@@ -125,20 +122,17 @@ delete backward word, command:
 .Hl backward-kill-word  backward-kill-word 2
 (\fB\*ebackspace\fR)
 .BU
-kill text from current position to end of line, the text is placed in the kill
-buffer. Command:
+kill text from current position to end of line, the text is placed in the kill buffer. Command:
 .Hl kill-line kill-line 2
 (\fB\*ck\fR).
 .BU
 erase whole line, the text is placed in the kill buffer, command
 .Hl kill-region kill-region 2
-(\fB\*cw\fR).  Note  that  in  incremental  searches  this  is used to add the
-current word to the search string.
+(\fB\*cw\fR). Note that in incremental searches this is used to add the current word to the search string.
 .BE 0
 .SS History
-\*(mS stores the last 20 entries of each kind  (command,  buffer, file, search
-and  general  which  is also  saved in the  history  file so the  state of the
-history is retained  when next loaded. The  following  commands can be used to
+\*(mS stores the last 20 entries of each kind (command, buffer, file, search and general which is also saved in the
+history file so the state of the history is retained when next loaded. The following commands can be used to
 manipulate the history.
 .BS
 next history list entry (loop through history), command:
@@ -150,16 +144,14 @@ previous history list entry, command:
 (\fB\*ep\fR, \fB\*cp\fR, \fBup\fR)
 .BE 0
 .SS Completion
-When  entering a command,  file, buffer or a mode name \*(mS creates a list of
-possible completions the following operations can be performed on this list.
+When entering a command, file, buffer or a mode name \*(mS creates a list of possible completions the following
+operations can be performed on this list.
 .BS
-expand. This  completes the given input until the first  ambiguous  character,
-command: a space (' ') or
+expand. This completes the given input until the first ambiguous character, command: a space (' ') or
 .Hl tab tab 2
 (\fB\*ci\fR).
 .BU
-expand  to  the  previous  completion  (loops  through  the  completion  list),
-command:
+expand to the previous completion (loops through the completion list), command:
 .Hl scroll-next-window-up scroll-next-window-up 2
 (\fB\*e\*cz\fR)
 .BU
@@ -167,8 +159,7 @@ expand to the next completion (loops through the completion list), command:
 .Hl scroll-next-window-down scroll-next-window-down 2
 (\fB\*e\*cv\fR)
 .BU
-create a listing of all  completions,  command:  a double  expansion,  i.e. 2
-spaces or
+create a listing of all completions, command: a double expansion, i.e. 2 spaces or
 .Hl tabs tab 2 .
 The first expands and the second creates the list.
 .BU
@@ -209,11 +200,11 @@ capitalize the next word, command:
 .Hl capitalize-word capitalize-word 2
 (\fB\*ec\fR)
 .BU
-Turn the whole of the next word to lower case letters, command:
+Turn the whole of the next word to upper case letters, command:
 .Hl upper-case-word upper-case-word 2
 (\fB\*eu\fR)
 .BU
-Turn the whole of the next word to upper case letters, command:
+Turn the whole of the next word to lower case letters, command:
 .Hl lower-case-word lower-case-word 2
 (\fB\*el\fR)
 .BU
@@ -225,12 +216,10 @@ Empty function, command:
 .Hl void void 2 
 .BE
 .B ml-unbind-key
-unbinds a user created message line key binding, this command effects only the
-message   line   key   bindings.   If  a   negative   argument   is  given  to
-\fBml-unbind-key\fR then all message line bindings are removed.
+unbinds a user created message line key binding, this command effects only the message line key bindings. If a
+negative argument is given to \fBml-unbind-key\fR then all message line bindings are removed.
 .SH EXAMPLE
-If  expansion  was  required on the  \fB\*e\*(eS\fR  key binding  then use the
-following:
+If expansion was required on the \fB\*e\*(eS\fR key binding then use the following:
 .Me $emf-scheme
 .CS
 ml-bind-key tab "esc esc"

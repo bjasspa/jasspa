@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Sat Feb 6 14:22:09 1999
 .\"
-.Id $Id: m9typ000.9,v 2.12 2026/01/17 21:37:12 jon Exp $
+.Id $Id: m9typ000.9,v 2.12 2026/06/19 13:39:34 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH c 9
@@ -18,7 +18,7 @@
 .XI def - "C or C++ definition file"
 .XI l - "LEX programming language"
 .XI y - "YACC programming language"
-.XI i - "C/C++ preprocessor outpuit file"
+.XI i - "C/C++ preprocessor output file"
 .XI rc - "Microsoft Developer resource file"
 .SH SYNOPSIS
 C, C++ \- C and C++ programming language templates
@@ -59,23 +59,21 @@ programming language
 .ad
 .SH "MAGIC STRINGS"
 .IP "\fB-*- c -*-\fR"
-Recognized by GNU and MicroEmacs.  Denotes a 'C' programming  type file, may be
-used in \fB.c\fR, \fB.def\fR and \fB.h\fR files.
+Recognized by GNU and MicroEmacs. Denotes a 'C' programming type file, may be used in \fB.c\fR, \fB.def\fR and
+\fB.h\fR files.
 .IP "\fB-*- c++ -*-\fR"
-Recognized by GNU and MicroEmacs.  Denotes a C++ programming  type file, may be
-used in \fB.c\fR, \fB.def\fR and \fB.h\fR files.
+Recognized by GNU and MicroEmacs. Denotes a C++ programming type file, may be used in \fB.c\fR, \fB.def\fR and
+\fB.h\fR files.
 .SH DESCRIPTION
-The \fBC\fR and \fBC++\fR  file type  templates  offer the most  sophisticated
-editing features within the \*(mS environment.
+The \fBC\fR and \fBC++\fR file type templates offer the most sophisticated editing features within the \*(mS
+environment.
 .IP "\fBGeneral Editing\fR"
 On creating a new file, a new header is automatically included into the file.
 .Ht time 2m
-is by default enabled, allowing the modification time-stamp to be maintained in
-the header.
+is by default enabled, allowing the modification time-stamp to be maintained in the header.
 .IP \fBHilighting\fR
-The  hilighting  features allow  commands,  variables,  logical,  preprocessor
-definitions,   comments,   strings  and  characters  of  the  language  to  be
-differentiated and rendered in different colors.
+The hilighting features allow commands, variables, logical, preprocessor definitions, comments, strings and characters
+of the language to be differentiated and rendered in different colors.
 .IP "\fBAuto Layout\fR"
 The C-Mode indentation mode of 
 .Ht indent 2
@@ -84,49 +82,42 @@ performs automatic layout of the text.
 .Ht restyle-region 3
 and
 .Ht restyle-buffer 3
-are available to reformat  (re-layout) selected sections of the buffer, or the
-whole buffer, respectively.
+are available to reformat (re-layout) selected sections of the buffer, or the whole buffer, respectively.
 .IP
-Comments  may be formatted  using  \fC\*eo\fR,  which  reformats  the comments
-according  to  the  current  fill  paragraph.  If  a  comment  commences  with
-\fC/***...\fR  then the comment is  automatically  formatted  to a box. If the
-comment  commentces  with  \fC/**\fR  then  the  comment  is  assumed  to be a
-\fIJava\fR \fIDoc\fR comment.
+Comments may be formatted using \fC\*eo\fR, which reformats the comments according to the current fill paragraph. If a
+comment commences with \fC/***...\fR then the comment is automatically formatted to a box. If the comment commentces
+with \fC/**\fR then the comment is assumed to be a \fIJava\fR \fIDoc\fR comment.
 .IP "\fBTags\fR"
-A C-tags file may be generated within the editor using the \fBTools\fR \->
-\fBC Tools\fR \-> \fBCreate Tag File\fR.
+A C-tags file may be generated within the editor using the \fBTools\fR \-> \fBC Tools\fR \-> \fBCreate Tag File\fR.
 .Ht find-tag 2
 takes the user to the file using the tag information.
 .IP
-On invoking  the tag  generator  then the user is presented  with a dialog box
-which specifies the generation  option of the tags file. The base directory of
-the tags file search and tagging options may be specified to locate all of the
+On invoking the tag generator then the user is presented with a dialog box which specifies the generation option of
+the tags file. The base directory of the tags file search and tagging options may be specified to locate all of the
 definitions within the code space.
 .IP
-The  \fBtags\fR  file is  extremely  useful  where  the user is  dealing  with
-inherited  source  code  spread over  multiple  directories.  Generation  of a
-recursive  tag file with all  searching  options  enabled  allows labels to be
-located extremely rapidly (certainly faster than IDE environments).
+The \fBtags\fR file is extremely useful where the user is dealing with inherited source code spread over multiple
+directories. Generation of a recursive tag file with all searching options enabled allows labels to be located
+extremely rapidly (certainly faster than IDE environments).
 .IP "\fBFolding and Information Hiding\fR"
-Generic  folding is enabled  within the C and C++ files. The folds occur about
-braces \fB{\fR...\fB}\fR located on the left-hand margin.
+Generic folding is enabled within the C and C++ files. The folds occur about braces \fB{\fR...\fB}\fR located on the
+left-hand margin.
 .Ht collapse-all 3
 (un)folds all regions in the file,
 .Ht collapse-current 3
 (un)folds the current region.
 Note that folding does not operate on K&R style code.
 .IP
-The \fBTools\fR -> \fBC Tools\fR  menu allows  \fC#define\fR's to be evaluated
-within the buffer. Where the state of a \fC#if\fR is  established  to be false
-(using the  \fC#define\fR  information)  then the  disabled  region of code is
-grayed out indicating which regions of the code are active.
+The \fBTools\fR -> \fBC Tools\fR menu allows \fC#define\fR's to be evaluated within the buffer. Where the state of a
+\fC#if\fR is established to be false (using the \fC#define\fR information) then the disabled region of code is grayed
+out indicating which regions of the code are active.
 .IP "\fBWorking Environment\fR"
 .Ht compile 3
 may be invoked to rebuild the source, the user is prompted to save any files.
 .IP
 .Ht rcs-file 2
-is automatically  invoked if an RCS file is detected, the normal  check-in/out
-operations may be performed through the editor.
+is automatically invoked if an RCS file is detected, the normal check-in/out operations may be performed through the
+editor.
 .IP "\fBShort Cuts\fR"
 The short cut keys used within the buffer are:
 .IP
@@ -178,11 +169,10 @@ the
 .Ht file-format 3
 and the 
 .Ht file-lint 3
-macros. The tools,  compilers  which are currently  supported are "gcc" and "g++"
-as compilers,   "astyle"  and  "clang-format"   (formatters)  and  "clang-tidy"
-(linter).  The tools can be  installed  either  using  your  standard  package
-manager system wide or, for the current user, using the Python package manager
-"pip". Here an example on how to install astyle and the clang tools using pip:
+macros. The tools, compilers which are currently supported are "gcc" and "g++" as compilers, "astyle" and
+"clang-format" (formatters) and "clang-tidy" (linter). The tools can be installed either using your standard package
+manager system wide or, for the current user, using the Python package manager "pip". Here an example on how to
+install astyle and the clang tools using pip:
 .RS
 .CS
 pip install astyle-py --user
@@ -216,11 +206,10 @@ hilight .hilight.c 1 "float64"  .scheme.type
 .CE 0
 .Me $ehf-scheme
 .SH BUGS
-The 'C' and 'C++' templates have been throughly used, there are no known issues
-with the templates.
+The 'C' and 'C++' templates have been thoroughly used, there are no known issues with the templates.
 .PP
-The  \fB.rc\fR  hilighting  is a little  bogus and should not really be mapped
-onto \fB.cpp\fR. Do not attept to re-style.
+The \fB.rc\fR hilighting is a little bogus and should not really be mapped onto \fB.cpp\fR. Do not attempt to
+re-style.
 .SH "SEE ALSO"
 .na
 .Ht c-deslashify 3 ,

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil026.4,v 2.8 2024/12/01 09:39:34 jon Exp $
+.Id $Id: m4fil026.4,v 2.8 2026/06/19 13:27:16 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous|bind
 .so me.tni
 .TH &cbind 4
@@ -12,7 +12,7 @@
 .XI &nbind - "Return the numerial argument of a binding"
 .XI &kbind - "Return the key a command is bound to"
 .SH NAME
-&cbind, &kbind, &nkind \- Command/key binding operators
+&cbind, &kbind, &nbind \- Command/key binding operators
 .SH SYNOPSIS
 .na
 .B &cbind
@@ -37,8 +37,7 @@ then an empty string (\fC""\fR) is returned.
 empty string (\fC""\fR) for no argument. If no binding can be found then \fB&kbind\fR returns an empty string
 (\fC""\fR).
 .SH EXAMPLE
-The  following  example  waits for the user to press a key, then  prints  what
-command the key is bound to.
+The following example waits for the user to press a key, then prints what command the key is bound to.
 .Me $emf-scheme
 .CS
 ml-write "Enter key: "
@@ -47,8 +46,7 @@ ml-write &spr "%s is bound to %s" #l0 &cbin #l0
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-In March 2001 \fB&kbind\fR was renamed \fB&ckind\fR and a new \fB&nkind\fR and
-\fB&kbind\fR added.
+In March 2001 \fB&kbind\fR was renamed \fB&cbind\fR and a new \fB&nbind\fR and \fB&kbind\fR added.
 .SH "SEE ALSO"
 .na
 .Hl "Variable Functions" Functions - ,

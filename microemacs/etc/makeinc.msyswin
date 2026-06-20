@@ -1,0 +1,18 @@
+# -*- Makefile -*-
+# Make rules for MSYS2
+#
+# Use standard definitions
+#
+include $(TOPDIR)/etc/makeinc.std
+#
+# Host specific definitions
+# 
+TARGETDIR   =   $(UNAME)
+#
+# Set up the compiler Compiler
+#
+include $(TOPDIR)/etc/makeinc.gcc
+#
+# Platform specific defines.
+#
+CPP_PLATDEFS=   -D_MSYSWIN -D_UNIX

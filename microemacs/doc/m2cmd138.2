@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jun 22 21:35:58 1998
 .\"
-.Id $Id: m2cmd138.2,v 2.6 2024/05/08 17:13:25 jon Exp $
+.Id $Id: m2cmd138.2,v 2.6 2026/06/19 13:52:31 jon Exp $
 .Im MicroEmacs command|spell
 .so me.tni
 .TH add-spell-rule 2
@@ -27,8 +27,8 @@ add-spell-rule \- Add a new spelling rule to the dictionary
 .ad
 .SH DESCRIPTION
 .B add-spell-rule
-adds a new  spelling  rule to the  spelling  checker.  The rules  effectively  define the prefix and suffix  character
-replacements  of words, which is given a single character identifier, \fIrule-letter\fR, used in conjunction  with the
+adds a new spelling rule to the spelling checker. The rules effectively define the prefix and suffix character
+replacements of words, which is given a single character identifier, \fIrule-letter\fR, used in conjunction with the
 language dictionary. The letter conventions are defined by the
 .B "Free Software Foundation"
 GNU
@@ -40,14 +40,14 @@ and
 package.
 .PP
 .B add-spell-rule
-is  used  in  the  \*(mS  language spelling initialization  macro files named  lsr\fI<language>\fR.emf,  e.g.  \fClsrenus.erf\fR,
-\fClsrelgr.erf\fR supplied in the \*(mS spelling or macros directory.
+is used in the \*(mS language spelling initialization macro files named lsr\fI<language>\fR.emf, e.g.
+\fClsrenus.erf\fR, \fClsrelgr.erf\fR supplied in the \*(mS spelling or macros directory.
 .PP
 The command uses the numeric argument \fIn\fR to control the addition of a rule to the speller, as follows:
 .TP
 \fC0\fR \fBadd-spell-rule\fR
 .\"
-Removes all existing rules and re-initializes.  This is, by convention,  explicitly called before  instantiating a new
+Removes all existing rules and re-initializes. This is, by convention, explicitly called before instantiating a new
 set of rules.
 .TP
 \fC\-1\fR \fBadd-spell-rule\fR "\|\fIrule-letter\fR\|" "\|\fIbase-ending\|\fR" "\fIremove\fR" "\fIderive-ending\fR" "\fIsub-rules\fR"
@@ -56,15 +56,15 @@ set of rules.
 .TP
 \fC\-2\fR \fBadd-spell-rule\fR "\|\fIrule-letter\fR\|" "\|\fIbase-ending\|\fR" "\fIremove\fR" "\fIderive-ending\fR" "\fIsub-rules\fR"
 .\"
-Adds a prefix rule, an argument of \-1 indicates  that this prefix rule cannot be used with a suffix rule. An argument
-of \-2  indicates  it can be used in  conjunction  with any base word suffix rule which allows used with a prefix rule
+Adds a prefix rule, an argument of \-1 indicates that this prefix rule cannot be used with a suffix rule. An argument
+of \-2 indicates it can be used in conjunction with any base word suffix rule which allows used with a prefix rule
 (e.g. argument of 2).
 .PD 1
 .IP
-"\fIrule-letter\fR"  is any  character  in the range 0x21 to 0xff, all rules of the given letter must be a prefix rule
-and of the same type (i.e. same argument  \fBn\fR). The start of a base word must match the given  "\fIbase-ending\fR"
-regular  expression string for the rule to be applied; the "\fIremove\fR" must be a fixed string if not empty and must
-explicitly match the start of the  \fIbase-ending\fR  and is removed from the start of the base word before the prefix
+"\fIrule-letter\fR" is any character in the range 0x21 to 0xff, all rules of the given letter must be a prefix rule
+and of the same type (i.e. same argument \fBn\fR). The start of a base word must match the given "\fIbase-ending\fR"
+regular expression string for the rule to be applied; the "\fIremove\fR" must be a fixed string if not empty and must
+explicitly match the start of the \fIbase-ending\fR and is removed from the start of the base word before the prefix
 "\fIderiv-ending\fR" is prefixed to the word. Example, for the American language;-
 .Me $emf-scheme
 .CS
@@ -202,7 +202,7 @@ for compounds may be added at some point in the future, see \fBspell.c\fR for th
 .SH "SEE ALSO"
 .na
 .Ht add-dictionary 2 ,
-.Ht spell 2
+.Ht spell 2 ,
 .Ht spell-buffer 3 ,
 .Ht spell-word 3 ,
 .Hr ispell 1 .

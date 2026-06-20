@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd010.2,v 2.6 2023/06/29 13:37:23 jon Exp $
+.Id $Id: m2cmd010.2,v 2.6 2026/06/19 13:20:55 jon Exp $
 .Im MicroEmacs command|cursor|essential
 .ds C0 "(\fB\*cf\fR)\ \&
 .ds C1 "(\fB\*cb\fR)\ \&
@@ -34,6 +34,8 @@ beginning of the current line.
 .B forward-char
 moves the cursor \fIn\fR  characters to the right. Move to the beginning of the next line if the cursor was already at
 the end of the current line.
+.PP
+For both commands, a negative value reverses the sense of movement as expected.
 .SH NOTES
 .B backward-char
 is also bound to \fBleft\fR.

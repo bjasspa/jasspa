@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var042.5,v 2.7 2022/06/12 17:14:15 jon Exp $
+.Id $Id: m5var042.5,v 2.7 2026/06/19 13:28:08 jon Exp $
 .Im MicroEmacs variable|insert
 .so me.tni
 .TH $tab-width 5
@@ -15,42 +15,36 @@ $tab-width \- Global tab character width
 .SH SYNOPSIS
 \fB$tab-width\fR \fIinteger\fR; Default is \fC8\fR
 .sp
-\-0 < \fIinteger\fR <= \fIn\fR
+0 < \fIinteger\fR <= \fIn\fR
 .SH DESCRIPTION
 .B $tab-width
-defines the default width of a tab character  specified in spaces. The default
-value is used when new files are loaded and created and seeds the variable
+defines the default width of a tab character specified in spaces. The default value is used when new files are loaded
+and created and seeds the variable
 .Ht $buffer-tab-width 5 .
 .PP
-Setting  tabs to arbitrary  widths is possible in  \*(mS  but you must be
-aware  of a subtle  difference  that it makes to your  file and  hence to your
-editing.  When  you  start  \*(mS,  the tab  width is set to the  default
-(usually  every 8th column) for the tab character  (\fCCTRL-I\fR).  As long as
-you stay with the default,  every time you insert the tab  character, a CTRL-I
-get inserted. Hence, you logically have a single  character which might appear
-to be several  spaces on the screen (or the output)  depending upon the column
-location of the tab character.  This means that to remove the spacing you have
-to delete a \fIsingle\fR character \-\- the tab character.
+Setting tabs to arbitrary widths is possible in \*(mS but you must be aware of a subtle difference that it makes to
+your file and hence to your editing. When you start \*(mS, the tab width is set to the default (usually every 8th
+column) for the tab character (\fCCTRL-I\fR). As long as you stay with the default, every time you insert the tab
+character, a CTRL-I get inserted. Hence, you logically have a single character which might appear to be several spaces
+on the screen (or the output) depending upon the column location of the tab character. This means that to remove the
+spacing you have to delete a \fIsingle\fR character \-\- the tab character.
 .PP
-On the other hand, the moment you  explicitly set the tab interval (even if it
-is to the default  value),  \*(mS  handles the tab character by expanding
-the  character  into  the  required  number  of  spaces  to  move  you  to the
-appropriate column. In this case, to remove the spacing you have to delete the
-appropriate number of spaces inserted by \*me to get you to the right column.
+On the other hand, the moment you explicitly set the tab interval (even if it is to the default value), \*(mS handles
+the tab character by expanding the character into the required number of spaces to move you to the appropriate column.
+In this case, to remove the spacing you have to delete the appropriate number of spaces inserted by \*me to get you to
+the right column.
 .PP
 The operating mode of the tab expansion is controlled by the 
 .Ht tab 2m  
 mode.
 .SH NOTES
-The   November   2004  version  of  \*(mS   removed  the  existing   variables
-\fB$tabwidth\fR   and  \fB$tabsize\fR   which  were  ambiguous.  The  existing
-variable  scope was global which caused  problems  when moving to buffers with
-different tab width properties. The variables have been replaced with 
+The November 2004 version of \*(mS removed the existing variables \fB$tabwidth\fR and \fB$tabsize\fR which were
+ambiguous. The existing variable scope was global which caused problems when moving to buffers with different tab
+width properties. The variables have been replaced with 
 .B $tab-width 
 and 
 .Ht $buffer-tab-width 5 . 
-The  indentation  which was  previously  controlled  by the tab width has been
-replaced with 
+The indentation which was previously controlled by the tab width has been replaced with 
 .Ht $indent-width 5 
 and 
 .Ht $buffer-indent-width 5 .

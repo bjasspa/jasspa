@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd105.2,v 2.7 2025/08/28 00:31:11 jon Exp $
+.Id $Id: m2cmd105.2,v 2.7 2026/06/19 13:47:52 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*(cX\*cq\fR)\ \&
 .so me.tni
@@ -31,23 +31,20 @@ variable
 .Ht $rcs-cou-com 5
 (co unlock). The file is then reloaded and the view mode status re-evaluated.
 .IP "\fBview-mode OFF; RCS file does not exist\fR"
-\*(mS  attempts  to  check-in  the file into RCS for the first  time using the
-command-line given by the variable
+\*(mS attempts to check-in the file into RCS for the first time using the command-line given by the variable
 .Ht $rcs-cif-com 5
 (ci first). The file is then reload.
 .IP "\fBview-mode OFF; RCS file exists\fR"
-\*(mS attempts to check-in the file into RCS using the  command-line  given by
-the variable
+\*(mS attempts to check-in the file into RCS using the command-line given by the variable
 .Ht $rcs-ci-com 5 .
 The file is then reload.
 .IP "\fBnegative argument given\fR"
-\*(mS  attempts to unedit any changes made to the file using the  command-line
-given by the variable
+\*(mS attempts to unedit any changes made to the file using the command-line given by the variable
 .Ht $rcs-ue-com 5 .
 The file is then reload.
 .SH "SEE ALSO"
 .na
-.Hr rcs 1 .
+.Hr rcs 1 ,
 .Ht $rcs-file 5 ,
 .Ht buffer-mode 2 ,
 .Ht find-file 2 ,

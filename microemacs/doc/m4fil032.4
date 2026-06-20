@@ -4,12 +4,12 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil032.4,v 2.7 2026/02/21 20:19:57 jon Exp $
+.Id $Id: m4fil032.4,v 2.7 2026/06/19 13:27:43 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !jump 4
 .XI !jump - "Unconditional jump"
-.XI !tjump - "Unconditional relative branch"
+.XI !tjump - "Conditional relative branch"
 .SH NAME
 .Me "|!jump"
 !jump \- Unconditional relative branch
@@ -21,40 +21,34 @@
 .br
 \fB!tjump\fR \fIcondition\fR \fIoffset\fR
 .SH DESCRIPTION
-Flow can be controlled  within a \*(mS macro using the \fB!jump\fR  directive.
-It takes as a numerical  argument  \fIoffset\fR.  The \fIoffset\fR is a signed
-relative  displacement,  it may be a literal  numeric  value, a variable or an
+Flow can be controlled within a \*(mS macro using the \fB!jump\fR directive. It takes as a numerical argument
+\fIoffset\fR. The \fIoffset\fR is a signed relative displacement, it may be a literal numeric value, a variable or an
 evaluated expression (see
 .Hl "Variable Functions"  Functions - ).
 The displacement to jump starts from the current \fB!jump\fR line. (i.e.
-.BR "0 goto" )
-would loop  forever as it jumps to  itself).  Negative  \fIoffset\fR  branches
-backwards, positive \fIoffset\fR forwards.
+.BR "0 !jump" )
+would loop forever as it jumps to itself). Negative \fIoffset\fR branches backwards, positive \fIoffset\fR forwards.
 .PP
-A  conditional  relative  branch, with a numerical  displacement  is specified
-using \fB!tjump\fR. This has an additional argument  \fIcondition\fR  which is
-evaluated  and if  \s-1TRUE\s0  (Non-zero)  then  the  branch  is  taken.  The
+A conditional relative branch, with a numerical displacement is specified using \fB!tjump\fR. This has an additional
+argument \fIcondition\fR which is evaluated and if \s-1TRUE\s0 (Non-zero) then the branch is taken. The
 \fIcondition\fR may be a variable or an evaluated expression.
 .PP
 \fB!jump\fR and \fB!tjump\fR are fast equivalents of
 .Ht !goto 4
 and
 .Ht !tgoto 4 ,
-respectively.  \fB!jump\fR should be used with care as these calls are source
-sensitive and  unexpected  results may be obtained if the  \fIoffset\fR's  are
-specified incorrectly.
+respectively. \fB!jump\fR should be used with care as these calls are source sensitive and unexpected results may be
+obtained if the \fIoffset\fR's are specified incorrectly.
 .SH WARNING
-Comments  are not  counted as valid lines  within the  relative  displacement,
-these are stripped out when the macro is loaded. When using a relative  branch
-ensure that \s-1ONLY\s0 the \fIcode\fR lines are counted.
+Comments are not counted as valid lines within the relative displacement, these are stripped out when the macro is
+loaded. When using a relative branch ensure that \s-1ONLY\s0 the \fIcode\fR lines are counted.
 .SH EXAMPLE
-For some seriously dirty macro tricks then the \fB!jump\fR  directive  becomes
-very useful. The following example is taken from the \fBMetris\fR macro (which
-is packed with  goodies if you can find time to work out what it does !!). The
+For some seriously dirty macro tricks then the \fB!jump\fR directive becomes very useful. The following example is
+taken from the \fBMetris\fR macro (which is packed with goodies if you can find time to work out what it does !!). The
 following example uses the random number generator
 .Ht $random 5
-to generate a random  number  which scaled and used as a  \fB!jump\fR  offset,
-thereby creating a \fIswitch\fR type statement.
+to generate a random number which scaled and used as a \fB!jump\fR offset, thereby creating a \fIswitch\fR type
+statement.
 .Me $emf-scheme
 .CS
 0 define-macro met-select-piece

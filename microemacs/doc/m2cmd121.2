@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd121.2,v 2.8 2025/08/28 00:30:47 jon Exp $
+.Id $Id: m2cmd121.2,v 2.8 2026/06/19 13:48:06 jon Exp $
 .Im MicroEmacs command|region
 .ds C0 "(\fB\*e\*(sP\fR)\ \&
 .so me.tni
@@ -19,28 +19,21 @@ set-mark \- Set starting point of region
 .ad
 .SH DESCRIPTION
 .B set-mark
-is used to  delimit  the  beginning  of a marked  region.  Many  commands  are
-effective  for a region of text. A region is defined as the text  between  the
-mark and the  current  cursor  position.  To  delete a  section  of text,  for
-example,  one moves the  cursor to the  beginning  of the text to be  deleted,
-issues the \fBset-mark\fR  command by typing  \fB\*e\*(sP\fR, moves the cursor
-to the end of the text to be deleted, and then deletes it by using the
+is used to delimit the beginning of a marked region. Many commands are effective for a region of text. A region is
+defined as the text between the mark and the current cursor position. To delete a section of text, for example, one
+moves the cursor to the beginning of the text to be deleted, issues the \fBset-mark\fR command by typing
+\fB\*e\*(sP\fR, moves the cursor to the end of the text to be deleted, and then deletes it by using the
 .Ht kill-region 2
-(\fB\*cw\fR)  command. Only one mark can be set in one window or one buffer at
-a time, and \*(mS will try to remember a mark set in an off screen buffer when
-it is called back on screen.
+(\fB\*cw\fR) command. Only one mark can be set in one window or one buffer at a time, and \*(mS will try to remember a
+mark set in an off screen buffer when it is called back on screen.
 .PP
-A region is a block of text to be acted  upon by some  \*(mS  commands.  It is
-demarcated by the  \fBPOINT\fR on one end and the \fBMARK\fR at the other. The
-point is the primary location  identifier where most of the action takes place
-and is always  between two  characters.  The point is  indicated by the cursor
-position in that it is just left of the cursor. The point is also  significant
-in that it  defines  one end of the  region.  The mark, on the other  hand, is
-invisible,  and is used to  demarcate  the other end of the  region and is set
-through \fBset-mark\fR.
+A region is a block of text to be acted upon by some \*(mS commands. It is demarcated by the \fBPOINT\fR on one end
+and the \fBMARK\fR at the other. The point is the primary location identifier where most of the action takes place and
+is always between two characters. The point is indicated by the cursor position in that it is just left of the cursor.
+The point is also significant in that it defines one end of the region. The mark, on the other hand, is invisible, and
+is used to demarcate the other end of the region and is set through \fBset-mark\fR.
 .PP
-The current buffer mark line and column position may be obtained from within a
-macro using the variables
+The current buffer mark line and column position may be obtained from within a macro using the variables
 .Ht $window-mark-line 5 
 and 
 .Ht $window-mark-col 5 . 
@@ -48,7 +41,7 @@ and
 .na
 .Ht copy-region 2 ,
 .Ht exchange-point-and-mark 2 ,
-.Ht kill-region 2 .
+.Ht kill-region 2 ,
 .Ht reyank 2 ,
 .Ht yank 2 ,
 .Ht $window-mark-col 5 , 

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd136.2,v 2.6 2025/08/28 00:28:31 jon Exp $
+.Id $Id: m2cmd136.2,v 2.6 2026/06/19 13:48:22 jon Exp $
 .Im MicroEmacs command|essential
 .ds C0 "(\fB\*(cXu\fR)\ \&
 .so me.tni
@@ -24,11 +24,34 @@ removes the last  \fIn\fR  edits made to the  current  buffer.  The
 .Ht undo 2m
 buffer mode must be enabled for this command to operate.
 .PP
+When \fIn\fR is \fC\-1\fR, \fBundo\fR discards all of the current undo history for the buffer without performing any
+undo operation. This can be used to free the memory consumed by the undo history after completing significant editing.
+.PP
+When \fIn\fR is less than \fC\-1\fR (e.g. \fC\-2\fR), \fBundo\fR inserts an undo boundary. By default, all edits
+performed within a single macro execution are treated as one undo group and are removed by a single call to
+\fBundo\fR. Calling \fC\-2 undo\fR from within a macro creates a break point so that edits made before the call form
+one undo group and edits made after form a new, separate undo group, each requiring their own call to \fBundo\fR to
+reverse. Multiple boundaries may be inserted by calling \fC\-2 undo\fR more than once.
+.PP
 The undo information is retained up until the next save operation, at which point the undo information is discarded.
 When editing large files with gross changes then it is advisable to either disable undo mode, or save frequently to
 flush the undo buffer, thereby keeping \*(mS memory requirements reasonable (most \s-1UNIX\s0 users have restrictions
 on the amount of memory that may be consumed by a single process. Windows is restricted by the amount of virtual
 memory (or swap space)).
+.SH EXAMPLE
+The following macro demonstrates the use of the undo boundary. After executing \fBtest-multi-step-undo\fR, the first
+call to \fBundo\fR removes only \fCCD\fR; a second call removes \fCAB\fR.
+.Me $emf-scheme
+.CS
+define-macro test-multi-step-undo
+    insert-string "A"
+    insert-string "B"
+    -2 undo
+    insert-string "C"
+    insert-string "D"
+!emacro
+.CE 0
+.Me $ehf-scheme
 .SH "SEE ALSO"
 .na
 .Ht buffer-mode 2 ,

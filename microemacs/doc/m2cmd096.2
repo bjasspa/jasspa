@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd096.2,v 2.6 2022/06/12 17:13:25 jon Exp $
+.Id $Id: m2cmd096.2,v 2.6 2026/06/19 13:47:31 jon Exp $
 .Im MicroEmacs command|cursor
 .ds C0 "(\fB\*ef\fR)\ \&
 .ds C1 "(\fB\*eb\fR)\ \&
@@ -27,22 +27,21 @@ backward-word \- Move the cursor to the previous word
 .ad
 .SH DESCRIPTION
 .B forward-word
-places the cursor at the end of the \fIn\fRth word from the current  position;
-the default is 1.
+places the cursor at the end of the \fIn\fRth word from the current position; the default is 1.
 .PP
 .B backward-word
 places the cursor at the beginning of the \fIn\fRth previous word, default 1.
+.PP
+For both commands, a negative value reverses the sense of movement as expected.
 .SH NOTES
-Words are distinguished by  non-alphanumeric  characters and need not be white
-space such as spaces and tabs.
+Words are distinguished by non-alphanumeric characters and need not be white space such as spaces and tabs.
 .PP
 A character is  considered  to be part of a word if it is in the
 .Ht $buffer-mask 5
-character set. The default setting for \fB$buffer-mask\fR is "\fCluh\fR" which
-gives   a  word   character   set  of  the   alphanumeric   characters,   i.e.
-\fC0\fR-\fC9\fR,  \fCA\fR-\fCZ\fR,  \fCa\fR-\fCz\fR, this  may be  changed  by
-setting the \fB$buffer-mask\fR  variable. The character sets (including 4 user
-character sets \fC1\fR-\fC4\fR) may be altered by using the command
+character set. The default setting for \fB$buffer-mask\fR is "\fCluh\fR" which gives a word character set of the
+alphanumeric characters, i.e. \fC0\fR-\fC9\fR, \fCA\fR-\fCZ\fR, \fCa\fR-\fCz\fR, this may be changed by setting the
+\fB$buffer-mask\fR variable. The character sets (including 4 user character sets \fC1\fR-\fC4\fR) may be altered by
+using the command
 .Ht set-char-mask 2 .
 .SH "SEE ALSO"
 .na

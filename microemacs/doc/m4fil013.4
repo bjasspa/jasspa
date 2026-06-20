@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil013.4,v 2.11 2026/02/21 20:07:11 jon Exp $
+.Id $Id: m4fil013.4,v 2.11 2026/06/19 13:23:42 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !bell 4
@@ -14,25 +14,20 @@
 .SH SYNOPSIS
 \fB!bell\fR [\fIn\fR]
 .SH DESCRIPTION
-\fB!bell\fR  provides  a warning  (audible  or  visual) to alert the user of a
-problem. \fB!bell\fR honors the
-.Ht quiet 5
-setting, as such if  \fBquiet\fR  mode is  disabled an audible  warning is given,
-otherwise  a  visual  warning  is  given  to the  user  (usually  the  message
-"\fI[BELL]\fR" in the bottom left hand corner of the message line).
+\fB!bell\fR provides a warning (audible or visual) to alert the user of a problem. \fB!bell\fR honors the
+.Ht $quiet 5
+setting, as such if \fBquiet\fR mode is disabled an audible warning is given, otherwise a visual warning is given to
+the user (usually the message "\fI[BELL]\fR" in the bottom left hand corner of the message line).
 .PP
-The optional  numerical  argument  \fIn\fR  over-rides the current  setting of
-\fBquite\fR,  a value of \fC0\fR  specifies  a quite bell,  \fC2\fR an audible
-one, when omitted the default is \fC1\fR  honoring the setting of  \fBquite\fR
-mode.
+The optional numerical argument \fIn\fR over-rides the current setting of \fBquiet\fR, a value of \fC0\fR specifies a
+quiet bell, \fC2\fR an audible one, when omitted the default is \fC1\fR honoring the setting of \fBquiet\fR mode.
 .PP
 \fB!bell\fR is generally used in conjunction with
 .Hl !abort !abort 4 ,
 the !bell function warning the user and the !abort function to quit the macro.
 .SH EXAMPLE
-The  following  macro  example  checks  for  incoming  mail and is taken  from
-\fCmail.emf\fR.  If any mail has  arrived  an  audible  warning  is assured by
-toggling the \fBquiet\fR mode.
+The following macro example checks for incoming mail and is taken from \fCmail.emf\fR. If any mail has arrived an
+audible warning is assured by toggling the \fBquiet\fR mode.
 .Me $emf-scheme
 .CS
 ;
@@ -63,6 +58,6 @@ define-macro mail-check
 .na
 .Ht !abort 4 ,
 .Ht abort-command 2 ,
-.Ht !bell 4 .
+.Ht $quiet 5 .
 .ad
 .FH

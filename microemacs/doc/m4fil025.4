@@ -4,11 +4,11 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil025.4,v 2.6 2025/08/28 01:58:37 jon Exp $
+.Id $Id: m4fil025.4,v 2.6 2026/06/19 13:27:00 jon Exp $
 .Im MicroEmacs macro;directive|miscellaneousOperators
 .so me.tni
 .TH !nmacro 4
-.XI !nmacro - "Ignore command or macro status"
+.XI !nmacro - "Execute line as if not in a macro"
 .SH NAME
 !nmacro \- Execute line as if not in a macro
 .SH SYNOPSIS
@@ -24,8 +24,7 @@ immediately following the command. If a line is preceded by a \fB!nmacro\fR (or 
 executed as if it was invoked from the command line by the user, as such, the rest of the line is ignored and all
 input is obtained directly from the user, as per normal command interaction.
 .SH EXAMPLE
-The following example is taken from macro file \fCmeme3_8.emf\fR and shows how
-to add a buffer mode.
+The following example is taken from macro file \fCmeme3_8.emf\fR and shows how to add a buffer mode.
 .Me $emf-scheme
 .CS
 ; Add a buffer mode
@@ -39,15 +38,14 @@ define-macro add-mode
 !emacro
 .CE
 .Me $ehf-scheme
-The first line  checks  that the mode to add has not  already  been given as a
-macro argument, e.g. by executing the following line
+The first line checks that the mode to add has not already been given as a macro argument, e.g. by executing the
+following line
 .Me $emf-scheme
 .CS
 buffer-add-mode "view"
 .CE
 .Me $ehf-scheme
-If this line fails then the  argument was not  specified  and must be obtained
-from the user as normal.
+If this line fails then the argument was not specified and must be obtained from the user as normal.
 .SH NOTES
 Individual arguments may be obtained from the user using the
 .Ht @mn 4
