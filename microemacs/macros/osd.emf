@@ -306,7 +306,7 @@ osd 1 210 ""  "E\Hxit            C-x C-c"   f save-buffers-exit-emacs
 osd 2 0   "bo" 1 0
 osd 2 10  ""  "\HUndo                C-x u"      1 osd-undo      ; Undo the last command
 osd 2 20  ""  "Redo"                                             ; Re-do the last osd-undo
-osd 2 30  ""  "Undo \HAll"                       0 osd-undo      ; Undo all changes to last save
+osd 2 30  ""  "Undo \HAll Changes"               0 osd-undo      ; Undo all changes to last save 
 osd 2 40  "-"
 osd 2 50  ""  "\HSet Mark            esc space"  f set-mark
 osd 2 60  ""  "\HCopy Region         esc w"      f copy-region
@@ -380,7 +380,7 @@ osd 5 60  ""  "I\HQ Fill Paragraph"                f ifill-paragraph
 osd 5 70  ""  "\HFill Paragraph           esc q"   f fill-paragraph
 osd 5 80  ""  "Fill \HAll Paragraphs"          65536 fill-paragraph
 osd 5 90  ""  "Para\Hgraph to Line"                f paragraph-to-line
-osd 5 90  ""  "All Paragraphs to Li\Hnes"      65536 paragraph-to-line
+osd 5 95  ""  "All Paragraphs to Li\Hnes"      65536 paragraph-to-line
 osd 5 100 "-"
 osd 5 110 ""  "C\Hhange Character Set..."          f change-buffer-charset
 osd 5 120 ""  "\HTabs to Spaces"                   f tabs-to-spaces

@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.14 2025/03/26 12:21:51 jon Exp $
+.Id $Id: m3osd006.3,v 2.14 2026/06/20 19:39:41 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -210,7 +210,7 @@ Redo the last  undo, only  available  immediately  after an undo. This is also
 done via the
 .Ht undo 2
 command.
-.IP "\fCUndo All\fR"
+.IP "\fCUndo All Changes\fR"
 Undo all  edits in the  current  buffer  until  the last  save or no more undo
 history is available. Executes the command
 .Ht undo 2
@@ -297,51 +297,42 @@ Finds the previous string in the buffer using the last search string, uses
 Opens a dialogue for searching and replacing the buffer for a given string, see 
 .Ht osd-search 3 .
 .IP "\fCHilight Search\fR"
-Opens a dialog which allows lines of the buffer to be searched and highlighted
-by changing the line color. Setting a line highlight is a temporary change, it
-does not effect any files and is lost when the buffer is deleted, see 
+Opens a dialog which allows lines of the buffer to be searched and highlighted by changing the line color. Setting a
+line highlight is a temporary change, it does not effect any files and is lost when the buffer is deleted, see 
 .Ht osd-search 3 .
 .\" -----------------
 .IP "\fCFind Files\fR"
-Initiates a search for files in the file system from the directory of the current
-buffer using
+Initiates a search for files in the file system from the directory of the current buffer using
 .Ht find 3 .
 .IP "\fCFind in Files\fR"
-Initiates a string  search of the file system, in the directory of the current
-buffer using
+Initiates a string search of the file system, in the directory of the current buffer using
 .Ht grep 3 .
 .IP "\fCReplace in Files\fR" 
-Initiates a string  search and replace of the file system, in the directory of
-the current buffer using
+Initiates a string search and replace of the file system, in the directory of the current buffer using
 .Ht replace-all-string 3 .
 .IP "\fCQuery Replace in Files\fR" 
 As with \fBReplace in Files\fR except prompts the user before each replace using
 .Ht query-replace-all-string 3 .
 .\" -----------------
 .IP "\fCSet Bookmark\fR"
-Places a bookmark in the buffer which  provides a quick method of returning to
-the buffer  position, the user is prompted for a single  character to identify
-the position the buffer. Executes command 
+Places a bookmark in the buffer which provides a quick method of returning to the buffer position, the user is
+prompted for a single character to identify the position the buffer. Executes command 
 .Ht set-alpha-mark 2 .
 .IP "\fCGoto Bookmark\fR"
 Moves the cursor to a book mark position defined with 
 .BR "Set Bookmark" ,
-the user is prompted for a single character that identifies the bookmark.
-Executes command
+the user is prompted for a single character that identifies the bookmark. Executes command
 .Ht goto-alpha-mark 2 .
 .IP "\fCGoto Fence\fR"
-When the  cursor is on a fence  character  (i.e.  \fC{\fR,  \fC}\fR,  \fC(\fR,
-\fC)\fR,  \fC[\fR,  \fC]\fR, ...) then the other matching fence is located and
-the buffer position is changed to the other fence character.
-Executes command
+When the cursor is on a fence character (i.e. \fC{\fR, \fC}\fR, \fC(\fR, \fC)\fR, \fC[\fR, \fC]\fR, ...) then the
+other matching fence is located and the buffer position is changed to the other fence character. Executes command
 .Ht goto-matching-fence 2 .
 .IP "\fCGoto Line\fR"
-Moves cursor to the specified line number or relative line position,  executes
-a dialog form of the command
+Moves cursor to the specified line number or relative line position, executes a dialog form of the command
 .Ht goto-line  2 .
 .IP "\fCGoto Tag\fR"
-Only  available  when a \fCtags\fR  file is found in the current  directory,  on  selection  either the current tag is
-located and  displayed in a pop-up  window or a dialog is presented  with a list of tags found within the tag file. On
+Only available when a \fCtags\fR file is found in the current directory, on selection either the current tag is
+located and displayed in a pop-up window or a dialog is presented with a list of tags found within the tag file. On
 selection of a tag then the file is opened and the cursor position is moved to the definition of the tag. See command
 .Ht find-tag 2
 for more information.
@@ -354,8 +345,7 @@ Hides the selected region of the buffer, executes command
 .Ht narrow-buffer 2
 with a numeric argument of \fC4\fR.
 .IP "\fCNarrow To\fR"
-Hides all of the buffer with the exception of the selected region,
-executes command
+Hides all of the buffer with the exception of the selected region, executes command
 .Ht narrow-buffer 2
 with a numeric argument of \fC3\fR.
 .IP "\fCRemove Single Narrow\fR"
@@ -368,30 +358,27 @@ Removes all of the narrowed regions in the buffer, executes command
 with a numeric argument of \fC1\fR.
 .\" -----------------
 .IP "\fCBuffer Info\fR"
-Provides  information  on the buffer current cursor  position on the mode line
-including line number, character under the cursor etc. See
+Provides information on the buffer current cursor position on the mode line including line number, character under the
+cursor etc. See
 .Ht buffer-info 2 .
 .IP "\fC Word Count\fR"
-Counts the number of words in the buffer and in the selected region (between point and mark),
-executes 
+Counts the number of words in the buffer and in the selected region (between point and mark), executes 
 .Ht count-words 2 .
 .IP "\fCOccurrences\fR"
-Finds all  occurrences  of a given  string in the buffer. The user is prompted
-for the  string  to find. A second  window  opens and all  occurrences  of the
-string in the buffer are  presented,  selecting  an item from this list, using
-the mouse, moves the cursor to the specified occurrence. See
+Finds all occurrences of a given string in the buffer. The user is prompted for the string to find. A second window
+opens and all occurrences of the string in the buffer are presented, selecting an item from this list, using the
+mouse, moves the cursor to the specified occurrence. See
 .Ht occur 3 .
 .\" -----------------
 .IP "\fCBuffer\fR"
-Lists the current buffers in the editor,  selecting one changes the
-current buffer to the selection.
+Lists the current buffers in the editor, selecting one changes the current buffer to the selection.
 .IP "\fCBuffer (by type)\fR"
-Similar to the File menu's Quick Open, this opens a sub-menu  listing the the user's file types and for each file type
+Similar to the File menu's Quick Open, this opens a sub-menu listing the the user's file types and for each file type
 a list of buffers matching that type is shown. Selecting a buffer will change the current buffer to the select. 
 .\" -----------------
 .IP "\fCMain Menu\fR"
-Hides or shows the Main Menu. If the main menu has been  hidden then  \fBF1\fR
-brings up the menu, the main menu may be re-activated then if necessary.
+Hides or shows the Main Menu. If the main menu has been hidden then \fBF1\fR brings up the menu, the main menu may be
+re-activated then if necessary.
 .IP "\fCScroll Bars\fR"
 Hides or shows scroll bars within the buffer.
 .IP "\fCTool Bar\fR"
@@ -404,50 +391,44 @@ Hides or shows the white space characters in the buffer.
 .\"*************************************************************************
 .SS "Format Menu"
 .IP "\fCRestyle Buffer\fR"
-Re-styles the layout of the buffer based on the major-mode  setting.  Executes
-the command
+Re-styles the layout of the buffer based on the major-mode setting. Executes the command
 .Ht restyle-buffer 3 .
 .IP "\fCRestyle Region\fR"
-Re-styles  the  layout  of a  selected  region  of  the  buffer  based  on the
-major-mode setting. Executes the command
+Re-styles the layout of a selected region of the buffer based on the major-mode setting. Executes the command
 .Ht restyle-region 3 .
 .IP "\fCIncrease Indent\fR"
-Increases  the  indentation  of a line or region by a single  single  Tab stop
-position. Executes the command 
+Increases the indentation of a line or region by a single single Tab stop position. Executes the command 
 .Ht indent-increase 3 .
 .IP "\fCDecrease Indent\fR"
-Decreases  the  indentation  of a line or region by a single  single  Tab stop
-position. Executes the command 
+Decreases the indentation of a line or region by a single single Tab stop position. Executes the command 
 .Ht indent-decrease 3 .
 .\" -----------------
 .IP "\fCIQ Fill Paragraph\fR"
-Reformat a paragraph  using the current fill mode, handling  embedded  bullets
-with no line separation. Executes the command
+Reformat a paragraph using the current fill mode, handling embedded bullets with no line separation. Executes the
+command
 .Ht ifill-paragraph 3 .
 .IP "\fCFill Paragraph\fR"
-Reformat a paragraph  using the current fill mode using the standard paragraph
-fill mode. Executes the command
+Reformat a paragraph using the current fill mode using the standard paragraph fill mode. Executes the command
 .Ht fill-paragraph 2 .
 .IP "\fCFill All Paragraphs\fR"
-Reformats all  paragraphs in the buffer using the standard  paragraph  filling
-mode. Executes command
+Reformats all paragraphs in the buffer using the standard paragraph filling mode. Executes command
 .Ht fill-paragraph 2
-with a very large  positive  numerical  argument.  Note that this only effects
-paragraphs from the current position onwards.
+with a very large positive numerical argument. Note that this only effects paragraphs from the current position
+onwards.
+.IP "\fCParagraph to Line\fR"
+Converts  the current paragraph  to a single line.
+Paragraphs are typically converted to a single line before copying into an external program, such as an email client or word
+processor, as these often performs their own text wrapping. It is  therefore  important that the new line characters 
+in \*(mS  paragraphs are removed first.
 .IP "\fCAll Paragraphs to Lines\fR"
-Converts  all  paragraphs  to a single line, one line per original  paragraph.
-Paragraphs are typically converted to a single line before copying into a Word
-Processor (i.e. Word,  StarOffice  etc.). The Word Processor  performs its own
-text wrapping  therefore it is important that \*(mS  paragraphs with new lines
-in them are not copied.
+As with \fCParagraph to Line\fR except it converts the current and all following paragraph. Note the conversion only
+starts from the current position, earlier paragraphs remain unchanged.
 .\" -----------------
 .IP "\fCChange Character Set ...\fR"
-Converts  the  ASCII  text from one  character  set to  another,  this  allows
-diacritical marks to be maintained.
+Converts the ASCII text from one character set to another, this allows diacritical marks to be maintained.
 .IP "\fCTabs to Spaces\fR"
-Converts \fCTAB\fR  characters to spaces whilst retaining the correct tab stop
-positions  within the file. Note that if the tab stops  appear to be incorrect
-then the tab width should be temporarily changed using 
+Converts \fCTAB\fR characters to spaces whilst retaining the correct tab stop positions within the file. Note that if
+the tab stops appear to be incorrect then the tab width should be temporarily changed using 
 .Ht buffer-setup 3 
 before converting to spaces.
 .IP "\fCClean Buffer\fR"
@@ -492,30 +473,26 @@ Spell checks the buffer from the current cursor position onwards,
 executes command
 .Ht spell-buffer 3 .
 .IP "\fCWord Complete\fR"
-Takes the incomplete  word to the left of the cursor and attempts to complete
-the word by using the users current  language  dictionary, use \fCTAB\fR for a
-list of possible completions. Executes the command
+Takes the incomplete word to the left of the cursor and attempts to complete the word by using the users current
+language dictionary, use \fCTAB\fR for a list of possible completions. Executes the command
 .Ht expand-word 3 .
 .\" -----------------
 .IP "\fCCompare Windows\fR"
-Compares the contents of two buffers, the  comparison  starts from the current
-cursor  position  in each  buffer  and the cursor  position  should be aligned
-before starting the comparison, executes the command
+Compares the contents of two buffers, the comparison starts from the current cursor position in each buffer and the
+cursor position should be aligned before starting the comparison, executes the command
 .Ht compare-windows 2 .
 .IP "\fCDiff Changes\fR"
-Compares  the current  buffer with the last backup  version of the buffer, the
-buffer has to be saved before the  comparison  may be performed,  executes the
-command
+Compares the current buffer with the last backup version of the buffer, the buffer has to be saved before the
+comparison may be performed, executes the command
 .Ht diff-changes 3 .
 .IP "\fCDiff\fR"
 Runs a 
 .Ht diff 3
-command  to  difference  two  files,  the user is  prompted  each of the files
-before  running the command. The results of the  difference are presented in a
-new buffer window.
+command to difference two files, the user is prompted each of the files before running the command. The results of the
+difference are presented in a new buffer window.
 .IP "\fCGraphical Diff\fR"
-Runs a graphics  difference  between  two files where the files are  presented
-side by side. The user is prompted for the two files to compare. See also 
+Runs a graphics difference between two files where the files are presented side by side. The user is prompted for the
+two files to compare. See also 
 .Ht gdiff 3 
 which uses a command line prompt for the files rather than a dialog.
 .IP "\fCCompile\fR"

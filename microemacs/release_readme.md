@@ -25,6 +25,7 @@ For your platform download the single-file binary zip file:
 | Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_intel_mesw.zip) |
 | Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_windows_arm_mesw.zip)   |
 | Cygwin intel  | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_cygwin_intel_mesc.zip)  | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_cygwin_intel_mesw.zip)  |
+| MSYS2 intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_msyswin_intel_mesc.zip) | N/A  |
 | **Legacy platforms**  | **Console/Terminal** | **GUI (X11 on Linux/Mac)** |
 | Linux intel v5 kernel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux5_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/Jasspa_MicroEmacs_<VERSION>_abin_linux5_intel_mesw.zip)   |
 
@@ -39,7 +40,7 @@ For a more complete experience execute command **init-session**, this creates a 
 
 ## INSTALLERS
 
-- **UNIX:** The preferred install method is using the [microemacs-install](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install) script, run the following script in a terminal:
+- **UNIX:** The preferred install method is using the [microemacs-install](https://github.com/bjasspa/jasspa/releases/download/me_<VERSION>/microemacs-install) script, this method supports Cygwin and MSYS2. Simply run the following command in a terminal:
 
       /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
     
