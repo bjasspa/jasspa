@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Sat Aug 22 09:00:06 1998
 .\"
-.Id $Id: m3osd006.3,v 2.14 2026/06/20 19:39:41 jon Exp $
+.Id $Id: m3osd006.3,v 2.14 2026/06/22 13:02:58 jon Exp $
 .Im MicroEmacs command|osd
 .so me.tni
 .TH "MainMenu" 3
@@ -280,9 +280,11 @@ of the buffer may not be altered. Change the buffer mode
 .\"*************************************************************************
 .SS "Search Menu"
 .IP "\fCIncremental Search\fR"
-Initiates an  incremental  search, the user is prompted to enter the string to
-search for, execute the command
+Initiates an incremental search, the user is prompted to enter the string to search for, see the command
 .Ht isearch-forward 2 .
+.IP "\fCReverse Inc Search\fR"
+Initiates a incremental search backward, the user is prompted to enter the string to search for, see the command
+.Ht isearch-backward 2 .
 .\" -----------------
 .IP "\fCFind\fR"
 Opens a dialogue for searching the buffer for a given string, see 
@@ -290,7 +292,7 @@ Opens a dialogue for searching the buffer for a given string, see
 .IP "\fCFind Next\fR"
 Finds the next string in the buffer using the last search string, uses
 .Ht hunt-forward 2 .
-.IP "\fCFind Prev\fR"
+.IP "\fCFind Previous\fR"
 Finds the previous string in the buffer using the last search string, uses
 .Ht hunt-backward 2 .
 .IP "\fCReplace\fR"
@@ -304,7 +306,7 @@ line highlight is a temporary change, it does not effect any files and is lost w
 .IP "\fCFind Files\fR"
 Initiates a search for files in the file system from the directory of the current buffer using
 .Ht find 3 .
-.IP "\fCFind in Files\fR"
+.IP "\fCFind in Files (grep)\fR"
 Initiates a string search of the file system, in the directory of the current buffer using
 .Ht grep 3 .
 .IP "\fCReplace in Files\fR" 
