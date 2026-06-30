@@ -80,6 +80,18 @@ Not used by this command.
 When this bit is set the command sets the value of the given  \fIvariable-name\fR  to the output of the shell  command
 rather than insert it into a buffer. Note that the output length is limited to the maximum variable length,  typically
 1024 or 2048 bytes, and the output is copied verbatim so a '\fC\\0\fR' in the output will terminate the value.
+.IP \fB0x800\fR
+When the terminal is operating in UTF-8 mode (i.e.
+.Ht $system 5
+bit \fC0x20000000\fR is set, auto-detected at startup from the locale), pipe output is
+automatically decoded from UTF-8: multi-byte sequences are converted to the
+nearest character in the current codepage, box-drawing characters are mapped to
+the \*(mS box-drawing set, and common typographic characters (curly quotes,
+em-dash, bullet etc.) are approximated with ASCII. Setting bit \fB0x800\fR
+suppresses this automatic decoding so that raw UTF-8 bytes are stored in the
+buffer instead. Bit \fB0x40\fR (raw mode) also suppresses UTF-8 decoding. Note
+that UTF-8 decoding is not applied when bit \fB0x400\fR directs output to a
+variable.
 .SH NOTES
 On \s-1MS-DOS\s0 and \fIWin32s\fR the standard shell
 .Hr command.com 1

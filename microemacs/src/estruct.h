@@ -1186,11 +1186,12 @@ typedef struct meFrame
 #if MEOPT_IPIPES
 /* The following is structure required for unix ipipes */
 
-#define meIPIPE_OVERWRITE   0x01
-#define meIPIPE_NEXT_CHAR   0x02
-#define meIPIPE_CHILD_EXIT  0x04
-#define meIPIPE_RAW         0x40        /* No messing with pipe data ! */
-#define meIPIPE_BUFIPIPE    0x80        /* Forced ipipe buffer */
+#define meIPIPE_OVERWRITE   0x001
+#define meIPIPE_NEXT_CHAR   0x002
+#define meIPIPE_CHILD_EXIT  0x004
+#define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
+#define meIPIPE_BUFIPIPE    0x080       /* Forced ipipe buffer          */
+#define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
 
 typedef struct meIPipe {
     meBuffer          *bp;

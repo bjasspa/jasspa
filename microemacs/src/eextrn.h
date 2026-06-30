@@ -482,6 +482,8 @@ extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp
 extern int      ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode);
 extern int      translateBuffer(int f, int n);
 extern meLine * translateBufferBack(meBuffer *bp, meUInt flags);
+extern meUByte  utf8ToMeChar(meUInt uc);
+extern void     meBufferDecodeUtf8(meBuffer *bp);
 #else
 #define ffFileOp(s,d,f,m) 0
 #define translateBuffer notAvailable
@@ -1016,7 +1018,8 @@ meSockEnd();
 #define LAUNCH_BUFCMDLINE    0x00100      /* cmd to run is 1st line of buf */
 #define LAUNCH_NO_WRAP       0x00200      /* Run without wrap mode     */
 #define LAUNCH_TO_VAR        0x00400      /* Output pipe to variable   */
-#define LAUNCH_USER_FLAGS    0x006FE      /* User flags bitmask (no 0x100) */
+#define LAUNCH_NOUTF8        0x00800      /* Suppress UTF-8 pipe decode */
+#define LAUNCH_USER_FLAGS    0x00EFE      /* User flags bitmask (no 0x100) */
 #define LAUNCH_SHELL         0x01000
 #define LAUNCH_SYSTEM        0x02000
 #define LAUNCH_FILTER        0x04000

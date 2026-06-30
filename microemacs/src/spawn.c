@@ -1119,16 +1119,16 @@ move_cursor_pos:
                                 while((p1[ii] = p1[ii+na]) != 0)
                                     ii++;
                             }
-                            break ;
+                            break;
                         default:
 cant_handle_this:
 #ifndef NDEBUG
-                            if(nb < 0)
-                                printf("Don't cope with term code \\E[%s%d%c\n",
-                                       (gotQ) ? "?":"",na,cc) ;
+                            if(nb >= 0)
+                                printf("Don't cope with term code \\E[%s%d;%d%c\n",(gotQ) ? "?":"",nb,na,cc);
+                            else if(gotQ && (na == 1) && ((cc == 'h') || (cc == 'l')))
+                                /* safe to ignore cursor key mode */;
                             else
-                                printf("Don't cope with term code \\E[%s%d;%d%c\n",
-                                       (gotQ) ? "?":"",nb,na,cc) ;
+                                printf("Don't cope with term code \\E[%s%d%c\n",(gotQ) ? "?":"",na,cc);
 #endif
                             break ;
                         }
@@ -1150,6 +1150,29 @@ cant_handle_this:
             /* follow through */
 #endif
         default:
+#if MEOPT_EXTENDED
+            if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
+            {
+                meUByte c2, c3;
+                if((cc < 0xc0) || !getNextCharFromPipe(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
+                    /* orphan continuation byte - discard */
+                    break;
+                if(cc < 0xe0)
+                    /* 2-byte sequence (0xc0-0xdf) */
+                    cc = utf8ToMeChar((((meUInt)(cc & 0x1f)) << 6) | (c2 & 0x3f));
+                else if(!getNextCharFromPipe(ipipe,c3,rbuff,curROff,curRRead) || ((c3 & 0xc0) != 0x80))
+                    break;
+                else if(cc < 0xf0)
+                    /* 3-byte sequence */
+                    cc = utf8ToMeChar((((meUInt) (cc & 0x0f)) << 12) | (((meUInt) (c2 & 0x3f)) << 6) | (c3 & 0x3f));
+                else if(!getNextCharFromPipe(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
+                    break;
+                else
+                    /* 4-byte: ME supports only up to U+FFFF - consume */
+                    cc = meCHAR_UNDEF;
+                /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
+            }
+#endif
             if(curOff >= maxOff)
             {
                 meUByte bb[2] ;
@@ -1565,7 +1588,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     meUByte   line[meBUF_SIZE_MAX];
     int       cd;
 #ifdef _UNIX
-    int       fds[2], outFds[2], ptyFp ;
+    int       fds[2], outFds[2], ptyFp;
     int       pid;                   /* Child process identity */
 #endif
 #ifdef _WIN32
@@ -1591,13 +1614,13 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     if((rr=WinLaunchProgram(comStr,(LAUNCH_IPIPE|flags), NULL, NULL, ipipe, NULL)) <= 0)
     {
         if(cd)
-            meChdir(curdir) ;
-        free(ipipe) ;
+            meChdir(curdir);
+        free(ipipe);
         if(rr == meABORT)
             /* returns meABORT when trying to IPIPE a DOS app on win95 (it
              * doesn't work) Try doPipe instead and maintain the same
              * environment as the macros may rely on callbacks etc. */
-            return doPipeCommand(comStr,path,bufName,ipipeFunc,(flags&~LAUNCH_TO_VAR),NULL) ;
+            return doPipeCommand(comStr,path,bufName,ipipeFunc,(flags&~LAUNCH_TO_VAR),NULL);
         return meFALSE;
     }
 #else
@@ -1605,7 +1628,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     /* Allocate a pseudo terminal to do the work */
     if((ptyFp=allocatePty(line)) >= 0)
     {
-        fds[0] = outFds[1] = ptyFp ;
+        fds[0] = outFds[1] = ptyFp;
 #if ((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
         /* On the BSD systems we open the tty prior to the fork. If this is a
          * later POSIX platform then we will expect O_NOCTTY to exist and we
@@ -1613,19 +1636,19 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
          * controlling tty. This prevents an application from unintentionally
          * aquiring the controlling terminal as a side effect of the open. */
 #if (defined O_NOCTTY)
-        fds[1] = outFds[0] = open((char *) line,O_RDWR|O_NOCTTY,0) ;
+        fds[1] = outFds[0] = open((char *) line,O_RDWR|O_NOCTTY,0);
 #else
-        fds[1] = outFds[0] = open((char *) line,O_RDWR,0) ;
+        fds[1] = outFds[0] = open((char *) line,O_RDWR,0);
 #endif /* O_NOCTTY */
 #else
-        fds[1] = outFds[0] = -1 ;
+        fds[1] = outFds[0] = -1;
 #endif /* _LINUX/_FREEBSD/.. */
     }
     else
     {
         /* Could not get a pty use a pipe instead */
-        pipe(fds) ;
-        pipe(outFds) ;
+        pipe(fds);
+        pipe(outFds);
     }
 
     /* The master end of the pty must be non-blocking. Under POSIX we can
@@ -1641,15 +1664,15 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
      * with a PTY or PIPE */
 #ifdef O_NONBLOCK
     if (fds[0] > 0)
-        fcntl(fds[0],F_SETFL,O_NONBLOCK) ;
+        fcntl(fds[0],F_SETFL,O_NONBLOCK);
     if ((fds[1] > 0) && (ptyFp < 0))
-        fcntl(fds[1],F_SETFL,O_NONBLOCK) ;
+        fcntl(fds[1],F_SETFL,O_NONBLOCK);
 #else
 #ifdef O_NDELAY
     if (fds[0] > 0)
-        fcntl(fds[0],F_SETFL,O_NDELAY) ;
+        fcntl(fds[0],F_SETFL,O_NDELAY);
     if ((fds[1] > 0) && (ptyFp < 0))
-        fcntl(fds[1],F_SETFL,O_NDELAY) ;
+        fcntl(fds[1],F_SETFL,O_NDELAY);
 #endif /* O_NDELAY */
 #endif /* O_NONBLOCK */
 
@@ -1663,7 +1686,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         * CHILD CHILD CHILD CHILD CHILD CHILD CHILD CHILD CHILD CHILD     *
         ******************************************************************/
         char *args[4];		/* command line send to shell */
-        meUByte *ss ;
+        meUByte *ss;
         
         /* close parent side */
         close(fds[0]);
@@ -1730,30 +1753,30 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
          * of the signals are reset to their correct default value */
 #ifdef _POSIX_SIGNALS
         {
-            struct sigaction sa ;
+            struct sigaction sa;
 
-            sigemptyset(&sa.sa_mask) ;
+            sigemptyset(&sa.sa_mask);
             sa.sa_flags=SA_RESETHAND;
-            sa.sa_handler=NULL ;
-            sigaction(SIGHUP,&sa,NULL) ;
-            sigaction(SIGINT,&sa,NULL) ;
-            sigaction(SIGQUIT,&sa,NULL) ;
-            sigaction(SIGTERM,&sa,NULL) ;
-            sigaction(SIGUSR1,&sa,NULL) ;
-            sigaction(SIGALRM,&sa,NULL) ;
-            sigaction(SIGCHLD,&sa,NULL) ;
+            sa.sa_handler=NULL;
+            sigaction(SIGHUP,&sa,NULL);
+            sigaction(SIGINT,&sa,NULL);
+            sigaction(SIGQUIT,&sa,NULL);
+            sigaction(SIGTERM,&sa,NULL);
+            sigaction(SIGUSR1,&sa,NULL);
+            sigaction(SIGALRM,&sa,NULL);
+            sigaction(SIGCHLD,&sa,NULL);
 
             /* Release any signals that might be blocked */
             sigprocmask(SIG_SETMASK,&sa.sa_mask,NULL);
         }
 #else
-        signal(SIGHUP,SIG_DFL) ;
-        signal(SIGINT,SIG_DFL) ;
-        signal(SIGQUIT,SIG_DFL) ;
-        signal(SIGTERM,SIG_DFL) ;
-        signal(SIGUSR1,SIG_DFL) ;
-        signal(SIGALRM,SIG_DFL) ;
-        signal(SIGCHLD,SIG_DFL) ;
+        signal(SIGHUP,SIG_DFL);
+        signal(SIGINT,SIG_DFL);
+        signal(SIGQUIT,SIG_DFL);
+        signal(SIGTERM,SIG_DFL);
+        signal(SIGUSR1,SIG_DFL);
+        signal(SIGALRM,SIG_DFL);
+        signal(SIGCHLD,SIG_DFL);
 #ifdef _BSD_SIGNALS
         /* Release any signals that might be blocked */
         sigsetmask (0);
@@ -1800,7 +1823,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 
         /* Set up the arguments for the pipe */
         if((ss=getUsrVar((meUByte *)"ipipe-term")) != NULL)
-            mePutenv(meStrdup(ss)) ;
+            mePutenv(meStrdup(ss));
         
         ss = getShellCmd();
         args[0] = (char *) ss;
@@ -1828,9 +1851,9 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
             execve(args[0],args,meEnviron);
         }
         else
-            execv(args[0],args) ;
+            execv(args[0],args);
 #endif
-        exit(1) ;                       /* Should never get here unless we fail */
+        exit(1);                       /* Should never get here unless we fail */
     }
     /* close child side */
     close(fds[1]);
@@ -1852,30 +1875,30 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 
     /* Create the output buffer */
     {
-        meMode sglobMode ;
-        meModeCopy(sglobMode,globMode) ;
+        meMode sglobMode;
+        meModeCopy(sglobMode,globMode);
         if (flags & (LAUNCH_RAW|LAUNCH_NO_WRAP))
-            meModeClear(globMode,MDWRAP) ;
+            meModeClear(globMode,MDWRAP);
         else
-            meModeSet(globMode,MDWRAP) ;
-        meModeSet(globMode,MDPIPE) ;
-        meModeSet(globMode,MDLOCK) ;
-        meModeClear(globMode,MDUNDO) ;
-        bp=bfind(bufName,BFND_CREAT|BFND_CLEAR) ;
-        meModeCopy(globMode,sglobMode) ;
+            meModeSet(globMode,MDWRAP);
+        meModeSet(globMode,MDPIPE);
+        meModeSet(globMode,MDLOCK);
+        meModeClear(globMode,MDUNDO);
+        bp=bfind(bufName,BFND_CREAT|BFND_CLEAR);
+        meModeCopy(globMode,sglobMode);
     }
     if((ipipe->bp = bp) == NULL)
     {
 #ifdef _UNIX
         meSigRelease ();
 #endif /*_UNIX */
-        ipipeRemove(ipipe) ;
-        return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName) ;
+        ipipeRemove(ipipe);
+        return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName);
     }
     /* setup the buffer */
     if(flags & LAUNCH_BUFIPIPE)
         bp->ipipeFunc = ipipeFunc;
-    bp->fileName = meStrdup(path) ;
+    bp->fileName = meStrdup(path);
     if((flags & LAUNCH_RAW) == 0)
     {
         meStrcpy(line,"cd ");
@@ -1890,15 +1913,19 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
 
     /* Set up the window dimensions - default to having auto wrap */
-    ipipe->flag = 0 ;
+    ipipe->flag = 0;
     if((flags & LAUNCH_RAW) != 0)
-        ipipe->flag |= meIPIPE_RAW ;
+        ipipe->flag |= meIPIPE_RAW;
+#if MEOPT_EXTENDED
+    if(!(meSystemCfg & meSYSTEM_IO_UTF8) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
+        ipipe->flag |= meIPIPE_NOUTF8;
+#endif
     ipipe->strRow = 0;
     ipipe->strCol = 0;
     ipipe->noRows = 0;
     ipipe->noCols = 0;
-    ipipe->curRow = (meShort) bp->dotLineNo ;
-    ipipeSetSize(frameCur->windowCur,bp) ;
+    ipipe->curRow = (meShort) bp->dotLineNo;
+    ipipeSetSize(frameCur->windowCur,bp);
 #ifdef _UNIX
     /* Release the signals - we can now cope if the child dies or writes. */
     meSigRelease ();
@@ -2158,6 +2185,11 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     meUnlinkNT(filnam);
 #endif
     
+#if MEOPT_EXTENDED
+    if((ret > 0) && !(flags & LAUNCH_TO_VAR) && !(flags & LAUNCH_RAW) &&
+       (meSystemCfg & meSYSTEM_IO_UTF8) && !(flags & LAUNCH_NOUTF8))
+        meBufferDecodeUtf8(bp);
+#endif
     if(flags & LAUNCH_TO_VAR)
     {
         if(ret > 0)

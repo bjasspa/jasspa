@@ -216,16 +216,6 @@ define-macro-file hkipipe fhook-ipipe
     !until &not &les $window-line #l0
     set-variable :ipp-last #l0
   !endif
-  !if &not @#
-    ; command finished - check if UTF8
-    buffer-is-utf8 #l1
-    !if #l1
-      -1 buffer-mode "view"
-      12 change-buffer-charset "utf8" "display"
-      -1 buffer-mode "edit"
-      1 buffer-mode "view"
-    !endif
-  !endif
 !emacro
 
 define-macro file-exec

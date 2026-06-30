@@ -38,6 +38,7 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <langinfo.h>
 #include <locale.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -2819,6 +2820,9 @@ TCAPstart(void)
     /* default to use fonts - usually supports reverse */
     meSystemCfg &= ~meSYSTEM_RGBCOLOR ;
     meSystemCfg |= (meSYSTEM_CONSOLE|meSYSTEM_FONTS) ;
+    setlocale(LC_ALL,"") ;
+    if((ss=nl_langinfo(CODESET)) && !strcmp(ss,"UTF-8"))
+        meSystemCfg |= meSYSTEM_IO_UTF8 ;
     if(((tv_stype = meGetenv("TERM")) == NULL) || (tv_stype[0] == '\0'))
     {
         if(!(meSystemCfg & meSYSTEM_PIPEDMODE))
@@ -4046,13 +4050,13 @@ meXIODie(Display *display)
 int
 XTERMstart(void)
 {
-    XrmDatabase  rdb ;
-    XrmValue     retVal ;
-    char        *retType ;
-    char        *xdefs ;
-    int          xx, yy ;
-    meUInt       ww, hh  ;
-    char        *ss ;
+    XrmDatabase  rdb;
+    XrmValue     retVal;
+    char        *retType;
+    char        *xdefs;
+    int          xx, yy;
+    meUInt       ww, hh;
+    char        *ss;
     
     /* Copy the Terminal I/O. We may spawn a terminal in the window later and
      * the termio structure must be initialised. The structure may be
@@ -4064,16 +4068,18 @@ XTERMstart(void)
     
     /* Configure X-Windows */
     setlocale(LC_ALL, "");
+    if((xdefs=nl_langinfo(CODESET)) && !strcmp(xdefs,"UTF-8"))
+        meSystemCfg |= meSYSTEM_IO_UTF8;
     XSetLocaleModifiers("@im=none");
     XSetIOErrorHandler(meXIODie);
     {
         char *disp ;
         if((disp=meGetenv("DISPLAY")) == NULL)
-            disp = ":0.0" ;
+            disp = ":0.0";
         if((mecm.xdisplay = XOpenDisplay(disp)) == NULL)
         {
-            fprintf(stderr,"MicroEmacs: Failed to open DISPLAY \"%s\"\n",disp) ;
-            exit(1) ;
+            fprintf(stderr,"MicroEmacs: Failed to open DISPLAY \"%s\"\n",disp);
+            exit(1);
         }
     }
     
@@ -4102,7 +4108,7 @@ XTERMstart(void)
     }
     if(XrmGetResource(rdb,"MicroEmacs.font","MicroEmacs.Font",&retType,&retVal) &&
        !strcmp(retType,"String"))
-        ss = retVal.addr ;
+        ss = retVal.addr;
     else
         ss = NULL ;
     
@@ -4141,11 +4147,11 @@ XTERMstart(void)
     TTwidthDefault = ww;
     
     if(xx < 0)
-        xx = sizeHints.max_width + xx - (ww * mecm.fwidth) ;
+        xx = sizeHints.max_width + xx - (ww * mecm.fwidth);
     if(yy < 0)
-        yy = sizeHints.max_height + yy - (hh * mecm.fdepth) ; ;
-    TTdefaultPosX = xx ;
-    TTdefaultPosY = yy ;
+        yy = sizeHints.max_height + yy - (hh * mecm.fdepth);
+    TTdefaultPosX = xx;
+    TTdefaultPosY = yy;
     
     /* Set up the  protocol  defaults  required. We must do this before we map
      * the window. */
@@ -4180,17 +4186,17 @@ XTERMstart(void)
     if(XrmGetResource(rdb,"MicroEmacs.name","MicroEmacs.Name",&retType,&retVal) &&
        !strcmp(retType,"String") &&
        ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
-        meName = ss ;
+        meName = ss;
     
     if(XrmGetResource(rdb,"MicroEmacs.iconname","MicroEmacs.IconName",&retType,&retVal) &&
        !strcmp(retType,"String") && ((ss = meStrdup((meUByte *) retVal.addr)) != NULL))
-        meIconName = ss ;
+        meIconName = ss;
     
     /* Free off the resource database */
-    XrmDestroyDatabase(rdb) ;
+    XrmDestroyDatabase(rdb);
     
     if((firstFrameData = XTERMcreateWindow(TTwidthDefault,TTdepthDefault)) == NULL)
-        return meFALSE ;
+        return meFALSE;
     
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
@@ -4202,11 +4208,11 @@ XTERMstart(void)
      * we must initialise the TCAPcup (cursor move string) to something to
      * stop it core-dumping.
      */
-    tcaptab[TCAPcup].code.str = "" ;
+    tcaptab[TCAPcup].code.str = "";
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
     
-    return meTRUE ;
+    return meTRUE;
 }
 
 int

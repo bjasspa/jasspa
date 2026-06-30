@@ -185,7 +185,112 @@ meUByte charIntrnlDsplyTbl[256] = {
 meUShort charToUnicode[128] = { 0 };
 meUByte isWordMask=CHRMSK_DEFWORDMSK;
 meUByte charMaskFlags[]="luhs1234dpPwaAMIDkc";
-#endif
+
+/* Convert a Unicode codepoint to the best single ME codepage byte.
+ * Tries codepage reverse lookup first, then box-drawing chars, then
+ * ASCII approximations for common typography (matches charsutl.emf). */
+meUByte
+utf8ToMeChar(meUInt uc)
+{
+    int ii;
+    if(uc == 0)
+        return meCHAR_UNDEF;
+    if(uc < 0x80)
+        return (meByte) uc;
+    ii = 127;
+    do {
+        if(charToUnicode[ii] == (meUShort) uc)
+            return (meUByte)(ii + 128);
+    } while(--ii >= 0);
+    switch(uc)
+    {
+    case 0x2502: return boxChars[BCNS];
+    case 0x250c: return boxChars[BCES];
+    case 0x2510: return boxChars[BCSW];
+    case 0x2514: return boxChars[BCNE];
+    case 0x2518: return boxChars[BCNW];
+    case 0x252c: return boxChars[BCESW];
+    case 0x251c: return boxChars[BCNES];
+    case 0x253c: return boxChars[BCNESW];
+    case 0x2524: return boxChars[BCNSW];
+    case 0x2534: return boxChars[BCNEW];
+    case 0x2500: return boxChars[BCEW];
+    case 0x00b4: return '\'';
+    case 0x00b7: return '*';
+    case 0x2010: case 0x2011: case 0x2012:
+    case 0x2013: case 0x2014: case 0x2015: return '-';
+    case 0x2018: case 0x2019: return '\'';
+    case 0x201a: return ',';
+    case 0x201b: return '`';
+    case 0x201c: case 0x201d:
+    case 0x201f: return '"';
+    case 0x201e: return ',';
+    case 0x2022: return '*';
+    }
+    return meCHAR_UNDEF;
+}
+
+/* Decode UTF-8 sequences in every line of bp in-place.
+ * Lines only shrink (multi-byte UTF-8 maps to at most one ME byte). */
+void
+meBufferDecodeUtf8(meBuffer *bp)
+{
+    meLine *lp = meLineGetNext(bp->baseLine);
+    while(lp != bp->baseLine)
+    {
+        int llen, ld;
+        meUByte *ss = lp->text;
+        meUByte *dd = ss;
+        while(*ss != '\0')
+        {
+            meUByte c2, c3, cc=*ss++;
+            if(cc < 0x80)
+                *dd++ = cc;
+            else if(cc < 0xc0)
+                *dd++ = meCHAR_UNDEF;
+            else if(((c2=*ss++) & 0xc0) != 0x80)
+            {
+                *dd++ = meCHAR_UNDEF;
+                ss--;
+            }
+            else if(cc >= 0xf0)
+            {
+                *dd++ = meCHAR_UNDEF;
+                if(((*ss++ & 0xc0) != 0x80) || ((*ss++ & 0xc0) != 0x80))
+                    ss--;
+            }
+            else
+            {
+                meUInt uc = 0;
+                if(cc < 0xe0)
+                    uc = (((meUInt)(cc & 0x1f)) << 6) | (*ss++ & 0x3f);
+                else if(((c3=*ss++) & 0xc0) != 0x80)
+                {
+                    *dd++ = meCHAR_UNDEF;
+                    ss--;
+                }
+                else
+                    uc = (((meUInt)(cc & 0x0f)) << 12) | (((meUInt)(c2 & 0x3f)) << 6) | (c3 & 0x3f);
+                if(uc != 0)
+                {
+                    cc = utf8ToMeChar(uc);
+                    if(cc != meCHAR_UNDEF)
+                        *dd++ = cc;
+                }
+            }
+        }
+        *dd = '\0';
+        llen = (int)(dd - lp->text);
+        if((ld = lp->length - llen) > 0)
+        {
+            lp->length = (meUShort) llen;
+            ld += (int) lp->unused;
+            lp->unused = (ld > 255) ? 255 : (meUByte) ld;
+        }
+        lp = meLineGetNext(lp);
+    }
+}
+#endif /* MEOPT_EXTENDED */
 
 meUByte *charKeyboardMap=NULL;
 

@@ -1597,20 +1597,24 @@ TTstart(void)
     memset(meColorTable,0,sizeof(meColorTable));
     /* Clear CONSOLE flag so ME uses _ME_WINDOW code paths throughout */
     meSystemCfg &= ~meSYSTEM_CONSOLE;
+    /* macOS is always UTF-8 */
+    meSystemCfg |= meSYSTEM_IO_UTF8;
 
     /* Initialise dirty-region tracking */
     {
         int r;
-        for (r = 0; r <= meFRAME_DEPTH_MAX; r++) {
+        for (r = 0; r <= meFRAME_DEPTH_MAX; r++)
+        {
             gDirtyColStart[r] = ME_DIRTY_NONE;
-            gDirtyColEnd[r]   = ME_DIRTY_CLEAR;
+            gDirtyColEnd[r] = ME_DIRTY_CLEAR;
         }
         gDirtyRowMin = ME_DIRTY_NONE;
         gDirtyRowMax = ME_DIRTY_CLEAR;
     }
 
     /* Create the self-pipe used to wake select() from Swift threads / sigAlarm */
-    if (pipe(gWakePipe) == 0) {
+    if (pipe(gWakePipe) == 0)
+    {
         /* Make the write end non-blocking so it is safe from signal handlers */
         fcntl(gWakePipe[1], F_SETFL, O_NONBLOCK);
         /* Make the read end non-blocking so drainWakePipe() never stalls */
@@ -1637,7 +1641,8 @@ meSetupProgname(char *progname)
     if (((ss = meGetenv("PWD")) != NULL) &&
         (ss[0] == DIR_CHAR) && (stat((char *)ss, &pwdstat) == 0) &&
         (stat(".", &dotstat) == 0) && (dotstat.st_ino == pwdstat.st_ino) &&
-        (dotstat.st_dev == pwdstat.st_dev)) {
+        (dotstat.st_dev == pwdstat.st_dev))
+    {
         ll = meStrlen(ss);
         curdir = dd = meMalloc(ll + 2);
         while ((cc = *ss++) != '\0')
@@ -1645,37 +1650,36 @@ meSetupProgname(char *progname)
         if (dd[-1] != DIR_CHAR)
             *dd++ = DIR_CHAR;
         *dd = 0;
-    } else {
-        curdir = gwd(0);
     }
+    else
+        curdir = gwd(0);
 
     if (curdir == NULL)
-        mlwrite(MWCURSOR | MWABORT | MWWAIT,
-                (meUByte *)"Failed to get cwd\n");
+        mlwrite(MWCURSOR|MWABORT|MWWAIT,(meUByte *)"Failed to get cwd\n");
 
     ii = meBUF_SIZE_MAX;
-    if (_NSGetExecutablePath((char *)resultStr, (uint32_t *)&ii) == 0)
+    if(_NSGetExecutablePath((char *)resultStr, (uint32_t *)&ii) == 0)
         fileNameCorrect(resultStr, evalResult, NULL);
     else
         ii = 0;
 
-    if (ii == 0)
+    if(ii == 0)
         ii = executableLookup((meUByte *)progname, evalResult);
 
-    if ((ii == 0) && (meStrrchr((meUByte *)progname, DIR_CHAR) == NULL))
-        ii = fileLookup((meUByte *)progname, 0, NULL,
-                        meFL_CHECKPATH | meFL_EXEC, evalResult);
+    if((ii == 0) && (meStrrchr((meUByte *)progname, DIR_CHAR) == NULL))
+        ii = fileLookup((meUByte *)progname, 0, NULL, meFL_CHECKPATH | meFL_EXEC, evalResult);
 
     /* Resolve any symlinks in the found path */
-    if ((ii > 0) &&
-        ((ll = readlink((char *)evalResult, (char *)resultStr, meBUF_SIZE_MAX)) > 0)) {
+    if((ii > 0) && ((ll = readlink((char *)evalResult, (char *)resultStr, meBUF_SIZE_MAX)) > 0))
+    {
         memcpy(evalResult, resultStr, ll);
         evalResult[ll] = '\0';
     }
 
     if (ii != 0)
         meProgName = meStrdup(evalResult);
-    else {
+    else
+    {
 #ifdef _ME_FREE_ALL_MEMORY
         meProgName = meStrdup((meUByte *)progname);
 #else

@@ -102,6 +102,16 @@ be given to
 When set forces
 .Ht wrap 2m
 mode off minimising line wrapping.
+.IP \fB0x800\fR
+When the terminal is operating in UTF-8 mode (i.e.
+.Ht $system 5
+bit \fC0x20000000\fR is set, auto-detected at startup from the locale), pipe output is
+automatically decoded from UTF-8: multi-byte sequences are converted to the
+nearest character in the current codepage, box-drawing characters are mapped to
+the \*(mS box-drawing set, and common typographic characters (curly quotes,
+em-dash, bullet etc.) are approximated with ASCII. Setting bit \fB0x800\fR
+suppresses this automatic decoding so that raw UTF-8 bytes are stored in the
+buffer instead. Bit \fB0x40\fR (raw mode) also suppresses UTF-8 decoding.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
