@@ -1212,11 +1212,16 @@ replaces(int kind, int ff, int nn)
     }   /* End of 'for' */
     
     /*--- And report the results. crop rpat to ensure resultStr is not overrun */
-    rpat[meBUF_SIZE_MAX-16] = '\0';
-    cc = 0xff ;
-    while((meStrchr(rpat,cc) != NULL) && --cc)
-        ;
-    sprintf((char *)resultStr,"%c%d%c%c%c%s%c",cc,numsub,cc,((!kind) ? 'a':((onemore == meTRUE) ? 'l':'q')),cc,rpat,cc) ;
+    rlength = (int) meStrlen(rpat);
+    if(rlength > meBUF_SIZE_MAX-16)
+        rlength = meBUF_SIZE_MAX-16;
+    cc = 0xff;
+    while((memchr(rpat,cc,rlength) != NULL) && (cc > 1))
+        cc--;
+    slength = sprintf((char *)resultStr,"%c%d%c%c%c",cc,numsub,cc,((!kind) ? 'a':((onemore == meTRUE) ? 'l':'q')),cc);
+    memcpy(resultStr+slength,rpat,rlength);
+    resultStr[slength+rlength] = cc;
+    resultStr[slength+rlength+1] = '\0';
 
     return mlwrite(((nn < 0) || (numsub == nn)) ? MWCLEXEC:(MWABORT|MWCLEXEC),(meUByte *)"%d substitutions", numsub);
 }	/* End of 'replaces' */
