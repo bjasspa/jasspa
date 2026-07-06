@@ -178,12 +178,10 @@ define-macro py-doc
   !iif &not &exi .fhook-python.com  file-tool-com-init "fhook-python"
   !force set-variable #l0 @1
   !iif &not $status  set-variable #l0 @ml00 "Python help on"
-  0 pipe-shell-command &spr "LANG=en_US %s -m pydoc %s" .fhook-python.com #l0 "*py-doc*"
+  0 pipe-shell-command &spr "%s -m pydoc %s" .fhook-python.com #l0 "*py-doc*"
   -1 buffer-mode "view"
   beginning-of-buffer
   3 kill-line
-  buffer-is-utf8 #l1
-  !iif #l1  12 change-buffer-charset "utf8" "display"
   beginning-of-buffer
   -1 buffer-mode "edit"
   1 buffer-mode "view"

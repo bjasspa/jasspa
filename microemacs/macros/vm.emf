@@ -26,10 +26,10 @@ hilight .hilight.vm 0x400 31 41  .scheme.prepro
 
 0 hilight  .hilight.vmh 2 100                     $global-scheme
 hilight .hilight.vmh 0x44 "\CCA" "" "\\}\CC" "" "" $global-scheme
-hilight .hilight.vmh 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.under   ; underline
-hilight .hilight.vmh 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.italic  ; italic
-hilight .hilight.vmh 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold    ; bold
 hilight .hilight.vmh 0x44 "\CCB" "" "\\}\CC" "" "" .scheme.header  ; Header
+hilight .hilight.vmh 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold    ; bold
+hilight .hilight.vmh 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.italic  ; italic
+hilight .hilight.vmh 0x44 "\CCG" "" "\\}\CC" "" "" .scheme.under   ; underline
 hilight .hilight.vmh 0x44 "\CCh" "" "\\}\CC" "" "" .scheme.comment ; image
 hilight .hilight.vmh 0xc0 "\CDA" "" .hilight.mail $global-scheme
 hilight .hilight.vmh 0x40 "\CDB" ""               $global-scheme

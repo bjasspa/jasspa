@@ -1189,9 +1189,11 @@ typedef struct meFrame
 #define meIPIPE_OVERWRITE   0x001
 #define meIPIPE_NEXT_CHAR   0x002
 #define meIPIPE_CHILD_EXIT  0x004
+#define meIPIPE_NOAUTOWRAP  0x008       /* Auto-wrap disabled (\E[?7l)  */
 #define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
 #define meIPIPE_BUFIPIPE    0x080       /* Forced ipipe buffer          */
 #define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
+#define meIPIPE_ANSICOLOR   0x1000      /* Translate ANSI SGR to semantic scheme tags */
 
 typedef struct meIPipe {
     meBuffer          *bp;
@@ -1220,6 +1222,10 @@ typedef struct meIPipe {
     meShort            strCol;
     meShort            curRow;
     meShort            flag;
+    meUByte            ansiCc;    /* last emitted \CCX byte; 0 = none emitted */
+    meUByte            ansiFg;    /* current fg: bits 1-4 = base color, 5 = colour set, 6 = bright */
+    meUByte            ansiBg;    /* current bg: bits 1-4 = base color, 5 = colour set, 6 = bright */
+    meUByte            ansiSt;    /* style: bits 1 = bold, 2 = italic, 3 = underline */
 } meIPipe;
 
 #endif

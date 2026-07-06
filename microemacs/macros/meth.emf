@@ -20,11 +20,11 @@ hilight .hilight.meth 0x44 "\CCB" "" "\\}\CC" "" "" .scheme.header
 hilight .hilight.meth 0x44 "\CCC" "" "\\}\CC" "" "" .scheme.link
 hilight .hilight.meth 0x44 "\CCD" "" "\\}\CC" "" "" .scheme.bold
 hilight .hilight.meth 0x44 "\CCE" "" "\\}\CC" "" "" .scheme.italic
-hilight .hilight.meth 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.under
-hilight .hilight.meth 0x44 "\CCG" "" "\\}\CC" "" "" .scheme.bold-italic
+hilight .hilight.meth 0x44 "\CCF" "" "\\}\CC" "" "" .scheme.bold-italic
+hilight .hilight.meth 0x44 "\CCG" "" "\\}\CC" "" "" .scheme.under
 hilight .hilight.meth 0x44 "\CCH" "" "\\}\CC" "" "" .scheme.bold-under
 hilight .hilight.meth 0x44 "\CCI" "" "\\}\CC" "" "" .scheme.italic-under
-hilight .hilight.meth 0x44 "\CCJ" "" "\\}\CC" "" "" .scheme.bold-italic-italic
+hilight .hilight.meth 0x44 "\CCJ" "" "\\}\CC" "" "" .scheme.bold-italic-under
 hilight .hilight.meth 0x44 "\CCK" "" "\\}\CC" "" "" .scheme.code
 hilight .hilight.meth 0x44 "\CCL" "" "\\}\CC" "" "" .scheme.spell-error
 hilight .hilight.meth 0x44 "\CCM" "" "\\}\CC" "" "" .scheme.gdfchange
@@ -33,6 +33,8 @@ hilight .hilight.meth 0x44 "\CCO" "" "\\}\CC" "" "" .scheme.gdfrej
 hilight .hilight.meth 0x44 "\CCP" "" "\\}\CC" "" "" .scheme.chg
 hilight .hilight.meth 0x44 "\CCQ" "" "\\}\CC" "" "" .scheme.add
 hilight .hilight.meth 0x44 "\CCR" "" "\\}\CC" "" "" .scheme.rmv
+hilight .hilight.meth 0x44 "\CCS" "" "\\}\CC" "" "" .scheme.dir
+hilight .hilight.meth 0x44 "\CCT" "" "\\}\CC" "" "" .scheme.file
 
 hilight .hilight.meth 0x44 "\CCa" "" "\\}\CC" "" "" .scheme.prepro
 hilight .hilight.meth 0x44 "\CCb" "" "\\}\CC" "" "" .scheme.function

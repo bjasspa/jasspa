@@ -1019,13 +1019,14 @@ meSockEnd();
 #define LAUNCH_NO_WRAP       0x00200      /* Run without wrap mode     */
 #define LAUNCH_TO_VAR        0x00400      /* Output pipe to variable   */
 #define LAUNCH_NOUTF8        0x00800      /* Suppress UTF-8 pipe decode */
-#define LAUNCH_USER_FLAGS    0x00EFE      /* User flags bitmask (no 0x100) */
-#define LAUNCH_SHELL         0x01000
-#define LAUNCH_SYSTEM        0x02000
-#define LAUNCH_FILTER        0x04000
-#define LAUNCH_PIPE          0x08000
-#define LAUNCH_IPIPE         0x10000
-#define LAUNCH_NOWAIT        0x20000
+#define LAUNCH_ANSICOLOR     0x01000      /* Translate ANSI SGR to semantic scheme tags */
+#define LAUNCH_USER_FLAGS    0x01EFE      /* User flags bitmask (no 0x100) */
+#define LAUNCH_SHELL         0x02000
+#define LAUNCH_SYSTEM        0x04000
+#define LAUNCH_FILTER        0x08000
+#define LAUNCH_PIPE          0x10000
+#define LAUNCH_IPIPE         0x20000
+#define LAUNCH_NOWAIT        0x40000
 extern	int	meShell(int f, int n);
 extern	int	doShellCommand(meUByte *cmdstr, int flags);
 extern	int	meShellCommand(int f, int n);

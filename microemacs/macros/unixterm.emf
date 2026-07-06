@@ -84,9 +84,6 @@ define-macro-file hkipipe ishell gdb dbx perldb
   -1 global-bind-key change-font-size "C--"
 !endif
 ;
-; Setup ipipe terminal, vt100-nam is preferred but not supported on all so init to basic vt100
-set-variable %ipipe-term "TERM=vt100"
-;
 ; setup the next-error stuff including grep and compiling
 set-variable $file-template "[!-9;-z~]+"
 set-variable $line-template "[0-9]+"

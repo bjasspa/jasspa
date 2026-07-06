@@ -173,7 +173,7 @@ define-macro md-process
       !endif
     !elif &seq "`" #l1
       backward-delete-char
-      insert-string "\CCG"
+      insert-string "\CCK"
       !force search-buffer "Me" "`"
       !if $status
         backward-delete-char
@@ -234,7 +234,7 @@ define-macro md-process
         -1 kill-region
         &len #l1 backward-char
         forward-delete-char
-        insert-string "\CCF"
+        insert-string "\CCc"
         &sub &len #l1 1 forward-char
         backward-delete-char
         !if &les &len #l1 5
@@ -259,7 +259,7 @@ define-macro md-process
       !if #l9
         insert-string &cat "\CD" &itoa &add 65 #l9
       !else
-        insert-string "\CCG"
+        insert-string "\CCK"
       !endif
       !force search-buffer "me" &spr "^ *%s *$" &trb #l1
       !if $status

@@ -250,6 +250,10 @@ extern char    **meEnviron;             /* Our own environment */
 /* Incremental pipe variables */
 extern meIPipe  *ipipes ;               /* list of all the current pipes*/
 extern int       noIpipes ;             /* count of all the cur pipes   */
+#ifndef _WIN32
+extern meUByte *ipipeTermSys;           /* TERM setting to use for non-color */
+extern meUByte *ipipeTermCol;           /* TERM setting to use for color */
+#endif
 #endif
 
 #define meALARM_DIE          0x01
@@ -752,6 +756,10 @@ char    **meEnviron = NULL;             /* Our own environment          */
 #if MEOPT_IPIPES
 meIPipe  *ipipes=NULL;                  /* list of all the current pipes*/
 int       noIpipes=0;                   /* count of all the cur pipes   */
+#ifndef _WIN32
+meUByte *ipipeTermSys=NULL;             /* TERM setting to use for non-color */
+meUByte *ipipeTermCol=NULL;             /* TERM setting to use for color */
+#endif
 #endif
 
 #if MEOPT_OSD

@@ -3,4 +3,7 @@
 x <- "ä"
 if ("ä" == "ä") {
     print("This code contains Umlauts äöüÄÖÜ and the sz: ß!")
+} else {
+    print("This is not running cp1252!")
 }
+

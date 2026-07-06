@@ -4,7 +4,6 @@
 # VT100 emulator.  And little bit of profiling could go a long way...
 
 from array import array
-import regex
 import string
 
 # Tunable parameters
@@ -34,7 +33,7 @@ class VT100:
 
 	def msg(self, msg, *args):
 		if self.debuglevel > 0:
-			print 'VT100:', msg%args
+			print ('VT100:', msg%args)
 
 	def set_debuglevel(self, debuglevel):
 		self.debuglevel = debuglevel
@@ -53,8 +52,8 @@ class VT100:
 			lineno = lineno + 1
 			i = len(line)
 			while i > 0 and line[i-1] == ' ': i = i-1
-			print line[:i]
-			print 'CURSOR:', self.x, self.y
+			print(line[:i])
+			print('CURSOR:', self.x, self.y)
 
 	def fill_bottom(self):
 		while len(self.lines) < self.height:
@@ -82,8 +81,7 @@ class VT100:
 		self.fill_top()
 
 	def send(self, buffer):
-		self.msg('send: unfinished=%s, buffer=%s',
-			  `self.unfinished`, `buffer`)
+		self.msg('send: unfinished=%s, buffer=%s',self.unfinished,buffer)
 		self.unfinished = self.unfinished + buffer
 		i = 0
 		n = len(self.unfinished)
@@ -101,8 +99,8 @@ class VT100:
 			if c == 'c':
 				self.reset()
 				continue
-			if c <> '[':
-				self.msg('unrecognized: ESC %s', `c`)
+			if c != '[':
+				self.msg('unrecognized: ESC %s',c)
 				continue
 			argstr = ''
 			while i < n:
@@ -159,7 +157,7 @@ class VT100:
 						self.curattrs.append(p1)
 						self.curattrs.sort()
 			else:
-				self.msg('unrecognized: ESC [ %s', `argstr+c`)
+				self.msg('unrecognized: ESC [ %s',argstr+c)
 		self.unfinished = self.unfinished[i:]
 
 	def add_char(self, c):
@@ -184,7 +182,7 @@ class VT100:
 		if c == '\0':
 			return
 		if c < ' ' or c > '~':
-			self.msg('ignored control char: %s', `c`)
+			self.msg('ignored control char: %s',c)
 			return
 		if self.x >= self.width:
 			self.move_to(0, self.y + 1)
@@ -261,9 +259,9 @@ class VT100:
 				extra = None
 			elif ftype == 'copy':
 				if not self.screens.has_key(extra):
-					raise ValueError, 'bad copy ref'
+					raise ValueError
 			else:
-				raise ValueError, 'bad ftype: %s' % `ftype`
+				raise ValueError
 			fieldscopy[fieldname] = (
 				  ftype, lineno, begin, end, extra)
 		self.screens[screenname] = fieldscopy
@@ -277,7 +275,7 @@ class VT100:
 		return self.okay[:]
 
 	def match_screen(self, name):
-		if name in self.busy: raise RuntimeError, 'recursive match'
+		if name in self.busy: raise RuntimeError
 		if name in self.okay: return 1
 		if name in self.fail: return 0
 		self.busy.append(name)
