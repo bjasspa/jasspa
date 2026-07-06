@@ -1131,7 +1131,7 @@ move_cursor_pos:
                                         }
                                         else if(prmA < 22)
                                             ;
-                                        else if(prmA < 24)
+                                        else if(prmA < 25)
                                             newSt &= ~(1<<(prmA-22));
                                     }
                                     else if(prmA < 40)
@@ -1161,8 +1161,8 @@ move_cursor_pos:
                                         if(prmA < 98)
                                             newFg = (meUByte) (prmA - 90 + 16 + 32);
                                     }
-                                    else if(prmA < 107)
-                                        newBg = (meUByte) (prmA - 10 + 16 + 32);
+                                    else if(prmA < 108)
+                                        newBg = (meUByte) (prmA - 100 + 16 + 32);
                                 }
                                 ipipe->ansiFg = newFg;
                                 ipipe->ansiBg = newBg;
