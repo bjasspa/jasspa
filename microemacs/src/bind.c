@@ -338,14 +338,8 @@ charMaskTblInit(void)
         charMaskTbl2[ii] = 0x00;
         charCaseTbl[ii] = ii;
     }
-#ifdef _UNIX
-    /* 0xA0 is the No-Break SPace char - nothing is drawn! */
-    for(ii=128 ; ii<161 ; ii++)
-        charMaskTbl1[ii] = 0x0A;
-#else
     for(ii=128 ; ii<160 ; ii++)
         charMaskTbl1[ii] = 0x3A;
-#endif
     for( ; ii<256 ; ii++)
         charMaskTbl1[ii] = 0x7A;
     for(ii='0' ; ii<='9' ; ii++)

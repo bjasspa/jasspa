@@ -723,6 +723,9 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 
 #endif
 
+#ifndef NDEBUG
+static FILE *logFp=NULL;
+#endif
 #define getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead)                 \
 ((curROff < curRRead) ?                                                      \
  ((cc=rbuff[curROff++]), 1):                                                 \
@@ -847,6 +850,8 @@ ipipeRead(meIPipe *ipipe)
      */
     if((curRow=ipipe->curRow) > bp->dotLineNo)
         curRow = bp->dotLineNo;
+    if(logFp == NULL)
+        logFp = fopen("./ipipe.log","wb+");
     len = bp->dotOffset;
     lp_old = bp->dotLine;
     meBufferStoreLocation(lp_old,bp->dotOffset,bp->dotLineNo);
@@ -901,6 +906,7 @@ ipipeRead(meIPipe *ipipe)
             else
                 cc = meCHAR_NL;
         }
+        fputc(cc,logFp);
         switch(cc)
         {
         case 0: /* ignore */
@@ -945,6 +951,7 @@ ipipeRead(meIPipe *ipipe)
             if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
             {
                 int gotQ=0, gotN=0, prmS[8], prmC=0;
+        fputc(cc,logFp);
 
                 prmL=0;
                 prmA=-1;
@@ -953,6 +960,7 @@ ipipeRead(meIPipe *ipipe)
 get_another:
                     if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
                     {
+        fputc(cc,logFp);
                         if(isDigit(cc))
                         {
                             gotN = 1;
@@ -965,6 +973,11 @@ get_another:
                             if(prmC < 8)
                                 prmS[prmC++] = prmL;
                             prmL = 0;
+                            goto get_another;
+                        case '<':
+                        case '=':
+                        case '>':
+                            /* ignore private parameter bytes as we don't support any of the codes using them */
                             goto get_another;
                         case '?':
                             gotQ = 1;
@@ -979,6 +992,21 @@ get_another:
                             len += prmL;
                             memset(p1,' ',prmL);
                             break;
+                        
+                        case 'A':
+                            if(!gotN)
+                                prmL = 1;
+                            prmA = curRow - prmL;
+                            prmL = len;
+                            goto move_cursor_pos;
+
+                        case 'B':
+                            if(!gotN)
+                                prmL = 1;
+                            prmA = curRow + prmL;
+                            prmL = len;
+                            goto move_cursor_pos;
+                        
                         case 'C':
                             if(!gotN)
                                 prmL = 1;
@@ -994,6 +1022,7 @@ get_another:
                             }
                             curOff = getcol(buff,len,bp->tabWidth);
                             break;
+                        
                         case 'D':
                             if(!gotN)
                                 prmL = 1;
@@ -1003,23 +1032,31 @@ get_another:
                             len -= prmL;
                             curOff = getcol(buff,len,bp->tabWidth);
                             break;
-                        case 'A':
-                            if(!gotN)
-                                prmL = 1;
-                            prmA = curRow - prmL;
-                            prmL = len;
-                            goto move_cursor_pos;
 
-                        case 'B':
+                        case 'G':
+                        case '`':
+                            /* CHA/HPA - cursor horizontal absolute, 1-based */
                             if(!gotN)
                                 prmL = 1;
-                            prmA = curRow + prmL;
-                            prmL = len;
-                            goto move_cursor_pos;
+                            prmL--;  /* convert to 0-based */
+                            if(prmL < 0)
+                                prmL = 0;
+                            else if(prmL >= ipipe->noCols)
+                                prmL = ipipe->noCols - 1;
+                            ii = prmL - meStrlen(buff);
+                            p1  = buff + prmL;
+                            len = prmL;
+                            if(ii > 0)
+                            {
+                                memset(p1-ii,' ',ii);
+                                *p1 = '\0';
+                            }
+                            curOff = getcol(buff,len,bp->tabWidth);
+                            break;
 
                         case 'H':
                         case 'f':
-                            /* CUP - ESC [ <row> ; <col> H */
+                            /* cup - ESC [ <row> ; <col> H */
                             if(prmC)
                             {
                                 prmA = prmS[0]-1;
@@ -1083,28 +1120,38 @@ move_cursor_pos:
                             {
                                 if(prmL == 7)
                                     ipipe->flag &= ~meIPIPE_NOAUTOWRAP;
-                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004) */
-                                else if((prmL != 2004) && (prmL != 1))
+#ifndef NDEBUG
+                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), show/hide cursor (25), focus in/out (1004)
+                                 * synchronized output (2026), unknown private mode (2031) */
+                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031))
                                     goto cant_handle_this;
+#endif
                             }
                             else if(prmL == 4)
                                 ipipe->flag |= meIPIPE_OVERWRITE;
+#ifndef NDEBUG
                             else
                                 goto cant_handle_this;
+#endif
                             break;
                         case 'l':
                             if(gotQ)
                             {
                                 if(prmL == 7)
                                     ipipe->flag |= meIPIPE_NOAUTOWRAP;
-                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004) */
-                                else if((prmL != 2004) && (prmL != 1))
+#ifndef NDEBUG
+                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), show/hide cursor (25), focus in/out (1004)
+                                 * synchronized output (2026), unknown private mode (2031) */
+                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031))
                                     goto cant_handle_this;
+#endif
                             }
                             else if(prmL == 4)
                                 ipipe->flag &= ~meIPIPE_OVERWRITE;
+#ifndef NDEBUG
                             else
                                 goto cant_handle_this;
+#endif
                             break;
                         case 'm':
                             if(ipipe->flag & meIPIPE_ANSICOLOR)
@@ -1183,7 +1230,11 @@ move_cursor_pos:
                                 char outb[20];
 
                                 if(prmL != 6)
+#ifndef NDEBUG
                                     goto cant_handle_this;
+#else
+                                    break;
+#endif
                                 sprintf(outb,"\033[%d;%dR",curRow,len);
                                 write(ipipe->outWfd,outb,strlen(outb));
                                 break;
@@ -1206,7 +1257,11 @@ move_cursor_pos:
                                         lp = meLineGetNext(lp);
                                 }
                                 else
+#ifndef NDEBUG
                                     goto cant_handle_this;
+#else
+                                    break;
+#endif
                                 while(lp != bp->baseLine)
                                 {
                                     memset(lp->text,' ',meLineGetLength(lp));
@@ -1234,9 +1289,15 @@ move_cursor_pos:
                                     ii++;
                             }
                             break;
+                        case 'c': /* Ignore Device Attributes */
+                        case 'q': /* Ignore DECLL (DEC Load LEDs) */
+                        case 'r': /* Ignore DECSTBM � scrolling region */
+                        case 'u': /* Ignore Kitty keyboard protocol */
+                            break;
+                            
                         default:
-cant_handle_this:
 #ifndef NDEBUG
+cant_handle_this:
                             if(prmC)
                                 printf("Don't cope with term code \\E[%s%d;%d%c\n",(gotQ) ? "?":"",prmS[0],prmL,cc);
                             else
@@ -1251,12 +1312,33 @@ cant_handle_this:
                 {
                     ipipe->strRow = curRow;
                     ipipe->strCol = len;
+                    break;
                 }
                 else if(cc == '8')
                 {
                     prmA = ipipe->strRow;
                     prmL = ipipe->strCol;
                     goto move_cursor_pos;
+                }
+                else if(cc == ']')
+                {
+                    /* OSC: consume until BEL (0x07) or ST (ESC \) */
+                    do {
+                        if(!getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+                            break;
+                        fputc(cc,logFp);
+                    } while((cc != 7) && (cc != 27));
+                    /* if terminated by ESC, consume the following \ */
+                    if((cc == 27) && getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+                        fputc(cc,logFp);
+                    break;
+                }
+                else if(cc == '(' || cc == ')')
+                {
+                    /* character set designation: consume the single designator byte and ignore all */
+                    if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+                        fputc(cc,logFp);
+                    break;
                 }
             }
             /* follow through */
@@ -1269,19 +1351,34 @@ cant_handle_this:
                 if((cc < 0xc0) || !getNextCharFromPipe(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
                     /* orphan continuation byte - discard */
                     break;
+        fputc(c2,logFp);
                 if(cc < 0xe0)
                     /* 2-byte sequence (0xc0-0xdf) */
                     cc = utf8ToMeChar((((meUInt)(cc & 0x1f)) << 6) | (c2 & 0x3f));
                 else if(!getNextCharFromPipe(ipipe,c3,rbuff,curROff,curRRead) || ((c3 & 0xc0) != 0x80))
                     break;
-                else if(cc < 0xf0)
+                else
+                {
+        fputc(c3,logFp);
+                    if(cc < 0xf0)
                     /* 3-byte sequence */
                     cc = utf8ToMeChar((((meUInt) (cc & 0x0f)) << 12) | (((meUInt) (c2 & 0x3f)) << 6) | (c3 & 0x3f));
                 else if(!getNextCharFromPipe(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
                     break;
                 else
+                {
+                    fputc(c2,logFp);
                     /* 4-byte: ME supports only up to U+FFFF - consume */
                     cc = meCHAR_UNDEF;
+                }
+                }
+                if(cc == meCHAR_UNDEF)
+                {
+                    fputc('Z',logFp);
+                    fputc('N',logFp);
+                    fputc('U',logFp);
+                    fputc('Z',logFp);
+                }
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
 #endif
@@ -1756,7 +1853,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         if(flags & LAUNCH_ANSICOLOR)
         {
             if(ipipeTermCol == NULL)
-                ipipeTermCol = (system("tput -T ansi longname > /dev/null 2>&1")) ? (meUByte *) "TERM=ansi":ipipeTermSys;
+                ipipeTermCol = (system("tput -T ansi longname > /dev/null 2>&1")) ? ipipeTermSys:(meUByte *) "TERM=ansi";
             term = ipipeTermCol;
         }
         else
