@@ -1,0 +1,64 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Claude Code AI integration for MicroEmacs
+; Authors:     Steven Phillips
+;
+
+define-macro-file hkipipe fhook-ipipe ipipe-mode ipipe-output
+!iif &not &exi meth-add-format  execute-file "meth"
+
+; $buffer-ipipe callback: @#!=0 output ready, @#==0 session ended
+0 define-macro claude-ipipe
+  !if &not @#
+    set-variable $buffer-input ""
+    set-variable $buffer-ipipe ""
+    !force buffer-unbind-key &kbin "" ipipe-mode
+    ml-write "[Claude session ended - C-return to restart]"
+  !endif
+  !iif &equ :imode 2  2 screen-update
+!emacro
+
+; Common post-launch buffer setup; called from claude and claude-restart
+0 define-macro claude-setup
+  set-variable $buffer-input ipipe-output
+  set-variable $buffer-ipipe claude-ipipe
+  set-variable $buffer-hilight .hilight.meth
+  -1 buffer-mode "wrap"
+  1 buffer-mode "magic"
+  !force buffer-bind-create "bo" "C-return" "" claude-restart
+  !force buffer-bind-create "bo" "C-j" ""      claude-restart
+  !force buffer-bind-create "bo" "f3" ""       ipipe-mode
+  set-variable :imode 0
+  1 ipipe-mode
+  buffer-init-hooks
+!emacro
+
+; Restart a terminated Claude session in the existing *claude* buffer
+0 define-macro claude-restart
+  !iif &bmod "pipe" !return
+  4096 ipipe-shell-command "claude" "*claude*"
+  !iif &not &bmod "pipe"  -8 ml-write "[Failed to restart Claude]"
+  claude-setup
+!emacro
+
+; Start or show a Claude Code interactive session
+; To bind: global-bind-key claude "<key>"
+define-macro claude
+  set-variable #l0 $buffer-bname
+  !force 0 find-buffer "*claude*"
+  !if &and $status &bmod "pipe"
+    find-buffer #l0
+    popup-window "*claude*"
+    !return
+  !endif
+  ; 4096 = LAUNCH_ANSICOLOR: enables UTF-8 decode and ANSI SGR colour
+  4096 ipipe-shell-command "claude" "*claude*"
+  popup-window "*claude*"
+  !iif &not &bmod "pipe"  -8 ml-write "[Failed to start Claude - is claude in PATH?]"
+  claude-setup
+!emacro
