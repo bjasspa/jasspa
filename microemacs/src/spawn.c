@@ -729,7 +729,6 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
  (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff)) > 0) ?                \
   (((cc)=rbuff[0]),curROff=1): 0))
 
-#define IPIPE_DUMP 1
 #ifdef IPIPE_DUMP
 static FILE *logFp=NULL;
 int
