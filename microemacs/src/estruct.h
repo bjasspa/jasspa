@@ -1189,7 +1189,8 @@ typedef struct meFrame
 #define meIPIPE_OVERWRITE   0x001
 #define meIPIPE_NEXT_CHAR   0x002
 #define meIPIPE_CHILD_EXIT  0x004
-#define meIPIPE_NOAUTOWRAP  0x008       /* Auto-wrap disabled (\E[?7l)  */
+#define meIPIPE_NOPTY       0x008       /* No PTY/ConPTY, using plain pipes */
+#define meIPIPE_NOAUTOWRAP  0x010       /* Auto-wrap disabled (\E[?7l)  */
 #define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
 #define meIPIPE_BUFIPIPE    0x080       /* Forced ipipe buffer          */
 #define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
@@ -1212,6 +1213,7 @@ typedef struct meIPipe {
     HANDLE             thread;
     DWORD              threadId;
     meUByte            nextChar;
+    HANDLE             hPCon;             /* ConPTY handle, NULL if plain pipes */
 #else
     int                rfd;
     int                outWfd;

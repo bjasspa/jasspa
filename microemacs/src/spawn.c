@@ -624,6 +624,7 @@ ipipeRemove(meIPipe *ipipe)
         CloseHandle(ipipe->childActive);
     CloseHandle(ipipe->rfd);
     CloseHandle(ipipe->outWfd);
+    meIPipeConPTYClose(ipipe);
 #else
     close(ipipe->rfd) ;
     if(ipipe->rfd != ipipe->outWfd)
@@ -632,6 +633,10 @@ ipipeRemove(meIPipe *ipipe)
 #endif
     free(ipipe);
 }
+
+#ifdef IPIPE_DUMP
+static FILE *logFp=NULL;
+#endif
 
 #ifdef _WIN32
 
@@ -651,8 +656,12 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
         if(nbytes > ttServerToRead)
             nbytes = ttServerToRead ;
         if(ReadFile(ipipe->rfd,buff,nbytes,&bytesRead,NULL) == 0)
-            return -1 ;
-        return (int) bytesRead ;
+            return -1;
+#ifdef IPIPE_DUMP
+        if((bytesRead > 0) && (logFp != NULL))
+            fwrite(buff,1,bytesRead,logFp);
+#endif
+        return (int) bytesRead;
     }
 #endif
     if(ipipe->flag & meIPIPE_CHILD_EXIT)
@@ -677,12 +686,16 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
         bytesRead = (DWORD) nbytes ;
     if(ReadFile(ipipe->rfd,buff,bytesRead,&bytesRead,NULL) == 0)
         return -1 ;
+#ifdef IPIPE_DUMP
+    if((bytesRead > 0) && (logFp != NULL))
+        fwrite(buff,1,bytesRead,logFp);
+#endif
     return (int) bytesRead ;
 }
 
 #else
 
-#if MEOPT_CLIENTSERVER
+#if MEOPT_CLIENTSERVER || (defined (IPIPE_DUMP))
 
 #include <sys/socket.h>
 #include <netdb.h>
@@ -693,25 +706,19 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 static int
 readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 {
-    int ii ;
+    int ii;
     if(ipipe->pid == 0)
     {
         if ((ii = recv(ipipe->rfd,(char *) buff,nbytes,0)) < 0)
-            ii = 0 ;
+            ii = 0;
     }
     else
-        ii = read(ipipe->rfd,buff,nbytes) ;
-#if 0
-    if(ii > 0)
-    {
-        static FILE *fplog=NULL ;
-        if(fplog == NULL)
-            fplog = fopen("log","wb+") ;
-        fwrite(buff,1,ii,fplog) ;
-    }
+        ii = read(ipipe->rfd,buff,nbytes);
+#ifdef IPIPE_DUMP
+    if((ii > 0) && (logFp != NULL))
+        fwrite(buff,1,ii,logFp);
 #endif
-    return ii ;
-
+    return ii;
 }
 
 
@@ -723,33 +730,11 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 
 #endif
 
-#define ipipeGetNextCharI(ipipe,cc,rbuff,curROff,curRRead)                   \
+#define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead)                    \
 ((curROff < curRRead) ?                                                      \
  (((cc)=rbuff[curROff++]), 1):                                               \
  (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff)) > 0) ?                \
   (((cc)=rbuff[0]),curROff=1): 0))
-
-#ifdef IPIPE_DUMP
-static FILE *logFp=NULL;
-int
-ipipeGetNextCharD(meIPipe *ipipe,meUByte *ccp,meUByte *rbuff, int *curROffP, int *curRReadP)
-{
-    int curROff=*curROffP, curRRead=*curRReadP;
-    meUByte cc;
-    int rr = ipipeGetNextCharI(ipipe,cc,rbuff,curROff,curRRead); 
-    if(rr)
-    {
-        fputc(cc,logFp);
-        *ccp = cc;
-    }
-    *curROffP = curROff;
-    *curRReadP = curRRead;
-    return rr;
-}
-#define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead) ipipeGetNextCharD(ipipe,&(cc),rbuff,&(curROff),&(curRRead))
-#else
-#define ipipeGetNextChar ipipeGetNextCharI
-#endif
 
 #define ipipeAddLine(ipipe,lp_old,buff,cbuff)                                \
 ((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeAddColorLine(lp_old,buff,cbuff):addLine(lp_old,buff))
@@ -892,9 +877,7 @@ ipipeRead(meIPipe *ipipe)
     meUInt  noLines;
     meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1], cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
     int     curROff=0, curRRead=0;
-#if _UNIX
     int     prmA, prmL;
-#endif
 
     maxOff = ipipe->noCols;
 #ifdef _UNIX
@@ -996,9 +979,6 @@ ipipeRead(meIPipe *ipipe)
             }
             ipipe->pid = -1;
         }
-#ifdef IPIPE_DUMP
-        fputc(cc,logFp);
-#endif
         switch(cc)
         {
         case 0: /* ignore */
@@ -1007,6 +987,7 @@ ipipeRead(meIPipe *ipipe)
             TTbell();
             break;
         case 8:
+        case 0x7f: /* DEL - some shells/consoles echo this for erase, treat as backspace */
             if(p1 != buff)
             {
                 p1--;
@@ -1019,15 +1000,13 @@ ipipeRead(meIPipe *ipipe)
             len = curOff = 0;
             break;
         case meCHAR_NL:
-#if _UNIX
-            if(!(ipipe->flag & meIPIPE_OVERWRITE) && (curRow+1 < ipipe->noRows))
+            if(!(ipipe->flag & meIPIPE_NOPTY) && !(ipipe->flag & meIPIPE_OVERWRITE) && (curRow+1 < ipipe->noRows))
             {
                 /* if in over-write mode and not at the bottom, move instead */
                 prmA = curRow + 1;
                 prmL = 0;
                 goto move_cursor_pos;
             }
-#endif
             ii = ipipeAddLine(ipipe,lp_old,buff,cbuff);
             noLines += ii;
             if(curRow < ipipe->noRows-1)
@@ -1038,9 +1017,8 @@ ipipeRead(meIPipe *ipipe)
             break;
         case 15: /* ignore */
             break;
-#if _UNIX
         case 27:
-            if(ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
+            if(!(ipipe->flag & meIPIPE_NOPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
             {
                 int gotQ=0, gotN=0, prmS[8], prmC=0;
 
@@ -1330,7 +1308,11 @@ move_cursor_pos:
                                     break;
 #endif
                                 sprintf(outb,"\033[%d;%dR",curRow,len);
+#ifdef _WIN32
+                                { DWORD wr; WriteFile(ipipe->outWfd,outb,(DWORD)strlen(outb),&wr,NULL); }
+#else
                                 write(ipipe->outWfd,outb,strlen(outb));
+#endif
                                 break;
                             }
                         case 'J':
@@ -1442,8 +1424,7 @@ cant_handle_this:
                     break;
                 }
             }
-            /* follow through */
-#endif
+            /* fall through */
         default:
 #if MEOPT_EXTENDED
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
@@ -1466,13 +1447,9 @@ cant_handle_this:
                     /* 4-byte: ME supports only up to U+FFFF - consume */
                     cc = meCHAR_UNDEF;
 #ifdef IPIPE_DUMP
-                if(cc == meCHAR_UNDEF)
-                {
-                    fputc('Z',logFp);
-                    fputc('N',logFp);
-                    fputc('U',logFp);
-                    fputc('Z',logFp);
-                }
+                if((cc == meCHAR_UNDEF) && (logFp != NULL))
+                    /* Put an easy to spot marker into the log */
+                    fwrite("ZUNZ",1,4,logFp);
 #endif
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
@@ -1741,6 +1718,9 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 #endif /* TIOCGSIZE */
 #endif /* TIOCSWINSZ/TIOCGWINSZ */
 #endif /* _UNIX */
+#ifdef _WIN32
+            meIPipeConPTYResize(ipipe,ipipe->noCols,ipipe->noRows);
+#endif /* _WIN32 */
         }
     }
 }
@@ -1943,6 +1923,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
             return doPipeCommand(comStr,path,bufName,ipipeFunc,(flags&~LAUNCH_TO_VAR),NULL);
         return meFALSE;
     }
+    if(ipipe->hPCon == NULL)
+        flags |= LAUNCH_NOPTY;
 #else
 
     if((term=getUsrVar((meUByte *) ((flags & LAUNCH_ANSICOLOR) ? "ipipe-color-term":"ipipe-term"))) == errorm)
@@ -1961,7 +1943,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     }
     
     /* Allocate a pseudo terminal to do the work */
-    if((ptyFp=allocatePty(line)) >= 0)
+    if(((flags & LAUNCH_NOPTY) == 0) && ((ptyFp=allocatePty(line)) >= 0))
     {
         fds[0] = outFds[1] = ptyFp;
 #if ((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
@@ -1982,6 +1964,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     else
     {
         /* Could not get a pty use a pipe instead */
+        flags |= LAUNCH_NOPTY;
         pipe(fds);
         pipe(outFds);
     }
@@ -1998,15 +1981,15 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
      * Note that these settings apply irrespective of whether we are dealing
      * with a PTY or PIPE */
 #ifdef O_NONBLOCK
-    if (fds[0] > 0)
+    if(fds[0] > 0)
         fcntl(fds[0],F_SETFL,O_NONBLOCK);
-    if ((fds[1] > 0) && (ptyFp < 0))
+    if((fds[1] > 0) && ((flags & LAUNCH_NOPTY) != 0))
         fcntl(fds[1],F_SETFL,O_NONBLOCK);
 #else
 #ifdef O_NDELAY
     if (fds[0] > 0)
         fcntl(fds[0],F_SETFL,O_NDELAY);
-    if ((fds[1] > 0) && (ptyFp < 0))
+    if ((fds[1] > 0) && ((flags & LAUNCH_NOPTY) != 0))
         fcntl(fds[1],F_SETFL,O_NDELAY);
 #endif /* O_NDELAY */
 #endif /* O_NONBLOCK */
@@ -2032,7 +2015,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #if (defined _BSD) && (defined TIOCNOTTY)
         /* Under BSD then we allocate a dummy tty and then immediatly shut it.
          * This has the desired effect of dissassociating the terminal */
-        if(ptyFp >= 0)
+        if((flags & LAUNCH_NOPTY) == 0)
         {
             /* Under BSD 4.2 then we have to break the tty off. We make a
              * dummy call to open a tty and then immediately close it. This
@@ -2067,7 +2050,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #endif        
         /* Not sure what the hell this does, why is it here ?? */
 #if (defined TIOCSCTTY) && ((defined _LINUX_BASE) || (defined _FREEBSD_BASE))
-        if((ptyFp >= 0) && (outFds[0] >= 0))
+        if(((flags & LAUNCH_NOPTY) == 0) && (outFds[0] >= 0))
             ioctl(outFds[0],TIOCSCTTY,0);
 #endif
 #endif
@@ -2076,7 +2059,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
          * we will get some problems with the shell. For simple pipes we do
          * not need to bother. */
 #if (defined _BSD) && (defined NTTYDISC) && (defined TIOCSETD)
-        if((ptyFp >= 0) && (outFds[0] >= 0))
+        if(((flags & LAUNCH_NOPTY) == 0) && (outFds[0] >= 0))
         {
             /* Use new line discipline.  */
             int ldisc = NTTYDISC;
@@ -2120,7 +2103,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 
 #if !((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
         /* Some systems the tty is opened late as here */
-        if(ptyFp >= 0)
+        if((flags & LAUNCH_NOPTY) == 0)
         {
             fds[1] = outFds[0] = open((const char *)line,O_RDWR,0);
         }
@@ -2129,13 +2112,13 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         /* On solaris (this is POSIX I believe) then push the line emulation
          * modes */
 #ifdef _SUNOS
-        if(ptyFp >= 0)
+        if((flags & LAUNCH_NOPTY) == 0)
         {
             /* Push the hardware emulation mode */
-            ioctl (fds[1], I_PUSH, "ptem");
+            ioctl(fds[1], I_PUSH, "ptem");
             
             /* Push the line discipline module */
-            ioctl (fds[1], I_PUSH, "ldterm");
+            ioctl(fds[1], I_PUSH, "ldterm");
         }
 #endif /* _SUNOS */
 
@@ -2218,6 +2201,10 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         meModeSet(globMode,MDPIPE);
         meModeSet(globMode,MDLOCK);
         meModeClear(globMode,MDUNDO);
+        if(flags & LAUNCH_NOPTY)
+            meModeClear(globMode,MDPTY);
+        else
+            meModeSet(globMode,MDPTY);
         bp=bfind(bufName,BFND_CREAT|BFND_CLEAR);
         meModeCopy(globMode,sglobMode);
     }
@@ -2247,15 +2234,11 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
 
     /* Set up the window dimensions - default to having auto wrap */
-    ipipe->flag = 0;
-    if((flags & LAUNCH_RAW) != 0)
-        ipipe->flag |= meIPIPE_RAW;
+    ipipe->flag = (flags & (LAUNCH_RAW|LAUNCH_NOPTY|LAUNCH_ANSICOLOR));
 #if MEOPT_EXTENDED
-    if(!(meSystemCfg & meSYSTEM_IO_UTF8) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
+    if(((meSystemCfg & meSYSTEM_IO_UTF8) == 0) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
         ipipe->flag |= meIPIPE_NOUTF8;
 #endif
-    if(flags & LAUNCH_ANSICOLOR)
-        ipipe->flag |= meIPIPE_ANSICOLOR;
     ipipe->ansiCc = 'A';
     ipipe->ansiFg = 0;
     ipipe->ansiBg = 0;

@@ -575,6 +575,9 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
                               meIPipe *ipipe,
 #endif
                               meInt *sysRet);
+#if MEOPT_IPIPES
+extern void meIPipeConPTYClose(meIPipe *ipipe);
+#endif
 
 #endif /* _WIN32 */
 

@@ -2156,10 +2156,60 @@ childActiveThread(LPVOID lpParam)
     meIPipe *ipipe=(meIPipe *) lpParam;
     DWORD bytesRead;
     meUByte buff[4];
-    
+    /* Capture at thread start: flag won't change, unlike ipipe->hPCon which
+     * meIPipeConPTYClose() may NULL mid-flight. */
+    int useOverlapped = !(ipipe->flag & meIPIPE_NOPTY);
+
     do {
         /* wait for child process activity */
-        if((ReadFile(ipipe->rfd,buff,1,&bytesRead,NULL) != 0) && (bytesRead > 0))
+        if(useOverlapped)
+        {
+            /* ConPTY path: overlapped read races against the child process handle.
+             * After child exits the ConPTY still holds the pipe write end open, so
+             * a plain blocking ReadFile would block forever.  When the process exits
+             * first we close the ConPTY (releasing the write end) then let the
+             * pending read complete with EOF (0 bytes transferred). */
+            OVERLAPPED ov;
+            HANDLE waitHandles[2];
+            DWORD transferred, waitResult;
+
+            memset(&ov,0,sizeof(ov));
+            ov.hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
+            waitHandles[0] = ov.hEvent;
+            waitHandles[1] = ipipe->process;
+
+            if(!ReadFile(ipipe->rfd,buff,1,NULL,&ov))
+            {
+                if(GetLastError() == ERROR_IO_PENDING)
+                {
+                    waitResult = WaitForMultipleObjects(2,waitHandles,FALSE,INFINITE);
+                    if(waitResult == WAIT_OBJECT_0 + 1)
+                    {
+                        /* Child exited: close ConPTY so write end is released */
+                        meIPipeConPTYClose(ipipe);
+                        GetOverlappedResult(ipipe->rfd,&ov,&transferred,TRUE);
+                    }
+                    else
+                        GetOverlappedResult(ipipe->rfd,&ov,&transferred,FALSE);
+                }
+                else
+                    transferred = 0;
+            }
+            else
+                GetOverlappedResult(ipipe->rfd,&ov,&transferred,FALSE);
+
+            CloseHandle(ov.hEvent);
+            bytesRead = transferred;
+        }
+        else
+        {
+            /* Plain pipe path: blocking ReadFile; child exit closes the write end
+             * which causes ReadFile to return with EOF naturally. */
+            if((ReadFile(ipipe->rfd,buff,1,&bytesRead,NULL) == 0) || (bytesRead == 0))
+                bytesRead = 0;
+        }
+
+        if(bytesRead > 0)
         {
             ipipe->nextChar = buff[0];
             ipipe->flag |= meIPIPE_NEXT_CHAR;
@@ -2187,6 +2237,49 @@ childActiveThread(LPVOID lpParam)
 #endif
 
 #if MEOPT_SPAWN
+#if MEOPT_IPIPES
+/* ConPTY support - CreatePseudoConsole/ClosePseudoConsole loaded dynamically
+ * so ME runs on pre-1809 Windows without the symbols present. */
+#ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
+#define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE 0x00020016
+#endif
+typedef HRESULT (WINAPI *meConPTYCreate_t)(COORD, HANDLE, HANDLE, DWORD, HANDLE *);
+typedef void    (WINAPI *meConPTYClose_t)(HANDLE);
+
+static meConPTYCreate_t meConPTYCreate    = NULL;
+static meConPTYClose_t  meConPTYCloseFunc = NULL;
+static int              meConPTYTried     = 0;
+
+static void
+meConPTYLoad(void)
+{
+    if(!meConPTYTried)
+    {
+        HMODULE hKernel = GetModuleHandle("kernel32.dll");
+        if(hKernel != NULL)
+        {
+            meConPTYCreate    = (meConPTYCreate_t) GetProcAddress(hKernel,"CreatePseudoConsole");
+            meConPTYCloseFunc = (meConPTYClose_t)  GetProcAddress(hKernel,"ClosePseudoConsole");
+            if(meConPTYCloseFunc == NULL)
+                meConPTYCreate = NULL;
+        }
+        meConPTYTried = 1;
+    }
+}
+
+void
+meIPipeConPTYClose(meIPipe *ipipe)
+{
+    if(ipipe->hPCon != NULL)
+    {
+        meConPTYLoad();
+        if(meConPTYCloseFunc != NULL)
+            meConPTYCloseFunc(ipipe->hPCon);
+        ipipe->hPCon = NULL;
+    }
+}
+#endif /* MEOPT_IPIPES */
+
 /*
  * WinLaunchProgram
  * Launches an external program using the DOS shell.
@@ -2250,6 +2343,9 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     static int pipeStderr=0;                    /* Remember the stderr state */
 #else
     HANDLE inHdlTmp, inHdl, outHdlTmp, outHdl, dumHdl;
+#if MEOPT_IPIPES
+    int    conPTYActive = 0;
+#endif
 #endif
     
     /* Get the comspec */
@@ -2406,54 +2502,115 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #if MEOPT_IPIPES
             else if(flags & LAUNCH_IPIPE)
             {
-                /* Its an IPIPE so create the pipes */
-                if(CreatePipe(&meSuInfo.hStdInput,&inHdlTmp,&sbuts,0) == 0)
+                ipipe->hPCon = NULL;
+                if(!(flags & LAUNCH_NOPTY))
                 {
-                    meFree(cmdLine);
-                    return meFALSE;
+                    /* Try ConPTY first (Windows 10 build 17763+) */
+                    meConPTYLoad();
+                    if(meConPTYCreate != NULL)
+                    {
+                        COORD consoleSize = {80, 25};
+                        /* inHdlTmp = ConPTY read (child stdin), inHdl = ME write end */
+                        if(CreatePipe(&inHdlTmp,&inHdl,NULL,0) != 0)
+                        {
+                            /* outHdl = ME read end (overlapped named pipe), outHdlTmp = ConPTY write end.
+                             * FILE_FLAG_OVERLAPPED on outHdl lets childActiveThread use
+                             * WaitForMultipleObjects on both pipe data and the process handle,
+                             * so it can detect child exit and close the ConPTY to release the pipe. */
+                            {
+                                static LONG conPTYPipeSeq = 0;
+                                char pname[64];
+                                sprintf(pname,"\\\\.\\pipe\\meconpty%lu_%lu",
+                                        (unsigned long)GetCurrentProcessId(),
+                                        (unsigned long)InterlockedIncrement(&conPTYPipeSeq));
+                                outHdl = CreateNamedPipe(pname,
+                                                         PIPE_ACCESS_INBOUND|FILE_FLAG_OVERLAPPED,
+                                                         PIPE_TYPE_BYTE|PIPE_WAIT,
+                                                         1,4096,4096,0,NULL);
+                                outHdlTmp = (outHdl != INVALID_HANDLE_VALUE)
+                                    ? CreateFile(pname,GENERIC_WRITE,0,NULL,
+                                                  OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL)
+                                    : INVALID_HANDLE_VALUE;
+                            }
+                            if(outHdlTmp != INVALID_HANDLE_VALUE)
+                            {
+                                HANDLE hPCon;
+                                if(meConPTYCreate(consoleSize,inHdlTmp,outHdlTmp,0,&hPCon) == S_OK)
+                                {
+                                    /* ConPTY owns the inner pipe ends */
+                                    CloseHandle(inHdlTmp);
+                                    CloseHandle(outHdlTmp);
+                                    ipipe->hPCon = hPCon;
+                                    conPTYActive = 1;
+                                }
+                                else
+                                {
+                                    CloseHandle(outHdl);
+                                    CloseHandle(outHdlTmp);
+                                    CloseHandle(inHdlTmp);
+                                    CloseHandle(inHdl);
+                                }
+                            }
+                            else
+                            {
+                                if(outHdl != INVALID_HANDLE_VALUE)
+                                    CloseHandle(outHdl);
+                                CloseHandle(inHdlTmp);
+                                CloseHandle(inHdl);
+                            }
+                        }
+                    }
                 }
-                if(CreatePipe(&outHdlTmp,&meSuInfo.hStdOutput,&sbuts,0) == 0)
+                if(!conPTYActive)
                 {
-                    CloseHandle(meSuInfo.hStdInput);
+                    /* Plain pipe fallback */
+                    if(CreatePipe(&meSuInfo.hStdInput,&inHdlTmp,&sbuts,0) == 0)
+                    {
+                        meFree(cmdLine);
+                        return meFALSE;
+                    }
+                    if(CreatePipe(&outHdlTmp,&meSuInfo.hStdOutput,&sbuts,0) == 0)
+                    {
+                        CloseHandle(meSuInfo.hStdInput);
+                        CloseHandle(inHdlTmp);
+                        meFree(cmdLine);
+                        return meFALSE;
+                    }
+                    // Create new output read handle and the input write handles. Set
+                    // the Properties to FALSE. Otherwise, the child inherits the
+                    // properties and, as a result, non-closeable handles to the pipes
+                    // are created.
+                    if(!DuplicateHandle(GetCurrentProcess(),inHdlTmp,
+                                        GetCurrentProcess(),&inHdl,
+                                        0,meFALSE,DUPLICATE_SAME_ACCESS))
+                    {
+                        CloseHandle(meSuInfo.hStdInput);
+                        CloseHandle(inHdl);
+                        CloseHandle(outHdlTmp);
+                        CloseHandle(meSuInfo.hStdOutput);
+                        meFree(cmdLine);
+                        return meFALSE;
+                    }
                     CloseHandle(inHdlTmp);
-                    meFree(cmdLine);
-                    return meFALSE;
-                }
-                // Create new output read handle and the input write handles. Set
-                // the Properties to FALSE. Otherwise, the child inherits the
-                // properties and, as a result, non-closeable handles to the pipes
-                // are created.
-                if(!DuplicateHandle(GetCurrentProcess(),inHdlTmp,
-                                    GetCurrentProcess(),&inHdl,
-                                    0,meFALSE,DUPLICATE_SAME_ACCESS))
-                {
-                    CloseHandle(meSuInfo.hStdInput);
-                    CloseHandle(inHdl);
+
+                    if(!DuplicateHandle(GetCurrentProcess(),outHdlTmp,
+                                        GetCurrentProcess(),&outHdl,
+                                        0,meFALSE,DUPLICATE_SAME_ACCESS))
+                    {
+                        CloseHandle(meSuInfo.hStdInput);
+                        CloseHandle(inHdlTmp);
+                        CloseHandle(outHdlTmp);
+                        CloseHandle(meSuInfo.hStdOutput);
+                        meFree(cmdLine);
+                        return meFALSE;
+                    }
                     CloseHandle(outHdlTmp);
-                    CloseHandle(meSuInfo.hStdOutput);
-                    meFree(cmdLine);
-                    return meFALSE;
+
+                    /* Duplicate stdout => stderr, don't really care if this fails */
+                    DuplicateHandle(GetCurrentProcess(),meSuInfo.hStdOutput,
+                                    GetCurrentProcess(),&meSuInfo.hStdError,
+                                    0,meTRUE,DUPLICATE_SAME_ACCESS);
                 }
-                CloseHandle(inHdlTmp);
-                
-                if(!DuplicateHandle(GetCurrentProcess(),outHdlTmp,
-                                    GetCurrentProcess(),&outHdl,
-                                    0,meFALSE,DUPLICATE_SAME_ACCESS))
-                {
-                    CloseHandle(meSuInfo.hStdInput);
-                    CloseHandle(inHdlTmp);
-                    CloseHandle(outHdlTmp);
-                    CloseHandle(meSuInfo.hStdOutput);
-                    meFree(cmdLine);
-                    return meFALSE;
-                }
-                CloseHandle(outHdlTmp);
-                
-                /* Duplicate stdout => stderr, don't really care if this fails */
-                DuplicateHandle(GetCurrentProcess(),meSuInfo.hStdOutput,
-                                GetCurrentProcess(),&meSuInfo.hStdError,
-                                0,meTRUE,DUPLICATE_SAME_ACCESS);
-                
             }
 #endif
             else
@@ -2519,7 +2676,10 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #endif
             }
 #ifndef _WIN32s
-            meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
+#if MEOPT_IPIPES
+            if(!conPTYActive)
+#endif
+                meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
 #endif
         }
 #ifndef _WIN32_WINNT
@@ -2586,10 +2746,54 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     if(status != 1)
         status = meFALSE;
 #else /* ! _WIN32s */
+#if MEOPT_IPIPES
+    if(conPTYActive)
+    {
+        /* Launch with ConPTY: use STARTUPINFOEX, no handle inheritance, no new console */
+        SIZE_T attrListSize = 0;
+        STARTUPINFOEX siEx;
+
+        memset(&siEx,0,sizeof(siEx));
+        siEx.StartupInfo.cb       = sizeof(STARTUPINFOEX);
+        siEx.StartupInfo.dwFlags  = meSuInfo.dwFlags;
+        siEx.StartupInfo.wShowWindow = meSuInfo.wShowWindow;
+        siEx.StartupInfo.lpTitle  = meSuInfo.lpTitle;
+
+        InitializeProcThreadAttributeList(NULL,1,0,&attrListSize);
+        siEx.lpAttributeList = (LPPROC_THREAD_ATTRIBUTE_LIST) meMalloc(attrListSize);
+        if(siEx.lpAttributeList != NULL)
+        {
+            if(InitializeProcThreadAttributeList(siEx.lpAttributeList,1,0,&attrListSize) &&
+               UpdateProcThreadAttribute(siEx.lpAttributeList,0,
+                                         PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
+                                         ipipe->hPCon,sizeof(HANDLE),NULL,NULL) &&
+               CreateProcess(NULL,(char *)cp,NULL,NULL,
+                             meFALSE,EXTENDED_STARTUPINFO_PRESENT,
+                             NULL,NULL,&siEx.StartupInfo,&mePInfo))
+            {
+                status = meTRUE;
+                CloseHandle(mePInfo.hThread);
+            }
+            DeleteProcThreadAttributeList(siEx.lpAttributeList);
+            meFree(siEx.lpAttributeList);
+        }
+        if(status != meTRUE)
+        {
+            meConPTYCloseFunc(ipipe->hPCon);
+            ipipe->hPCon = NULL;
+            CloseHandle(inHdl);
+            CloseHandle(outHdl);
+            mlwrite(0,(meUByte *)"[Failed to run \"%s\"]",cp);
+            meFree(cmdLine);
+            return meFALSE;
+        }
+    }
+    else
+#endif /* MEOPT_IPIPES */
     /* start the process and get a handle on it */
     if(CreateProcess(NULL,(char *) cp,NULL,NULL,
                      ((flags & (LAUNCH_SHELL|LAUNCH_NOWAIT)) ? meFALSE:meTRUE),
-                     ((flags & LAUNCH_DETACHED) ? DETACHED_PROCESS : CREATE_NEW_CONSOLE),
+                     CREATE_NEW_CONSOLE,
                      NULL,NULL,&meSuInfo,&mePInfo))
     {
         status = meTRUE;

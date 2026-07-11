@@ -688,6 +688,9 @@ meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 f
 #if !defined (_WIN32s)
  |meSYSTEM_CLNTSRVR
 #endif
+#if MEOPT_EXTENDED
+ |meSYSTEM_IO_UTF8
+#endif
 );
 meUByte *meProgData=NULL;               /* the program data path - AppData */
 #endif

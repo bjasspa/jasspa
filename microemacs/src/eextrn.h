@@ -1010,7 +1010,7 @@ meSockEnd();
 #define LAUNCH_WAIT          0x00001      /* shell-com wait -> LAUNCH_NOWAIT */
 #define LAUNCH_SILENT        0x00002      /* Hide the output buffer    */
 #define LAUNCH_NOCOMSPEC     0x00004      /* Do not use the comspec    */
-#define LAUNCH_DETACHED      0x00008      /* Detached process launch   */
+#define LAUNCH_NOPTY         0x00008      /* No PTY/ConPTY, use plain pipes */
 #define LAUNCH_LEAVENAMES    0x00010      /* Leave the names untouched */
 #define LAUNCH_SHOWWINDOW    0x00020      /* Dont hide the new cmd wdw */
 #define LAUNCH_RAW           0x00040      /* Raw pipe output           */
