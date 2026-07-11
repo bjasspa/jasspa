@@ -723,20 +723,44 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 
 #endif
 
-#ifndef NDEBUG
-static FILE *logFp=NULL;
-#endif
-#define getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead)                 \
+#define ipipeGetNextCharI(ipipe,cc,rbuff,curROff,curRRead)                   \
 ((curROff < curRRead) ?                                                      \
- ((cc=rbuff[curROff++]), 1):                                                 \
+ (((cc)=rbuff[curROff++]), 1):                                               \
  (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff)) > 0) ?                \
-  ((cc=rbuff[0]),curROff=1): 0))
+  (((cc)=rbuff[0]),curROff=1): 0))
 
+#define IPIPE_DUMP 1
+#ifdef IPIPE_DUMP
+static FILE *logFp=NULL;
+int
+ipipeGetNextCharD(meIPipe *ipipe,meUByte *ccp,meUByte *rbuff, int *curROffP, int *curRReadP)
+{
+    int curROff=*curROffP, curRRead=*curRReadP;
+    meUByte cc;
+    int rr = ipipeGetNextCharI(ipipe,cc,rbuff,curROff,curRRead); 
+    if(rr)
+    {
+        fputc(cc,logFp);
+        *ccp = cc;
+    }
+    *curROffP = curROff;
+    *curRReadP = curRRead;
+    return rr;
+}
+#define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead) ipipeGetNextCharD(ipipe,&(cc),rbuff,&(curROff),&(curRRead))
+#else
+#define ipipeGetNextChar ipipeGetNextCharI
+#endif
+
+#define ipipeAddLine(ipipe,lp_old,buff,cbuff)                                \
+((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeAddColorLine(lp_old,buff,cbuff):addLine(lp_old,buff))
+#define ipipeDecodeLine(ipipe,src,buff,cbuff,offs)                           \
+((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeDecodeColorLine(src,buff,cbuff,offs):(meStrcpy(buff,src),offs))
 
 #define ipipeStoreInputPos()                                                 \
 do {                                                                         \
     meLine *lp_new;                                                          \
-    noLines += addLine(lp_old,buff);                                         \
+    noLines += ipipeAddLine(ipipe,lp_old,buff,cbuff);                        \
     lp_new = meLineGetPrev(lp_old);                                          \
     if(lp_old != bp->baseLine)                                               \
     {                                                                        \
@@ -762,6 +786,75 @@ do {                                                                         \
     meBufferUpdateLocation(bp,noLines,bp->dotOffset);                        \
 } while(0)
 
+
+static int
+ipipeDecodeColorLine(const meUByte *src, meUByte *buff, meUByte *cbuff, int offs)
+{
+    meUByte cc = 'A';
+    int rr=0, i = 0;
+    while(*src)
+    {
+        if((*src == '\x03') && src[1])
+        {
+            cc = *++src;
+            src++;
+        }
+        else
+        {
+            cbuff[i] = cc;
+            buff[i++] = *src++;
+            if(--offs == 0)
+                rr = i;
+        }
+    }
+    buff[i] = '\0';
+    return rr;
+}
+
+static void
+ipipeClearColorLine(meLine *lp)
+{
+    meUByte *ss=lp->text;
+    int ll = 0;
+    while((ss=meStrchr(ss,'\x03')) != NULL)
+    {
+        ll += 2;
+        ss++;
+    }
+    ll = lp->length - ll;
+    memset(lp->text,' ',ll);
+    lp->text[ll] = '\0';
+    lp->unused += (meUByte) (lp->length - ll);
+    lp->length = (meUShort) ll;
+    lp->flag |= meLINE_CHANGED;
+}
+
+static int
+ipipeAddColorLine(meLine *lp, const meUByte *buff, const meUByte *cbuff)
+{
+    meUByte encbuff[3*meBUF_SIZE_MAX+1];
+    meUByte cc='A', sc;
+    meUByte *op=encbuff;
+    int i = 0;
+    while(buff[i])
+    {
+        sc = (cbuff[i]) ? cbuff[i] : 'A';
+        if(sc != cc)
+        {
+            cc = sc;
+            *op++ = '\x03';
+            *op++ = cc;
+        }
+        *op++ = buff[i++];
+    }
+    if(cc != 'A')
+    {
+        *op++ = '\x03';
+        *op++ = 'A';
+    }
+    *op = '\0';
+    return addLine(lp,encbuff);
+}
 
 static meUByte
 ipipeAnsiToScheme(meUByte fg, meUByte bg, meUByte styl)
@@ -798,8 +891,7 @@ ipipeRead(meIPipe *ipipe)
     meLine   *lp_old;
     int     len, curOff, maxOff, curRow, ii;
     meUInt  noLines;
-    meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1];
-    meUByte   rbuff[meBUF_SIZE_MAX];
+    meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1], cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
     int     curROff=0, curRRead=0;
 #if _UNIX
     int     prmA, prmL;
@@ -850,63 +942,64 @@ ipipeRead(meIPipe *ipipe)
      */
     if((curRow=ipipe->curRow) > bp->dotLineNo)
         curRow = bp->dotLineNo;
+#ifdef IPIPE_DUMP
     if(logFp == NULL)
         logFp = fopen("./ipipe.log","wb+");
+#endif
     len = bp->dotOffset;
     lp_old = bp->dotLine;
     meBufferStoreLocation(lp_old,bp->dotOffset,bp->dotLineNo);
-    meStrcpy(buff,lp_old->text);
+    len = ipipeDecodeLine(ipipe,lp_old->text,buff,cbuff,bp->dotOffset);
     p1 = buff+len;
     noLines = 0;
     curOff = getcol(buff,len,bp->tabWidth);
     for(;;)
     {
-        if(!getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
         {
-            if((ipipe->flag & meIPIPE_ANSICOLOR) && (ipipe->ansiCc != 0) && (ipipe->ansiCc != 'A') && ((p1 - buff) < meBUF_SIZE_MAX - 1))
-            {
-                *p1++ = '\x03';
-                *p1++ = 'A';
-                *p1 = '\0';
-                len += 2;
-                ipipe->ansiCc = 'A';
-            }
-            if(ipipe->pid == -4)
-                sprintf((char *) p1,"[EXIT %d]",(int) ipipe->exitCode);
-            else
-            {
-                meUByte *ins;
-                if(ipipe->pid == -5)
-                {
-                    ipipe->exitCode = -1000-15;
-                    ins = (meUByte *)"[TERMINATED]";
-                }
-                else if(ipipe->pid == -3)
-                {
-                    ipipe->exitCode = -1000-9;
-                    ins = (meUByte *)"[KILLED]";
-                }
-                else if(ipipe->pid == -2)
-                {
-                    ipipe->exitCode = -1000-11;
-                    ins = (meUByte *)"[CORE DUMP]";
-                }
-                else
-                    /* none left to read */
-                    break;
-                meStrcpy(p1,ins);
-            }
-            ipipe->pid = -1;
-            /* Do not annotate the end of the ipipe in raw mode */
+            ipipe->ansiCc = 'A';
+            if((ipipe->pid >= -1) || (ipipe->pid < -5))
+                /* none left to read */
+                break;
             if((ipipe->flag & meIPIPE_RAW) != 0)
             {
+                /* Do not annotate the end of the ipipe in raw mode */
                 *p1 = '\0';
                 cc = 0;
             }
             else
+            {
                 cc = meCHAR_NL;
+                if(ipipe->pid == -4)
+                    ii = sprintf((char *) p1,"[EXIT %d]",(int) ipipe->exitCode);
+                else
+                {
+                    meUByte *ins;
+                    if(ipipe->pid == -3)
+                    {
+                        ipipe->exitCode = -1000-9;
+                        ins = (meUByte *)"[KILLED]";
+                    }
+                    else if(ipipe->pid == -2)
+                    {
+                        ipipe->exitCode = -1000-11;
+                        ins = (meUByte *)"[CORE DUMP]";
+                    }
+                    else
+                    {
+                        ipipe->exitCode = -1000-15;
+                        ins = (meUByte *)"[TERMINATED]";
+                    }
+                    ii = meStrlen(ins);
+                    memcpy(p1,ins,ii+1);
+                }
+                memset(cbuff+len,ipipe->ansiCc,ii);
+            }
+            ipipe->pid = -1;
         }
+#ifdef IPIPE_DUMP
         fputc(cc,logFp);
+#endif
         switch(cc)
         {
         case 0: /* ignore */
@@ -936,7 +1029,7 @@ ipipeRead(meIPipe *ipipe)
                 goto move_cursor_pos;
             }
 #endif
-            ii = addLine(lp_old,buff);
+            ii = ipipeAddLine(ipipe,lp_old,buff,cbuff);
             noLines += ii;
             if(curRow < ipipe->noRows-1)
                 curRow += ii;
@@ -948,19 +1041,17 @@ ipipeRead(meIPipe *ipipe)
             break;
 #if _UNIX
         case 27:
-            if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+            if(ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
             {
                 int gotQ=0, gotN=0, prmS[8], prmC=0;
-        fputc(cc,logFp);
 
                 prmL=0;
                 prmA=-1;
                 if(cc == '[')
                 {
 get_another:
-                    if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+                    if(ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
                     {
-        fputc(cc,logFp);
                         if(isDigit(cc))
                         {
                             gotN = 1;
@@ -983,15 +1074,21 @@ get_another:
                             gotQ = 1;
                             goto get_another;
                         case '@':
+                        {
                             if(!gotN)
                                 prmL = 1;
                             ii = meStrlen(p1);
-                            do
-                                p1[prmL+ii] = p1[ii];
-                            while(--ii >= 0);
-                            len += prmL;
+                            if(ipipe->flag & meIPIPE_ANSICOLOR)
+                            {
+                                memmove(cbuff+len+prmL,cbuff+len,ii);
+                                memset(cbuff+len,(char)ipipe->ansiCc,prmL);
+                            }
+                            memmove(p1+prmL,p1,ii+1);
                             memset(p1,' ',prmL);
+                            p1 += prmL;
+                            len += prmL;
                             break;
+                        }
                         
                         case 'A':
                             if(!gotN)
@@ -1018,11 +1115,13 @@ get_another:
                             if(ii > 0)
                             {
                                 memset(p1-ii,' ',ii);
+                                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                    memset(cbuff+(p1-ii-buff),'A',ii);
                                 *p1 = '\0';
                             }
                             curOff = getcol(buff,len,bp->tabWidth);
                             break;
-                        
+
                         case 'D':
                             if(!gotN)
                                 prmL = 1;
@@ -1049,6 +1148,8 @@ get_another:
                             if(ii > 0)
                             {
                                 memset(p1-ii,' ',ii);
+                                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                    memset(cbuff+(p1-ii-buff),'A',ii);
                                 *p1 = '\0';
                             }
                             curOff = getcol(buff,len,bp->tabWidth);
@@ -1102,13 +1203,15 @@ move_cursor_pos:
                             }
                             len = prmL;
                             bp->dotLine = lp_old;
-                            meStrcpy(buff,lp_old->text);
+                            ipipeDecodeLine(ipipe,lp_old->text,buff,cbuff,0);
                             meBufferStoreLocation(lp_old,(meUShort)len,bp->dotLineNo);
                             prmL -= meStrlen(buff);
                             p1 = buff+len;
                             if(prmL > 0)
                             {
                                 memset(p1-prmL,' ',prmL);
+                                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                    memset(cbuff+(p1-prmL-buff),'A',prmL);
                                 *p1 = '\0';
                             }
                             curOff = getcol(buff,len,bp->tabWidth);
@@ -1156,7 +1259,7 @@ move_cursor_pos:
                         case 'm':
                             if(ipipe->flag & meIPIPE_ANSICOLOR)
                             {
-                                meUByte newFg=ipipe->ansiFg, newBg=ipipe->ansiBg, newSt=ipipe->ansiSt, newCc;
+                                meUByte newFg=ipipe->ansiFg, newBg=ipipe->ansiBg, newSt=ipipe->ansiSt;
                                 if(prmC < 8)
                                     prmS[prmC++] = prmL;
                                 for(ii=0 ; ii<prmC ; ii++)
@@ -1214,15 +1317,7 @@ move_cursor_pos:
                                 ipipe->ansiFg = newFg;
                                 ipipe->ansiBg = newBg;
                                 ipipe->ansiSt = newSt;
-                                newCc = ipipeAnsiToScheme(newFg,newBg,newSt);
-                                if((newCc != ipipe->ansiCc) && ((p1 - buff) < meBUF_SIZE_MAX - 1))
-                                {
-                                    *p1++ = '\x03';
-                                    *p1++ = newCc;
-                                    *p1 = '\0';
-                                    len += 2;
-                                    ipipe->ansiCc = newCc;
-                                }
+                                ipipe->ansiCc = ipipeAnsiToScheme(newFg,newBg,newSt);
                             }
                             break;
                         case 'n':
@@ -1248,11 +1343,17 @@ move_cursor_pos:
                                 {
                                     for(ii=curRow ; ii>0 ; ii--)
                                         lp = meLineGetPrev(lp);
-                                    memset(buff,' ',meStrlen(buff));
+                                    ii = meStrlen(buff);
+                                    memset(buff,' ',ii);
+                                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                        memset(cbuff,'A',ii);
                                 }
                                 else if(prmL == 0)
                                 {
-                                    memset(buff+len,' ',meStrlen(buff+len));
+                                    ii = meStrlen(buff+len);
+                                    memset(buff+len,' ',ii);
+                                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                        memset(cbuff+len,'A',ii);
                                     if(lp != bp->baseLine)
                                         lp = meLineGetNext(lp);
                                 }
@@ -1264,8 +1365,13 @@ move_cursor_pos:
 #endif
                                 while(lp != bp->baseLine)
                                 {
-                                    memset(lp->text,' ',meLineGetLength(lp));
-                                    lp->flag |= meLINE_CHANGED;
+                                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                        ipipeClearColorLine(lp);
+                                    else
+                                    {
+                                        memset(lp->text,' ',meLineGetLength(lp));
+                                        lp->flag |= meLINE_CHANGED;
+                                    }
                                     lp = meLineGetNext(lp);
                                 }
                                 curOff = len;
@@ -1275,20 +1381,18 @@ move_cursor_pos:
                             *p1 = '\0';
                             break;
                         case 'P':
-                            if(!gotN)
-                                prmL = 1;
-                            ii = prmL;
-                            while((p1[ii] != '\0') && (--ii >= 0))
-                               ;
-                            if(ii < 0)
-                                *p1 = '\0';
-                            else
                             {
-                                ii = 0;
-                                while((p1[ii] = p1[ii+prmL]) != 0)
-                                    ii++;
+                                int ll;
+                                if((ll = meStrlen(p1) - prmL) <= 0)
+                                    *p1 = '\0';
+                                else
+                                {
+                                    memmove(p1,p1+prmL,ll+1);
+                                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                        memmove(cbuff+len,cbuff+len+prmL,ll);
+                                }
+                                break;
                             }
-                            break;
                         case 'c': /* Ignore Device Attributes */
                         case 'q': /* Ignore DECLL (DEC Load LEDs) */
                         case 'r': /* Ignore DECSTBM � scrolling region */
@@ -1324,20 +1428,18 @@ cant_handle_this:
                 {
                     /* OSC: consume until BEL (0x07) or ST (ESC \) */
                     do {
-                        if(!getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
+                        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
                             break;
-                        fputc(cc,logFp);
                     } while((cc != 7) && (cc != 27));
                     /* if terminated by ESC, consume the following \ */
-                    if((cc == 27) && getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
-                        fputc(cc,logFp);
+                    if(cc == 27)
+                        ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead);
                     break;
                 }
                 else if(cc == '(' || cc == ')')
                 {
                     /* character set designation: consume the single designator byte and ignore all */
-                    if(getNextCharFromPipe(ipipe,cc,rbuff,curROff,curRRead))
-                        fputc(cc,logFp);
+                    ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead);
                     break;
                 }
             }
@@ -1348,30 +1450,23 @@ cant_handle_this:
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
             {
                 meUByte c2, c3;
-                if((cc < 0xc0) || !getNextCharFromPipe(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
+                if((cc < 0xc0) || !ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
                     /* orphan continuation byte - discard */
                     break;
-        fputc(c2,logFp);
                 if(cc < 0xe0)
                     /* 2-byte sequence (0xc0-0xdf) */
                     cc = utf8ToMeChar((((meUInt)(cc & 0x1f)) << 6) | (c2 & 0x3f));
-                else if(!getNextCharFromPipe(ipipe,c3,rbuff,curROff,curRRead) || ((c3 & 0xc0) != 0x80))
+                else if(!ipipeGetNextChar(ipipe,c3,rbuff,curROff,curRRead) || ((c3 & 0xc0) != 0x80))
                     break;
-                else
-                {
-        fputc(c3,logFp);
-                    if(cc < 0xf0)
+                else if(cc < 0xf0)
                     /* 3-byte sequence */
                     cc = utf8ToMeChar((((meUInt) (cc & 0x0f)) << 12) | (((meUInt) (c2 & 0x3f)) << 6) | (c3 & 0x3f));
-                else if(!getNextCharFromPipe(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
+                else if(!ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
                     break;
                 else
-                {
-                    fputc(c2,logFp);
                     /* 4-byte: ME supports only up to U+FFFF - consume */
                     cc = meCHAR_UNDEF;
-                }
-                }
+#ifdef IPIPE_DUMP
                 if(cc == meCHAR_UNDEF)
                 {
                     fputc('Z',logFp);
@@ -1379,6 +1474,7 @@ cant_handle_this:
                     fputc('U',logFp);
                     fputc('Z',logFp);
                 }
+#endif
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
 #endif
@@ -1394,32 +1490,35 @@ cant_handle_this:
                 else
                 {
                     meUByte bb[2];
+                    int splitIdx = (int)(p1-buff);
                     bb[0] = p1[0];
                     bb[1] = p1[1];
+                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                        cbuff[splitIdx] = ipipe->ansiCc;
                     p1[0] = windowChars[WCDISPSPLTLN];
                     p1[1] = '\0';
-                    ii = addLine(lp_old,buff) ;			/* Add string */
+                    ii = ipipeAddLine(ipipe,lp_old,buff,cbuff);
                     noLines += ii;
                     if(curRow < ipipe->noRows-1)
                         curRow += ii;
                     p1[0] = bb[0];
                     p1[1] = bb[1];
                     meStrcpy(buff,p1);
+                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                        memmove(cbuff,cbuff+splitIdx,meBUF_SIZE_MAX-splitIdx);
                     p1 = buff;
                     len = curOff = 0;
                 }
             }
             if(ipipe->flag & meIPIPE_OVERWRITE)
             {
-                meUByte *ss, *dd;
-                int ll;
-
-                ll = (int) meStrlen(p1);
-                ss = p1 + ll;
-                dd = ss+1;
-                do
-                    *dd-- = *ss--;
-                while(ll--);
+                int ll = meStrlen(p1)+1;
+                memmove(p1+1,p1,ll);
+                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                {
+                    int p1i = (int)(p1-buff);
+                    memmove(cbuff+p1i+1,cbuff+p1i,ll);
+                }
             }
             else if(*p1 == '\0')
                 p1[1] = '\0';
@@ -1435,6 +1534,8 @@ cant_handle_this:
                 curOff++;
                 break;
             }
+            if(ipipe->flag & meIPIPE_ANSICOLOR)
+                cbuff[p1-buff] = ipipe->ansiCc;
             *p1++ = cc;
             if(isDisplayable(cc))
                 curOff++;
@@ -2156,7 +2257,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #endif
     if(flags & LAUNCH_ANSICOLOR)
         ipipe->flag |= meIPIPE_ANSICOLOR;
-    ipipe->ansiCc = 0;
+    ipipe->ansiCc = 'A';
     ipipe->ansiFg = 0;
     ipipe->ansiBg = 0;
     ipipe->ansiSt = 0;

@@ -202,25 +202,21 @@ utf8ToMeChar(meUInt uc)
     } while(--ii >= 0);
     switch(uc)
     {
-    case 0x00b4: return '\'';
-    case 0x00b7: return '*';
+    case 0x00b4: case 0x2018: case 0x2019: return '\'';
+    case 0x00b7: case 0x2022: case 0x25CF: case 0x2736: case 0x273B: case 0x273C: case 0x273D: return '*';
     case 0x2010: case 0x2011: case 0x2012: case 0x2013: case 0x2014: case 0x2015: return '-';
-    case 0x2018: case 0x2019: return '\'';
-    case 0x201a: return ',';
+    case 0x201a: case 0x201e: return ',';
     case 0x201b: return '`';
     case 0x201c: case 0x201d: case 0x201f: return '"';
-    case 0x201e: return ',';
-    case 0x2022: return '*';
-    case 0x2190: return windowChars[WCHSBUP];
-    case 0x2191: return windowChars[WCVSBUP];
-    case 0x2192: return windowChars[WCHSBDOWN];
-    case 0x2193: return windowChars[WCVSBDOWN];
-    case 0x23BF: return boxChars[BCNE];
+    case 0x2190: case 0x23F4: return windowChars[WCHSBUP];
+    case 0x2191: case 0x23F6: return windowChars[WCVSBUP];
+    case 0x2192: case 0x23F5: return windowChars[WCHSBDOWN];
+    case 0x2193: case 0x23F7: return windowChars[WCVSBDOWN];
+    case 0x23BF: case 0x2514: case 0x2515: case 0x2516: case 0x2517: case 0x259d: case 0x2599: return boxChars[BCNE];
+    case 0x23F8: case 0x2502: case 0x2503: case 0x258E: case 0x258F: case 0x2595: return boxChars[BCNS];
     case 0x2500: case 0x2501: case 0x2581: case 0x2582: case 0x2583: case 0x2594: return boxChars[BCEW];
-    case 0x2502: case 0x2503: case 0x258E: case 0x258F: case 0x2595: return boxChars[BCNS];
     case 0x250C: case 0x250D: case 0x250E: case 0x250F: case 0x2597: case 0x259B: return boxChars[BCES];
     case 0x2510: case 0x2511: case 0x2512: case 0x2513: case 0x2596: case 0x259C: return boxChars[BCSW];
-    case 0x2514: case 0x2515: case 0x2516: case 0x2517: case 0x259d: case 0x2599: return boxChars[BCNE];
     case 0x2518: case 0x2519: case 0x251A: case 0x251B: case 0x2598: case 0x259F: return boxChars[BCNW];
     case 0x251C: case 0x251D: case 0x251E: case 0x251F: case 0x2520: case 0x2521: case 0x2522: case 0x2523: return boxChars[BCNES];
     case 0x2524: case 0x2525: case 0x2526: case 0x2527: case 0x2528: case 0x2529: case 0x252A: case 0x252B: return boxChars[BCNSW];
@@ -233,7 +229,6 @@ utf8ToMeChar(meUInt uc)
     case 0x258B: case 0x258C: case 0x258D: return ']';
     case 0x2590: return '[';
     case 0x2591: case 0x2592: case 0x2593: return windowChars[WCHSBUSHAFT1];
-    case 0x25CF: case 0x2736: case 0x273B: case 0x273C: case 0x273D: return '*';
     case 0x2722: case 0x2723: case 0x2724: return '+';
     case 0x276E: return '<';
     case 0x276F: return '>';
