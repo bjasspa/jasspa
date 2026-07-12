@@ -100,14 +100,12 @@ add-next-line "*compile*" "^ *%f(%l\\(,\\d+\\)?) ?: \\(fatal error\\|error\\|war
 ; GNU gcc & Java style errors and warning
 add-next-line "*compile*" "^ *\\(\\[\\m+\\] \\)?%f:%l:\\(\\d+:\\)? \\(fatal error\\|error\\|warning\\)"
 ; Load additional hooks required for windows.
-define-macro-file hkipipe ishell perldb
-;--- COMSHELL
-; As command.com's prompt echoing is broken ishell is useless without
-; the following 2 variables which enable ME's command-line support
-; NOTE - if you use a different prompt (i.e. not "PATH>") then you
-; must configure .ishell.prompt appropriately
-;set-variable .ishell.prompt "^[^>\n]*>"
-;set-variable .ishell.noecho "1"
+define-macro-file hkipipe ishell gdb perldb
+; Pre windows 10 ~2018/19 there was no ConPTY and cmd's prompt echoing is broken, ishell is useless without
+; the following 2 variables which enable ME's command-line support - these are only used when there's no PTY.
+; NOTE - if you use a different prompt (i.e. not "PATH>") then you must configure .ishell.prompt appropriately
+set-variable .ishell.prompt "^[^>\n]*>"
+set-variable .ishell.noecho "1"
 ;--- CYGWIN
 ; Try to find cygwin automatically.
 !if &not &exi %cygwin-path

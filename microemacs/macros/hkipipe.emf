@@ -441,8 +441,10 @@ define-macro ishell
   set-variable #l2 &con &band 1 @# 4096 0
   !force 0 find-buffer "*shell*"
   !if &and $status &bmod "pipe"
-    set-variable #l2 0
+    set-variable #l2 -1
     find-buffer #l0
+  !elif &les @# 0
+    !return
   !elif &band $system 0x100           ; is it MS-DOS type system ?
     !if &seq $platform "windows"
       &add #l2 4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
@@ -461,11 +463,16 @@ define-macro ishell
     #l2 ipipe-shell-command $SHELL "*shell*"
   !endif
   popup-window "*shell*"
-  !iif #l2  set-variable $buffer-hilight .hilight.meth
-  !if &exi .ishell.prompt
-    set-variable :mode 0
-    set-variable :prompt .ishell.prompt
-    set-variable :noecho .ishell.noecho
+  !if &gre #l2 -1
+    !iif #l2  set-variable $buffer-hilight .hilight.meth
+    !if &not &bmo "pty"
+      !if &exi .ishell.prompt
+        set-variable :mode 0
+        set-variable :prompt .ishell.prompt
+        set-variable :noecho .ishell.noecho
+      !endif
+      ml-write "[Warning: Failed to create as proper PTY terminal - this is unlikely to work well]"  
+    !endif
   !endif
 !emacro
 

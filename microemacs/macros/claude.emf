@@ -8,7 +8,7 @@
 ; Synopsis:    Claude Code AI integration for MicroEmacs
 ; Authors:     Steven Phillips
 ;
-
+; Diff colors: red: 3d0100 -> 5c0200 green: 022800 -> 044700, completion: b1b9f9
 define-macro-file hkipipe fhook-ipipe ipipe-mode ipipe-output
 !iif &not &exi meth-add-format  execute-file "meth"
 
