@@ -8,10 +8,9 @@
 ; Synopsis:    Interactive Pipe hook
 ; Authors:     Steven Phillips & Jon Green
 ;
+!iif &not &exi meth-add-format  execute-file "meth"
 !if &band .hilight.flags 0x02
-  !if &not &exist .hilight.gdb
-    set-variable .hilight.gdb &pinc .hilight.next 1
-  !endif
+  !iif &not &exist .hilight.gdb  set-variable .hilight.gdb &pinc .hilight.next 1
   0 hilight  .hilight.gdb 0             $global-scheme
   hilight .hilight.gdb 2 "(gdb)"        .scheme.keyword
   hilight .hilight.gdb 2 "Source file is more recent" .scheme.error
@@ -206,12 +205,16 @@
       -1 yank
       insert-string #l4
       !goto update-cmdline
-    !elif &sin #l1 "\CN\CP"
+    !elif &sin #l1 "\e[A\e[B"
       ; next/prev history
       set-variable #l3 @wl
       !force find-buffer &cat #l0 "-hist"
       !iif &seq @wc ""  set-variable :cmd #l3
-      !force !force execute-string #l1
+      !if &seq #l1 "\e[A"
+        !force !force backward-line
+      !else
+        !force !force forward-line
+      !endif
       set-variable #l3 @wl
       !iif &seq @wc ""  set-variable #l3 :cmd
       !force find-buffer &cat #l0 "-cmd"
@@ -225,6 +228,10 @@
       ; edit the current line
       !if &seq #l1 "\CH"
         !force !force backward-delete-char
+      !elif &seq #l1 "\e[D"
+        !force !force backward-char
+      !elif &seq #l1 "\e[C"
+        !force !force forward-char
       !else
         set-variable #l1 &rep #l1 "\e" "\E"
         !force !force execute-string #l1
@@ -265,9 +272,9 @@
   !elif &les &len @cc 2
     set-variable #l1 @cc
   !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
-    set-variable #l1 &lget "|\t|\b|\CM|" #l0
+    set-variable #l1 &lget "|\t|\d|\CM|" #l0
   !elif &set #l0 &lfi "|backspace|" #l2
-    set-variable #l1 &lget "|\b|" #l0
+    set-variable #l1 &lget "|\d|" #l0
   !elif &seq "quote-char" #l3
     ml-write "Quote: "
     set-variable #l1 @cqk
@@ -298,9 +305,9 @@
     ; For Windows we need a \r\n sequence - over-ride the default.
     ;        set-variable #l1 "\CM\CJ"
   !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
-    set-variable #l1 &lget "|\CI|\CH|\CM|\CA|\CB|\CD|\CE|\CF|\CK|\CL|\CN|\CP|\e\e|\ef|\eb|" #l0
+    set-variable #l1 &lget "|\CI|\d|\CM|\CA|\e[D|\CD|\CE|\e[C|\CK|\CL|\e[B|\e[A|\e\e|\ef|\eb|" #l0
   !elif &set #l0 &lfi "|backspace|" #l2
-    set-variable #l1 &lget "|\b|" #l0
+    set-variable #l1 &lget "|\d|" #l0
   !elif &seq "yank" #l3
     set-variable #l1 @y
   !elif &seq "quote-char" #l3
@@ -431,19 +438,16 @@ define-macro fhook-ipipe
 
 define-macro ishell
   set-variable #l0 $buffer-bname
+  set-variable #l2 &con &band 1 @# 4096 0
   !force 0 find-buffer "*shell*"
   !if &and $status &bmod "pipe"
+    set-variable #l2 0
     find-buffer #l0
   !elif &band $system 0x100           ; is it MS-DOS type system ?
     !if &seq $platform "windows"
-      ; For windows DOS shell in a window we need to drop the command
-      ; shell (!c!) and run a detached process (!d!). Optionally allow
-      ; the user to run a different command shell %comspec2. This must
-      ; be a 32-bit app, so if you use a 16-bit 4DOS as the default
-      ; command shell, you will need to set %comspec2 to "command.com"
-      4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
+      &add #l2 4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
     !else
-      0 ipipe-shell-command $COMSPEC "*shell*"
+      #l2 ipipe-shell-command $COMSPEC "*shell*"
     !endif
   !elif &seq $platform "cygwin"
     ; For cygwin then convert the COMSPEC path into a cygwin path for
@@ -451,12 +455,13 @@ define-macro ishell
     ; space.
     set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
     set-variable #l1 &xir #l1 "\\\\" "/"
-    0 ipipe-shell-command #l1  "*shell*"
+    #l2 ipipe-shell-command #l1 "*shell*"
   !else
     ; UNIX based platforms then we may simply run the shell.
-    0 ipipe-shell-command $SHELL "*shell*"
+    #l2 ipipe-shell-command $SHELL "*shell*"
   !endif
   popup-window "*shell*"
+  !iif #l2  set-variable $buffer-hilight .hilight.meth
   !if &exi .ishell.prompt
     set-variable :mode 0
     set-variable :prompt .ishell.prompt

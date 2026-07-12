@@ -1964,6 +1964,7 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
     case MDNACT:
     case MDNARROW:
     case MDPIPE:
+    case MDPTY:
 invalid_global:
         return mlwrite(MWABORT,(meUByte *)"[Cannot change this mode]");
     }

@@ -49,6 +49,7 @@ DEFMODE(MDNACT,   "nact",   'n')       /* Buffer is not active         */
 DEFMODE(MDNARROW, "narrow", 'N')       /* Buffer has a narrowing       */
 DEFMODE(MDOVER,   "over",   'O')       /* overwrite mode               */
 DEFMODE(MDPIPE,   "pipe",   'P')       /* Buffer is an ipipe buffer    */
+DEFMODE(MDPTY,    "pty",    'y')       /* Ipipe buffer has a real PTY  */
 DEFMODE(MDRBIN,   "rbin",   'r')       /* File loaded in reduced binary*/
 DEFMODE(MDTAB,    "tab",    'T')       /* Virtual tabs                 */
 DEFMODE(MDTIME,   "time",   't')       /* Time stamping mode           */

@@ -577,6 +577,7 @@ extern int  WinLaunchProgram (meUByte *cmd, int flags, meUByte *inFile, meUByte 
                               meInt *sysRet);
 #if MEOPT_IPIPES
 extern void meIPipeConPTYClose(meIPipe *ipipe);
+extern void meIPipeConPTYResize(meIPipe *ipipe, int cols, int rows);
 #endif
 
 #endif /* _WIN32 */

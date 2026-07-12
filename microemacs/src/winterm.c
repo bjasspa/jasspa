@@ -2234,10 +2234,6 @@ childActiveThread(LPVOID lpParam)
 #endif
 }
 
-#endif
-
-#if MEOPT_SPAWN
-#if MEOPT_IPIPES
 /* ConPTY support - CreatePseudoConsole/ClosePseudoConsole loaded dynamically
  * so ME runs on pre-1809 Windows without the symbols present. */
 #ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
@@ -2245,10 +2241,12 @@ childActiveThread(LPVOID lpParam)
 #endif
 typedef HRESULT (WINAPI *meConPTYCreate_t)(COORD, HANDLE, HANDLE, DWORD, HANDLE *);
 typedef void    (WINAPI *meConPTYClose_t)(HANDLE);
+typedef HRESULT (WINAPI *meConPTYResize_t)(HANDLE, COORD);
 
-static meConPTYCreate_t meConPTYCreate    = NULL;
-static meConPTYClose_t  meConPTYCloseFunc = NULL;
-static int              meConPTYTried     = 0;
+static meConPTYCreate_t meConPTYCreate = NULL;
+static meConPTYResize_t meConPTYResizeFunc = NULL;
+static meConPTYClose_t meConPTYCloseFunc = NULL;
+static int meConPTYTried = 0;
 
 static void
 meConPTYLoad(void)
@@ -2256,13 +2254,10 @@ meConPTYLoad(void)
     if(!meConPTYTried)
     {
         HMODULE hKernel = GetModuleHandle("kernel32.dll");
-        if(hKernel != NULL)
-        {
-            meConPTYCreate    = (meConPTYCreate_t) GetProcAddress(hKernel,"CreatePseudoConsole");
-            meConPTYCloseFunc = (meConPTYClose_t)  GetProcAddress(hKernel,"ClosePseudoConsole");
-            if(meConPTYCloseFunc == NULL)
-                meConPTYCreate = NULL;
-        }
+        if((hKernel != NULL) &&
+           ((meConPTYCloseFunc = (meConPTYClose_t) GetProcAddress(hKernel,"ClosePseudoConsole")) != NULL) &&
+           ((meConPTYResizeFunc = (meConPTYResize_t) GetProcAddress(hKernel,"ResizePseudoConsole")) != NULL))
+            meConPTYCreate = (meConPTYCreate_t) GetProcAddress(hKernel,"CreatePseudoConsole");
         meConPTYTried = 1;
     }
 }
@@ -2272,14 +2267,30 @@ meIPipeConPTYClose(meIPipe *ipipe)
 {
     if(ipipe->hPCon != NULL)
     {
-        meConPTYLoad();
-        if(meConPTYCloseFunc != NULL)
-            meConPTYCloseFunc(ipipe->hPCon);
+        meConPTYCloseFunc(ipipe->hPCon);
         ipipe->hPCon = NULL;
+    }
+}
+
+/* meIPipeConPTYResize
+ * Called from ipipeSetSize (spawn.c) whenever the window displaying the
+ * ipipe buffer changes shape - the Windows analogue of the Unix
+ * TIOCSWINSZ/TIOCSSIZE ioctl calls. Tells the ConPTY the new buffer size so
+ * the child sees a SIGWINCH-equivalent console resize event. */
+void
+meIPipeConPTYResize(meIPipe *ipipe, int cols, int rows)
+{
+    if(ipipe->hPCon != NULL)
+    {
+        COORD size;
+        size.X = (SHORT) cols;
+        size.Y = (SHORT) rows;
+        meConPTYResizeFunc(ipipe->hPCon,size);
     }
 }
 #endif /* MEOPT_IPIPES */
 
+#if MEOPT_SPAWN
 /*
  * WinLaunchProgram
  * Launches an external program using the DOS shell.
@@ -2343,9 +2354,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     static int pipeStderr=0;                    /* Remember the stderr state */
 #else
     HANDLE inHdlTmp, inHdl, outHdlTmp, outHdl, dumHdl;
-#if MEOPT_IPIPES
-    int    conPTYActive = 0;
-#endif
 #endif
     
     /* Get the comspec */
@@ -2541,7 +2549,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                                     CloseHandle(inHdlTmp);
                                     CloseHandle(outHdlTmp);
                                     ipipe->hPCon = hPCon;
-                                    conPTYActive = 1;
                                 }
                                 else
                                 {
@@ -2561,7 +2568,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                         }
                     }
                 }
-                if(!conPTYActive)
+                if(ipipe->hPCon == NULL)
                 {
                     /* Plain pipe fallback */
                     if(CreatePipe(&meSuInfo.hStdInput,&inHdlTmp,&sbuts,0) == 0)
@@ -2677,7 +2684,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             }
 #ifndef _WIN32s
 #if MEOPT_IPIPES
-            if(!conPTYActive)
+            if(ipipe->hPCon == NULL)
 #endif
                 meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
 #endif
@@ -2747,7 +2754,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         status = meFALSE;
 #else /* ! _WIN32s */
 #if MEOPT_IPIPES
-    if(conPTYActive)
+    if(ipipe->hPCon != NULL)
     {
         /* Launch with ConPTY: use STARTUPINFOEX, no handle inheritance, no new console */
         SIZE_T attrListSize = 0;
