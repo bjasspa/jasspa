@@ -675,8 +675,12 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
     {
         buff[0] = ipipe->nextChar ;
         ipipe->flag &= ~meIPIPE_NEXT_CHAR ;
+#ifdef IPIPE_DUMP
+        if(logFp != NULL)
+            fwrite(buff,1,1,logFp);
+#endif
         return 1 ;
-    }        
+    }
     /* Must peek on a pipe cos if we try to read too many this will fail */
     if((PeekNamedPipe(ipipe->rfd, (LPVOID) NULL, (DWORD) 0,
                       (LPDWORD) NULL, &bytesRead, (LPDWORD) NULL) != meTRUE) ||
