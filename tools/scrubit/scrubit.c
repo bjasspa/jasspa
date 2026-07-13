@@ -74,7 +74,7 @@ main (int argc, char *argv[])
             mbyte = 0;
             back = 0;
             
-            sprintf (fname, "%s.%d", argv[ii], gbyte);
+            snprintf (fname, sizeof(fname), "%s.%d", argv[ii], gbyte);
             
             if ((fp = fopen (fname, "wb")) == NULL)
             {
@@ -143,7 +143,7 @@ main (int argc, char *argv[])
         /* Clean up the files */
         while (gbyte >= 0)
         {
-            sprintf (fname, "%s.%d", argv[ii], gbyte);
+            snprintf (fname, sizeof(fname), "%s.%d", argv[ii], gbyte);
             remove (fname);
             gbyte--;
         }
