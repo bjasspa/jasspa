@@ -634,6 +634,7 @@ ipipeRemove(meIPipe *ipipe)
     free(ipipe);
 }
 
+/*#define IPIPE_DUMP 1*/
 #ifdef IPIPE_DUMP
 static FILE *logFp=NULL;
 #endif
@@ -1367,7 +1368,10 @@ move_cursor_pos:
                             break;
                         case 'P':
                             {
+                                /* DCH - delete prmL chars and shifts the remainder left. */
                                 int ll;
+                                if(!gotN)
+                                    prmL = 1;
                                 if((ll = meStrlen(p1) - prmL) <= 0)
                                     *p1 = '\0';
                                 else
@@ -1375,6 +1379,22 @@ move_cursor_pos:
                                     memmove(p1,p1+prmL,ll+1);
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         memmove(cbuff+len,cbuff+len+prmL,ll);
+                                }
+                                break;
+                            }
+                        case 'X':
+                            {
+                                /* ECH - erase prmL chars with no shift. */
+                                int ll;
+                                if(!gotN)
+                                    prmL = 1;
+                                if((ll = meStrlen(p1)) <= prmL)
+                                    *p1 = '\0';
+                                else
+                                {
+                                    memset(p1,' ',prmL);
+                                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                        memset(cbuff+len,(char)ipipe->ansiCc,prmL);
                                 }
                                 break;
                             }

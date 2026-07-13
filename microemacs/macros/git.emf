@@ -784,7 +784,7 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
   !force 0 delete-buffer #l0
   set-variable $buffer-fname #l2
   set-variable .wait &sin "!" &lget .git.cflags @#
-  !force !force !force &con &band #l1 4 0x3c6 0x386 ipipe-shell-command "*git-cmdline*" #l0 git-exec-ipipe
+  !force !force !force &con &band #l1 4 0x3ce 0x38e ipipe-shell-command "*git-cmdline*" #l0 git-exec-ipipe
   set-variable #l2 $status
   !iif &band #l1 1  !force 0 delete-buffer "*git-cmdline*"
   find-buffer #l0

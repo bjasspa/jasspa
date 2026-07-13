@@ -2684,7 +2684,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             }
 #ifndef _WIN32s
 #if MEOPT_IPIPES
-            if(ipipe->hPCon == NULL)
+            if(((flags & LAUNCH_IPIPE) == 0) || (ipipe->hPCon == NULL))
 #endif
                 meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
 #endif
@@ -2754,7 +2754,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         status = meFALSE;
 #else /* ! _WIN32s */
 #if MEOPT_IPIPES
-    if(ipipe->hPCon != NULL)
+    if(((flags & LAUNCH_IPIPE) != 0) && (ipipe->hPCon != NULL))
     {
         /* Launch with ConPTY: use STARTUPINFOEX, no handle inheritance, no new console */
         SIZE_T attrListSize = 0;
