@@ -1189,7 +1189,7 @@ typedef struct meFrame
 #define meIPIPE_OVERWRITE   0x001
 #define meIPIPE_NEXT_CHAR   0x002
 #define meIPIPE_CHILD_EXIT  0x004
-#define meIPIPE_NOPTY       0x008       /* No PTY/ConPTY, using plain pipes */
+#define meIPIPE_USEPTY      0x008       /* Use PTY/ConPTY, otherwise plain pipes */
 #define meIPIPE_NOAUTOWRAP  0x010       /* Auto-wrap disabled (\E[?7l)  */
 #define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
 #define meIPIPE_BUFIPIPE    0x080       /* Forced ipipe buffer          */

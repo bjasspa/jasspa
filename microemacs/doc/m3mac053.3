@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac053.3,v 2.7 2022/06/12 17:13:59 jon Exp $
+.Id $Id: m3mac053.3,v 2.7 2026/07/16 21:15:28 jon Exp $
 .Im MicroEmacs command|file
 .so me.tni
 .TH reread-file 3
@@ -22,26 +22,36 @@ reread-file \- Reload the current buffer's file
 .Me "|reread-all"
 .I n
 .B reread-all
+["\fIpath\fR"]
 .ad
 .SH DESCRIPTION
 .B reread-file
-reloads from disk the file associated with the current buffer, this command is
-particularly  useful  when  the file is  continually  updated  by an  external
-program.  If the  buffer  has been  edited  and its name does not start with a
-\&'\fC*\fR'  then the user is  prompted  as to whether  the changes  should be
-discarded.  Also  if the  buffer  has an  active  process  running  in it then
-confirmation is sort from the user before the process is killed.
+reloads from disk the file associated with the current buffer, this command is particularly useful when the file is
+continually updated by an external program. If the buffer has been edited and its name does not start with a
+\&'\fC*\fR' then the user is prompted as to whether the changes should be discarded. Also if the buffer has an active
+process running in it then confirmation is sort from the user before the process is killed.
 .PP
-The  argument  \fIn\fR  can  be  used  to  change  the  default  behavior  of
-reread-file described above, \fIn\fR is a bit based flag where:
+The argument \fIn\fR can be used to change the default behavior of reread-file described above, \fIn\fR is a bit based
+flag where:
 .IP \fB0x01\fR
-Enables loss of work checks  (default), if this flag is not supplied  then the
-buffer is reread without any user prompts (useful in macros).
+Enables loss of work checks (default), if this flag is not supplied then the buffer is reread without any user prompts
+(useful in macros).
 .PP
 .B reread-all
-reloads all out-of-date  buffers. If the argument \fIn\fR is specified as zero
-(0) then all  buffers are  re-read.  The default  with no numeric  argument is
-reload out-of-date buffers only.
+reloads out-of-date buffers. The argument \fIn\fR is a bit based flag where:
+.IP \fB0x01\fR
+Prompt before discarding edits in a modified buffer. This flag takes priority over \fB0x02\fR.
+.IP \fB0x02\fR
+Yes to all, discard edits in modified buffers without prompting.
+.IP \fB0x04\fR
+Reload all buffers, not just those that are out-of-date.
+.IP \fB0x08\fR
+Reload only those buffers whose file is within the given \fIpath\fR. If \fIpath\fR is not supplied on the command line
+the user is prompted for it.
+.PP
+Note that when both \fB0x01\fR and \fB0x02\fR are clear, buffers with unsaved edits are left untouched (not reloaded)
+and no prompt is given. The default with no numeric argument (i.e. \fIn\fR is zero) is thus to reload out-of-date
+buffers that have no unsaved edits, leaving any buffer with unsaved edits untouched.
 .SH NOTES
 \fBreread-file\fR is a macro implemented in \fCtool.emf\fR.
 .SH "SEE ALSO"

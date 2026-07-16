@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd077.2,v 2.12 2026/07/06 14:19:40 jon Exp $
+.Id $Id: m2cmd077.2,v 2.12 2026/07/16 23:45:05 jon Exp $
 .Im MicroEmacs command|shell
 .ds C0 "(\fB\*e backslash\fR)\ \&
 .so me.tni
@@ -66,8 +66,9 @@ Disable the use of the command-line processor to launch the program (MS Win32 ve
 .IP
 Where \fC%COMSPEC%\fR is typically \fCcommand.com\fR. If this bit is set "\fIcommand\fR" is launched directly.
 .IP \fB0x08\fR
-Detach the launched process from \*(mS (MS Win32 versions only). By default the command is launched as a child process
-of \*(mS with a new console. With this bit set the process is completely detached from \*(mS instead.
+.\"TODO need to update 0x08 and add 0x1000 & 0x2000
+Force the use of a pseudo PTY, ignored when bit \fB0x1000\fR is set. When bit bit \fB0x08\fR and \fB0x1000\fR are 
+clear, pseudo terminals are used on UNIX systems, but not on Windows. 
 .IP \fB0x10\fR
 Disable the command name mangling (MS Win32 versions only). By default any \&'\fC/\fR' characters found in the command
 name (the first argument only) are converted to '\fC\\\fR' characters to make it Windows compliant.
@@ -105,6 +106,9 @@ Enables support for ANSI color in the terminal processing, semantically converti
 combinations to meth based scheme codes. The buffer's
 .Ht $buffer-hilight 5
 variable must be set appropriately for the high-lighting to be recognisable. 
+.IP \fB0x2000\fR
+.\"TODO need to update 0x08 and add 0x1000 & 0x2000
+Stop the use of a pseudo PTY. 
 .PP
 Many other macro commands (see
 .Ht compile 3 ,

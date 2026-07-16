@@ -502,46 +502,43 @@ define-macro reread-file
 define-macro reread-all
   0xde set-position "\x82"
   set-variable #l0 $buffer-bname
-  set-variable #l1 0
+  !iif &set #l1 &not &band @# 1  set-variable #l1 &con &band @# 2 1 -1
+  !if &set #l6 &band @# 8
+    !force set-variable #l5 @1
+    !iif &not $status  set-variable #l5 @ml61 "Within path" &cat $buffer-fname "a/../"
+    set-variable #l6 &len &set #l5 &stat "a" #l5
+  !endif
   set-variable $buffer-names "[^*].*"
   !while &not &seq &set #l2 $buffer-names ""
-    !if &nbmod #l2 "nact"
-    !else
-      find-buffer #l2
-      !if &band $buffer-fmod 0x10000
-      !elif &len $buffer-fname
-        !if &band @# 0x01
-          !if &not &bstat o
-            !cont
-          !endif
-        !endif
-        !if &bmod "edit"
-          !if &les #l1 0
-            set-variable #l3 "n"
-          !elif &gre #l1 0
-            set-variable #l3 "y"
-          !else
-            set-variable #l3 @mc5 &cat $buffer-fname ": Discard changes (?/y/n/a/o) ? " "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
-            !if &iseq #l3 "a"
-              set-variable #l1 1
-              set-variable #l3 "y"
-            !elif &iseq #l3 "o"
-              set-variable #l1 -1
-              set-variable #l3 "n"
-            !endif
-          !endif
+    !iif &nbmod #l2 "nact"  !continue
+    find-buffer #l2
+    !if &band $buffer-fmod 0x10000
+    !elif &len $buffer-fname
+      !if &band @# 0x08
+        !iif &not &iseq #l5 &lef $buffer-fname #l6  !continue
+      !endif
+      !if &band @# 0x04
+      !elif &not &bstat o
+        !continue
+      !endif
+      !if &set #l3 &not &bmod "edit"
+      !elif &not &set #l3 #l1
+        set-variable #l4 @mc5 &cat $buffer-fname ": Discard changes (?/y/n/a/o) ? " "aAnNoOyY"  "(Y)es, (N)o, Yes to (A)ll, N(o) to All, (C-g)Abort ? "
+        !if &iseq #l4 "a"
+          set-variable #l3 &set #l1 1
+        !elif &iseq #l4 "o"
+          set-variable #l3 &set #l1 -1
         !else
-          set-variable #l3 "y"
+          set-variable #l3 &con &iseq #l4 "y" 1 -1
         !endif
-        !if &iseq #l3 "y"
-          !if &seq $buffer-bname #l0
-            !force goto-position "\x82"
-            0 reread-file
-            0xde set-position "\x82"
-          !else
-            0 reread-file
-          !endif
-        !endif
+      !endif
+      !if &les #l3 0
+      !elif &seq $buffer-bname #l0
+        !force goto-position "\x82"
+        0 reread-file
+        0xde set-position "\x82"
+      !else
+        0 reread-file
       !endif
     !endif
   !done

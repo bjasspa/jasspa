@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac098.3,v 2.2 2026/03/18 23:46:11 jon Exp $
+.Id $Id: m3mac098.3,v 2.2 2026/07/14 19:33:24 jon Exp $
 .Im MicroEmacs command|file|macrodevelop
 .so me.tni
 .TH copy-file 3
@@ -49,7 +49,7 @@ will copy directory \fCa\fR to \fCb\fR, effectively renaming it, whereas:
 will copy directory \fCa\fR into directory \fCb/\fR. The numeric argument \fIn\fR is used to modify the default
 behavior of the command, where the bits are defined as follows:
 .IP \fB0x01\fR
-wWhen set \fBcopy-file\fR copies \fBfrom\fR, when clear \fBcopy-file\fR moves \fBfrom\fR to \fBto\fR.
+When set \fBcopy-file\fR copies \fBfrom\fR, when clear \fBcopy-file\fR moves \fBfrom\fR to \fBto\fR.
 .IP \fB0x02\fR
 When set the command will not prompt the user on a file read failure, the copy/move for that file will simply fail.
 .IP \fB0x04\fR

@@ -136,8 +136,8 @@ set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 2 - Pull
 set-variable .git.cnames &lins .git.cnames -1 "Pull"
-set-variable .git.cflags &lins .git.cflags -1 "BTos*!$"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|"
+set-variable .git.cflags &lins .git.cflags -1 "BToEs*!$"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|1|"
 ; Command 3 - Push
 set-variable .git.cnames &lins .git.cnames -1 "Push"
 set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
@@ -176,8 +176,8 @@ set-variable .git.cflags &lins .git.cflags -1 "CS*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 12 - Checkout
 set-variable .git.cnames &lins .git.cnames -1 "Checkout"
-set-variable .git.cflags &lins .git.cflags -1 "Bbtr*!D"
-set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|0|"
+set-variable .git.cflags &lins .git.cflags -1 "BbtEr*!D"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|1|0|"
 ; Command 13 - Blame
 set-variable .git.cnames &lins .git.cnames -1 "Blame"
 set-variable .git.cflags &lins .git.cflags -1 "vphVs"
@@ -463,6 +463,9 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
       !elif &seq #l1 "d"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hdiff of changes" #l0 git-osd-cbc
+      !elif &seq #l1 "E"
+        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HReread updated files" #l0 git-osd-cbc
       !elif &seq #l1 "F"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Full file list for each commit" #l0 git-osd-cbc
@@ -850,7 +853,7 @@ define-macro git-pull
   !iif &not $status  -8 ml-write "[Current path does not appear to be within a Git repository]"
   2 git-osd
   !if &set #l7 &lget &set #l9 .git-osd.values 2
-    set-variable #l7 &lget .git-osd.values 3
+    set-variable #l7 &lget #l9 3
     set-variable #l0 $buffer-bname
     !force 0 delete-buffer "*git-pll-s1*"
     6 pipe-shell-command &spr "%s stash -- %s" .git.com .git-dirlst-detect.ld "*git-pll-s1*"
@@ -906,6 +909,9 @@ define-macro git-pull
     -1 buffer-mode "edit"
     1 buffer-mode "view"
     find-buffer #l0
+  !endif
+  !if &not .git-exec.exit
+    !iif &lget #l9 4  0x09 reread-all .git-dirlst-detect.ld
   !endif
 !emacro
 
@@ -1498,10 +1504,15 @@ define-macro git-checkout
     7 git-get-file-list 0 0 #l2
   !endif
   12 git-exec 3 $buffer-fname
-  !if &seq $buffer-fname ""
-  !elif &not &band $buffer-fmod 0x10000
-  !elif &lget #l9 4
+  !if &not &lget #l9 5
+  !elif &seq $buffer-fname ""
+  !elif &band $buffer-fmod 0x10000
     dirlst-refresh
+  !endif
+  !if .git-exec.exit
+  !elif &lget #l9 4
+    !force git-dirlst-detect
+    0x09 reread-all .git-dirlst-detect.ld
   !endif
 !emacro
 

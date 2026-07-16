@@ -2158,7 +2158,7 @@ childActiveThread(LPVOID lpParam)
     meUByte buff[4];
     /* Capture at thread start: flag won't change, unlike ipipe->hPCon which
      * meIPipeConPTYClose() may NULL mid-flight. */
-    int useOverlapped = !(ipipe->flag & meIPIPE_NOPTY);
+    int useOverlapped = (ipipe->flag & meIPIPE_USEPTY);
 
     do {
         /* wait for child process activity */
@@ -2511,7 +2511,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             else if(flags & LAUNCH_IPIPE)
             {
                 ipipe->hPCon = NULL;
-                if(!(flags & LAUNCH_NOPTY))
+                if(flags & LAUNCH_USEPTY)
                 {
                     /* Try ConPTY first (Windows 10 build 17763+) */
                     meConPTYLoad();

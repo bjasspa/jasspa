@@ -634,7 +634,7 @@ ipipeRemove(meIPipe *ipipe)
     free(ipipe);
 }
 
-/*#define IPIPE_DUMP 1*/
+#define IPIPE_DUMP 1
 #ifdef IPIPE_DUMP
 static FILE *logFp=NULL;
 #endif
@@ -1005,7 +1005,7 @@ ipipeRead(meIPipe *ipipe)
             len = curOff = 0;
             break;
         case meCHAR_NL:
-            if(!(ipipe->flag & meIPIPE_NOPTY) && !(ipipe->flag & meIPIPE_OVERWRITE) && (curRow+1 < ipipe->noRows))
+            if((ipipe->flag & meIPIPE_USEPTY) && !(ipipe->flag & meIPIPE_OVERWRITE) && (curRow+1 < ipipe->noRows))
             {
                 /* if in over-write mode and not at the bottom, move instead */
                 prmA = curRow + 1;
@@ -1023,7 +1023,7 @@ ipipeRead(meIPipe *ipipe)
         case 15: /* ignore */
             break;
         case 27:
-            if(!(ipipe->flag & meIPIPE_NOPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
+            if((ipipe->flag & meIPIPE_USEPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
             {
                 int gotQ=0, gotN=0, prmS[8], prmC=0;
 
@@ -1948,7 +1948,9 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         return meFALSE;
     }
     if(ipipe->hPCon == NULL)
-        flags |= LAUNCH_NOPTY;
+        flags &= ~LAUNCH_USEPTY;
+    else
+        flags |= LAUNCH_USEPTY;
 #else
 
     if((term=getUsrVar((meUByte *) ((flags & LAUNCH_ANSICOLOR) ? "ipipe-color-term":"ipipe-term"))) == errorm)
@@ -1969,6 +1971,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     /* Allocate a pseudo terminal to do the work */
     if(((flags & LAUNCH_NOPTY) == 0) && ((ptyFp=allocatePty(line)) >= 0))
     {
+        flags |= LAUNCH_USEPTY;
         fds[0] = outFds[1] = ptyFp;
 #if ((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
         /* On the BSD systems we open the tty prior to the fork. If this is a
@@ -1988,7 +1991,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     else
     {
         /* Could not get a pty use a pipe instead */
-        flags |= LAUNCH_NOPTY;
+        flags &= ~LAUNCH_USEPTY;
         pipe(fds);
         pipe(outFds);
     }
@@ -2007,13 +2010,13 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #ifdef O_NONBLOCK
     if(fds[0] > 0)
         fcntl(fds[0],F_SETFL,O_NONBLOCK);
-    if((fds[1] > 0) && ((flags & LAUNCH_NOPTY) != 0))
+    if((fds[1] > 0) && ((flags & LAUNCH_USEPTY) == 0))
         fcntl(fds[1],F_SETFL,O_NONBLOCK);
 #else
 #ifdef O_NDELAY
     if (fds[0] > 0)
         fcntl(fds[0],F_SETFL,O_NDELAY);
-    if ((fds[1] > 0) && ((flags & LAUNCH_NOPTY) != 0))
+    if ((fds[1] > 0) && ((flags & LAUNCH_USEPTY) == 0))
         fcntl(fds[1],F_SETFL,O_NDELAY);
 #endif /* O_NDELAY */
 #endif /* O_NONBLOCK */
@@ -2039,7 +2042,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #if (defined _BSD) && (defined TIOCNOTTY)
         /* Under BSD then we allocate a dummy tty and then immediatly shut it.
          * This has the desired effect of dissassociating the terminal */
-        if((flags & LAUNCH_NOPTY) == 0)
+        if(flags & LAUNCH_USEPTY)
         {
             /* Under BSD 4.2 then we have to break the tty off. We make a
              * dummy call to open a tty and then immediately close it. This
@@ -2074,7 +2077,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 #endif        
         /* Not sure what the hell this does, why is it here ?? */
 #if (defined TIOCSCTTY) && ((defined _LINUX_BASE) || (defined _FREEBSD_BASE))
-        if(((flags & LAUNCH_NOPTY) == 0) && (outFds[0] >= 0))
+        if((flags & LAUNCH_USEPTY) && (outFds[0] >= 0))
             ioctl(outFds[0],TIOCSCTTY,0);
 #endif
 #endif
@@ -2083,7 +2086,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
          * we will get some problems with the shell. For simple pipes we do
          * not need to bother. */
 #if (defined _BSD) && (defined NTTYDISC) && (defined TIOCSETD)
-        if(((flags & LAUNCH_NOPTY) == 0) && (outFds[0] >= 0))
+        if((flags & LAUNCH_USEPTY) && (outFds[0] >= 0))
         {
             /* Use new line discipline.  */
             int ldisc = NTTYDISC;
@@ -2127,7 +2130,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 
 #if !((defined _LINUX_BASE) || (defined _FREEBSD_BASE) || (defined _SUNOS) || (defined _BSD))
         /* Some systems the tty is opened late as here */
-        if((flags & LAUNCH_NOPTY) == 0)
+        if(flags & LAUNCH_USEPTY)
         {
             fds[1] = outFds[0] = open((const char *)line,O_RDWR,0);
         }
@@ -2136,7 +2139,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         /* On solaris (this is POSIX I believe) then push the line emulation
          * modes */
 #ifdef _SUNOS
-        if((flags & LAUNCH_NOPTY) == 0)
+        if(flags & LAUNCH_USEPTY)
         {
             /* Push the hardware emulation mode */
             ioctl(fds[1], I_PUSH, "ptem");
@@ -2225,10 +2228,10 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         meModeSet(globMode,MDPIPE);
         meModeSet(globMode,MDLOCK);
         meModeClear(globMode,MDUNDO);
-        if(flags & LAUNCH_NOPTY)
-            meModeClear(globMode,MDPTY);
-        else
+        if(flags & LAUNCH_USEPTY)
             meModeSet(globMode,MDPTY);
+        else
+            meModeClear(globMode,MDPTY);
         bp=bfind(bufName,BFND_CREAT|BFND_CLEAR);
         meModeCopy(globMode,sglobMode);
     }
@@ -2258,7 +2261,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
 
     /* Set up the window dimensions - default to having auto wrap */
-    ipipe->flag = (flags & (LAUNCH_RAW|LAUNCH_NOPTY|LAUNCH_ANSICOLOR));
+    ipipe->flag = (flags & (LAUNCH_RAW|LAUNCH_USEPTY|LAUNCH_ANSICOLOR));
 #if MEOPT_EXTENDED
     if(((meSystemCfg & meSYSTEM_IO_UTF8) == 0) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
         ipipe->flag |= meIPIPE_NOUTF8;
@@ -2316,6 +2319,8 @@ ipipeCommand(int f, int n)
     /* Get the command to pipe in */
     if((ss=meGetString((meUByte *)"Ipipe", 0, 0, lbuf, meBUF_SIZE_MAX)) <= 0)
         return ss;
+    if((alarmState & meALARM_PIPED) && ((n & LAUNCH_USEPTY) == 0))
+        n |= LAUNCH_NOPTY;
     if(n & LAUNCH_BUFCMDLINE)
     {
         if((bp=bfind(lbuf,0)) == NULL)

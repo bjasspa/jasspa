@@ -1010,7 +1010,7 @@ meSockEnd();
 #define LAUNCH_WAIT          0x00001      /* shell-com wait -> LAUNCH_NOWAIT */
 #define LAUNCH_SILENT        0x00002      /* Hide the output buffer    */
 #define LAUNCH_NOCOMSPEC     0x00004      /* Do not use the comspec    */
-#define LAUNCH_NOPTY         0x00008      /* No PTY/ConPTY, use plain pipes */
+#define LAUNCH_USEPTY        0x00008      /* Enable use of PTY/ConPTY  */
 #define LAUNCH_LEAVENAMES    0x00010      /* Leave the names untouched */
 #define LAUNCH_SHOWWINDOW    0x00020      /* Dont hide the new cmd wdw */
 #define LAUNCH_RAW           0x00040      /* Raw pipe output           */
@@ -1020,7 +1020,8 @@ meSockEnd();
 #define LAUNCH_TO_VAR        0x00400      /* Output pipe to variable   */
 #define LAUNCH_NOUTF8        0x00800      /* Suppress UTF-8 pipe decode */
 #define LAUNCH_ANSICOLOR     0x01000      /* Translate ANSI SGR to semantic scheme tags */
-#define LAUNCH_USER_FLAGS    0x01EFE      /* User flags bitmask (no 0x100) */
+#define LAUNCH_NOPTY         0x02000      /* No PTY/ConPTY, use plain pipes */
+#define LAUNCH_USER_FLAGS    0x03EFE      /* User flags bitmask (no 0x100) */
 #define LAUNCH_SHELL         0x02000
 #define LAUNCH_SYSTEM        0x04000
 #define LAUNCH_FILTER        0x08000
