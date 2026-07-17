@@ -1022,12 +1022,12 @@ meSockEnd();
 #define LAUNCH_ANSICOLOR     0x01000      /* Translate ANSI SGR to semantic scheme tags */
 #define LAUNCH_NOPTY         0x02000      /* No PTY/ConPTY, use plain pipes */
 #define LAUNCH_USER_FLAGS    0x03EFE      /* User flags bitmask (no 0x100) */
-#define LAUNCH_SHELL         0x02000
-#define LAUNCH_SYSTEM        0x04000
-#define LAUNCH_FILTER        0x08000
-#define LAUNCH_PIPE          0x10000
-#define LAUNCH_IPIPE         0x20000
-#define LAUNCH_NOWAIT        0x40000
+#define LAUNCH_SHELL         0x04000
+#define LAUNCH_SYSTEM        0x08000
+#define LAUNCH_FILTER        0x10000
+#define LAUNCH_PIPE          0x20000
+#define LAUNCH_IPIPE         0x40000
+#define LAUNCH_NOWAIT        0x80000
 extern	int	meShell(int f, int n);
 extern	int	doShellCommand(meUByte *cmdstr, int flags);
 extern	int	meShellCommand(int f, int n);
