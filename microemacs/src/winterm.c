@@ -2155,7 +2155,7 @@ childActiveThread(LPVOID lpParam)
 {
     meIPipe *ipipe=(meIPipe *) lpParam;
     DWORD bytesRead;
-    meUByte buff[4];
+    meUByte buff[4], fRead=1;
     /* Capture at thread start: flag won't change, unlike ipipe->hPCon which
      * meIPipeConPTYClose() may NULL mid-flight. */
     int useOverlapped = (ipipe->flag & meIPIPE_USEPTY);
@@ -2171,35 +2171,40 @@ childActiveThread(LPVOID lpParam)
              * pending read complete with EOF (0 bytes transferred). */
             OVERLAPPED ov;
             HANDLE waitHandles[2];
-            DWORD transferred, waitResult;
-
+            DWORD waitResult;
+            
             memset(&ov,0,sizeof(ov));
             ov.hEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
             waitHandles[0] = ov.hEvent;
             waitHandles[1] = ipipe->process;
-
-            if(!ReadFile(ipipe->rfd,buff,1,NULL,&ov))
+            
+            if(ReadFile(ipipe->rfd,buff,1,NULL,&ov))
+                GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,FALSE);
+            else if(GetLastError() != ERROR_IO_PENDING)
+                bytesRead = 0;
+            else
             {
-                if(GetLastError() == ERROR_IO_PENDING)
+                waitResult = WaitForMultipleObjects(2,waitHandles,FALSE,INFINITE);
+                if(waitResult == WAIT_OBJECT_0 + 1)
                 {
-                    waitResult = WaitForMultipleObjects(2,waitHandles,FALSE,INFINITE);
-                    if(waitResult == WAIT_OBJECT_0 + 1)
-                    {
-                        /* Child exited: close ConPTY so write end is released */
-                        meIPipeConPTYClose(ipipe);
-                        GetOverlappedResult(ipipe->rfd,&ov,&transferred,TRUE);
-                    }
-                    else
-                        GetOverlappedResult(ipipe->rfd,&ov,&transferred,FALSE);
+                    /* Child exited: close ConPTY so write end is released */
+                    meIPipeConPTYClose(ipipe);
+                    GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,TRUE);
                 }
                 else
-                    transferred = 0;
+                    GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,FALSE);
+                CloseHandle(ov.hEvent);
             }
-            else
-                GetOverlappedResult(ipipe->rfd,&ov,&transferred,FALSE);
-
-            CloseHandle(ov.hEvent);
-            bytesRead = transferred;
+            if(bytesRead && fRead)
+            {
+                /* If this is the very first write and it starts with an escape sleep for a 200th of a sec.
+                 * This is so all the initialisation codes will fall into the first read and can be parsed
+                 * as a single block. This is important because windws ConPTY always send erase whole screen
+                 * init codes which are best skipped. */
+                if(buff[0] == 0x1b)
+                    Sleep(50);
+                fRead = 0;
+            }
         }
         else
         {

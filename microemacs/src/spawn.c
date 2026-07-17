@@ -498,7 +498,7 @@ ipipeKillBuf(meIPipe *ipipe, int type)
                          * foreWnd so that app will get very confused! So the sleep should
                          * be as small as possible
                          */
-                        Sleep(50) ;
+                        Sleep(50);
                         
                         /* Swap back to the original fore window */
                         SetForegroundWindow(foreWnd);
@@ -634,7 +634,7 @@ ipipeRemove(meIPipe *ipipe)
     free(ipipe);
 }
 
-#define IPIPE_DUMP 1
+/*#define IPIPE_DUMP 1*/
 #ifdef IPIPE_DUMP
 static FILE *logFp=NULL;
 #endif
@@ -644,58 +644,113 @@ static FILE *logFp=NULL;
 static int
 readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 {
-    DWORD  bytesRead ;
+    DWORD bRead, bAvail;
 
     /* See if process has ended first */
     if(ipipe->pid < 0)
-        return ipipe->pid ;
+        return ipipe->pid;
 #if MEOPT_CLIENTSERVER
     if(ipipe->pid == 0)
     {
         if(ttServerToRead == 0)
             return 0 ;
         if(nbytes > ttServerToRead)
-            nbytes = ttServerToRead ;
-        if(ReadFile(ipipe->rfd,buff,nbytes,&bytesRead,NULL) == 0)
+            nbytes = ttServerToRead;
+        if(ReadFile(ipipe->rfd,buff,nbytes,&bRead,NULL) == 0)
             return -1;
 #ifdef IPIPE_DUMP
-        if((bytesRead > 0) && (logFp != NULL))
-            fwrite(buff,1,bytesRead,logFp);
+        if((bRead > 0) && (logFp != NULL))
+        {
+            fwrite(buff,1,bRead,logFp);
+#if (IPIPE_DUMP == 2)
+            fwrite("ZZAZ",1,4,logFp);
 #endif
-        return (int) bytesRead;
+        }
+#endif
+        return (int) bRead;
     }
 #endif
     if(ipipe->flag & meIPIPE_CHILD_EXIT)
     {
-        GetExitCodeProcess(ipipe->process,(LPDWORD) &(ipipe->exitCode)) ;
+        GetExitCodeProcess(ipipe->process,(LPDWORD) &(ipipe->exitCode));
         CloseHandle(ipipe->process);
         ipipe->pid = -4 ;
-        return ipipe->pid ;
+        return ipipe->pid;
     }
     if(ipipe->flag & meIPIPE_NEXT_CHAR)
     {
-        buff[0] = ipipe->nextChar ;
-        ipipe->flag &= ~meIPIPE_NEXT_CHAR ;
-#ifdef IPIPE_DUMP
-        if(logFp != NULL)
-            fwrite(buff,1,1,logFp);
-#endif
-        return 1 ;
+        buff[0] = ipipe->nextChar;
+        ipipe->flag &= ~meIPIPE_NEXT_CHAR;
+        bRead = 1;
+        --nbytes;
     }
+    else
+        bRead = 0;
     /* Must peek on a pipe cos if we try to read too many this will fail */
-    if((PeekNamedPipe(ipipe->rfd, (LPVOID) NULL, (DWORD) 0,
-                      (LPDWORD) NULL, &bytesRead, (LPDWORD) NULL) != meTRUE) ||
-       (bytesRead <= 0))
-        return 0 ;
-    if(bytesRead > (DWORD) nbytes)
-        bytesRead = (DWORD) nbytes ;
-    if(ReadFile(ipipe->rfd,buff,bytesRead,&bytesRead,NULL) == 0)
-        return -1 ;
+    if((PeekNamedPipe(ipipe->rfd,(LPVOID) NULL,(DWORD) 0,(LPDWORD) NULL,&bAvail,(LPDWORD) NULL) == 0) || (bAvail <= 0))
+    {
 #ifdef IPIPE_DUMP
-    if((bytesRead > 0) && (logFp != NULL))
-        fwrite(buff,1,bytesRead,logFp);
+        if((bRead > 0) && (logFp != NULL))
+        {
+            fwrite(buff,1,bRead,logFp);
+#if (IPIPE_DUMP == 2)
+            fwrite("ZZBZ",1,4,logFp);
 #endif
-    return (int) bytesRead ;
+        }
+#endif
+        return bRead;
+    }
+    if(bAvail > (DWORD) nbytes)
+        bAvail = (DWORD) nbytes;
+    if(ReadFile(ipipe->rfd,buff+bRead,bAvail,&bAvail,NULL) == 0)
+        return -1;
+    bRead += bAvail;
+        /* TODO only do first time */
+    if((bRead > 30) && (buff[0] == 0x1b))
+    {
+        int ii=0, ll=bRead-10;
+        meUByte cc, c2;
+        /* TODO check length */
+        while((ii < ll) && ((cc=buff[ii++]) == 0x1b) && (buff[ii++] == '['))
+        {
+            if((c2=buff[ii++]) == '?')
+                c2 = buff[ii++];
+            while((c2 == ';') || ((c2 >= '0') && (c2 <= '9')))
+                c2 = buff[ii++];
+            if((c2 < 'A') || (c2 > 'z') || ((c2 > 'Z') && (c2 < 'a')))
+                break;
+        }
+        if((ii < ll) && (cc == '\r') && (c2 == 'H') && (buff[ii++] == '\n'))
+        {
+            while((ii < ll) && ((cc=buff[ii++]) == '\r') && (buff[ii++] == '\n'))
+                ;
+            if((cc == 0x1b) && (buff[ii++] == '[') && (buff[ii++] == 'H'))
+            {
+#ifdef IPIPE_DUMP
+                if(logFp != NULL)
+                {
+                    fwrite("SKIP INIT:",1,10,logFp);
+#if (IPIPE_DUMP == 2)
+                    fwrite(buff,1,ii,logFp);
+                    fwrite(":END:",1,5,logFp);
+#endif
+                }
+#endif
+                bRead -= ii;
+                memmove(buff,buff+ii,bRead);
+            }
+        }
+    }
+#ifdef IPIPE_DUMP
+    if((bRead > 0) && (logFp != NULL))
+    {
+        fwrite(buff,1,bRead,logFp);
+#if (IPIPE_DUMP == 2)
+        fwrite("ZZCZ",1,4,logFp);
+#endif
+    }
+#endif
+    return (int) bRead;
 }
 
 #else
@@ -721,7 +776,12 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
         ii = read(ipipe->rfd,buff,nbytes);
 #ifdef IPIPE_DUMP
     if((ii > 0) && (logFp != NULL))
+    {
         fwrite(buff,1,ii,logFp);
+#if (IPIPE_DUMP == 2)
+        fwrite("ZZDZ",1,4,logFp);
+#endif
+    }
 #endif
     return ii;
 }
@@ -1160,7 +1220,7 @@ move_cursor_pos:
                             else if(prmL >= ipipe->noCols)
                                 prmL = ipipe->noCols - 1;
                             ipipeStoreInputPos();
-                            bp->dotLineNo += prmA - curRow ;
+                            bp->dotLineNo += prmA - curRow;
                             lp_old = bp->dotLine;
                             if(prmA > curRow)
                             {
@@ -1697,7 +1757,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         {
             if(ii > 0)
             {
-                if((ipipe->curRow += ii) > bp->lineCount)
+                if((bp->lineCount > noRows) && ((ipipe->curRow += ii) > bp->lineCount))
                     ipipe->curRow = (meShort) bp->lineCount;
             }
             else if(ipipe->curRow >= ipipe->noRows)
@@ -2263,7 +2323,14 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     /* Set up the window dimensions - default to having auto wrap */
     ipipe->flag = (flags & (LAUNCH_RAW|LAUNCH_USEPTY|LAUNCH_ANSICOLOR));
 #if MEOPT_EXTENDED
+#ifdef _WIN32
+    /* TODO Currently processes are launched with current codepage to avoid UTF8 encoding issues, but even this is not great as ME may be set to use a different codepage.
+     * However windows PTY makes this much worse, it always uses UTF8 regardless, so we must take control of this setting.
+     * long term we should consider change the exec of all over to utf8 and use ME's conversion so there is parity between platforms. */
+    if(((flags & LAUNCH_USEPTY) == 0) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
+#else
     if(((meSystemCfg & meSYSTEM_IO_UTF8) == 0) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
+#endif
         ipipe->flag |= meIPIPE_NOUTF8;
 #endif
     ipipe->ansiCc = 'A';
@@ -2274,7 +2341,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     ipipe->strCol = 0;
     ipipe->noRows = 0;
     ipipe->noCols = 0;
-    ipipe->curRow = (meShort) bp->dotLineNo;
+    ipipe->curRow = 0;//(meShort) bp->dotLineNo;
     ipipeSetSize(frameCur->windowCur,bp);
 #ifdef _UNIX
     /* Release the signals - we can now cope if the child dies or writes. */

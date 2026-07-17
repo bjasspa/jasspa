@@ -57,7 +57,7 @@ define-macro claude
     !return
   !endif
   ; 4096 = LAUNCH_ANSICOLOR: enables UTF-8 decode and ANSI SGR colour
-  4096 ipipe-shell-command "claude" "*claude*"
+  0x1008 ipipe-shell-command "claude" "*claude*"
   popup-window "*claude*"
   !iif &not &bmod "pipe"  -8 ml-write "[Failed to start Claude - is claude in PATH?]"
   claude-setup
