@@ -2197,10 +2197,10 @@ childActiveThread(LPVOID lpParam)
             }
             if(bytesRead && fRead)
             {
-                /* If this is the very first write and it starts with an escape sleep for a 200th of a sec.
+                /* If this is the very first write and it starts with an escape, sleep for 200th of a sec.
                  * This is so all the initialisation codes will fall into the first read and can be parsed
                  * as a single block. This is important because windws ConPTY always send erase whole screen
-                 * init codes which are best skipped. */
+                 * init codes which are best skipped. See meIPIPE_HAVE_READ */
                 if(buff[0] == 0x1b)
                     Sleep(50);
                 fRead = 0;

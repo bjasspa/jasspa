@@ -704,40 +704,47 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
         bAvail = (DWORD) nbytes;
     if(ReadFile(ipipe->rfd,buff+bRead,bAvail,&bAvail,NULL) == 0)
         return -1;
-    bRead += bAvail;
-        /* TODO only do first time */
-    if((bRead > 30) && (buff[0] == 0x1b))
+    if((bRead += bAvail) == 0)
+        return 0;
+    if((ipipe->flag & meIPIPE_HAVE_READ) == 0)
     {
-        int ii=0, ll=bRead-10;
-        meUByte cc, c2;
-        /* TODO check length */
-        while((ii < ll) && ((cc=buff[ii++]) == 0x1b) && (buff[ii++] == '['))
+        ipipe->flag |= meIPIPE_HAVE_READ;
+        if((bRead > 30) && (buff[0] == 0x1b))
         {
-            if((c2=buff[ii++]) == '?')
-                c2 = buff[ii++];
-            while((c2 == ';') || ((c2 >= '0') && (c2 <= '9')))
-                c2 = buff[ii++];
-            if((c2 < 'A') || (c2 > 'z') || ((c2 > 'Z') && (c2 < 'a')))
-                break;
-        }
-        if((ii < ll) && (cc == '\r') && (c2 == 'H') && (buff[ii++] == '\n'))
-        {
-            while((ii < ll) && ((cc=buff[ii++]) == '\r') && (buff[ii++] == '\n'))
-                ;
-            if((cc == 0x1b) && (buff[ii++] == '[') && (buff[ii++] == 'H'))
+            int ii=0, ll=bRead-10;
+            meUByte cc, c2;
+            /* Windows ConPTYs always start by initialising the screen, propably because of the base design which is to get the child process to print to a
+             * virtual terminal and send the host a set of codes to bring about the changes needed to get them in sync (a diff engine as it were), so it needs
+             * a clean slate. The init largely involves going to to the top ('\E[H') printing new line (\r\n) for as many lines as the console has and then back
+             * to the top - skip is as we have a clean slate and this will add a lot of pointless blank lines. */
+            while((ii < ll) && ((cc=buff[ii++]) == 0x1b) && (buff[ii++] == '['))
             {
-#ifdef IPIPE_DUMP
-                if(logFp != NULL)
+                if((c2=buff[ii++]) == '?')
+                    c2 = buff[ii++];
+                while((c2 == ';') || ((c2 >= '0') && (c2 <= '9')))
+                    c2 = buff[ii++];
+                if((c2 < 'A') || (c2 > 'z') || ((c2 > 'Z') && (c2 < 'a')))
+                    break;
+            }
+            if((ii < ll) && (cc == '\r') && (c2 == 'H') && (buff[ii++] == '\n'))
+            {
+                while((ii < ll) && ((cc=buff[ii++]) == '\r') && (buff[ii++] == '\n'))
+                    ;
+                if((cc == 0x1b) && (buff[ii++] == '[') && (buff[ii++] == 'H'))
                 {
-                    fwrite("SKIP INIT:",1,10,logFp);
+#ifdef IPIPE_DUMP
+                    if(logFp != NULL)
+                    {
+                        fwrite("SKIP INIT:",1,10,logFp);
 #if (IPIPE_DUMP == 2)
-                    fwrite(buff,1,ii,logFp);
-                    fwrite(":END:",1,5,logFp);
+                        fwrite(buff,1,ii,logFp);
+                        fwrite(":END:",1,5,logFp);
 #endif
+                    }
+#endif
+                    bRead -= ii;
+                    memmove(buff,buff+ii,bRead);
                 }
-#endif
-                bRead -= ii;
-                memmove(buff,buff+ii,bRead);
             }
         }
     }
@@ -1530,10 +1537,10 @@ cant_handle_this:
                 else
                     /* 4-byte: ME supports only up to U+FFFF - consume */
                     cc = meCHAR_UNDEF;
-#ifdef IPIPE_DUMP
+#if (IPIPE_DUMP == 2)
                 if((cc == meCHAR_UNDEF) && (logFp != NULL))
                     /* Put an easy to spot marker into the log */
-                    fwrite("ZUNZ",1,4,logFp);
+                    fwrite("ZZUZ",1,4,logFp);
 #endif
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
@@ -2341,7 +2348,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     ipipe->strCol = 0;
     ipipe->noRows = 0;
     ipipe->noCols = 0;
-    ipipe->curRow = 0;//(meShort) bp->dotLineNo;
+    /* initialising this to 0 tries to preserve the 3 line header from being trashed by a program that redraws screen by moving cursor to 1,1 etc. This is common on Windows */
+    ipipe->curRow = 0;
     ipipeSetSize(frameCur->windowCur,bp);
 #ifdef _UNIX
     /* Release the signals - we can now cope if the child dies or writes. */

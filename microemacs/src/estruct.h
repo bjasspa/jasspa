@@ -1186,11 +1186,13 @@ typedef struct meFrame
 #if MEOPT_IPIPES
 /* The following is structure required for unix ipipes */
 
+/* Some of these must stay in sync with the LIUNCH_* flags, see init of ipipe flag */
 #define meIPIPE_OVERWRITE   0x001
 #define meIPIPE_NEXT_CHAR   0x002
 #define meIPIPE_CHILD_EXIT  0x004
 #define meIPIPE_USEPTY      0x008       /* Use PTY/ConPTY, otherwise plain pipes */
 #define meIPIPE_NOAUTOWRAP  0x010       /* Auto-wrap disabled (\E[?7l)  */
+#define meIPIPE_HAVE_READ   0x020       /* Flags if not first read      */
 #define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
 #define meIPIPE_BUFIPIPE    0x080       /* Forced ipipe buffer          */
 #define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
