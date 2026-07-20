@@ -10,29 +10,27 @@
 ;
 !iif &not &exi dirlst-sort-list  0 execute-file "hkdirlst"
 
-!if &not &exi .osd.cvsosd
-  set-variable .osd.cvsosd &pinc .osd.next 1
+!if &not &exi .osd.cvs-osd
+  set-variable .osd.cvs-osd &pinc .osd.next 1
   set-variable .osd.cvsstp &pinc .osd.next 1
   set-variable .osd.cvshlp &pinc .osd.next 1
   define-macro cvs
   !emacro
 !endif
-!if &not &lfind .fhook-dirlst.sc-name "CVS"
+!if &not &exi .vcs.cvs
   set-variable #l0 &lef .fhook-dirlst.col-name 1
   set-variable .fhook-dirlst.col-name &spr "%sRevis'n%sTag / Date      %s" .fhook-dirlst.col-name #l0 #l0
   set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
-  set-variable .fhook-dirlst.sc-name &lins .fhook-dirlst.sc-name -1 "CVS"
-  set-variable .fhook-dirlst.sc-menu &lins .fhook-dirlst.sc-menu -1 "osd-cvs-file-menu"
-  set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "cvs-dirlst-detect"
-  set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cvs-dirlst-format"
   set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "CVS-Quick"
   set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "cvs-full-reread"
+  set-variable .vcs.cvs "|CVS|"
 !endif
+
 0 define-macro cvs-init
 !emacro
-0 define-macro fhook-cvs-state
+0 define-macro fhook-cvs-status
   buffer-init
-  set-variable :sc &lfind .fhook-dirlst.sc-detect "cvs-dirlst-detect"
+  set-variable :vcs "cvs"
   set-variable :fmpf 6
   set-variable :tag-count 0
   set-variable :mouse-pick-1 dirlst-mouse-pick-1
@@ -42,17 +40,17 @@
   set-variable :dirlst-mode .fhook-dirlst.mode
   buffer-init-hooks
 !emacro
-15 major-mode "cvs-state" "" "" "CVS State"
-set-variable .fhook-cvs-state.setup &reg "/history/fhook/cvs-state" "ghmop"
-set-variable .fhook-cvs-state.setup-mask    "aceghlopq"
-set-variable .fhook-cvs-state.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
-set-variable .fhook-cvs-state.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "cvs-context-menu" 5 "cvs-state" 6 "cvs-state" 2
-set-variable .fhook-cvs-state.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.cvshlp 4 "" 5 "" 6 "" 2
-set-variable .fhook-cvs-state.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "f5" 2
-set-variable .fhook-cvs-state.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on CVS States" 4 "Open CVS menu" 5 "Rerun cvs-state" 6 "" 2
-set-variable .fhook-cvs-state.refresh "cvs-state-refresh"
+15 major-mode "cvs-status" "" "" "CVS Status"
+set-variable .fhook-cvs-status.setup &reg "/history/fhook/cvs-status" "ghmop"
+set-variable .fhook-cvs-status.setup-mask    "aceghlopq"
+set-variable .fhook-cvs-status.command-flag  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-flag  1 "" 2 "" 3 "t" 4 "thbio" 5 "thbio" 6 "bio" 2
+set-variable .fhook-cvs-status.command-name  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-name  1 "" 2 "" 3 "osd" 4 "cvs-context-menu" 5 "cvs-status" 6 "cvs-status" 2
+set-variable .fhook-cvs-status.command-nbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-nbind 1 "" 2 "" 3 .osd.cvshlp 4 "" 5 "" 6 "" 2
+set-variable .fhook-cvs-status.command-kbind &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-kbind 1 "" 2 "" 3 "" 4 "k" 5 "C-return" 6 "f5" 2
+set-variable .fhook-cvs-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on CVS States" 4 "Open CVS menu" 5 "Rerun cvs-status" 6 "" 2
+set-variable .fhook-cvs-status.refresh "cvs-status-refresh"
 
-set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|State|Status|Tag|Update|Annotate|Resolve Conflicts|"
+set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|Status|File Status|Tag|Update|Annotate|Resolve Conflicts|"
 set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|"
 set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
@@ -78,21 +76,21 @@ set-variable #l0 0
 
 !if &not &exist .hilight.cvscon
   set-variable .hilight.cvscon &pinc .hilight.next 1
-  set-variable .hilight.cvs-state &pinc .hilight.next 1
+  set-variable .hilight.cvs-status &pinc .hilight.next 1
 !endif
 !if &band .hilight.flags 0x02
-  0 hilight .hilight.cvs-state 2 100      $global-scheme
-  hilight .hilight.cvs-state 0x102 "[ *]A" .scheme.add
-  hilight .hilight.cvs-state 0x102 "[ *]C" .scheme.hlred
-  hilight .hilight.cvs-state 0x102 "[ *]L" .scheme.no1
-  hilight .hilight.cvs-state 0x102 "[ *]M" .scheme.chg
-  hilight .hilight.cvs-state 0x102 "[ *]P" .scheme.prepro
-  hilight .hilight.cvs-state 0x102 "[ *]R" .scheme.rmv
-  hilight .hilight.cvs-state 0x102 "[ *]U" .scheme.prepro
-  hilight .hilight.cvs-state 0x102 " Attr Name" .scheme.header
-  hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
-  hilight .hilight.cvs-state 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
-  set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "State" .hilight.cvs-state
+  0 hilight .hilight.cvs-status 2 100      $global-scheme
+  hilight .hilight.cvs-status 0x102 "[ *]A" .scheme.add
+  hilight .hilight.cvs-status 0x102 "[ *]C" .scheme.hlred
+  hilight .hilight.cvs-status 0x102 "[ *]L" .scheme.no1
+  hilight .hilight.cvs-status 0x102 "[ *]M" .scheme.chg
+  hilight .hilight.cvs-status 0x102 "[ *]P" .scheme.prepro
+  hilight .hilight.cvs-status 0x102 "[ *]R" .scheme.rmv
+  hilight .hilight.cvs-status 0x102 "[ *]U" .scheme.prepro
+  hilight .hilight.cvs-status 0x102 " Attr Name" .scheme.header
+  hilight .hilight.cvs-status 0x102 "\\[\\*\\*\\*\\* CVS exited with code 0" .scheme.no1
+  hilight .hilight.cvs-status 0x102 "\\[\\*\\*\\*\\* CVS exited"             .scheme.error
+  set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Status" .hilight.cvs-status
 
   !iif &not &exi .hilight.diff  !force execute-file "hkdiff"
   set-variable .cvs.schemes &lset .cvs.schemes &lfind .cvs.names "Diff" .hilight.diff
@@ -419,7 +417,7 @@ define-macro cvs-log-list
   0x10 goto-position "\x82"
 !emacro
 
-0 define-macro cvs-state-refresh
+0 define-macro cvs-status-refresh
   !if .find-file.file-count
     set-alpha-mark "\x81"
     -1 buffer-mode "view"
@@ -455,7 +453,7 @@ define-macro cvs-log-list
     set-variable $mouse-y $cursor-y
     0x21 set-position "\x82"
   !endif
-  &neg .osd.tmp osd-cvs-file-menu
+  &neg .osd.tmp cvs-file-menu
   goto-position "\x82"
   !force !force .osd.tmp osd
 !emacro
@@ -543,7 +541,7 @@ define-macro cvs-log-list
     !force search-backward "^cvs \\(update\\|server\\): warning: \\(.*\\) was lost"
   !done
   beginning-of-buffer
-  !force replace-string "^cvs \\(update\\|server\\): Updating " "cvs-state: "
+  !force replace-string "^cvs \\(update\\|server\\): Updating " "cvs-status: "
   beginning-of-buffer
   !force replace-string "^RCS file: .*\n" ""
   beginning-of-buffer
@@ -588,7 +586,7 @@ define-macro cvs-log-list
     insert-string &spr "\n[**** CVS exited with code %s ****]" #l2
     beginning-of-line
   !endif
-  !iif &seq $buffer-bname "*cvs-state*"  !force 0 cvs-exec-state-ipipe
+  !iif &seq $buffer-bname "*cvs-status*"  !force 0 cvs-exec-state-ipipe
   !if &set #l3 &seq &set #l1 $buffer-bname "*cvs-console*"
     set-variable #l1 "*cvs-last-cmd*"
     !force 0 delete-buffer #l1
@@ -653,7 +651,7 @@ define-macro cvs-log-list
 0 define-macro cvs-exec-cmd-ipipe
   !iif &not &exi :lock  set-variable :lock .cvs.lock
   set-variable $buffer-dhook "cvs-exec-cmd-complete"
-  !iif &seq $buffer-bname "*cvs-state*"  !force 1 cvs-exec-state-ipipe
+  !iif &seq $buffer-bname "*cvs-status*"  !force 1 cvs-exec-state-ipipe
   !if &not @#
     set-variable .bname $buffer-bname
     1 create-callback "cvs-exec-cmd-complete"
@@ -816,22 +814,22 @@ define-macro cvs-log-list
   set-variable #l1 &mid .cvs.values #l0 1
   set-variable #l2 &add &mul #l0 100 110
   set-variable #l3 &bxor 1 &band #l1 1
-  osd .osd.cvsosd &inc #l2 1 "" ""
+  osd .osd.cvs-osd &inc #l2 1 "" ""
   !if &gre #l1 2
-    osd .osd.cvsosd &inc #l2 1 "Sfh" &spr "        %s %s" &cond &gre #l1 4 "\H1st" "CVS" &cond #l3 "Date: " "Revision/Tag: " &add #l2 1
-    osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "################" &add 1 #l3 cvs-osd-rec
+    osd .osd.cvs-osd &inc #l2 1 "Sfh" &spr "        %s %s" &cond &gre #l1 4 "\H1st" "CVS" &cond #l3 "Date: " "Revision/Tag: " &add #l2 1
+    osd .osd.cvs-osd &inc #l2 1 "EtxHf" .scheme.osd-entry "################" &add 1 #l3 cvs-osd-rec
   !else
-    osd .osd.cvsosd &inc #l2 1 "" ""
-    osd .osd.cvsosd &inc #l2 1 "D"
+    osd .osd.cvs-osd &inc #l2 1 "" ""
+    osd .osd.cvs-osd &inc #l2 1 "D"
   !endif
   !if &gre #l1 4
-    osd .osd.cvsosd &inc #l2 1 "fh" &cat "        \H2nd " &cond #l3 "Date: " "Revision/Tag: "
-    osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "################" &add 3 #l3 cvs-osd-rec
+    osd .osd.cvs-osd &inc #l2 1 "fh" &cat "        \H2nd " &cond #l3 "Date: " "Revision/Tag: "
+    osd .osd.cvs-osd &inc #l2 1 "EtxHf" .scheme.osd-entry "################" &add 3 #l3 cvs-osd-rec
   !else
-    osd .osd.cvsosd &inc #l2 1 "" ""
-    osd .osd.cvsosd &inc #l2 1 "D"
+    osd .osd.cvs-osd &inc #l2 1 "" ""
+    osd .osd.cvs-osd &inc #l2 1 "D"
   !endif
-  osd .osd.cvsosd &inc #l2 1 "" ""
+  osd .osd.cvs-osd &inc #l2 1 "" ""
 !emacro
 0 define-macro cvs-osd-compare-set
   set-variable #l0 &sin "O" .cvs.options
@@ -857,16 +855,16 @@ set-variable .cvs-osd-compare.values "|Local with Local BASE|Local BASE with CVS
   set-variable #l0 &sub &sin "v" .cvs.options 1
   set-variable #l1 &mid .cvs.values #l0 1
   set-variable #l2 &add &mul #l0 100 110
-  osd .osd.cvsosd &inc #l2 1 "" ""
+  osd .osd.cvs-osd &inc #l2 1 "" ""
   !if &equ #l1 3
-    osd .osd.cvsosd &inc #l2 1 "Shf" "        D\Hate (yyyy-mm-dd): " &add #l2 1
-    osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "yyyy-mm-dd   " 2 cvs-osd-rec
+    osd .osd.cvs-osd &inc #l2 1 "Shf" "        D\Hate (yyyy-mm-dd): " &add #l2 1
+    osd .osd.cvs-osd &inc #l2 1 "EtxHf" .scheme.osd-entry "yyyy-mm-dd   " 2 cvs-osd-rec
   !elif &equ #l1 2
-    osd .osd.cvsosd &inc #l2 1 "Shf" "        Revision/T\Hag: " &add #l2 1
-    osd .osd.cvsosd &inc #l2 1 "EtxHf" .scheme.osd-entry "##################" 1 cvs-osd-rec
+    osd .osd.cvs-osd &inc #l2 1 "Shf" "        Revision/T\Hag: " &add #l2 1
+    osd .osd.cvs-osd &inc #l2 1 "EtxHf" .scheme.osd-entry "##################" 1 cvs-osd-rec
   !else
-    osd .osd.cvsosd &inc #l2 1 "" ""
-    osd .osd.cvsosd &inc #l2 1 "D"
+    osd .osd.cvs-osd &inc #l2 1 "" ""
+    osd .osd.cvs-osd &inc #l2 1 "D"
   !endif
 !emacro
 0 define-macro cvs-osd-version-set
@@ -941,7 +939,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !else
       ; check that all the selected files have been 'lost' (deleted locally) first
       set-variable $window-line 5
-      !if &seq $buffer-bname "*cvs-state*"
+      !if &seq $buffer-bname "*cvs-status*"
         !force search-buffer "em" "^\\*[^L\n]"
       !else
         !force search-buffer "em" "^\\*[-d][^L\n]"
@@ -964,107 +962,107 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !endif
     !goto no-gui
   !endif
-  -1 osd .osd.cvsosd
-  osd .osd.cvsosd 0 ""
+  -1 osd .osd.cvs-osd
+  osd .osd.cvs-osd 0 ""
   set-variable #l0 0
   set-variable #l3 0
   !repeat
     set-variable #l1 &mid .cvs.options #l0 1
     !if &sin #l1 &lget .cvs.flags @#
       set-variable #l2 &add &mul #l0 100 100
-      osd .osd.cvsosd  &inc #l2 1 ""
+      osd .osd.cvs-osd  &inc #l2 1 ""
       !if &seq #l1 "D"
-        osd .osd.cvsosd &inc #l2 1 "Sf" "    Root \HDirectory:" &add #l2 2
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-Dec
-        osd .osd.cvsosd &inc #l2 1 "f"  "    "
+        osd .osd.cvs-osd &inc #l2 1 "Sf" "    Root \HDirectory:" &add #l2 2
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-Dec
+        osd .osd.cvs-osd &inc #l2 1 "f"  "    "
       !elif &seq #l1 "f"
         cvs-get-checkout-info
-        osd .osd.cvsosd &inc #l2 1 "Sf" "    \HFile, Directory or Module:" &add #l2 2
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-fec
+        osd .osd.cvs-osd &inc #l2 1 "Sf" "    \HFile, Directory or Module:" &add #l2 2
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" f cvs-osd-fec
         set-variable #l3 &con #l3 #l3 #l2
-        osd .osd.cvsosd &inc #l2 1 "f"  "    "
+        osd .osd.cvs-osd &inc #l2 1 "f"  "    "
       !elif &seq #l1 "t"
-        osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HTag Name: " &add #l2 1
-        osd .osd.cvsosd &inc #l2 1 "EtxHfz" .scheme.osd-entry 20 1 "" f cvs-osd-tec
+        osd .osd.cvs-osd &inc #l2 1 "Sfh" "    \HTag Name: " &add #l2 1
+        osd .osd.cvs-osd &inc #l2 1 "EtxHfz" .scheme.osd-entry 20 1 "" f cvs-osd-tec
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "m"
         cvs-get-message-template
-        osd .osd.cvsosd &inc #l2 1 "Sf" "    \HLog message:" &add #l2 2
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cvs-osd-mec
+        osd .osd.cvs-osd &inc #l2 1 "Sf" "    \HLog message:" &add #l2 2
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cvs-osd-mec
         set-variable #l3 &con #l3 #l3 #l2
-        osd .osd.cvsosd &inc #l2 1 "f"  "    "
+        osd .osd.cvs-osd &inc #l2 1 "f"  "    "
       !elif &seq #l1 "v"
-        osd .osd.cvsosd &inc #l2 1 "Sfh" "    \HVersion: " &add #l2 1
-        osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 13 1 "" .osd.tmp cvs-osd-version
+        osd .osd.cvs-osd &inc #l2 1 "Sfh" "    \HVersion: " &add #l2 1
+        osd .osd.cvs-osd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 13 1 "" .osd.tmp cvs-osd-version
         set-variable #l3 &con #l3 #l3 #l2
-        osd .osd.cvsosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
+        osd .osd.cvs-osd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
         cvs-osd-version-setup
       !elif &seq #l1 "O"
-        osd .osd.cvsosd &inc #l2 1 "Sfh" "    Co\Hmpare: " &add #l2 1
-        osd .osd.cvsosd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 28 1 "" .osd.tmp cvs-osd-compare
+        osd .osd.cvs-osd &inc #l2 1 "Sfh" "    Co\Hmpare: " &add #l2 1
+        osd .osd.cvs-osd &inc #l2 1 "OtxmsfhHzR" .scheme.osd-entry 28 1 "" .osd.tmp cvs-osd-compare
         set-variable #l3 &con #l3 #l3 #l2
-        osd .osd.cvsosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
+        osd .osd.cvs-osd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
         cvs-osd-crev-setup
       !elif &seq #l1 "Z"
         !if .find-file.file-count
-          osd .osd.cvsosd &inc #l2 1 "fh" "    "
-          osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" #l0 cvs-osd-cbc
+          osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+          osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on current \Hdirectory" #l0 cvs-osd-cbc
           set-variable #l3 &con #l3 #l3 #l2
           set-variable .cvs.values &cat &cat &lef .cvs.values #l0 0 &rig .cvs.values &add #l0 1
         !endif
       !elif &seq #l1 "k"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Add as \HBinary Files" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Add as \HBinary Files" #l0 cvs-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "R"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cvs-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "d"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out \Hmissing directories" #l0 cvs-osd-cbc
       !elif &seq #l1 "A"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecursively add sub-directory files" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecursively add sub-directory files" #l0 cvs-osd-cbc
       !elif &seq #l1 "P"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HPrune empty directories" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HPrune empty directories" #l0 cvs-osd-cbc
       !elif &seq #l1 "C"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Overwrite locally modified files" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Overwrite locally modified files" #l0 cvs-osd-cbc
       !elif &seq #l1 "c"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Conte\Hxt diffs" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Conte\Hxt diffs" #l0 cvs-osd-cbc
       !elif &seq #l1 "w"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cvs-osd-cbc
       !elif &seq #l1 "b"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create a \HBranch tag" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Create a \HBranch tag" #l0 cvs-osd-cbc
       !elif &seq #l1 "r"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Delete the tag" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Delete the tag" #l0 cvs-osd-cbc
       !elif &seq #l1 "F"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HMove the tag if it exists" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HMove the tag if it exists" #l0 cvs-osd-cbc
       !elif &seq #l1 "o"
-        osd .osd.cvsosd &inc #l2 1 "fh" "    "
-        osd .osd.cvsosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out re\Had-only" #l0 cvs-osd-cbc
+        osd .osd.cvs-osd &inc #l2 1 "fh" "    "
+        osd .osd.cvs-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Check-out re\Had-only" #l0 cvs-osd-cbc
       !else
-        osd .osd.cvsosd &inc #l2 1 "" &cat "flag " #l1
+        osd .osd.cvs-osd &inc #l2 1 "" &cat "flag " #l1
       !endif
     !endif
   !until &seq &mid .cvs.options &inc #l0 1 1 ""
-  osd .osd.cvsosd 2000 ""
-  osd .osd.cvsosd 2010 ""
-  osd .osd.cvsosd 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+  osd .osd.cvs-osd 2000 ""
+  osd .osd.cvs-osd 2010 ""
+  osd .osd.cvs-osd 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
   set-variable #l3 &con #l3 #l3 #l2
-  osd .osd.cvsosd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
-  osd .osd.cvsosd 0 "batcDIHs" 9 3 47 4 -1 -1 2020 #l3 .scheme.osd-title &cat "CVS " &lget .cvs.names @#
-  !force !force .osd.cvsosd osd
+  osd .osd.cvs-osd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
+  osd .osd.cvs-osd 0 "batcDIHs" 9 3 47 4 -1 -1 2020 #l3 .scheme.osd-title &cat "CVS " &lget .cvs.names @#
+  !force !force .osd.cvs-osd osd
   !iif &not $status  !abort
 *no-gui
   ; gdiffs are a little different
@@ -1208,10 +1206,10 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     set-variable $buffer-hilight .hilight.cvscon
   !else
     set-variable $buffer-hilight &lget .cvs.schemes @#
-    !if &seq #l6 "*cvs-state*"
+    !if &seq #l6 "*cvs-status*"
       set-variable $window-line 3
       insert-string "\n Attr Name  <Order by Extension>"
-      major-mode "cvs-state"
+      major-mode "cvs-status"
       end-of-buffer
       backward-line
     !endif
@@ -1241,10 +1239,10 @@ define-macro cvs-log
 define-macro cvs-remove
   7 cvs-osd
 !emacro
-define-macro cvs-state
+define-macro cvs-status
   8 cvs-osd
 !emacro
-define-macro cvs-status
+define-macro cvs-file-status
   9 cvs-osd
 !emacro
 define-macro cvs-tag
@@ -1271,7 +1269,7 @@ define-macro cvs-resolve-conflicts
   goto-position "\x82"
 !emacro
 
-0 define-macro osd-cvs-file-menu
+0 define-macro cvs-file-menu
   !if &les @# 0
     -1 osd &set @# &neg @#
     osd @# 0 "bBo" -1 1
@@ -1279,34 +1277,33 @@ define-macro cvs-resolve-conflicts
     -1 osd @#
     osd @# 0 "bB"
   !endif
-  osd @# 1  "" "Current \HState"     8 cvs-osd
-  osd @# 5  "" "Check\Hout files"    2 cvs-osd
-  osd @# 10 "" "\HUpdate files"     11 cvs-osd
-  osd @# 30 "" "\HDiff files"        4 cvs-osd
-  osd @# 20 "" "\HCommit files"      3 cvs-osd
+  osd @# 10  "" "Current \HStatus"     8 cvs-osd
+  osd @# 20 "" "\HDiff files"        4 cvs-osd
   osd @# 40 "" "\HLog files"         6 cvs-osd
-  osd @# 50 "" "Status \Hfiles"      9 cvs-osd
-  osd @# 55 "" "A\Hnnotate files"   12 cvs-osd
-  osd @# 60 "" "\HTag files"        10 cvs-osd
-  !if :tag-count
-    osd @# 70 "" "\HAdd files"     1 cvs-osd
-    osd @# 80 "" "Re\Hmove files"    7 cvs-osd
+  osd @# 50 "" "A\Hnnotate files"   12 cvs-osd
+  !if &equ :tag-count 1
+    osd @# 30 "" "\HGraphical diff"      5 cvs-osd
+    osd @# 220 "" "\HResolve conflicts"  13 cvs-osd
   !else
-    osd @# 70 "" "Add files"
-    osd @# 80 "" "Remove files"
+    osd @# 30 "" "Graphical diff"
+    osd @# 220 "" "Resolve conflicts"
   !endif
   osd @# 100 "-"
-  !if &equ :tag-count 1
-    osd @# 110 "" "\HGraphical diff"      5 cvs-osd
-    osd @# 120 "" "\HResolve conflicts"  13 cvs-osd
+  !if :tag-count
+    osd @# 110 "" "\HAdd files"     1 cvs-osd
+    osd @# 140 "" "Re\Hmove files"    7 cvs-osd
   !else
-    osd @# 110 "" "Graphical diff"
-    osd @# 120 "" "Resolve conflicts"
+    osd @# 110 "" "Add files"
+    osd @# 140 "" "Remove files"
   !endif
-  osd @# 150 "-"
-  osd @# 155 "" "Generate Log List"    f cvs-log-list
-  osd @# 160 "" "Clear c\Hvs console"  f cvs-clear-console
-  osd @# 170 "" "CVS Setup"            f cvs-setup
+  osd @# 200 "-"
+  osd @# 210 "" "\HUpdate files"     11 cvs-osd
+  osd @# 230 "" "\HCommit files"      3 cvs-osd
+  osd @# 240 "" "\HTag files"        10 cvs-osd
+  osd @# 300 "-"
+  osd @# 310 "" "Generate Log List"    f cvs-log-list
+  osd @# 320 "" "Clear C\HVS console"  f cvs-clear-console
+  osd @# 330 "" "CVS Setup"            f cvs-setup
 !emacro
 
 0 define-macro cvs-read-entries
@@ -1629,7 +1626,7 @@ define-macro cvs-resolve-conflicts
   !endif
   buffer-bind-create "bio" "C-delete" "" cvs-remove
   buffer-bind-create "bio" "C-f5"   "" cvs-full-reread
-  buffer-bind-create "b"   "S-f5"   "" cvs-state
+  buffer-bind-create "b"   "S-f5"   "" cvs-status
   buffer-bind-create "b"   "esc f5" "" cvs-diff
   buffer-bind-create "bio" "k"      "" cvs-context-menu
 !emacro
@@ -1685,7 +1682,7 @@ define-macro cvs
 !emacro
 
 0 define-macro cvs-setup-checkbox
-  set-variable #l2 &cat "/history/cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|en-strt|" &abs @#
+  set-variable #l2 &cat "/history/cvs/" &lget "|q|browse-mode|opt-R|opt-d|opt-P|" &abs @#
   set-variable #l0 &lget "|0|0|1|0|0|" &abs @#
   set-variable #l0 &reg #l2 #l0
   !if &les @# 0
@@ -1736,8 +1733,6 @@ osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  CVS File Browser"
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "fh" "    "
-osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable Support on Start-Up" 6 cvs-setup-checkbox
-osd .osd.cvsstp &inc #l2 1 "fh" "    "
 osd .osd.cvsstp &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Quick \Hbrowser mode" 2 cvs-setup-checkbox
 osd .osd.cvsstp &inc #l2 1 "" ""
 osd .osd.cvsstp &inc #l2 1 "" "  Tool Defaults"
@@ -1766,7 +1761,7 @@ define-macro cvs-setup
   !endif
 !emacro
 
-osd .osd.cvshlp 0 "batcDH" 9 3 99 .scheme.osd-title "CVS State Help"
+osd .osd.cvshlp 0 "batcDH" 9 3 99 .scheme.osd-title "CVS Status Help"
 osd .osd.cvshlp 1  ""
 osd .osd.cvshlp 23 ""
 osd .osd.cvshlp 24 ""  "  A  Add      - file flagged to be added"

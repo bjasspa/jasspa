@@ -9,7 +9,7 @@
 ; Authors:     Steven Phillips, Jon Green
 ;
 0 define-macro-file ftp ftp-rename-buffer
-0 define-macro-file clearcs cc-init
+0 define-macro-file cc cc-init
 !iif &not &exi fhook-html  define-macro-file hkhtml fhook-html
 
 define-macro fhook-dirlst
@@ -141,16 +141,13 @@ define-macro fhook-dirlst
     3 forward-line
     set-variable :fmpf 35
     insert-string " Attr    Size             Modified Name  <Order by Extension>\n"
-    set-variable #l3 "file-browser-filter"
-    set-variable #l1 0
-    !while &not &seq "" &set #l2 &lget .fhook-dirlst.sc-detect &inc #l1 1
-      !force execute-named-command #l2
-      !if $status
-        set-variable #l3 &lget .fhook-dirlst.sc-format #l1
-        set-variable :sc #l1
-        set-variable #l1 -1
-      !endif
-    !done
+    !force 0 vcs-id
+    !if $status
+      set-variable :vcs #l9
+      set-variable #l3 &cat #l9 "-dirlst-format"
+    !else
+      set-variable #l3 "file-browser-filter"
+    !endif
     !force !force &lget .fhook-dirlst.mode 1 execute-named-command #l3
   !endif
   dirlst-sort-list
@@ -184,10 +181,6 @@ set-variable .fhook-dirlst.col-flag "|20|4|18|16|0|8|"
 set-variable .fhook-dirlst.sort     "|5|0|"
 set-variable .fhook-dirlst.browser-lock 0
 set-variable .fhook-dirlst.mode &con &sin "l" .fhook-dirlst.setup "|0|1|" "|0|0|"
-set-variable .fhook-dirlst.sc-name "|"
-set-variable .fhook-dirlst.sc-menu "|"
-set-variable .fhook-dirlst.sc-detect "|"
-set-variable .fhook-dirlst.sc-format "|"
 
 !if &not &exist .osd.dirlst
   set-variable .osd.dirlst &pinc .osd.next 1
@@ -1956,7 +1949,7 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
   set-variable #l0 &not &or &les $window-line 5 &les &len @wl :fmpf
   !if #l0
     osd .osd.dirlst   5 ""  "\HEdit File"     f dirlst-find-file
-    osd .osd.dirlst  15 ""  "\HView File"     0 dirlst-find-file
+    osd .osd.dirlst  15 ""  "Vie\Hw File"     0 dirlst-find-file
     osd .osd.dirlst  20 ""  "\HRename"        f dirlst-file-rename
     osd .osd.dirlst  60 ""  "Delete Current Line" f dirlst-delete-line
   !else
@@ -1988,7 +1981,7 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
     osd .osd.dirlst  55 ""  "C\Hompare Files"   2 dirlst-cmp-files
   !elif &or &equ :tag-count 1 &and &not :tag-count #l0
     osd .osd.dirlst  55 ""  "Select for C\Hompare" 0 dirlst-cmp-files
-    !iif &exi .dirlst-cmp-files.f1  osd .osd.dirlst  56 "" &cat "Compare \HWith " &rig .dirlst-cmp-files.f1 &rsin "/" &lef .dirlst-cmp-files.f1 -1 1 dirlst-cmp-files
+    !iif &exi .dirlst-cmp-files.f1  osd .osd.dirlst  56 "" &cat "Com\Hpare With " &rig .dirlst-cmp-files.f1 &rsin "/" &lef .dirlst-cmp-files.f1 -1 1 dirlst-cmp-files
   !else
     osd .osd.dirlst  55 "D"
   !endif
@@ -2024,8 +2017,8 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
       !until &not &dec .sc-count 1
       osd .osd.dirlst 89  "D"
     !endif
-    !if &exi :sc
-      !force osd .osd.dirlst &add 70 &inc .sc-count 1 "M" &cat &lget .fhook-dirlst.sc-name :sc " (\Hk)" .osd.tmp &lget .fhook-dirlst.sc-menu :sc
+    !if &exi :vcs
+      !force osd .osd.dirlst &add 70 &inc .sc-count 1 "M" &spr "\HVCS (%s)" &lget &ind &cat ".vcs." :vcs 1 .osd.tmp &cat :vcs "-file-menu"
       osd .osd.dirlst 89  "-"
     !endif
   !endif
@@ -2347,8 +2340,4 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
 !emacro
 set-variable .toolbar-file-list-create.filter 1
 
-!iif &reg "/history/clearcase/en-strt" "0"  cc-init
-!iif &reg "/history/cvs/en-strt" "0"  execute-file "cvs"
-!iif &reg "/history/git/en-strt" "0"  execute-file "git"
-!iif &reg "/history/svn/en-strt" "0"  execute-file "svn"
 buffer-init-fhook "dirlst"

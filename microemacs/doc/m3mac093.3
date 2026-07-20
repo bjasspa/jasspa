@@ -27,6 +27,7 @@
 .XI svn-log - "\*(mS SVN interface - list log of changes"
 .XI svn-move - "\*(mS SVN interface - move an item"
 .XI svn-resolve - "\*(mS SVN interface - resolve conflicts"
+.XI svn-revert - "\*(mS SVN interface - revert local changes"
 .XI svn-server-copy - "\*(mS SVN interface - server based copy items"
 .XI svn-server-move - "\*(mS SVN interface - server based move items"
 .XI svn-status - "\*(mS SVN interface - status of items"
@@ -81,6 +82,9 @@ svn-move \- \*(mS SVN interface - move an item
 .Me "|svn-resolve"
 svn-resolve \- \*(mS SVN interface - resolve conflicts
 .br
+.Me "|svn-revert"
+svn-revert \- \*(mS SVN interface - revert local changes
+.br
 .Me "|svn-server-copy"
 svn-server-copy \- \*(mS SVN interface - server based copy items
 .br
@@ -130,6 +134,8 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .B svn-move
 .br
 .B svn-resolve
+.br
+.B svn-revert
 .br
 .B svn-server-copy
 .br
@@ -241,6 +247,13 @@ moved. Note that unlike copy, SVN does not support a direct local to reposition 
 simply deleting and adding a new item is that the item's  change log history will be  maintained.
 .PP
 The  \fBsvn-resolve\fR  command may be used to resolve conflicts caused by SVN updating the local working copy.
+.PP
+The \fBsvn-revert\fR  command reverts local modifications made to the current buffer's file or selected items back to
+the last checked out revision, discarding the local changes; unlike \fBsvn-delete\fR this does not affect the
+repository. Items previously scheduled for addition via \fBsvn-add\fR are by default simply unscheduled (returned to
+an unversioned state), the local file itself is left untouched; enabling the \fCRemove added file(s)\fR option
+additionally deletes these local files. Sub-directories are recursed into by default, this can be disabled via the
+\fCRecurse into sub-directories\fR option so that only the top-level of a selected directory is reverted.
 .PP
 The \fBsvn-server-copy\fR  command performs a repository based copy of the current buffer's file or selected item, to a
 new  location  in the  repository.  In SVN this is the easiest way to create a  development  branch or a release,  for

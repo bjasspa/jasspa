@@ -1,0 +1,179 @@
+; -!- emf -!-
+; Copyright (c) 2026 Steven Phillips.
+;
+; All rights reserved.
+;
+; Synopsis:    Wrapper for all VCS systems
+; Authors:     Steven Phillips
+;
+define-macro vcs-id
+  !force set-variable #l0 @1
+  !iif &not $status  set-variable #l0 $buffer-fname
+  !if &seq "" #l0
+    !iif @#  ml-write "[VCS Error: No file path given]"
+    !abort
+  !elif &seq &lget .ld 1 &lef #l0 &len &lget .ld 1
+    set-variable #p8 &ind &cat ".vcs." &set #p9 &lget .li 1
+    set-variable #l0 &lget .ld 1
+  !elif &seq &lget .ld 2 &lef #l0 &len &lget .ld 2
+    set-variable #p8 &ind &cat ".vcs." &set #p9 &lget .li 2
+    set-variable #l0 &lget .ld 2
+  !else
+    !iif &not &seq "/" &rig #l0 -1  set-variable #l0 &lef #l0 &rsin "/" #l0
+    !if &seq "D" &stat "t" &cat #l0 ".git"
+      set-variable #p9 "git"
+    !elif &seq "D" &stat "t" &cat #l0 ".svn"
+      set-variable #p9 "svn"
+    !elif &seq "D" &stat "t" &cat &set #l4 #l0 "CVS"
+      set-variable #p9 "cvs"
+    !else
+      !while &gre &set #l1 &rsin "/" &lef #l0 -1 3
+        !iif &seq "D" &stat "t" &cat &set #l0 &lef #l0 #l1 &set #l3 ".git"  !break
+      !until &seq "D" &stat "t" &cat #l0 &set #l3 ".svn"  !break
+      !if &gre #l1 3
+        set-variable #p9 &rig #l3 1
+      !else
+        set-variable #l1 0
+        !while &not &seq "" &set #l0 &reg &cat "/history/clearcase/" &inc #l1 1 ""
+          !iif &seq &lef #l4 &len #l0 #l0  !break
+        !done
+        !if &seq #l0 ""
+          !iif @#  ml-write &spr "[VCS Error: Failed to identify system used for %s]" #l4
+          !abort
+        !endif
+        set-variable #p9 "cc"
+      !endif
+    !endif
+    !if &not &exi &ind &cat ".vcs." #p9
+      execute-file #p9
+      !iif &not &exi &ind &cat ".vcs." #p9  -8 ml-write &spr "[VCS Error: %s not setup correctly]" #p9
+    !endif
+    set-variable #p8 &ind &cat ".vcs." #p9
+    set-variable .ld &spr "|%s|%s|" #l0 &lget .ld 1
+    set-variable .li &spr "|%s|%s|" #p9 &lget .li 1
+  !endif
+  !iif &not @?  ml-write &spr "VCS for \"%s\" is %s (%s)" #l0 &lget #p8 1 #p9
+!emacro
+set-variable .vcs-id.ld "|:|:|"
+set-variable .vcs-id.li "|||"
+
+define-macro vcs
+  1 vcs-id
+  !iif &not &exi #l9  -8 ml-write &spr "[VCS Error: %s does not have an main %s command]" &lget #l8 1 #l9
+  execute-named-command #l9
+!emacro
+define-macro vcs-add
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-add"  -8 ml-write &spr "[VCS Error: %s does not support add]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-annotate
+  vcs-blame @1
+!emacro
+define-macro vcs-blame
+  1 vcs-id
+  !if &not &exi &set #l0 &cat #l9 "-blame"
+    !iif &not &exi &set #l0 &cat #l9 "-annotate"  -8 ml-write &spr "[VCS Error: %s does not support annotate/blame]" &lget #l8 1
+  !endif
+  execute-named-command #l0
+!emacro
+define-macro vcs-checkout
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-checkout"  -8 ml-write &spr "[VCS Error: %s does not support checkout]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-coci
+  0 vcs-id
+  !if &not $status
+    @# rcs-file
+  !elif &exi &set #l0 &cat #l9 "-coci"
+    execute-named-command #l0
+  !else
+    -8 ml-write &spr "[VCS Error: %s does not support check-out-check-in]" &lget #l8 1
+  !endif
+!emacro
+define-macro vcs-commit
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-commit"  -8 ml-write &spr "[VCS Error: %s does not support commit]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-commit-log
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-commit-log"  -8 ml-write &spr "[VCS Error: %s does not support commit-log]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-delete
+  1 vcs-id
+  !if &not &exi &set #l0 &cat #l9 "-delete"
+    !iif &not &exi &set #l0 &cat #l9 "-remove"  -8 ml-write &spr "[VCS Error: %s does not support delete/remove]" &lget #l8 1
+  !endif
+  execute-named-command #l0
+!emacro
+define-macro vcs-diff
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-diff"  -8 ml-write &spr "[VCS Error: %s does not support diff]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-fetch
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-fetch"  -8 ml-write &spr "[VCS Error: %s does not support fetch]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-gdiff
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-gdiff"  -8 ml-write &spr "[VCS Error: %s does not support gdiff]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-log
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-log"  -8 ml-write &spr "[VCS Error: %s does not support log]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-move
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-move"  -8 ml-write &spr "[VCS Error: %s does not support move]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-pull
+  vcs-update @1
+!emacro
+define-macro vcs-push
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-push"  -8 ml-write &spr "[VCS Error: %s does not support push]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-remove
+  vcs-delete @1
+!emacro
+define-macro vcs-revert
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-revert"  -8 ml-write &spr "[VCS Error: %s does not support revert]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-setup
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-setup"  -8 ml-write &spr "[VCS Error: %s does not support setup]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-status
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-status"  -8 ml-write &spr "[VCS Error: %s does not support status]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-switch
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-switch"  -8 ml-write &spr "[VCS Error: %s does not support switch]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-unstage
+  1 vcs-id
+  !iif &not &exi &set #l0 &cat #l9 "-unstage"  -8 ml-write &spr "[VCS Error: %s does not support unstage]" &lget #l8 1
+  execute-named-command #l0
+!emacro
+define-macro vcs-update
+  1 vcs-id
+  !if &not &exi &set #l0 &cat #l9 "-update"
+    !iif &not &exi &set #l0 &cat #l9 "-pull"  -8 ml-write &spr "[VCS Error: %s does not support pull/update]" &lget #l8 1
+  !endif
+  execute-named-command #l0
+!emacro

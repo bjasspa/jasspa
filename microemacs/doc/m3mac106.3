@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac093.3,v 2.12 2025/11/29 00:37:25 jon Exp $
+.Id $Id: m3mac093.3,v 2.12 2026/07/21 00:02:30 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH git 3
@@ -15,7 +15,6 @@
 .XI git-setup - "\*(mS GIT interface setup"
 .XI git-add - "\*(mS GIT interface - add items to the index"
 .XI git-blame - "\*(mS GIT interface - annotate a file"
-.XI git-checkout - "\*(mS GIT interface - switch branches or restore files"
 .XI git-commit - "\*(mS GIT interface - commit changes to repository"
 .XI git-diff - "\*(mS GIT interface - diff changes"
 .XI git-fetch - "\*(mS GIT interface - download from another repository"
@@ -24,9 +23,12 @@
 .XI git-pull - "\*(mS GIT interface - download and integrate another repository"
 .XI git-push - "\*(mS GIT interface - update remote repository"
 .XI git-remove - "\*(mS GIT interface - remove items"
+.XI git-revert - "\*(mS GIT interface - revert local changes"
 .XI git-show - "\*(mS GIT interface - show information about a specific commit"
 .XI git-show-file - "\*(mS GIT interface - output specific commit of a file"
 .XI git-status - "\*(mS GIT interface - status of items"
+.XI git-switch - "\*(mS GIT interface - switch or create branches"
+.XI git-unstage - "\*(mS GIT interface - unstage items"
 .SH NAME
 .Me "|git"
 git \- \*(mS GIT interface
@@ -39,9 +41,6 @@ git-add \- \*(mS GIT interface - add items to the index
 .br
 .Me "|git-blame"
 git-blame \- \*(mS GIT interface - annotate a file
-.br
-.Me "|git-checkout"
-git-checkout \- \*(mS GIT interface - switch branches or restore files
 .br
 .Me "|git-commit"
 git-commit \- \*(mS GIT interface - commit changes to repository
@@ -67,6 +66,9 @@ git-push \- \*(mS GIT interface - update remote repository
 .Me "|git-remove"
 git-remove \- \*(mS GIT interface - remove items
 .br
+.Me "|git-revert"
+git-revert \- \*(mS GIT interface - revert local changes
+.br
 .Me "|git-show"
 git-show \- \*(mS GIT interface - show information about a specific commit
 .br
@@ -75,6 +77,12 @@ git-show-file \- \*(mS GIT interface - output specific commit of a file
 .br
 .Me "|git-status"
 git-status \- \*(mS GIT interface - status of items
+.br
+.Me "|git-switch"
+git-switch \- \*(mS GIT interface - switch or create branches
+.br
+.Me "|git-unstage"
+git-unstage \- \*(mS GIT interface - unstage items
 .Me $a
 .SH SYNOPSIS
 .na
@@ -86,8 +94,6 @@ git-status \- \*(mS GIT interface - status of items
 .B git-add
 .br
 .B git-blame
-.br
-.B git-checkout
 .br
 .B git-commit
 .br
@@ -105,11 +111,17 @@ git-status \- \*(mS GIT interface - status of items
 .br
 .B git-remove
 .br
+.B git-revert
+.br
 .B git-show
 .br
 .B git-show-file
 .br
 .B git-status
+.br
+.B git-switch
+.br
+.B git-unstage
 .ad
 .SH DESCRIPTION
 The git and sub-commands provide \*(mS with an interface to the
@@ -130,8 +142,6 @@ buffer). This menu item opens another  sub-menu  providing  access to the items 
 pop-up check-box may be displayed which allows options to be selected for the command.
 .IP "\fBCurrent State\fR"
 Executes the git-status command.
-.IP "\fBCheckout files\fR"
-Executes the git-checkout command.
 .IP "\fBCommit files\fR"
 Executes the git-commit command.
 .IP "\fBDiff files\fR"
@@ -146,6 +156,12 @@ Executes the git-move command, one or more items must be selected.
 Executes the git-add command, one or more items must be selected.
 .IP "\fBRemove items\fR"
 Executes the git-remove command, one or more items must be selected.
+.IP "\fBRevert items\fR"
+Executes the git-revert command, one or more items must be selected.
+.IP "\fBUnstage items\fR"
+Executes the git-unstage command, one or more items must be selected.
+.IP "\fBUpdate files\fR"
+Executes the git-pull command.
 .IP "\fBClear Git console\fR"
 Clears the \fI*git-console*\fR buffer.
 .IP "\fBGIT Setup\fR"
@@ -157,8 +173,6 @@ Note that a \fIGIT\fR \fIcommit\fR is required to make the addition permanent.
 .PP
 The \fBgit-blame\fR command opens a \fI*git-blame*\fR window annotating the commit and author of each line in the
 current buffer or single selected file.
-.PP
-The \fBgit-checkout\fR command switches branches or restores working tree files.
 .PP
 The \fBgit-commit\fR command commits any changes made to the index (staging area) back to the repository, local
 changes that have not been added to the index are ignored. The user is prompted for a commit log message. While the 
@@ -197,10 +211,16 @@ on \fBgit-pull\fR above.
 .PP
 The \fBgit-remove\fR command removes the file of the current buffer or selected files and flags them for removal in
 the index (staging area), the files will be permanently removed from the repository when the change is committed back.
-PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! As the local file will be removed the file-browser will no longer list the 
+PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! As the local file will be removed the file-browser will no longer list the
 file, use the \fBgit-status\fR command to list change as this list includes all items flagged for removal.
 .PP
-The \fBgit-show\fR command opens a \fI*git-show*\fR windows displaying information about a specified GIT commit. 
+The \fBgit-revert\fR command reverts local modifications made to the current buffer's file or selected items back to
+the last checked out version, discarding the local changes; unlike \fBgit-remove\fR this does not affect the
+repository. By default the file is restored from the index (staging area), so any changes already staged via
+\fBgit-add\fR are kept; enabling the \fCRevert staged changes\fR option instead restores the file from \fCHEAD\fR,
+discarding both staged and unstaged local modifications.
+.PP
+The \fBgit-show\fR command opens a \fI*git-show*\fR windows displaying information about a specified GIT commit.
 .PP
 The \fBgit-show-file\fR command opens a \fI*<file-name>:<commit>\fR window with the contents set to the specified
 commit of a selected file.
@@ -208,6 +228,21 @@ commit of a selected file.
 The \fBgit-status\fR  command opens a \fI*git-state*\fR window and shows the state of all the items within the current
 directory,  including the modification state, and optionally whether items are out-of-date (i.e. have been modified in
 the repository).
+.PP
+The \fBgit-switch\fR command switches to an existing branch, or creates and switches to a new one, taking over the
+branch-switching role formerly played by \fBgit-checkout\fR (file restoration duties have moved to \fBgit-revert\fR
+and \fBgit-unstage\fR instead). Unlike \fBgit-fetch\fR and \fBgit-pull\fR the branch name cannot be left blank, since
+there is no configured default branch to fall back on; the special name \fC-\fR (a single hyphen) switches back to the
+previously checked out branch. Enabling \fCCreate a new branch\fR creates the named branch from the current \fCHEAD\fR
+before switching to it; enabling \fCTrack the branch\fR additionally sets up an upstream tracking relationship for it.
+If the switch would otherwise be blocked by local modifications, enabling \fCStash local changes first\fR stashes them
+beforehand. Unlike \fBgit-pull\fR, which offers an option to pop the stash back once its operation has completed,
+\fBgit-switch\fR does not offer this, since immediately after a branch switch the stash would be applied against the
+wrong branch's content; instead recover it later with \fCgit stash pop\fR once back on the original branch (use
+\fCgit stash list\fR first to identify the right entry if more than one stash is outstanding).
+.PP
+The \fBgit-unstage\fR command removes the current buffer or selected items from the index (staging area); any local
+modifications already made to the working tree files are left untouched. This is the opposite of \fBgit-add\fR.
 .SS Setup
 .B git-setup
 provides a dialog interface to configure the \*(mS GIT interface if required. On a typical system installation then it

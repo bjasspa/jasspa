@@ -10,8 +10,8 @@
 ;
 !iif &not &exi dirlst-sort-list 0  execute-file "hkdirlst"
 !iif &not &exi %diff-com  0 execute-file "tools"
-!if &not &exi .osd.ccosd
-  set-variable .osd.ccosd  &pinc .osd.next 1
+!if &not &exi .osd.cc-osd
+  set-variable .osd.cc-osd  &pinc .osd.next 1
   set-variable .osd.ccstp  &pinc .osd.next 1
   set-variable .osd.ccshlp &pinc .osd.next 1
   set-variable .osd.ccgen  &pinc .osd.next 1
@@ -22,22 +22,19 @@
   set-variable .osd.cctlc  &pinc .osd.next 1
   set-variable .osd.cctlo  &pinc .osd.next 1
 !endif
-!if &not &lfind .fhook-dirlst.sc-name "ClearCase"
+!if &not &exi .vcs.cc
   set-variable #l0 &lef .fhook-dirlst.col-name 1
   set-variable .fhook-dirlst.col-name &spr "%sVersion                 %sRule                    %s" .fhook-dirlst.col-name #l0 #l0
   set-variable .fhook-dirlst.col-flag &spr "%s1%1%s" .fhook-dirlst.col-flag #l0 #l0
-  set-variable .fhook-dirlst.sc-name &lins .fhook-dirlst.sc-name -1 "ClearCase"
-  set-variable .fhook-dirlst.sc-menu &lins .fhook-dirlst.sc-menu -1 "osd-cc-file-menu"
-  set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "cc-dirlst-detect"
-  set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "cc-dirlst-format"
   set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "ConfigSpec"
   set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "cc-config-spec"
+  set-variable .vcs.cc "|ClearCase|"
 !endif
 0 define-macro cc-init
 !emacro
 0 define-macro fhook-cc-state
   buffer-init
-  set-variable :sc &lfind .fhook-dirlst.sc-detect "cc-dirlst-detect"
+  set-variable :vcs "cc"
   set-variable :fmpf 6
   set-variable :tag-count 0
   set-variable :mouse-pick-1 dirlst-mouse-pick-1
@@ -161,7 +158,7 @@ set-variable #l9 .cc-init.count
   !endif
   !force 0 delete-buffer "*cc-comtemp*"
   goto-position "\x82"
-  osd .osd.ccosd @# "BfH" .scheme.osd-dbtt " Get Comment "
+  osd .osd.cc-osd @# "BfH" .scheme.osd-dbtt " Get Comment "
 !emacro
 0 define-macro cc-init-comment
   set-variable .cc-init.comment ""
@@ -297,171 +294,171 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
   !if &sin "^" #l9
     !return
   !endif
-  -1 osd .osd.ccosd
-  osd .osd.ccosd 0 ""
+  -1 osd .osd.cc-osd
+  osd .osd.cc-osd 0 ""
   set-variable #l0 0
   set-variable #l3 0
   !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
     !if &not &sin #l1 "Ss*!"
       set-variable #l2 &mul #l0 100
-      osd .osd.ccosd &inc #l2 1 ""
+      osd .osd.cc-osd &inc #l2 1 ""
       !if &seq #l1 "C"
-        osd .osd.ccosd &inc #l2 1 "Sfh" "    Co\Hmment:    " &add #l2 3
+        osd .osd.cc-osd &inc #l2 1 "Sfh" "    Co\Hmment:    " &add #l2 3
         !if &set #l4 &seq "c" &mid #l9 #l0 1
           !if .find-file.file-count
-            osd .osd.ccosd &inc #l2 1 "BRtfHx" .scheme.osd-ebtt " \HGet Comment " #l2 cc-osd-get-comment
+            osd .osd.cc-osd &inc #l2 1 "BRtfHx" .scheme.osd-ebtt " \HGet Comment " #l2 cc-osd-get-comment
           !endif
           set-variable #l0 &add #l0 1
           set-variable #l4 &cond &lget .cc-osd.values #l0 #l2 0
         !else
-          osd .osd.ccosd &inc #l2 1 "" ""
+          osd .osd.cc-osd &inc #l2 1 "" ""
         !endif
         @# cc-init-comment #l4
-        osd .osd.ccosd &inc #l2 1 "fh" "      "
-        osd .osd.ccosd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cc-osd-mec
+        osd .osd.cc-osd &inc #l2 1 "fh" "      "
+        osd .osd.cc-osd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f cc-osd-mec
         !if &not &seq .cc-init.comment ""
           set-variable #l3 &con #l3 #l3 #l2
         !endif
-        osd .osd.ccosd &inc #l2 1 "f"  "    "
+        osd .osd.cc-osd &inc #l2 1 "f"  "    "
       !elif &seq #l1 "D"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Checkout parent \Hdirectory if required" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Checkout parent \Hdirectory if required" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "F"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable file filter" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable file filter" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "G"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hgraphical merge" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hgraphical merge" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "H"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output \Hheader information" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "J"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use local Hi\Hjacked file as co file" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use local Hi\Hjacked file as co file" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "K"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep current version" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep current version" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "L"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output file \Hline information" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output file \Hline information" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "N"
         !if &equ .find-file.file-count 1
-          osd .osd.ccosd &inc #l2 1 "Sf" "    \HNew Name or Directory:" &add #l2 2
+          osd .osd.cc-osd &inc #l2 1 "Sf" "    \HNew Name or Directory:" &add #l2 2
           set-variable .cc-init.name .find-file.file1
         !else
-          osd .osd.ccosd &inc #l2 1 "Sf" "    \HNew Directory:" &add #l2 2
+          osd .osd.cc-osd &inc #l2 1 "Sf" "    \HNew Directory:" &add #l2 2
           set-variable .cc-init.name ""
         !endif
-        osd .osd.ccosd &inc #l2 1 "fh" "      "
-        osd .osd.ccosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 cc-osd-name
+        osd .osd.cc-osd &inc #l2 1 "fh" "      "
+        osd .osd.cc-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 cc-osd-name
         set-variable #l3 &con #l3 #l3 #l2
-        osd .osd.ccosd &inc #l2 1 "f"  "    "
+        osd .osd.cc-osd &inc #l2 1 "f"  "    "
       !elif &seq #l1 "M"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hremoved lines" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Include \Hremoved lines" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "O"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Overwrite \Hhijacked files" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Overwrite \Hhijacked files" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "Q"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HSensible amount of logging please!" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HSensible amount of logging please!" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "R"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HRecurse into sub-directories" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "U"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HUnreserved checkout" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HUnreserved checkout" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "V"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on entire \HView" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on entire \HView" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "W"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Ignore \Hwhite spaces" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "w"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \Hsingle window" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "X"
         set-variable .X 0
         !if &equ .find-file.file-count 1
           !if &not &seq "D" &stat "t" &cat .find-file.file-dir .find-file.file1
-            osd .osd.ccosd &inc #l2 1 "Sfh" "        \HUse: " &add #l2 1
-            osd .osd.ccosd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-osd-diffX
-            osd .osd.ccosd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
+            osd .osd.cc-osd &inc #l2 1 "Sfh" "        \HUse: " &add #l2 1
+            osd .osd.cc-osd &inc #l2 1 "OtxmsfhHR" .scheme.osd-entry "##################" .osd.tmp cc-osd-diffX
+            osd .osd.cc-osd &inc #l2 1 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 &sub #l2 1
             set-variable .X #l0
           !endif
         !endif
         !if &not .X
-          osd .osd.ccosd #l2 "D"
+          osd .osd.cc-osd #l2 "D"
         !endif
       !elif &seq #l1 "x"
         !if .X
-          osd .osd.ccosd #l2 "D"
+          osd .osd.cc-osd #l2 "D"
         !else
-          osd .osd.ccosd &inc #l2 1 "fh" "    "
-          osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" #l0 cc-osd-cbc
+          osd .osd.cc-osd &inc #l2 1 "fh" "    "
+          osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Use \HME diff tool" #l0 cc-osd-cbc
           set-variable #l3 &con #l3 #l3 #l2
         !endif
       !elif &seq #l1 "Z"
         !if .find-file.file-count
-          osd .osd.ccosd &inc #l2 1 "fh" "    "
-          osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" #l0 cc-osd-cbc
+          osd .osd.cc-osd &inc #l2 1 "fh" "    "
+          osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Operate on \Hdirectory (ignore selection)" #l0 cc-osd-cbc
           set-variable #l3 &con #l3 #l3 #l2
         !else
-          osd .osd.ccosd #l2 "D"
+          osd .osd.cc-osd #l2 "D"
         !endif
       !elif &seq #l1 "a"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hauto merge" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Enable \Hauto merge" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "h"
         !if &band $buffer-fmod 0x10000
-          osd .osd.ccosd #l2 "D"
+          osd .osd.cc-osd #l2 "D"
         !else
-          osd .osd.ccosd &inc #l2 1 "fh" "    "
-          osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HHijack current file" #l0 cc-osd-cbc
+          osd .osd.cc-osd &inc #l2 1 "fh" "    "
+          osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HHijack current file" #l0 cc-osd-cbc
           set-variable #l3 &con #l3 #l3 #l2
         !endif
       !elif &seq #l1 "l"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output detailed \Hinformation" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Output detailed \Hinformation" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "r"
-        osd .osd.ccosd &inc #l2 1 "fh" "    "
-        osd .osd.ccosd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 cc-osd-cbc
+        osd .osd.cc-osd &inc #l2 1 "fh" "    "
+        osd .osd.cc-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Refresh directory \Hlisting" #l0 cc-osd-cbc
         set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "v"
-        osd .osd.ccosd &inc #l2 1 "Sf" "    Merge \HVersion:" &add #l2 2
-        osd .osd.ccosd &inc #l2 1 "fh" "      "
-        osd .osd.ccosd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 cc-osd-fver
+        osd .osd.cc-osd &inc #l2 1 "Sf" "    Merge \HVersion:" &add #l2 2
+        osd .osd.cc-osd &inc #l2 1 "fh" "      "
+        osd .osd.cc-osd &inc #l2 1 "EtxHfhz" .scheme.osd-entry 60 1 "" #l0 cc-osd-fver
         set-variable #l3 &con #l3 #l3 #l2
-        osd .osd.ccosd &inc #l2 1 "f"  "    "
+        osd .osd.cc-osd &inc #l2 1 "f"  "    "
       !else
-        osd .osd.ccosd &inc #l2 1 "" &cat "flag " #l1
+        osd .osd.cc-osd &inc #l2 1 "" &cat "flag " #l1
       !endif
     !endif
   !done
-  osd .osd.ccosd 2000 ""
-  osd .osd.ccosd 2010 ""
-  osd .osd.ccosd 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
+  osd .osd.cc-osd 2000 ""
+  osd .osd.cc-osd 2010 ""
+  osd .osd.cc-osd 2020 "BtcfHh" .scheme.osd-ebtt " \HOkay " f void
   set-variable #l3 &con #l3 #l3 #l2
-  osd .osd.ccosd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
-  osd .osd.ccosd 0 "batcDIHs" 9 3 47 4 -1 -1 2020 #l3 .scheme.osd-title &cat "ClearCase " &lget .cc-init.names @#
-  !force !force .osd.ccosd osd
+  osd .osd.cc-osd 2030 "BtcfH"  .scheme.osd-ebtt " \HCancel " 0 void
+  osd .osd.cc-osd 0 "batcDIHs" 9 3 47 4 -1 -1 2020 #l3 .scheme.osd-title &cat "ClearCase " &lget .cc-init.names @#
+  !force !force .osd.cc-osd osd
   !if &not $status
     !abort
   !endif
@@ -1082,7 +1079,7 @@ set-variable .cc-osd-diffX.t "|\HCleartool diff|\HME diff tool|ME \Hgdiff tool|M
     set-variable $mouse-y $cursor-y
     0x21 set-position "\x82"
   !endif
-  &neg .osd.tmp osd-cc-file-menu
+  &neg .osd.tmp cc-file-menu
   goto-position "\x82"
   !force !force .osd.tmp osd
 !emacro
@@ -1846,7 +1843,7 @@ define-macro cc-add-view
   !endif
   !if $status
     -1 osd .osd.ccgenv
-    osd .osd.ccgenv 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child 60 7 -1 -1
+    osd .osd.ccgenv 0 &cond &band $system 0x100 "AisSf" "AsSf" .scheme.osd-child 60 8 -1 -1
     set-variable #l1 0
     !while &not &seq "" &set #l2 &reg &cat "/history/clearcase/" &inc #l1 1 ""
       osd .osd.ccgenv 1 "xBd" #l2 f cc-setup-del-view
@@ -1926,15 +1923,6 @@ define-macro cc-add-view
     set-variable &ind #l2 &lset #l3 #l0 &set #l4 &bxor 1 &lget #l3 #l0
     set-registry &spr "/history/clearcase/%d_%s" #l1 &mid &lget .cc-init.flags #l1 &sub #l0 1 1 #l4
   !elif &not &lget #l3 #l0
-    !abort
-  !endif
-!emacro
-0 define-macro cc-setup-gcbc
-  set-variable #l0 &cat "/history/clearcase/" &lget "|en-strt|rep-rcs|" &abs @#
-  set-variable #l1 &reg #l0 "0"
-  !if &les @# 0
-    set-registry #l0 &bxor #l1 1
-  !elif &not #l1
     !abort
   !endif
 !emacro
@@ -2069,14 +2057,11 @@ osd .osd.ccgen 30  "EtxHfz" .scheme.osd-entry 42 1 "" 1 cc-setup-entry
 osd .osd.ccgen 40  "Sfh" "  Version \HSeparator: " 50
 osd .osd.ccgen 50  "EtxHfz" .scheme.osd-entry 10 1 "" 2 cc-setup-entry
 osd .osd.ccgen 60  "" ""
-osd .osd.ccgen 70  "fh" "    "
-osd .osd.ccgen 80  "Cptfhx" &cat .osd.checkbox-chars "\} \HEnable Support on Start-Up    " 1 cc-setup-gcbc
-osd .osd.ccgen 90  "Cptfx"  &cat .osd.checkbox-chars "\} \HReplace RCS Support" 2 cc-setup-gcbc
 osd .osd.ccgen 100 "" ""
 osd .osd.ccgen 110 "fh" "  \HViews:             "
 osd .osd.ccgen 120 "BtfHx" .scheme.osd-ebtt " \HAdd " f cc-setup-add-view
 osd .osd.ccgen 130 "fh" "  "
-osd .osd.ccgen 140 "IbHt" .scheme.osd-sbar 60 7 .osd.ccgenv
+osd .osd.ccgen 140 "IbHt" .scheme.osd-sbar 60 8 .osd.ccgenv
 
 osd .osd.ccnb 0 "NsI" 68 20 -1 -1 1
 osd .osd.ccnb 1 "Pft" "General" .osd.ccgen
@@ -2099,13 +2084,13 @@ define-macro cc-setup
     !else
       0 reread-settings
     !endif
-    execute-file "clearcs"
+    execute-file "cc"
   !endif
 !emacro
 
 ; ClearCase directory list context menu ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 define-macro osd-cc-file-menu
+0 define-macro cc-file-menu
   !if &les @# 0
     -1 osd &set @# &neg @#
     osd @# 0 "bBo" -1 1

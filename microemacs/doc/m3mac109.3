@@ -1,0 +1,319 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Steven Phillips
+.\"  Created       : Mon Jul 20 00:00:00 2026
+.\"
+.Id $Id: m3mac109.3,v 2.2 2026/07/21 00:10:29 jon Exp $
+.Im MicroEmacs shell|command
+.so me.tni
+.TH vcs 3
+.XI vcs - "\*(mS VCS interface - VCS-agnostic front-end"
+.XI vcs-id - "\*(mS VCS interface - identify the VCS controlling a file/directory"
+.XI vcs-add - "\*(mS VCS interface - add items"
+.XI vcs-annotate - "\*(mS VCS interface - annotate a file"
+.XI vcs-blame - "\*(mS VCS interface - annotate a file"
+.XI vcs-checkout - "\*(mS VCS interface - checkout (create) a working copy"
+.XI vcs-coci - "\*(mS VCS interface - check-out/check-in a file"
+.XI vcs-commit - "\*(mS VCS interface - commit changes to repository"
+.XI vcs-commit-log - "\*(mS VCS interface - get log for a commit"
+.XI vcs-delete - "\*(mS VCS interface - delete/remove items"
+.XI vcs-diff - "\*(mS VCS interface - diff changes"
+.XI vcs-fetch - "\*(mS VCS interface - download from another repository"
+.XI vcs-gdiff - "\*(mS VCS interface - graphical diff changes"
+.XI vcs-log - "\*(mS VCS interface - list log of changes"
+.XI vcs-move - "\*(mS VCS interface - move an item"
+.XI vcs-pull - "\*(mS VCS interface - download and integrate another repository"
+.XI vcs-push - "\*(mS VCS interface - update remote repository"
+.XI vcs-remove - "\*(mS VCS interface - remove items"
+.XI vcs-revert - "\*(mS VCS interface - revert local changes"
+.XI vcs-setup - "\*(mS VCS interface - setup the underlying VCS"
+.XI vcs-status - "\*(mS VCS interface - status of items"
+.XI vcs-switch - "\*(mS VCS interface - switch or create branches"
+.XI vcs-unstage - "\*(mS VCS interface - unstage items"
+.XI vcs-update - "\*(mS VCS interface - update directory files"
+.SH NAME
+.Me "|vcs"
+vcs \- \*(mS VCS interface - VCS-agnostic front-end
+.br
+.Me "|vcs-id"
+vcs-id \- \*(mS VCS interface - identify the VCS controlling a file/directory
+.br
+.Me "|vcs-add"
+vcs-add \- \*(mS VCS interface - add items
+.br
+.Me "|vcs-annotate"
+vcs-annotate \- \*(mS VCS interface - annotate a file
+.br
+.Me "|vcs-blame"
+vcs-blame \- \*(mS VCS interface - annotate a file
+.br
+.Me "|vcs-checkout"
+vcs-checkout \- \*(mS VCS interface - checkout (create) a working copy
+.br
+.Me "|vcs-coci"
+vcs-coci \- \*(mS VCS interface - check-out/check-in a file
+.br
+.Me "|vcs-commit"
+vcs-commit \- \*(mS VCS interface - commit changes to repository
+.br
+.Me "|vcs-commit-log"
+vcs-commit-log \- \*(mS VCS interface - get log for a commit
+.br
+.Me "|vcs-delete"
+vcs-delete \- \*(mS VCS interface - delete/remove items
+.br
+.Me "|vcs-diff"
+vcs-diff \- \*(mS VCS interface - diff changes
+.br
+.Me "|vcs-fetch"
+vcs-fetch \- \*(mS VCS interface - download from another repository
+.br
+.Me "|vcs-gdiff"
+vcs-gdiff \- \*(mS VCS interface - graphical diff changes
+.br
+.Me "|vcs-log"
+vcs-log \- \*(mS VCS interface - list log of changes
+.br
+.Me "|vcs-move"
+vcs-move \- \*(mS VCS interface - move an item
+.br
+.Me "|vcs-pull"
+vcs-pull \- \*(mS VCS interface - download and integrate another repository
+.br
+.Me "|vcs-push"
+vcs-push \- \*(mS VCS interface - update remote repository
+.br
+.Me "|vcs-remove"
+vcs-remove \- \*(mS VCS interface - remove items
+.br
+.Me "|vcs-revert"
+vcs-revert \- \*(mS VCS interface - revert local changes
+.br
+.Me "|vcs-setup"
+vcs-setup \- \*(mS VCS interface - setup the underlying VCS
+.br
+.Me "|vcs-status"
+vcs-status \- \*(mS VCS interface - status of items
+.br
+.Me "|vcs-switch"
+vcs-switch \- \*(mS VCS interface - switch or create branches
+.br
+.Me "|vcs-unstage"
+vcs-unstage \- \*(mS VCS interface - unstage items
+.br
+.Me "|vcs-update"
+vcs-update \- \*(mS VCS interface - update directory files
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B vcs
+.sp 1
+.I n
+.B vcs-id
+[ "\fIfile-path\fR" ]
+.sp 1
+.B vcs-add
+.br
+.B vcs-annotate
+.br
+.B vcs-blame
+.br
+.B vcs-checkout
+.br
+.B vcs-coci
+.br
+.B vcs-commit
+.br
+.B vcs-commit-log
+.br
+.B vcs-delete
+.br
+.B vcs-diff
+.br
+.B vcs-fetch
+.br
+.B vcs-gdiff
+.br
+.B vcs-log
+.br
+.B vcs-move
+.br
+.B vcs-pull
+.br
+.B vcs-push
+.br
+.B vcs-remove
+.br
+.B vcs-revert
+.br
+.B vcs-setup
+.br
+.B vcs-status
+.br
+.B vcs-switch
+.br
+.B vcs-unstage
+.br
+.B vcs-update
+.ad
+.SH DESCRIPTION
+The \fBvcs\fR and sub-commands provide a \s-1VCS\s0-agnostic front-end over \*(mS's individual version control system
+interfaces. Each command determines which \s-1VCS\s0 controls the current buffer's file (or the current directory) by
+calling \fBvcs-id\fR, and then forwards the request to the equivalent command of the underlying interface, i.e.
+\fBvcs-status\fR run against a file in a
+.Ht git 3
+working copy executes \fBgit-status\fR, in a
+.Ht svn 3
+working copy executes \fBsvn-status\fR, and so on. This allows a single set of key-bindings and menu entries to be used
+regardless of which \s-1VCS\s0 happens to control the file being edited.
+.PP
+This page only describes the behaviour common to \fBvcs\fR and its sub-commands; each command's action, its prompts and
+its options are ultimately those of the underlying \s-1VCS\s0 command it forwards to, so see
+.Ht git 3 ,
+.Ht svn 3 ,
+.Ht cvs 3
+and
+.Ht ClearCase 3
+for the details, dialogs and command-line options specific to that system.
+.PP
+Not every sub-command is implemented by every \s-1VCS\s0 interface; where this is the case it is noted below. If a
+sub-command is run against a \s-1VCS\s0 that does not implement it, an
+.Ht ml-write 2
+message of the form \fC[VCS Error: <vcs> does not support <action>]\fR is reported and the command is abandoned.
+Similarly, a few pairs of sub-commands are simply synonyms of one another (e.g. \fBvcs-blame\fR/\fBvcs-annotate\fR)
+because the underlying \s-1VCS\s0 interfaces themselves use different names for the same action; these are noted below
+too.
+.PP
+The \*(mS \fBvcs\fR command itself opens the file-browser of the detected \s-1VCS\s0, i.e. it is equivalent to running
+.Ht git 3 ,
+.Ht svn 3
+or
+.Ht cvs 3
+directly, including the same use of a numeric argument \fIn\fR of zero to open a single directory-only window (i.e.
+.BR "0 vcs" ).
+Only supported by \s-1Git\s0, \s-1SVN\s0 and \s-1CVS\s0; ClearCase does not currently provide an equivalent browser
+entry point via \fBvcs\fR, use
+.Ht ClearCase 3
+directly instead.
+.SS "Identifying the VCS"
+.B vcs-id
+identifies which \s-1VCS\s0 (\s-1Git\s0, \s-1SVN\s0, \s-1CVS\s0 or ClearCase) controls a given file or directory,
+walking up the directory tree as necessary to locate a \fC.git\fR, \fC.svn\fR or \fCCVS\fR control directory, or, for
+ClearCase, a matching view record. The result of the last two lookups is cached so that repeated calls for files in the
+same directory are cheap.
+.PP
+All of the \fBvcs-*\fR sub-commands described below use \fBvcs-id\fR internally to select which \fC<vcs>-<command>\fR
+macro to forward to, and it is also used by the file-browser's directory-listing file-hook to select the appropriate
+\s-1VCS\s0 state format for a directory listing, see
+.Ht file-browser 3 .
+.PP
+\fBvcs-id\fR optionally takes a file or directory path as its argument; if omitted the current buffer's file name is
+used. When called with a numeric argument (as it is internally by the other \fBvcs-*\fR commands and by the
+file-browser hook) it operates silently, only setting up its result for the calling macro. When run directly by the
+user with no numeric argument it instead reports the identified \s-1VCS\s0 on the message line, e.g. 
+\fCVCS for "<file>" is Git (git)\fR. If no controlling \s-1VCS\s0 can be identified for the given file or directory an error is
+reported and the command is abandoned.
+.SS Sub-Commands
+.PP
+The \fBvcs-add\fR command adds the current buffer or selected items to the \s-1VCS\s0.
+.PP
+The \fBvcs-annotate\fR command is a synonym for \fBvcs-blame\fR.
+.PP
+The \fBvcs-blame\fR command opens a window annotating each line of the current buffer or a single selected file with
+the revision/commit and author that last changed it.
+.PP
+The \fBvcs-checkout\fR command checks out (creates) a working copy from the repository. Only supported by \s-1SVN\s0,
+\s-1CVS\s0 and ClearCase; \s-1Git\s0 users should use \fBvcs-switch\fR to change branches, or
+\fBvcs-revert\fR/\fBvcs-unstage\fR to discard local file changes.
+.PP
+The \fBvcs-coci\fR command performs a simple \s-1RCS\s0-style check-out/check-in of the current buffer's file, see
+.Ht rcs-file 2 .
+Of the supported \s-1VCS\s0 systems only ClearCase has this per-file check-out/check-in concept (\s-1Git\s0,
+\s-1SVN\s0 and \s-1CVS\s0 have no equivalent lock/checkout model), toggling between checking the file out and
+checking it back in depending on the buffer's current
+.Ht view 2m
+mode state; only supported by ClearCase. If the file is not controlled by any of \s-1Git\s0, \s-1SVN\s0,
+\s-1CVS\s0 or ClearCase then
+.Ht rcs-file 2
+is invoked directly instead, giving equivalent behaviour on a standalone file kept under plain
+.Ht $rcs-file 5
+control. Directories are not supported by either form of this command.
+.PP
+The \fBvcs-commit\fR command commits changes made to the current buffer's file or selection back to the repository,
+the user typically being prompted for a commit log message; exactly what gets committed (e.g. the index/staging area
+for \s-1Git\s0, or the working copy directly for \s-1SVN\s0/\s-1CVS\s0) depends on the underlying \s-1VCS\s0. Not
+currently supported for ClearCase, use
+.Ht ClearCase 3 's
+own check-in command instead.
+.PP
+The \fBvcs-commit-log\fR command displays the log message and affected files of a specific commit. Only supported by
+\s-1SVN\s0 at present.
+.PP
+The \fBvcs-delete\fR command removes the current buffer or selected items from \s-1VCS\s0 control, and typically the
+local file too - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! \fBvcs-remove\fR is a synonym for this command.
+.PP
+The \fBvcs-diff\fR command displays the differences between the current buffer or selected local files and the
+repository version.
+.PP
+The \fBvcs-fetch\fR command downloads changes from a remote repository without altering the local files or index.
+Only supported by \s-1Git\s0 at present.
+.PP
+The \fBvcs-gdiff\fR command launches a graphical diff to display changes. Only supported by \s-1CVS\s0 at present, for
+other systems see
+.Ht %xdiff-com 5
+based commands such as \fBsvn-xdiff\fR.
+.PP
+The \fBvcs-log\fR command displays the commit/revision log history of the current buffer or selected files. Not
+currently supported for ClearCase.
+.PP
+The \fBvcs-move\fR command moves (renames) the current buffer's file or selected items, preserving the item's change
+log history where the underlying \s-1VCS\s0 supports this. Not currently supported for \s-1CVS\s0.
+.PP
+The \fBvcs-pull\fR command is a synonym for \fBvcs-update\fR.
+.PP
+The \fBvcs-push\fR command updates the remote repository with committed local changes. Only supported by \s-1Git\s0
+at present.
+.PP
+The \fBvcs-remove\fR command is a synonym for \fBvcs-delete\fR.
+.PP
+The \fBvcs-revert\fR command reverts local modifications back to the repository version, discarding the local
+changes. Currently only supported by \s-1Git\s0 and \s-1SVN\s0, not \s-1CVS\s0 or ClearCase.
+.PP
+The \fBvcs-setup\fR command opens the setup dialog of the current buffer's underlying \s-1VCS\s0 interface, e.g.
+.Ht git 3 's
+\fBgit-setup\fR; it does not have any configuration of its own, each underlying interface must be set up individually.
+.PP
+The \fBvcs-status\fR command opens a window showing the state of all the items within the current directory. Not
+currently mapped for ClearCase, which names its equivalent command \fBcc-state\fR, see
+.Ht ClearCase 3 .
+.PP
+The \fBvcs-switch\fR command switches to an existing branch, or creates and switches to a new one. Only supported by
+\s-1Git\s0 at present; \s-1SVN\s0, \s-1CVS\s0 and ClearCase have no equivalent branch-switching concept for this
+command to forward to.
+.PP
+The \fBvcs-unstage\fR command removes items from the staging area/index without discarding the underlying local
+modifications. Only supported by \s-1Git\s0 at present.
+.PP
+The \fBvcs-update\fR command updates the local working files with changes from the repository. \fBvcs-pull\fR is a
+synonym for this command.
+.SH NOTES
+\fBvcs\fR and sub-commands are macros defined in file \fCvcs.emf\fR. They are a thin dispatch layer only; the
+underlying \s-1VCS\s0 interface (\fCgit.emf\fR, \fCsvn.emf\fR, \fCcvs.emf\fR or \fCcc.emf\fR) for a given file's
+\s-1VCS\s0 must be set up correctly, e.g. via \fBgit-setup\fR, \fBsvn-setup\fR, \fBcvs-setup\fR or \fBcc-setup\fR, for
+its \fBvcs-*\fR commands to function.
+.SH "SEE ALSO"
+.na
+.Ht git 3 ,
+.Ht svn 3 ,
+.Ht cvs 3 ,
+.Ht ClearCase 3 ,
+.Ht file-browser 3 ,
+.Ht rcs-file 2 ,
+.Ht $rcs-file 5 .
+.ad
+.FH

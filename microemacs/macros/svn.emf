@@ -23,17 +23,15 @@
   define-macro svn
   !emacro
 !endif
-!if &not &lfind .fhook-dirlst.sc-name "Subversion"
+!if &not &exi .vcs.svn
   set-variable #l0 &lef .fhook-dirlst.col-name 1
   set-variable .fhook-dirlst.col-name &spr "%sFlags  %sWork Rev%sComt Rev%sComt Author%s" .fhook-dirlst.col-name #l0 #l0 #l0 #l0
   set-variable .fhook-dirlst.col-flag &spr "%s1%1%s1%s1%s" .fhook-dirlst.col-flag #l0 #l0 #l0 #l0
-  set-variable .fhook-dirlst.sc-name &lins .fhook-dirlst.sc-name -1 "Subversion"
-  set-variable .fhook-dirlst.sc-menu &lins .fhook-dirlst.sc-menu -1 "osd-svn-file-menu"
-  set-variable .fhook-dirlst.sc-detect &lins .fhook-dirlst.sc-detect -1 "svn-dirlst-detect"
-  set-variable .fhook-dirlst.sc-format &lins .fhook-dirlst.sc-format -1 "svn-dirlst-format"
   set-variable .fhook-dirlst.modefunc-lbl &lins .fhook-dirlst.modefunc-lbl -1 "SVN:Quick"
   set-variable .fhook-dirlst.modefunc-cmd &lins .fhook-dirlst.modefunc-cmd -1 "svn-full-reread"
+  set-variable .vcs.svn "|Subversion|"
 !endif
+
 !if &band .hilight.flags 0x02
   !iif &not &exi .hilight.diff  !force execute-file "hkdiff"
   hilight .hilight.diff 20 "\\[Diff-" "]" "" $mode-line-scheme
@@ -102,7 +100,7 @@
 !endif
 0 define-macro fhook-svn-status
   buffer-init
-  set-variable :sc &lfind .fhook-dirlst.sc-detect "svn-dirlst-detect"
+  set-variable :vcs "svn"
   set-variable :tag-count 0
   set-variable :mouse-pick-1 dirlst-mouse-pick-1
   set-variable :mouse-drop-1 dirlst-mouse-drop-1
@@ -123,47 +121,49 @@ set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
 ; * = Console, ! = wait, $ = no file select
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Commit Log|Cat|"
-set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Commit Log|Cat|Revert|"
+set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|JRrS*!|"
 ; 1 Add - flags: RIS*!
 set-variable .svn.cdefs1  "|1|0|"
 ; 2 Blame - flags: Vhpvs
 set-variable .svn.cdefs2  "|0|0|1|3|"
-; 3 Checkout - flags: UR$
+; 4 Checkout - flags: UR$
 set-variable .svn.cdefs3  "||1|0|"
-; 4 Commit - flags: CRS*!
+; 6 Commit - flags: CRS*!
 set-variable .svn.cdefs4  "||1|0|"
-; 5 Copy - flags: NPrS*!
+; 7 Copy - flags: NPrS*!
 set-variable .svn.cdefs5  "||1|0|"
-; 6 Delete - flags: KrS*!
+; 8 Delete - flags: KrS*!
 set-variable .svn.cdefs6  "|0|0|"
-; 7 Diff - flags: ZRxWwpvS
+; 9 Diff - flags: ZRxWwpvS
 set-variable .svn.cdefs7  "|0|1|0|1|0|1|3|"
-; 8 Log - flags: ZVpf
+; 12 Log - flags: ZVpf
 set-variable .svn.cdefs8  "|0|1|1|"
-; 9 Move - flags: NPrS*!
+; 13 Move - flags: NPrS*!
 set-variable .svn.cdefs9  "||1|0|"
-; 10 Status - flags: ZRAIuwS
+; 16 Status - flags: ZRAIuwS
 set-variable .svn.cdefs10 "|1|1|0|0|1|0|"
-; 11 Update - flags: ZRMS*
+; 17 Update - flags: ZRMS*
 set-variable .svn.cdefs11 "|1|1|0|"
-; 12 Server Copy - flags: nCPs*!
+; 19 Server Copy - flags: nCPs*!
 set-variable .svn.cdefs12 "|||1|"
-; 13 Server Move - flags: nCPs*!
+; 20 Server Move - flags: nCPs*!
 set-variable .svn.cdefs13 "|||1|"
 ; 14 Resolve - flags: ZRaS*
 set-variable .svn.cdefs14 "|0|0|2|"
-; 15 Ignore - flags: iD!
+; 10 Ignore - flags: iD!
 set-variable .svn.cdefs15 "||"
-; 16 Info - flags: sD^!
+; 11 Info - flags: sD^!
 set-variable .svn.cdefs16 "|"
-; 17 XDiff - flags: ZtS
+; 18 XDiff - flags: ZtS
 set-variable .svn.cdefs17 "|0|1|"
-; 18 Commit Log - flags: pv$
+; 6 Commit Log - flags: pv$
 set-variable .svn.cdefs18 "|1|6|"
-; 2 Cat - flags: vs
+; 3 Cat - flags: vs
 set-variable .svn.cdefs19 "|5|"
-set-variable .svn.ccount  19
+; 15 Revert - flags: JRrS*!
+set-variable .svn.cdefs20  "|0|1|0|"
+set-variable .svn.ccount  20
 
 set-variable .svn.com &reg &spr "/history/%s/svn/com" $platform "svn"
 !iif &sin " " .svn.com  set-variable .svn.com &spr "\"%s\"" .svn.com
@@ -576,6 +576,10 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
         osd .osd.svn-osd &inc #l2 1 "EtNxHfhz" .scheme.osd-entry 60 10 "" f svn-osd-meim
         set-variable #l3 &con #l3 #l3 #l2
         osd .osd.svn-osd &inc #l2 1 "f"  "    "
+      !elif &seq #l1 "J"
+        osd .osd.svn-osd &inc #l2 1 "fh" "    "
+        osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Re\Hmove added file(s)" #l0 svn-osd-cbc
+        set-variable #l3 &con #l3 #l3 #l2
       !elif &seq #l1 "K"
         osd .osd.svn-osd &inc #l2 1 "fh" "    "
         osd .osd.svn-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep local file(s)" #l0 svn-osd-cbc
@@ -1616,6 +1620,20 @@ define-macro svn-resolve
 set-variable .svn-resolve.al "|\HBase|\HWorking|\HMine full|\HTheirs full|"
 set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
 
+;; SVN Revert ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro svn-revert
+  20 svn-osd
+  set-variable #l2 &spr "%s revert %s%s" .svn.com &con &lget .svn.cvalues20 1 "--remove-added " "" &con &lget .svn.cvalues20 2 "" "--depth=empty "
+  7 svn-get-file-list 0 0 #l2
+  20 svn-exec 3 $buffer-fname
+  !if &seq $buffer-fname ""
+  !elif &not &band $buffer-fmod 0x10000
+  !elif &lget .svn.cvalues20 3
+    dirlst-refresh
+  !endif
+!emacro
+
 ;; SVN Status ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 0 define-macro svn-exec-ipipe10
@@ -1700,7 +1718,7 @@ set-variable .svn-resolve.av "|base|working|mine-full|theirs-full|"
     set-variable $mouse-y $cursor-y
     0x21 set-position "\x82"
   !endif
-  &neg .osd.tmp osd-svn-file-menu
+  &neg .osd.tmp svn-file-menu
   goto-position "\x82"
   !force !force .osd.tmp osd
 !emacro
@@ -1929,7 +1947,7 @@ define-macro svn-xdiff
   !endif
 !emacro
 0 define-macro svn-setup-gcbc
-  set-variable #l0 &cat "/history/svn/" &lget "|en-strt|browse-mode|" &abs @#
+  set-variable #l0 &cat "/history/svn/" &lget "|browse-mode|" &abs @#
   set-variable #l1 &reg #l0 "0"
   !if &les @# 0
     set-registry #l0 &bxor #l1 1
@@ -1967,6 +1985,9 @@ define-macro svn-xdiff
       !elif &seq #l1 "I"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HInclude ignored files" &bor #l4 #l0 svn-setup-cbc
+      !elif &seq #l1 "J"
+        osd #l8 &inc #l2 1 "fh" "    "
+        osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} Re\Hmove added file(s)" &bor #l4 #l0 svn-setup-cbc
       !elif &seq #l1 "K"
         osd #l8 &inc #l2 1 "fh" "    "
         osd #l8 &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HKeep local file(s)" &bor #l4 #l0 svn-setup-cbc
@@ -2013,7 +2034,7 @@ define-macro svn-xdiff
   !done
 !emacro
 set-variable .svn-setup-page.cur 1
-set-variable .svn-setup-page.order "|1|2|3|4|5|6|7|10|11|13|14|16|17|12|8|9|15|"
+set-variable .svn-setup-page.order "|1|2|4|6|7|8|9|12|13|16|17|19|20|14|10|11|18|6|3|15|"
 
 -1 osd .osd.svn-tlc
 osd .osd.svn-tlc 0 "sS" .scheme.osd-child 12 12 -1 -1
@@ -2046,10 +2067,7 @@ osd .osd.svn-gen 70  "Sfh" "  Def \HRep URL:   " 80
 osd .osd.svn-gen 80  "EtxHfz" .scheme.osd-entry 42 1 "" 3 svn-setup-entry
 osd .osd.svn-gen 90  "" ""
 osd .osd.svn-gen 100 "fh" "    "
-osd .osd.svn-gen 110 "Cptfx" &cat .osd.checkbox-chars "\} \HEnable Support on Start-Up" 1 svn-setup-gcbc
-osd .osd.svn-gen 120 "" ""
-osd .osd.svn-gen 130 "fh" "    "
-osd .osd.svn-gen 140 "Cptfx" &cat .osd.checkbox-chars "\} \HQuick browser mode (no out-of-date check)" 2 svn-setup-gcbc
+osd .osd.svn-gen 140 "Cptfx" &cat .osd.checkbox-chars "\} \HQuick browser mode (no out-of-date check)" 1 svn-setup-gcbc
 osd .osd.svn-gen 150 "" ""
 
 osd .osd.svn-nb 0 "NsI" 68 20 -1 -1 1
@@ -2112,7 +2130,7 @@ define-macro svn
   goto-position "\x82"
 !emacro
 
-0 define-macro osd-svn-file-menu
+0 define-macro svn-file-menu
   !if &les @# 0
     -1 osd &set @# &neg @#
     osd @# 0 "bBo" -1 1
@@ -2120,27 +2138,8 @@ define-macro svn
     -1 osd @#
     osd @# 0 "bB"
   !endif
-  osd @# 1  "" "Current \HStatus"    f svn-status
-  osd @# 5  "" "Check\Hout files"    f svn-checkout
-  osd @# 10 "" "\HUpdate files"      f svn-update
-  osd @# 20 "" "\HCommit files"      f svn-commit
-  osd @# 30 "" "\HDiff files"        f svn-diff
-  osd @# 100 "-"
-  osd @# 160 "" "Clear S\HVN console" f svn-clear-console
-  osd @# 170 "" "SVN Setup"           f svn-setup
-  !if :tag-count
-    osd @# 55 "" "\HCopy items"      f svn-copy
-    osd @# 60 "" "\HMove items"      f svn-move
-    osd @# 70 "" "\HAdd items"       f svn-add
-    osd @# 80 "" "Delete items"      f svn-delete
-    osd @# 120 "" "\HResolve conflicts" f svn-resolve
-  !else
-    osd @# 55 "" "Copy items"
-    osd @# 60 "" "Move items"
-    osd @# 70 "" "Add items"
-    osd @# 80 "" "Delete items"
-    osd @# 120 "" "Resolve conflicts"
-  !endif
+  osd @# 10  "" "Current \HStatus"    f svn-status
+  osd @# 20 "" "\HDiff files"        f svn-diff
   !if &equ :tag-count 1
     osd @# 40 "" "Item \HLog"          f svn-log
     osd @# 50 "" "Item \HBlame"        f svn-blame
@@ -2148,6 +2147,29 @@ define-macro svn
     osd @# 40 "" "Item Log"
     osd @# 50 "" "Item Blame"
   !endif
+  osd @# 100 "-"
+  !if :tag-count
+    osd @# 110 "" "\HAdd items"       f svn-add
+    osd @# 120 "" "\HCopy items"      f svn-copy
+    osd @# 130 "" "\HMove items"      f svn-move
+    osd @# 140 "" "Delete items"      f svn-delete
+    osd @# 150 "" "Revert items"      f svn-revert
+    osd @# 220 "" "\HResolve conflicts" f svn-resolve
+    osd @# 230 "" "\HCommit files"      f svn-commit
+  !else
+    osd @# 110 "" "Add items"
+    osd @# 120 "" "Copy items"
+    osd @# 130 "" "Move items"
+    osd @# 140 "" "Delete items"
+    osd @# 150 "" "Revert items"
+    osd @# 220 "" "Resolve conflicts"
+    osd @# 230 "" "Commit files"
+  !endif
+  osd @# 200 "-"
+  osd @# 210 "" "\HUpdate files"      f svn-update
+  osd @# 300 "-"
+  osd @# 310 "" "Clear S\HVN console" f svn-clear-console
+  osd @# 320 "" "SVN Setup"           f svn-setup
 !emacro
 
 ;; SVN status help dialog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

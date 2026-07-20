@@ -17,8 +17,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	abbrev.emf	abbrlist.emf	aix.emf		\
 	bintools.emf	bookmark.emf	brag.emf	\
 	buffinit.emf	bytecomp.emf	\
-	calc.emf	cfind.emf	charset.emf	charsutl.emf	\
-	clearcs.emf	cmacros.emf	collapse.emf	comment.emf	\
+	calc.emf	cc.emf		cfind.emf	charset.emf	\
+	charsutl.emf	cmacros.emf	collapse.emf	comment.emf	\
 	crosswd.emf	crtappln.emf	ctags.emf	cvs.emf		\
 	cygwin.emf	\
 	darwin.emf	diffline.emf    dmf.emf		docmacro.emf	\
@@ -106,7 +106,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	toollist.emf	tools.emf	toolstd.emf	toolstp.emf	\
 	triangle.emf	typing.emf	\
 	unixterm.emf	userstp.emf	utils.emf	\
-	vbtags.emf	vm.emf		\
+	vbtags.emf	vcs.emf		vm.emf		\
 	watch.emf	windows.emf	word.emf	\
 	xfind.emf	xmlutil.emf	xrdb.emf	\
 	zaurus.emf	zfile.emf
