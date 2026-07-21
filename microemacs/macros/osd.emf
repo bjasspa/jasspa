@@ -35,23 +35,28 @@ define-macro-file osdhelp osd-help
   !if &seq @cl "undo"
     !jump 2
   !elif &and &seq @cl "osd-redo" .undo.count
-    osd 2 20  ""  "\HRedo" f osd-redo
+    osd 2 20 "" "\HRedo" f osd-redo
   !else
-    osd 2 20  ""  "Redo"
+    osd 2 20 "" "Redo"
   !endif
   set-variable #l0 &ind &spr ".%s.setup" $buffer-fhook
   !if &sin "p" #l0
     osd 9 10 "" "\HMajor Mode Help      esc h" f major-mode-help
   !else
-    osd 9 10 "D"
+    osd 9 10 "" "No Major Mode Help"
   !endif
   !if &sin "o" #l0
     0 major-mode $buffer-major-mode
     osd 6 10 "M" &cat &lget $result 5 " \HTools" .osd.tmp major-mode-tool
-    osd 6 20 "-"
   !else
-    osd 6 10 "D"
-    osd 6 20 "D"
+    osd 6 10 "" "No Mode Tools"
+  !endif
+  osd 6 115 "" "VCS (none)"
+  !if &seq $buffer-fname ""
+  !elif &not &sin "//" $buffer-fname
+    ; test above should eliminate ftp, http, tfs, and UNC paths
+    !force 0 vcs-id
+    !iif $status  osd 6 115 "M" &spr "\HVCS (%s)" &lget #l8 1 .osd.tmp &cat #l9 "-file-menu"
   !endif
   !if &seq &ind &spr ".%s.setup-mask" $buffer-fhook "ERROR"
     osd 6 190 "D"
@@ -396,6 +401,7 @@ osd 5 190 ""  "U\Hpper Case Region        C-x C-u" f upper-case-region
 ; MENU #6 - TOOLS sub-menu
 ; Start at item 10 so buffer specific tool menus can be inserted
 osd 6 0   "bo" 1 0
+osd 6 20  "-"
 osd 6 30  ""  "Spell \HWord          esc $"       1 spell-word
 osd 6 40  ""  "\HSpell Buffer...     f7"          f spell-buffer
 osd 6 50  ""  "Word Complete"                     f expand-word

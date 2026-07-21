@@ -1940,10 +1940,11 @@ osd .osd.dirlsts 60 ""  "\HUnselect All"       -1 dirlst-tag-set
 -1 osd .osd.dirlst
 osd .osd.dirlst 0   bBo -1 1
 osd .osd.dirlst 65  "-"
+osd .osd.dirlst 80  "-"
+osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
 osd .osd.dirlst 110 ""  "\HNew Folder"          f dirlst-new-folder
 osd .osd.dirlst 120 ""  "Refresh \HList"        f dirlst-refresh
 osd .osd.dirlst 130 ""  "\HAuto-Refresh: on "   f dirlst-auto-refresh
-osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
 
 0 define-macro dirlst-context-menu
   set-variable #l0 &not &or &les $window-line 5 &les &len @wl :fmpf
@@ -2011,15 +2012,10 @@ osd .osd.dirlst 90  "M" "File \HSelection"      .osd.dirlsts
     !else
       osd .osd.dirlst 140 "" "Enable \HFilter" 1 file-browser-set-filter
     !endif
-    !if &gre .sc-count 0
-      !repeat
-        osd .osd.dirlst &add 70 .sc-count "D"
-      !until &not &dec .sc-count 1
-      osd .osd.dirlst 89  "D"
-    !endif
     !if &exi :vcs
-      !force osd .osd.dirlst &add 70 &inc .sc-count 1 "M" &spr "\HVCS (%s)" &lget &ind &cat ".vcs." :vcs 1 .osd.tmp &cat :vcs "-file-menu"
-      osd .osd.dirlst 89  "-"
+      osd .osd.dirlst 70 "M" &spr "\HVCS (%s)" &lget &ind &cat ".vcs." :vcs 1 .osd.tmp &cat :vcs "-file-menu"
+    !else
+      osd .osd.dirlst 70 "" "VCS (none)"
     !endif
   !endif
   .osd.dirlst osd

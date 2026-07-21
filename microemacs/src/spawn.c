@@ -836,7 +836,10 @@ do {                                                                         \
     bp->dotLineNo += noLines;                                                \
     bp->lineCount += noLines;                                                \
     ipipe->curRow = curRow;                                                  \
-    bp->vertScroll = bp->dotLineNo-curRow;                                   \
+    if(bp->lineCount <= ipipe->noRows)                                       \
+        bp->vertScroll = 0;                                                  \
+    else                                                                     \
+        bp->vertScroll = bp->dotLineNo-curRow;                               \
     bp->dotLine = lp_new;                                                    \
     bp->dotOffset = (meUShort) (p1 - buff);                                  \
     meBufferUpdateLocation(bp,noLines,bp->dotOffset);                        \
@@ -1769,11 +1772,10 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
             }
             else if(ipipe->curRow >= ipipe->noRows)
                 ipipe->curRow = ipipe->noRows-1;
-            /* Check the window is displaying this buffer before we
-             * mess with the window settings */
+            /* Check the window is displaying this buffer before messing with the window settings */
             if((wp->buffer == bp) && meModeTest(bp->mode,MDLOCK))
             {
-                if (wp->dotLineNo < ipipe->curRow)
+                if((bp->lineCount <= wp->textDepth) || (wp->dotLineNo < ipipe->curRow))
                     wp->vertScroll = 0;
                 else
                     wp->vertScroll = wp->dotLineNo-ipipe->curRow;

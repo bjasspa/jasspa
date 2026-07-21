@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.12 2025/11/28 21:59:27 jon Exp $
+.Id $Id: m3mac057.3,v 2.12 2026/07/21 19:27:38 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -18,12 +18,12 @@
 .XI cvs-checkout - "\*(mS CVS interface - checkout files"
 .XI cvs-commit - "\*(mS CVS interface - commit changes"
 .XI cvs-diff - "\*(mS CVS interface - diff changes"
+.XI cvs-file-status - "\*(mS CVS interface - status of files"
 .XI cvs-gdiff - "\*(mS CVS interface - graphical diff changes"
 .XI cvs-log - "\*(mS CVS interface - log changes"
 .XI cvs-remove - "\*(mS CVS interface - remove file"
 .XI cvs-resolve-conflicts - "\*(mS CVS interface - resolve conflicts"
-.XI cvs-state - "\*(mS CVS interface - list state of directory files"
-.XI cvs-status - "\*(mS CVS interface - status of files"
+.XI cvs-status - "\*(mS CVS interface - list state of directory files"
 .XI cvs-tag - "\*(mS CVS interface - tag files"
 .XI cvs-update - "\*(mS CVS interface - update directory files"
 .XI %cvs-com 5 "CVS Command line" variable|shell
@@ -49,6 +49,9 @@ cvs-commit \- \*(mS CVS interface - commit changes
 .Me "|cvs-diff"
 cvs-diff \- \*(mS CVS interface - diff changes
 .br
+.Me "|cvs-file-status"
+cvs-file-status \- \*(mS CVS interface - status of files
+.br
 .Me "|cvs-gdiff"
 cvs-gdiff \- \*(mS CVS interface - graphical diff changes
 .br
@@ -61,11 +64,8 @@ cvs-remove \- \*(mS CVS interface - remove file
 .Me "|cvs-resolve-conflicts"
 cvs-resolve-conflicts \- \*(mS CVS interface - resolve conflicts
 .br
-.Me "|cvs-state"
-cvs-state \- \*(mS CVS interface - list state of directory files
-.br
 .Me "|cvs-status"
-cvs-status \- \*(mS CVS interface - status of files
+cvs-status \- \*(mS CVS interface - list state of directory files
 .br
 .Me "|cvs-tag"
 cvs-tag \- \*(mS CVS interface - tag files
@@ -90,6 +90,8 @@ cvs-update \- \*(mS CVS interface - update directory files
 .br
 .B cvs-diff
 .br
+.B cvs-file-status
+.br
 .B cvs-gdiff
 .br
 .B cvs-log
@@ -97,8 +99,6 @@ cvs-update \- \*(mS CVS interface - update directory files
 .B cvs-remove
 .br
 .B cvs-resolve-conflicts
-.br
-.B cvs-state
 .br
 .B cvs-status
 .br
@@ -216,6 +216,10 @@ differences between the current buffer's local file and repository version. If
 the current buffer is a directory list it will list all the differences  found
 in all files within the directory.
 .PP
+The \fBcvs-file-status\fR command opens a \fI*cvs-file-status*\fR window and shows the
+state of the current buffer in the window  including the  modification  state,
+repository etc.
+.PP
 The \fBcvs-gdiff\fR command opens a
 .Ht gdiff 3
 window displaying the differences  between the current buffer's local file and
@@ -238,14 +242,10 @@ gdiff window  displaying  the areas of conflict,  the user may then select the
 correct version in each case and save the resultant new version over the local
 file.
 .PP
-The \fBcvs-state\fR command opens a \fI*cvs-state*\fR window listing the state
+The \fBcvs-status\fR command opens a \fI*cvs-status*\fR window listing the state
 of any file in the current directory which is not up-to-date. Note that unlike
 most cvs sub  commands  this  command  executes  over all files in the current
 buffer's file directory.
-.PP
-The \fBcvs-status\fR command opens a \fI*cvs-state*\fR window and shows the
-state of the current buffer in the window  including the  modification  state,
-repository etc.
 .PP
 The  \fBcvs-tag\fR  command  opens a dialog  box and  allows  the user to add,
 remove or delete a CVS tag. 

@@ -1706,10 +1706,15 @@ reframe(meWindow *wp)
             while(ipipe->bp != wp->buffer)
                 ipipe = ipipe->next ;
 
-            if((ii = ipipe->curRow) >= wp->textDepth)
-                ii = wp->textDepth-1 ;
-            if((ii = wp->dotLineNo-ii) < 0)
-                ii = 0 ;
+            if(wp->buffer->lineCount <= wp->textDepth)
+                ii = 0;
+            else
+            {
+                if((ii = ipipe->curRow) >= wp->textDepth)
+                    ii = wp->textDepth-1;
+                if((ii = wp->dotLineNo-ii) < 0)
+                    ii = 0;
+            }
             if((wp->updateFlags & WFFORCE) || (ii != wp->vertScroll))
             {
                 wp->vertScroll = ii ;
