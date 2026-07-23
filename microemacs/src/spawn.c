@@ -634,7 +634,7 @@ ipipeRemove(meIPipe *ipipe)
     free(ipipe);
 }
 
-/*#define IPIPE_DUMP 1*/
+/*#define IPIPE_DUMP 2*/
 #ifdef IPIPE_DUMP
 static FILE *logFp=NULL;
 #endif
@@ -642,7 +642,7 @@ static FILE *logFp=NULL;
 #ifdef _WIN32
 
 static int
-readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
+readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
 {
     DWORD bRead, bAvail;
 
@@ -664,6 +664,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
             fwrite(buff,1,bRead,logFp);
 #if (IPIPE_DUMP == 2)
             fwrite("ZZAZ",1,4,logFp);
+            fflush(logFp);
 #endif
         }
 #endif
@@ -689,16 +690,24 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
     /* Must peek on a pipe cos if we try to read too many this will fail */
     if((PeekNamedPipe(ipipe->rfd,(LPVOID) NULL,(DWORD) 0,(LPDWORD) NULL,&bAvail,(LPDWORD) NULL) == 0) || (bAvail <= 0))
     {
-#ifdef IPIPE_DUMP
-        if((bRead > 0) && (logFp != NULL))
+        if(doSleep)
+            /* Currently in the middle of a terminal code, throw a short sleep to give the child process a
+             * chance to write the rest of the code, set to a very short time due to Windows timer granularity */
+            Sleep(2);
+        if(!doSleep || (PeekNamedPipe(ipipe->rfd,(LPVOID) NULL,(DWORD) 0,(LPDWORD) NULL,&bAvail,(LPDWORD) NULL) == 0) || (bAvail <= 0))
         {
-            fwrite(buff,1,bRead,logFp);
+#ifdef IPIPE_DUMP
+            if((bRead > 0) && (logFp != NULL))
+            {
+                fwrite(buff,1,bRead,logFp);
 #if (IPIPE_DUMP == 2)
-            fwrite("ZZBZ",1,4,logFp);
+                fwrite("ZZBZ",1,4,logFp);
+                fflush(logFp);
 #endif
+            }
+#endif
+            return bRead;
         }
-#endif
-        return bRead;
     }
     if(bAvail > (DWORD) nbytes)
         bAvail = (DWORD) nbytes;
@@ -754,6 +763,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
         fwrite(buff,1,bRead,logFp);
 #if (IPIPE_DUMP == 2)
         fwrite("ZZCZ",1,4,logFp);
+        fflush(logFp);
 #endif
     }
 #endif
@@ -762,7 +772,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 
 #else
 
-#if MEOPT_CLIENTSERVER || (defined (IPIPE_DUMP))
+#if MEOPT_CLIENTSERVER
 
 #include <sys/socket.h>
 #include <netdb.h>
@@ -770,23 +780,45 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 #include <sys/un.h>
 #include <netinet/in.h>
 
+#endif
+
 static int
-readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
+readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
 {
     int ii;
+
+#if MEOPT_CLIENTSERVER
     if(ipipe->pid == 0)
     {
         if ((ii = recv(ipipe->rfd,(char *) buff,nbytes,0)) < 0)
             ii = 0;
     }
     else
+#endif
+    {
+        if(doSleep)
+        {
+            /* Currently in the middle of a terminal code, throw a short sleep to give the child
+               process a chance to write the rest of the code, currently 20ms */
+            fd_set rfds;
+            struct timeval tv;
+
+            FD_ZERO(&rfds);
+            FD_SET(ipipe->rfd,&rfds);
+            tv.tv_sec = 0;
+            tv.tv_usec = 20000;
+            if(select(ipipe->rfd+1,&rfds,NULL,NULL,&tv) <= 0)
+                return 0;
+        }
         ii = read(ipipe->rfd,buff,nbytes);
+    }
 #ifdef IPIPE_DUMP
     if((ii > 0) && (logFp != NULL))
     {
         fwrite(buff,1,ii,logFp);
 #if (IPIPE_DUMP == 2)
         fwrite("ZZDZ",1,4,logFp);
+        fflush(logFp);
 #endif
     }
 #endif
@@ -794,18 +826,12 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff)
 }
 
 
-#else
-
-#define readFromPipe(ipipe,nbytes,buff) read(ipipe->rfd,buff,nbytes)
-
 #endif
 
-#endif
-
-#define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead)                    \
+#define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,doSleep)            \
 ((curROff < curRRead) ?                                                      \
  (((cc)=rbuff[curROff++]), 1):                                               \
- (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff)) > 0) ?                \
+ (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff,doSleep)) > 0) ?        \
   (((cc)=rbuff[0]),curROff=1): 0))
 
 #define ipipeAddLine(ipipe,lp_old,buff,cbuff)                                \
@@ -1012,7 +1038,7 @@ ipipeRead(meIPipe *ipipe)
     curOff = getcol(buff,len,bp->tabWidth);
     for(;;)
     {
-        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
+        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,0))
         {
             ipipe->ansiCc = 'A';
             if((ipipe->pid >= -1) || (ipipe->pid < -5))
@@ -1093,7 +1119,7 @@ ipipeRead(meIPipe *ipipe)
         case 15: /* ignore */
             break;
         case 27:
-            if((ipipe->flag & meIPIPE_USEPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
+            if((ipipe->flag & meIPIPE_USEPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
             {
                 int gotQ=0, gotN=0, prmS[8], prmC=0;
 
@@ -1102,7 +1128,7 @@ ipipeRead(meIPipe *ipipe)
                 if(cc == '[')
                 {
 get_another:
-                    if(ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
+                    if(ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
                     {
                         if(isDigit(cc))
                         {
@@ -1503,18 +1529,18 @@ cant_handle_this:
                 {
                     /* OSC: consume until BEL (0x07) or ST (ESC \) */
                     do {
-                        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead))
+                        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
                             break;
                     } while((cc != 7) && (cc != 27));
                     /* if terminated by ESC, consume the following \ */
                     if(cc == 27)
-                        ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead);
+                        ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1);
                     break;
                 }
                 else if(cc == '(' || cc == ')')
                 {
                     /* character set designation: consume the single designator byte and ignore all */
-                    ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead);
+                    ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1);
                     break;
                 }
             }
@@ -1524,26 +1550,29 @@ cant_handle_this:
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
             {
                 meUByte c2, c3;
-                if((cc < 0xc0) || !ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
+                if((cc < 0xc0) || !ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead,1) || ((c2 & 0xc0) != 0x80))
                     /* orphan continuation byte - discard */
                     break;
                 if(cc < 0xe0)
                     /* 2-byte sequence (0xc0-0xdf) */
                     cc = utf8ToMeChar((((meUInt)(cc & 0x1f)) << 6) | (c2 & 0x3f));
-                else if(!ipipeGetNextChar(ipipe,c3,rbuff,curROff,curRRead) || ((c3 & 0xc0) != 0x80))
+                else if(!ipipeGetNextChar(ipipe,c3,rbuff,curROff,curRRead,1) || ((c3 & 0xc0) != 0x80))
                     break;
                 else if(cc < 0xf0)
                     /* 3-byte sequence */
                     cc = utf8ToMeChar((((meUInt) (cc & 0x0f)) << 12) | (((meUInt) (c2 & 0x3f)) << 6) | (c3 & 0x3f));
-                else if(!ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead) || ((c2 & 0xc0) != 0x80))
+                else if(!ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead,1) || ((c2 & 0xc0) != 0x80))
                     break;
                 else
                     /* 4-byte: ME supports only up to U+FFFF - consume */
                     cc = meCHAR_UNDEF;
 #if (IPIPE_DUMP == 2)
                 if((cc == meCHAR_UNDEF) && (logFp != NULL))
+                {
                     /* Put an easy to spot marker into the log */
                     fwrite("ZZUZ",1,4,logFp);
+                    fflush(logFp);
+                }
 #endif
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
