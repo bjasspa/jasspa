@@ -538,7 +538,7 @@ if [ -z "${INSTPKG}" ] ; then
         fi
       fi
       
-      if [ $PLATFORM == "Linux" ] ; then
+      if [ $PLATFORM = "Linux" ] ; then
         while true; do
           read -p "Create Application launcher for mew ? (y/n) " rin
           case $rin in 

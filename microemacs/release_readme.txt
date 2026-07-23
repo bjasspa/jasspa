@@ -39,7 +39,7 @@ docs and spelling dictionaries for numerous languages.
 INSTALLERS
 ----------
 
-- UNIX: The preferred install method is using the microemacs-install script, run the following script in a terminal:
+- UNIX: The preferred install method is using the microemacs-install script, this method supports Cygwin and MSYS2. Simply run the following command in a terminal:
 
     /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
 
@@ -47,19 +47,35 @@ INSTALLERS
   encounters issues during the installation processes, typically insufficient permissions, please follow the
   instructions given.
 
-  Note: MicroEmacs supports a native MacOS GUI version, i.e. it does not require X11, the installer will first prompt
-  you for which type of MicroEmacs you wish to install. 
+  Note: MicroEmacs supports a native MacOS GUI version, i.e. does not require X11, the installer will first prompt
+  for which type of MicroEmacs you wish to install.
 
 - Windows: All Windows platforms can use the microemacs-install.ps1 PowerShell script, run the following in a PowerShell:
 
     Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 | Invoke-Expression
 
-  Or download the script first and run locally, note that this will always install the latest release and to install
-  for all users the PowerShell needs to be run as Administrator. If the script encounters issues during the
-  installation processes, typically insufficient permissions, please follow the instructions given.
+  Or download the script first and run locally, if you get the error:
+    
+        cannot be loaded because running scripts is disabled on this system
+        
+  Run the script as follows:
+
+      powershell -ExecutionPolicy Bypass -File microemacs-install.ps1
+
+  Note that this will always install the latest release and to install for all users the PowerShell needs to be run as
+  Administrator. If the script encounters issues during the installation processes, typically insufficient
+  permissions, please follow the instructions given.
 
 - Windows intel: Download and run Jasspa_MicroEmacs_<VERSION>_installer_windows.msi installer (intel only), which
   contains the binaries, macros and help file, to create a fully working environment.
+
+
+NOTE:
+
+  If you get an error about a missing VC-runtime (vcruntime140.dll) you have to download and install the Microsoft VC
+  runtime, download from: https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170
+
+  For Intel processors the **x86** architecture should be installed, *not* x64.
 
 Once successfully installed a microemacs-update script (or microemacs-update.ps1 on Windows) can be used to update the
 installation to the latest version or to install other components such as spelling languages, e.g. run:

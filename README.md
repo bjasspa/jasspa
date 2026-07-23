@@ -72,7 +72,7 @@ _Right:_ GUI version - theme "Ayu Dark", displaying the hypertext enabled R docu
 
 ## Installation
 
-### Linux/MacOS/Cygwin
+### Linux/MacOS/Cygwin/MSYS2
 
 Install by running the `miscroemacs-install` script, available in the latest release. This can be done by running the following command in a terminal:
 
@@ -119,7 +119,7 @@ entry in your start menu after installation.
 The MicroEmacs single file executables with macro files embedded come in two flavors:
 
 - mesc - terminal version ('s' for single file, 'c' stands for console)
-- mesw - GUI version ('w' stands for window, which requires X11 on Linux, MacOS or Cygwin)
+- mesw - GUI version ('w' stands for window, which requires X11 on Linux, MacOS and Cygwin)
 
 Download one of the following zip archives with the binaries  inside and place
 the executables into a folder belonging to your PATH variable.
@@ -132,7 +132,8 @@ the executables into a folder belonging to your PATH variable.
 | MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_macos_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_macos_intel_mesw.zip)   |
 | Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_windows_intel_mesw.zip) |
 | Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_windows_arm_mesw.zip)   |
-| Cygwin intel  | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_cygwin_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_cygwin_intel_mesw.zip)   |
+| Cygwin intel  | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_cygwin_intel_mesc.zip)  | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_cygwin_intel_mesw.zip)   |
+| MSYS2 intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601_abin_msyswin_intel_mesc.zip) | N/A  |
 
 To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20260601/Jasspa_MicroEmacs_20260601-sha256.txt)
 

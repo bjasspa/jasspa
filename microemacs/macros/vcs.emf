@@ -10,7 +10,7 @@ define-macro vcs-id
   !force set-variable #l0 @1
   !iif &not $status  set-variable #l0 $buffer-fname
   !if &seq "" #l0
-    !iif @#  ml-write "[VCS Error: No file path given]"
+    !iif &band @# 1  ml-write "[VCS Error: No file path given]"
     !abort
   !elif &seq &lget .ld 1 &lef #l0 &len &lget .ld 1
     set-variable #p8 &ind &cat ".vcs." &set #p9 &lget .li 1
@@ -38,7 +38,7 @@ define-macro vcs-id
           !iif &seq &lef #l4 &len #l0 #l0  !break
         !done
         !if &seq #l0 ""
-          !iif @#  ml-write &spr "[VCS Error: Failed to identify system used for %s]" #l4
+          !iif &band @# 1  ml-write &spr "[VCS Error: Failed to identify system used for %s]" #l4
           !abort
         !endif
         set-variable #p9 "cc"
@@ -52,35 +52,34 @@ define-macro vcs-id
     set-variable .ld &spr "|%s|%s|" #l0 &lget .ld 1
     set-variable .li &spr "|%s|%s|" #p9 &lget .li 1
   !endif
-  !iif &not @?  ml-write &spr "VCS for \"%s\" is %s (%s)" #l0 &lget #p8 1 #p9
+  !if &not @?
+    ml-write &spr "VCS for \"%s\" is %s (%s)" #l0 &lget #p8 1 #p9
+  !elif &band @# 2
+    !if &not &exi &set #l0 &cat #p9 &set #l1 @2
+      !force set-variable #l2 @3
+      !iif &not $status  -8 ml-write &spr "[VCS Error: %s does not support %s]" &lget #p8 1 &rig #l1 1
+      !iif &not &exi &set #l0 &cat #p9 #l2  -8 ml-write &spr "[VCS Error: %s does not support %s/%s]" &lget #p8 1 &rig #l1 1 &rig #l2 1
+    !endif
+    execute-named-command #l0
+  !endif
 !emacro
 set-variable .vcs-id.ld "|:|:|"
 set-variable .vcs-id.li "|||"
 
 define-macro vcs
-  1 vcs-id
-  !iif &not &exi #l9  -8 ml-write &spr "[VCS Error: %s does not have an main %s command]" &lget #l8 1 #l9
-  execute-named-command #l9
+  3 vcs-id $buffer-fname ""
 !emacro
 define-macro vcs-add
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-add"  -8 ml-write &spr "[VCS Error: %s does not support add]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-add"
 !emacro
 define-macro vcs-annotate
-  vcs-blame @1
+  3 vcs-id $buffer-fname "-annotate" "-blame"
 !emacro
 define-macro vcs-blame
-  1 vcs-id
-  !if &not &exi &set #l0 &cat #l9 "-blame"
-    !iif &not &exi &set #l0 &cat #l9 "-annotate"  -8 ml-write &spr "[VCS Error: %s does not support annotate/blame]" &lget #l8 1
-  !endif
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-annotate" "-blame"
 !emacro
 define-macro vcs-checkout
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-checkout"  -8 ml-write &spr "[VCS Error: %s does not support checkout]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-checkout"
 !emacro
 define-macro vcs-coci
   0 vcs-id
@@ -93,102 +92,62 @@ define-macro vcs-coci
   !endif
 !emacro
 define-macro vcs-cat
-  1 vcs-id
-  !if &not &exi &set #l0 &cat #l9 "-cat"
-    !iif &not &exi &set #l0 &cat #l9 "-show-file"  -8 ml-write &spr "[VCS Error: %s does not support cat/show-file]" &lget #l8 1
-  !endif
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-cat" "-show-file"
 !emacro
 define-macro vcs-commit
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-commit"  -8 ml-write &spr "[VCS Error: %s does not support commit]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-commit"
 !emacro
 define-macro vcs-commit-log
-  vcs-show @1
+  3 vcs-id $buffer-fname "-show" "-commit-log"
 !emacro
 define-macro vcs-delete
-  1 vcs-id
-  !if &not &exi &set #l0 &cat #l9 "-delete"
-    !iif &not &exi &set #l0 &cat #l9 "-remove"  -8 ml-write &spr "[VCS Error: %s does not support delete/remove]" &lget #l8 1
-  !endif
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-delete" "-remove"
 !emacro
 define-macro vcs-diff
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-diff"  -8 ml-write &spr "[VCS Error: %s does not support diff]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-diff"
 !emacro
 define-macro vcs-fetch
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-fetch"  -8 ml-write &spr "[VCS Error: %s does not support fetch]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-fetch"
 !emacro
 define-macro vcs-gdiff
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-gdiff"  -8 ml-write &spr "[VCS Error: %s does not support gdiff]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-gdiff"
 !emacro
 define-macro vcs-log
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-log"  -8 ml-write &spr "[VCS Error: %s does not support log]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-log"
 !emacro
 define-macro vcs-move
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-move"  -8 ml-write &spr "[VCS Error: %s does not support move]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-move"
 !emacro
 define-macro vcs-pull
-  vcs-update @1
+  3 vcs-id $buffer-fname "-update" "-pull"
 !emacro
 define-macro vcs-push
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-push"  -8 ml-write &spr "[VCS Error: %s does not support push]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-push"
 !emacro
 define-macro vcs-remove
-  vcs-delete @1
+  3 vcs-id $buffer-fname "-delete" "-remove"
 !emacro
 define-macro vcs-revert
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-revert"  -8 ml-write &spr "[VCS Error: %s does not support revert]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-revert"
 !emacro
 define-macro vcs-show
-  1 vcs-id
-  !if &not &exi &set #l0 &cat #l9 "-show"
-    !iif &not &exi &set #l0 &cat #l9 "-commit-log"  -8 ml-write &spr "[VCS Error: %s does not support show/commit-log]" &lget #l8 1
-  !endif
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-show" "-commit-log"
 !emacro
 define-macro vcs-show-file
-  vcs-cat @1
+  3 vcs-id $buffer-fname "-cat" "-show-file"
 !emacro
 define-macro vcs-setup
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-setup"  -8 ml-write &spr "[VCS Error: %s does not support setup]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-setup"
 !emacro
 define-macro vcs-status
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-status"  -8 ml-write &spr "[VCS Error: %s does not support status]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-status"
 !emacro
 define-macro vcs-switch
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-switch"  -8 ml-write &spr "[VCS Error: %s does not support switch]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-switch"
 !emacro
 define-macro vcs-unstage
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-unstage"  -8 ml-write &spr "[VCS Error: %s does not support unstage]" &lget #l8 1
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-unstage"
 !emacro
 define-macro vcs-update
-  1 vcs-id
-  !if &not &exi &set #l0 &cat #l9 "-update"
-    !iif &not &exi &set #l0 &cat #l9 "-pull"  -8 ml-write &spr "[VCS Error: %s does not support pull/update]" &lget #l8 1
-  !endif
-  execute-named-command #l0
+  3 vcs-id $buffer-fname "-update" "-pull"
 !emacro
