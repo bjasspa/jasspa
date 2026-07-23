@@ -92,15 +92,20 @@ define-macro vcs-coci
     -8 ml-write &spr "[VCS Error: %s does not support check-out-check-in]" &lget #l8 1
   !endif
 !emacro
+define-macro vcs-cat
+  1 vcs-id
+  !if &not &exi &set #l0 &cat #l9 "-cat"
+    !iif &not &exi &set #l0 &cat #l9 "-show-file"  -8 ml-write &spr "[VCS Error: %s does not support cat/show-file]" &lget #l8 1
+  !endif
+  execute-named-command #l0
+!emacro
 define-macro vcs-commit
   1 vcs-id
   !iif &not &exi &set #l0 &cat #l9 "-commit"  -8 ml-write &spr "[VCS Error: %s does not support commit]" &lget #l8 1
   execute-named-command #l0
 !emacro
 define-macro vcs-commit-log
-  1 vcs-id
-  !iif &not &exi &set #l0 &cat #l9 "-commit-log"  -8 ml-write &spr "[VCS Error: %s does not support commit-log]" &lget #l8 1
-  execute-named-command #l0
+  vcs-show @1
 !emacro
 define-macro vcs-delete
   1 vcs-id
@@ -149,6 +154,16 @@ define-macro vcs-revert
   1 vcs-id
   !iif &not &exi &set #l0 &cat #l9 "-revert"  -8 ml-write &spr "[VCS Error: %s does not support revert]" &lget #l8 1
   execute-named-command #l0
+!emacro
+define-macro vcs-show
+  1 vcs-id
+  !if &not &exi &set #l0 &cat #l9 "-show"
+    !iif &not &exi &set #l0 &cat #l9 "-commit-log"  -8 ml-write &spr "[VCS Error: %s does not support show/commit-log]" &lget #l8 1
+  !endif
+  execute-named-command #l0
+!emacro
+define-macro vcs-show-file
+  vcs-cat @1
 !emacro
 define-macro vcs-setup
   1 vcs-id

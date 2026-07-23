@@ -1440,7 +1440,7 @@ define-macro git-move
     !abort
   !endif
   ; TODO implement creation of intemediate directories (eqiv of svn add --parents)
-  !iif &lget &set #l9 .git.values 2  -8 ml-write "[Git create intermediate directories not yet implemented]"
+  !iif &lget &set #l9 .git-osd.values 2  -8 ml-write "[Git create intermediate directories not yet implemented]"
   set-variable #l2 &spr "%s mv -- " .git.com
   7 git-get-file-list 0 0 #l2
   find-buffer "*git-cmdline*"
@@ -1463,7 +1463,7 @@ define-macro git-move
 
 define-macro git-remove
   10 git-osd
-  set-variable #l9 .git.values
+  set-variable #l9 .git-osd.values
   set-variable #l2 &spr "%s rm %s-- " .git.com &con &lget #l9 1 "-r " ""
   7 git-get-file-list 0 0 #l2
   10 git-exec 3 $buffer-fname
@@ -1656,7 +1656,7 @@ define-macro git-revert
 
 define-macro git-unstage
   16 git-osd
-  set-variable #l9 .git.values
+  set-variable #l9 .git-osd.values
   set-variable #l2 &spr "%s reset -- " .git.com
   7 git-get-file-list 0 0 #l2
   16 git-exec 3 $buffer-fname
