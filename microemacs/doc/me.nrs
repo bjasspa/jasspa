@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/03/05 16:15:12 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/07/25 00:16:01 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -4843,7 +4843,7 @@ ignore line feature.
 .Ht cvs-add 3
 looks  for  a  Tags  file  in  the  CVS  directory  and  sets  the  GUI  state
 appropriately. Added server to the
-.Ht cvs-state  3
+.Ht cvs-status  3
 line mangling.
 .BU
 [040909]
