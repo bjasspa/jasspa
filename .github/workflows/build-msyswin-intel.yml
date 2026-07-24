@@ -93,7 +93,7 @@ jobs:
         Remove-Item .gitignore
         $MSYS2BIN = (Get-Item "msyswin2-intel64-gcc*").Name
         Rename-Item -Path $MSYS2BIN -NewName msyswin2-intel64
-        Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
+        Rename-Item -Path windows100-intel32-msvc18 -NewName windows100-intel32
         Move-Item -Path windows100-intel32 -Destination ..
         cd ..
         Rename-Item -Path release_readme.txt -NewName readme.txt

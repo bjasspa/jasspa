@@ -69,7 +69,7 @@ jobs:
           mkdir -Path packages
           cd .\microemacs\bin
           Remove-Item .gitignore
-          Rename-Item -Path windows100-intel32-msvc17 -NewName windows100-intel32
+          Rename-Item -Path windows100-intel32-msvc18 -NewName windows100-intel32
           cd ..
           Rename-Item -Path release_readme.txt -NewName readme.txt
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
@@ -136,7 +136,7 @@ jobs:
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           cd .\mesingle
           mkdir -Path bin\windows100-intel32
-          ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesc.exe
+          ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc18s\mec.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesc.exe
           Copy-Item -Path ..\LICENSE -Destination .
           Copy-Item -Path ..\readme.txt -Destination .
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_intel_mesc
@@ -157,7 +157,7 @@ jobs:
           $env:MEVER=$(.\bin\windows100-intel32\mec -p @contribs/ver.emf)
           cd .\mesingle
           Remove-Item bin\windows100-intel32\mesc.exe
-          ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc17s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesw.exe
+          ..\bin\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-intel32-msvc18s\mew.exe -t ..\bin\windows100-intel32\tfs.exe -o bin\windows100-intel32\mesw.exe
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_intel_mesw
 
       - name: Upload windows-intel downloads
