@@ -96,7 +96,7 @@ jobs:
         mkdir -Path packages
         cd .\microemacs\bin
         Remove-Item .gitignore
-        Rename-Item -Path cygwin3-intel64-gcc13 -NewName cygwin3-intel64
+        Rename-Item -Path cygwin3-intel64-gcc14 -NewName cygwin3-intel64
         Rename-Item -Path windows100-intel32-msvc18 -NewName windows100-intel32
         Move-Item -Path windows100-intel32 -Destination ..
         cd ..
