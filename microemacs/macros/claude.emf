@@ -18,7 +18,7 @@ define-macro-file hkipipe fhook-ipipe ipipe-mode ipipe-output
     set-varia $buffer-input ""
     set-variable $buffer-ipipe ""
     !force buffer-unbind-key &kbin "" ipipe-mode
-    ml-write "[ClaudeQQQ session ended - C-return to restart]"
+    ml-write "[Claude session ended - C-return to restart]"
   !endif
   !iif &equ :imode 2  2 screen-update
 !emacro

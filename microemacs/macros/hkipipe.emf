@@ -301,9 +301,6 @@
   set-variable #l3 @cc
   !if &les &len #l3 2
     set-variable #l1 #l3
-    ;    !elif &and &band $system 0x100 &seq #l3 "newline"
-    ; For Windows we need a \r\n sequence - over-ride the default.
-    ;        set-variable #l1 "\CM\CJ"
   !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
     set-variable #l1 &lget "|\CI|\d|\CM|\CA|\e[D|\CD|\CE|\e[C|\CK|\CL|\e[B|\e[A|\e\e|\ef|\eb|" #l0
   !elif &set #l0 &lfi "|backspace|" #l2
@@ -352,6 +349,8 @@
       set-variable #l0 @cqk
       !if &not &bmo "pipe"
         !return
+      !elif &set #l1 &sin #l0 "\CH\CP\CN\CF\CB"
+        ipipe-write &lget "|\d|\e[A|\e[B|\e[C|\e[D|" #l1
       !elif &equ &len #l0 1
         ipipe-write #l0
       !elif &seq #l0 "f3"

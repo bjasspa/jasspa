@@ -97,8 +97,8 @@ set-variable #l1 1
 !iif &seq "" &set .change-font.wftp &lget .change-font.cs-wftp &set #l2 &lfind .change-font.cs-id #l0  set-variable .change-font.wftp 0
 !iif &reg &spr "/history/%s/ext-char-set" %platform "0"  set-variable $system &bor $system 0x10000
 !if &ban $system 0x10000
-  set-char-mask "dp" "\CA\CB\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\C^\C_\CG\C[\C]"
-  set-char-mask "p"  "\CH\CI\CJ\CS\CT\CZ"
+  set-char-mask "dp" "\CA\CB\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\CS\CT\C^\C_\CG\C[\C]"
+  set-char-mask "p"  "\CH\CI\CJ\CZ"
   set-variable .osd.checkbox-chars "^ \CS\CT ^"
   set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
   set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** x\CZ \CP \CQ\t\n\CH\CQ\CP\\"

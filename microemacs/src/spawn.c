@@ -744,7 +744,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
 #ifdef IPIPE_DUMP
                     if(logFp != NULL)
                     {
-                        fwrite("SKIP INIT:",1,10,logFp);
+                        fwrite(":SKIP-INIT:",1,10,logFp);
 #if (IPIPE_DUMP == 2)
                         fwrite(buff,1,ii,logFp);
                         fwrite(":END:",1,5,logFp);
@@ -979,7 +979,16 @@ ipipeRead(meIPipe *ipipe)
     meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1], cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
     int     curROff=0, curRRead=0;
     int     prmA, prmL;
-
+#ifdef _WIN32
+    /* On Windows ConPTY explicitly generates a new line blank line for wrapped text rather than rely on the terminal handler,
+     * this needs to be caught and handled properly otherwise an additional line is inserted at the end of the buffer.
+     * The blank line insertion sequence is NL (\r\n) followed by 'ESC [ y;x H' move where y is the starting line and x is the last column,
+     * followed by text which triggers the line wrap. If this sequence occurs we must avoid adding a 2nd line on the text-wrap. */
+    int scrollWrapCUP = 0;
+#else
+#define scrollWrapCUP 0
+#endif
+    
     maxOff = ipipe->noCols;
 #ifdef _UNIX
     meSigHold();
@@ -1025,10 +1034,6 @@ ipipeRead(meIPipe *ipipe)
      */
     if((curRow=ipipe->curRow) > bp->dotLineNo)
         curRow = bp->dotLineNo;
-#ifdef IPIPE_DUMP
-    if(logFp == NULL)
-        logFp = fopen("./ipipe.log","wb+");
-#endif
     len = bp->dotOffset;
     lp_old = bp->dotLine;
     meBufferStoreLocation(lp_old,bp->dotOffset,bp->dotLineNo);
@@ -1038,7 +1043,7 @@ ipipeRead(meIPipe *ipipe)
     curOff = getcol(buff,len,bp->tabWidth);
     for(;;)
     {
-        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,0))
+        if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,scrollWrapCUP))
         {
             ipipe->ansiCc = 'A';
             if((ipipe->pid >= -1) || (ipipe->pid < -5))
@@ -1115,6 +1120,10 @@ ipipeRead(meIPipe *ipipe)
             p1 = buff;
             *p1 = '\0';
             len = curOff = 0;
+#ifdef _WIN32
+            /* See scrollWrapCUP comment above */
+            scrollWrapCUP = 1;
+#endif
             break;
         case 15: /* ignore */
             break;
@@ -1185,8 +1194,8 @@ get_another:
                         case 'C':
                             if(!gotN)
                                 prmL = 1;
-                            if((prmL + len) >= ipipe->noCols)
-                                prmL = ipipe->noCols - len - 1;
+                            if((prmL + len) >= maxOff)
+                                prmL = maxOff - len - 1;
                             ii = prmL - meStrlen(p1);
                             p1 += prmL;
                             len += prmL;
@@ -1218,8 +1227,8 @@ get_another:
                             prmL--;  /* convert to 0-based */
                             if(prmL < 0)
                                 prmL = 0;
-                            else if(prmL >= ipipe->noCols)
-                                prmL = ipipe->noCols - 1;
+                            else if(prmL >= maxOff)
+                                prmL = maxOff - 1;
                             ii = prmL - meStrlen(buff);
                             p1  = buff + prmL;
                             len = prmL;
@@ -1246,6 +1255,13 @@ get_another:
                                 prmA = (gotN) ? prmL-1:0;
                                 prmL = 0;
                             }
+#ifdef _WIN32
+                            /* See scrollWrapCUP comment above */
+                            if((scrollWrapCUP == 1) && prmC && (prmA == curRow-1) && (prmL == maxOff-1))
+                                scrollWrapCUP = 2;
+                            else
+                                scrollWrapCUP = 0;
+#endif
 move_cursor_pos:
                             if(prmA < 0)
                                 prmA = 0;
@@ -1253,8 +1269,8 @@ move_cursor_pos:
                                 prmA = ipipe->noRows - 1;
                             if(prmL < 0)
                                 prmL = 0;
-                            else if(prmL >= ipipe->noCols)
-                                prmL = ipipe->noCols - 1;
+                            else if(prmL >= maxOff)
+                                prmL = maxOff - 1;
                             ipipeStoreInputPos();
                             bp->dotLineNo += prmA - curRow;
                             lp_old = bp->dotLine;
@@ -1549,6 +1565,9 @@ cant_handle_this:
 #if MEOPT_EXTENDED
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
             {
+#if (IPIPE_DUMP == 2)
+                meUByte c1=cc;
+#endif
                 meUByte c2, c3;
                 if((cc < 0xc0) || !ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead,1) || ((c2 & 0xc0) != 0x80))
                     /* orphan continuation byte - discard */
@@ -1569,8 +1588,8 @@ cant_handle_this:
 #if (IPIPE_DUMP == 2)
                 if((cc == meCHAR_UNDEF) && (logFp != NULL))
                 {
-                    /* Put an easy to spot marker into the log */
-                    fwrite("ZZUZ",1,4,logFp);
+                    /* Put an easy to spot marker into the log with U+FFFF code */
+                    fprintf(logFp,":ZZUZ:%04x:",((c1 < 0xe0) ? ((((meUInt)(c1 & 0x1f)) << 6) | (c2 & 0x3f)):((c1 < 0xf0) ? ((((meUInt) (c1 & 0x0f)) << 12) | (((meUInt) (c2 & 0x3f)) << 6) | (c3 & 0x3f)):-1)));
                     fflush(logFp);
                 }
 #endif
@@ -1586,6 +1605,19 @@ cant_handle_this:
                     len--;
                     curOff = maxOff - 1;
                 }
+#ifdef _WIN32
+                else if((scrollWrapCUP == 2) && (meLineGetLength(meLineGetNext(lp_old)) == 0))
+                {
+                    /* ConPTY's bottom-of-viewport scroll-resync idiom was confirmed (see init & use scrollWrapCUP),
+                     * the blank line for this row already exists via \n insertion, so simple reuse */
+                    lp_old = meLineGetNext(lp_old);
+                    if(curRow < ipipe->noRows-1)
+                        curRow++;
+                    p1 = buff;
+                    *p1 = '\0';
+                    len = curOff = 0;
+                }
+#endif
                 else
                 {
                     meUByte bb[2];
@@ -1598,6 +1630,25 @@ cant_handle_this:
                     p1[1] = '\0';
                     ii = ipipeAddLine(ipipe,lp_old,buff,cbuff);
                     noLines += ii;
+                    if(lp_old != bp->baseLine)
+                    {
+                        /* The wrap just produced the row lp_old used to occupy, so retire lp_old
+                         * exactly as ipipeStoreInputPos does for a real commit, and advance lp_old
+                         * to the line after it. Otherwise this old line is never spliced out by
+                         * anything (the wrap doesn't move lp_old, and the commit that eventually
+                         * follows only retires whatever lp_old still points to) and is left
+                         * stranded in the buffer, resurfacing later as stale content one row after
+                         * where it should have been. */
+                        meLine *lp_next = meLineGetNext(lp_old);
+                        meLine *lp_new = meLineGetPrev(lp_old);
+                        noLines--;
+                        lp_new->next = lp_old->next;
+                        lp_old->next->prev = lp_new;
+                        if(lp_old->flag & meLINE_ANCHOR)
+                            meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,bp,lp_old,lp_new,0,0);
+                        meFree(lp_old);
+                        lp_old = lp_next;
+                    }
                     if(curRow < ipipe->noRows-1)
                         curRow += ii;
                     p1[0] = bb[0];
@@ -1609,6 +1660,9 @@ cant_handle_this:
                     len = curOff = 0;
                 }
             }
+#ifdef _WIN32
+            scrollWrapCUP = 0;
+#endif
             if(ipipe->flag & meIPIPE_OVERWRITE)
             {
                 int ll = meStrlen(p1)+1;
@@ -1786,6 +1840,9 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         if(((ss=getUsrVar((meUByte *)"ipipe-width")) == NULL) || ((noCols=((meShort) meAtoi(ss))) <= 0) || (noCols > meBUF_SIZE_MAX - 2))
             noCols = meBUF_SIZE_MAX - 2;
     }
+#if (IPIPE_DUMP == 2)
+    fprintf(logFp,":IPIPE-SIZE:%d %d -> %d %d (%d %d):",ipipe->noRows,ipipe->noCols,noRows,noCols,meModeTest(bp->mode,MDWRAP),wp->textWidth);
+#endif
     if((ipipe->noRows != noRows) || (ipipe->noCols != noCols))
     {
         ii = ((int) noRows) - ((int) ipipe->noRows);
@@ -1796,8 +1853,17 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         {
             if(ii > 0)
             {
+#ifdef _WIN32
+                /* ConPTY anchors the top of the viewport when the window grows, its post-resize
+                 * full-screen repaint redraws the same top line unchanged and simply adds blank
+                 * rows at the bottom, rather than reflowing/revealing more scrollback above the
+                 * cursor as a Unix terminal would. So curRow must be left as-is here; advancing it
+                 * makes the subsequent ESC[H home from the repaint walk too far back into
+                 * scrollback. */
+#else
                 if((bp->lineCount > noRows) && ((ipipe->curRow += ii) > bp->lineCount))
                     ipipe->curRow = (meShort) bp->lineCount;
+#endif
             }
             else if(ipipe->curRow >= ipipe->noRows)
                 ipipe->curRow = ipipe->noRows-1;
@@ -2341,6 +2407,10 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         ipipeRemove(ipipe);
         return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName);
     }
+#ifdef IPIPE_DUMP
+    if(logFp == NULL)
+        logFp = fopen("./ipipe.log","wb+");
+#endif
     /* setup the buffer */
     if(flags & LAUNCH_BUFIPIPE)
         bp->ipipeFunc = ipipeFunc;
