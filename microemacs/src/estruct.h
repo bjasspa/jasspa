@@ -1198,6 +1198,23 @@ typedef struct meFrame
 #define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
 #define meIPIPE_ANSICOLOR   0x1000      /* Translate ANSI SGR to semantic scheme tags */
 
+/* ipipe ANSI colour encoding - the 24 bit rgb & 256 palette colours are reduced to one of the
+ * 8 base colours plus a shade, this is all that is required to determine the meaning the colour
+ * is conveying, which is what MicroEmacs needs to select the semantic scheme */
+#define meIPIPE_COL_MASK    0x07        /* Base colour: 0=black 1=red 2=green 3=yellow 4=blue 5=magenta 6=cyan 7=white */
+#define meIPIPE_COL_SET     0x08        /* Colour is set, i.e. not the terminal default */
+#define meIPIPE_COL_BRIGHT  0x10        /* Light shade of the base colour */
+#define meIPIPE_COL_DARK    0x20        /* Dark shade of the base colour */
+#define meIPIPE_COL_GREY    0x40        /* Neutral, i.e. no significant hue, base colour gives the level */
+#define meIPIPE_COL_RGB     0x80        /* Colour was given as an rgb or 256 palette value */
+
+/* ipipe ANSI style bits, note that bits 0 to 2 must not change as they are used to index the
+ * bold, italic & underline scheme combinations */
+#define meIPIPE_STY_BOLD    0x01
+#define meIPIPE_STY_ITALIC  0x02
+#define meIPIPE_STY_UNDER   0x04
+#define meIPIPE_STY_DIM     0x08        /* Faint text (\E[2m), used to de-emphasize */
+
 typedef struct meIPipe {
     meBuffer          *bp;
     struct meIPipe    *next;
@@ -1227,9 +1244,9 @@ typedef struct meIPipe {
     meShort            curRow;
     meShort            flag;
     meUByte            ansiCc;    /* last emitted \CCX byte; 0 = none emitted */
-    meUByte            ansiFg;    /* current fg: bits 1-4 = base color, 5 = colour set, 6 = bright */
-    meUByte            ansiBg;    /* current bg: bits 1-4 = base color, 5 = colour set, 6 = bright */
-    meUByte            ansiSt;    /* style: bits 1 = bold, 2 = italic, 3 = underline */
+    meUByte            ansiFg;    /* current fg colour, see meIPIPE_COL_* */
+    meUByte            ansiBg;    /* current bg colour, see meIPIPE_COL_* */
+    meUByte            ansiSt;    /* current style, see meIPIPE_STY_* */
 } meIPipe;
 
 #endif

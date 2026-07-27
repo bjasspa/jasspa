@@ -872,6 +872,10 @@ do {                                                                         \
 } while(0)
 
 
+/* Maximum number of parameters collected from a CSI sequence, must be large enough to hold a
+ * combined SGR setting both an rgb fg & bg colour, i.e. '\E[0;38;2;r;g;b;48;2;r;g;bm' */
+#define meIPIPE_PRM_MAX 16
+
 static int
 ipipeDecodeColorLine(const meUByte *src, meUByte *buff, meUByte *cbuff, int offs)
 {
@@ -941,30 +945,184 @@ ipipeAddColorLine(meLine *lp, const meUByte *buff, const meUByte *cbuff)
     return addLine(lp,encbuff);
 }
 
+/* ipipeBaseToColor - convert one of the 16 standard terminal colours, i.e. 0-7 and their
+ * bright versions 8-15, into the colour encoding */
+static meUByte
+ipipeBaseToColor(int idx)
+{
+    meUByte cc;
+
+    cc = (meUByte) ((idx & 0x07) | meIPIPE_COL_SET);
+    if(idx & 0x08)
+        cc |= meIPIPE_COL_BRIGHT;
+    if(((idx & 0x07) == 0) || ((idx & 0x07) == 7))
+        /* black & white have no hue */
+        cc |= meIPIPE_COL_GREY;
+    return cc;
+}
+
+/* ipipeRgbToColor - reduce a 24 bit rgb colour to one of the 8 base colours plus a shade,
+ * see meIPIPE_COL_* for the returned encoding */
+static meUByte
+ipipeRgbToColor(int r, int g, int b)
+{
+    meUByte cc;
+    int mx, mn;
+
+    mx = (r > g) ? r:g;
+    if(b > mx)
+        mx = b;
+    mn = (r < g) ? r:g;
+    if(b < mn)
+        mn = b;
+    if((mx < 0x20) || (((mx - mn) << 4) < mx))
+    {
+        /* Either too dark, or too little colour in relation to the brightness (i.e. less than
+         * about 6% saturated) for the hue to be significant, so this is a neutral grey. Note
+         * that the test must be relative as the pale backgrounds used to mark up diffs have a
+         * very low absolute colour range, e.g. 230,255,236 is a green. Use black or white as
+         * the base colour depending on which end of the scale the grey is closest to */
+        if(mx < 0x40)
+            cc = 0 | meIPIPE_COL_DARK;              /* black                        */
+        else if(mx < 0xa0)
+            cc = 0 | meIPIPE_COL_BRIGHT;            /* dark grey, i.e. bright black */
+        else if(mx < 0xd8)
+            cc = 7 | meIPIPE_COL_DARK;              /* light grey, i.e. dark white  */
+        else
+            cc = 7 | meIPIPE_COL_BRIGHT;            /* white                        */
+        return (meUByte) (cc | meIPIPE_COL_SET | meIPIPE_COL_GREY | meIPIPE_COL_RGB);
+    }
+    /* Split the channels about the mid point to get the nearest of the 6 hues, the base colour
+     * bits are in the same order as the channels, i.e. bit 0 = red, 1 = green & 2 = blue */
+    mn = (mx + mn) >> 1;
+    cc = (meUByte) (((r > mn) ? 0x01:0) | ((g > mn) ? 0x02:0) | ((b > mn) ? 0x04:0));
+    if(mx >= 0xc0)
+        cc |= meIPIPE_COL_BRIGHT;
+    else if(mx < 0x80)
+        cc |= meIPIPE_COL_DARK;
+    return (meUByte) (cc | meIPIPE_COL_SET | meIPIPE_COL_RGB);
+}
+
+/* ipipePalToColor - convert a 256 colour palette index to a base colour plus shade */
+static meUByte
+ipipePalToColor(int idx)
+{
+    static const meUByte cubeLvl[6] = { 0x00, 0x5f, 0x87, 0xaf, 0xd7, 0xff };
+
+    if(idx < 0)
+        return 0;
+    if(idx < 16)
+        /* The 16 standard terminal colours, treat these as if given as \E[3xm or \E[9xm */
+        return ipipeBaseToColor(idx);
+    if(idx < 232)
+    {
+        /* 6x6x6 colour cube */
+        idx -= 16;
+        return ipipeRgbToColor(cubeLvl[(idx / 36) % 6],cubeLvl[(idx / 6) % 6],cubeLvl[idx % 6]);
+    }
+    if(idx < 256)
+    {
+        /* 24 step grey ramp */
+        idx = 8 + ((idx - 232) * 10);
+        return ipipeRgbToColor(idx,idx,idx);
+    }
+    return 0;
+}
+
+/* ipipeAnsiExtColor - convert an extended colour SGR argument list, i.e. the parameters
+ * following the 38 (fg) or 48 (bg), which is either '5;n' selecting a 256 palette colour or
+ * '2;r;g;b' giving a 24 bit rgb colour. sub flags whether each parameter was introduced by the
+ * ':' sub-parameter separator. Returns the number of parameters consumed, 0 if the form is not
+ * understood, in which case the caller must abandon the sequence as the number of parameters to
+ * be skipped is unknown */
+static int
+ipipeAnsiExtColor(const int *prm, const meUByte *sub, int cnt, meUByte *colp)
+{
+    int itu=0, nn;
+
+    if(cnt > 1)
+    {
+        if(sub[0])
+        {
+            /* The colon sub-parameter separator was used so the number of arguments belonging
+             * to this colour is known exactly, the ITU-T form has an extra colour-space id
+             * before the rgb values, e.g. '38:2::r:g:b' */
+            for(nn=1 ; (nn < cnt) && sub[nn] ; nn++)
+                ;
+            cnt = nn;
+            itu = (cnt > 4);
+        }
+        if(prm[0] == 5)
+        {
+            *colp = ipipePalToColor(prm[1]);
+            return 2;
+        }
+        if(prm[0] == 2)
+        {
+            nn = (itu) ? 2:1;
+            if(cnt > (nn + 2))
+            {
+                *colp = ipipeRgbToColor(prm[nn],prm[nn+1],prm[nn+2]);
+                return nn + 3;
+            }
+        }
+    }
+    return 0;
+}
+
+/* ipipeAnsiToScheme - convert the current ANSI colour & style into the meth scheme tag with the
+ * closest meaning, see macros/meth.emf for the tag character to scheme mapping */
 static meUByte
 ipipeAnsiToScheme(meUByte fg, meUByte bg, meUByte styl)
 {
-    if(bg)
+    if(bg & meIPIPE_COL_SET)
     {
-        switch(bg & 0x07)
+        /* A bright background colour (i.e. \E[10xm) is taken as a request to simply highlight
+         * the text, whereas a standard or rgb background is more likely to be conveying a
+         * meaning such as a diff addition or removal */
+        int hl = ((bg & (meIPIPE_COL_BRIGHT|meIPIPE_COL_RGB)) == meIPIPE_COL_BRIGHT);
+        if(bg & meIPIPE_COL_GREY)
+            /* A dark grey bg is usually the terminal's own background so ignore it, a light
+             * grey or white bg is highlighting the current item */
+            return (bg & meIPIPE_COL_MASK) ? 's':'A';   /* .scheme.hlwhite */
+        switch(bg & meIPIPE_COL_MASK)
         {
-        case 1: return (bg & 0x20) ? 'u' : 'O'; /* red bg: hlred or gdfrej */
-        case 2: return (bg & 0x20) ? 'v' : 'N'; /* green bg: hlgreen or gdfsel */
-        case 3: return (bg & 0x20) ? 'w' : 'M'; /* yellow bg: hlyellow or gdfchange */
-        default: return 'A';
+        case 1: return (hl) ? 'u':'O';  /* red bg     -> .scheme.hlred:.scheme.gdfrej      */
+        case 2: return (hl) ? 'v':'N';  /* green bg   -> .scheme.hlgreen:.scheme.gdfsel    */
+        case 3: return (hl) ? 'w':'M';  /* yellow bg  -> .scheme.hlyellow:.scheme.gdfchange*/
+        case 4: return 'x';             /* blue bg    -> .scheme.hlblue                    */
+        case 5: return 'y';             /* magenta bg -> .scheme.hlmagenta                 */
+        case 6: return 'z';             /* cyan bg    -> .scheme.hlcyan                    */
+        case 7: return 's';             /* white bg   -> .scheme.hlwhite                   */
+        default: return 'A';            /* black bg, assume the terminal's own background  */
         }
     }
-    if(fg)
+    if(fg & meIPIPE_COL_SET)
     {
-        switch(fg & 0x07)
+        if(fg & meIPIPE_COL_GREY)
         {
-        case 1: return (styl & 0x01) ? 'k':'R'; /* red fg -> (bold) .scheme.error:.scheme.rmv */
-        case 2: return 'Q';            /* green fg -> .scheme.add */
-        case 3: return 'l';            /* yellow fg -> .scheme.warn */
-        case 4: return 'S';            /* blue fg -> .scheme.dir */
-        case 6: return 'm';            /* cyan fg -> .scheme.info */
+            /* Grey text darker than mid-grey (which includes \E[90m) is being dimmed down to
+             * de-emphasize it, e.g. placeholder or supplementary help text, anything lighter
+             * is simply the normal text colour */
+            if(!(fg & meIPIPE_COL_MASK))
+                return 'h';             /* dim grey fg -> .scheme.comment */
+        }
+        else
+        {
+            switch(fg & meIPIPE_COL_MASK)
+            {
+            case 1: return (styl & meIPIPE_STY_BOLD) ? 'k':'R'; /* red fg -> (bold) .scheme.error:.scheme.rmv */
+            case 2: return 'Q';         /* green fg   -> .scheme.add   */
+            case 3: return 'l';         /* yellow fg  -> .scheme.warn  */
+            case 4: return 'S';         /* blue fg    -> .scheme.dir   */
+            case 5: return 'S';         /* magenta fg -> .scheme.dir   */
+            case 6: return 'm';         /* cyan fg    -> .scheme.info  */
+            }
         }
     }
+    if(styl & meIPIPE_STY_DIM)
+        /* faint text -> .scheme.comment */
+        return 'h';
     /* bold -> .scheme.bold */
     return (styl & 0x07) ? 'C'+(styl & 0x07):'A';
 }
@@ -1130,7 +1288,8 @@ ipipeRead(meIPipe *ipipe)
         case 27:
             if((ipipe->flag & meIPIPE_USEPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
             {
-                int gotQ=0, gotN=0, prmS[8], prmC=0;
+                int gotQ=0, gotN=0, gotC=0, prmS[meIPIPE_PRM_MAX], prmC=0;
+                meUByte prmB[meIPIPE_PRM_MAX];
 
                 prmL=0;
                 prmA=-1;
@@ -1147,9 +1306,17 @@ get_another:
                         }
                         switch(cc)
                         {
+                        case ':':
                         case ';':
-                            if(prmC < 8)
+                            /* ':' separates the sub-parameters of a single parameter, only the
+                             * extended colour SGRs use them so simply flag which parameters
+                             * they are, otherwise the two separators are the same */
+                            if(prmC < meIPIPE_PRM_MAX)
+                            {
+                                prmB[prmC] = (meUByte) gotC;
                                 prmS[prmC++] = prmL;
+                            }
+                            gotC = (cc == ':');
                             prmL = 0;
                             goto get_another;
                         case '<':
@@ -1354,12 +1521,16 @@ move_cursor_pos:
                             if(ipipe->flag & meIPIPE_ANSICOLOR)
                             {
                                 meUByte newFg=ipipe->ansiFg, newBg=ipipe->ansiBg, newSt=ipipe->ansiSt;
-                                if(prmC < 8)
+                                int nn;
+                                if(prmC < meIPIPE_PRM_MAX)
+                                {
+                                    prmB[prmC] = (meUByte) gotC;
                                     prmS[prmC++] = prmL;
+                                }
                                 for(ii=0 ; ii<prmC ; ii++)
                                 {
                                     if((prmA = prmS[ii]) == 0)
-                                    { 
+                                    {
                                         newFg = 0;
                                         newBg = 0;
                                         newSt = 0;
@@ -1369,44 +1540,57 @@ move_cursor_pos:
                                         if(prmA < 5)
                                         {
                                             if(prmA > 2)
+                                                /* 3 = italic, 4 = underline */
                                                 newSt |= 1<<(prmA - 2);
-                                            else if(prmA != 2)
-                                                newSt |= 0x01;
+                                            else if(prmA == 2)
+                                                newSt |= meIPIPE_STY_DIM;
+                                            else
+                                                newSt |= meIPIPE_STY_BOLD;
                                         }
                                         else if(prmA < 22)
                                             ;
+                                        else if(prmA == 22)
+                                            /* 22 turns off both the bold & dim intensities */
+                                            newSt &= ~(meIPIPE_STY_BOLD|meIPIPE_STY_DIM);
                                         else if(prmA < 25)
                                             newSt &= ~(1<<(prmA-22));
                                     }
                                     else if(prmA < 40)
                                     {
                                         if(prmA < 38)
-                                            newFg = (meUByte) (prmA - 30 + 16);
+                                            newFg = ipipeBaseToColor(prmA - 30);
                                         else if(prmA == 38)
-                                            /* extended fg colour: skip remaining params */
-                                            break;
+                                        {
+                                            /* extended fg colour, i.e. 256 palette or 24 bit rgb */
+                                            if((nn = ipipeAnsiExtColor(prmS+ii+1,prmB+ii+1,prmC-ii-1,&newFg)) == 0)
+                                                /* unknown form: abandon the rest of the sequence */
+                                                break;
+                                            ii += nn;
+                                        }
                                         else
                                             newFg = 0;
                                     }
                                     else if(prmA < 50)
                                     {
                                         if(prmA < 48)
-                                            newBg = (meUByte) (prmA - 40 + 16);
+                                            newBg = ipipeBaseToColor(prmA - 40);
                                         else if(prmA == 48)
-                                            /* extended bg colour: skip remaining params */
-                                            break;
+                                        {
+                                            /* extended bg colour, i.e. 256 palette or 24 bit rgb */
+                                            if((nn = ipipeAnsiExtColor(prmS+ii+1,prmB+ii+1,prmC-ii-1,&newBg)) == 0)
+                                                /* unknown form: abandon the rest of the sequence */
+                                                break;
+                                            ii += nn;
+                                        }
                                         else
                                             newBg = 0;
                                     }
                                     else if(prmA < 90)
                                         ;
-                                    else if(prmA < 100)
-                                    {
-                                        if(prmA < 98)
-                                            newFg = (meUByte) (prmA - 90 + 16 + 32);
-                                    }
-                                    else if(prmA < 108)
-                                        newBg = (meUByte) (prmA - 100 + 16 + 32);
+                                    else if(prmA < 98)
+                                        newFg = ipipeBaseToColor(prmA - 90 + 8);
+                                    else if((prmA >= 100) && (prmA < 108))
+                                        newBg = ipipeBaseToColor(prmA - 100 + 8);
                                 }
                                 ipipe->ansiFg = newFg;
                                 ipipe->ansiBg = newBg;
