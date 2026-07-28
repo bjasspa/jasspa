@@ -64,7 +64,7 @@ define-macro gentags-add-tag
 !emacro
 
 define-macro gentags-parse-tags
-  ml-write "All done! Parsing tags file."
+  -2 ml-write "Parsed files, processing tags file..."
   beginning-of-buffer
   set-mark
   replace-string "\\\\" "\\\\\\\\"
@@ -90,14 +90,14 @@ define-macro gentags-process-buffers
     !else
       beginning-of-buffer
       !force execute-named-command &cat %tag-id "tags-add-file"
-      !iif &not $status  !force -8 ml-write &spr "[Warning: %stags-add-file failed on \"%s\"]" %tag-id $buffer-fname
+      !iif &not $status  -2 ml-write &spr "Warning: %stags-add-file failed on \"%s\"" %tag-id $buffer-fname
     !endif
     0 delete-buffer #l0
-  !done 0
+  !done
 !emacro
 
 define-macro gentags
-  !iif &seq &lget %tag-filemask 1 ""  -8 ml-write "[No input file mask set!]"
+  !iif &seq &lget %tag-filemask 1 ""  -10 ml-write "Error; No input file mask set!"
   delete-other-windows
   split-window-vertically
   find-buffer "*scratch*"

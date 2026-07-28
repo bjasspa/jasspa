@@ -2016,7 +2016,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         }
         meFrameLoopEnd();
     }
-    if(meModeTest(bp->mode,MDWRAP))
+    if(bp->ipipeFlags & meBUFFER_IPIPE_WRAP)
         noCols = noCols-1;
     else if((noCols = ipipe->noCols) == 0)
     {
@@ -2576,10 +2576,6 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         meModeSet(globMode,MDPIPE);
         meModeSet(globMode,MDLOCK);
         meModeClear(globMode,MDUNDO);
-        if(flags & LAUNCH_USEPTY)
-            meModeSet(globMode,MDPTY);
-        else
-            meModeClear(globMode,MDPTY);
         bp=bfind(bufName,BFND_CREAT|BFND_CLEAR);
         meModeCopy(globMode,sglobMode);
     }
@@ -2598,6 +2594,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     /* setup the buffer */
     if(flags & LAUNCH_BUFIPIPE)
         bp->ipipeFunc = ipipeFunc;
+    bp->ipipeFlags = ((flags & LAUNCH_USEPTY) ? (meBUFFER_IPIPE_USED|meBUFFER_IPIPE_PTY):meBUFFER_IPIPE_USED) | 
+          ((flags & (LAUNCH_RAW|LAUNCH_NO_WRAP)) ? 0:meBUFFER_IPIPE_WRAP) | ((flags & LAUNCH_ANSICOLOR) ? meBUFFER_IPIPE_COLOR:0);
     bp->fileName = meStrdup(path);
     if((flags & LAUNCH_RAW) == 0)
     {
@@ -2607,6 +2605,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         addLineToEob(bp,comStr);
         addLineToEob(bp,(meUByte *)"\n");
     }
+    else
+        bp->ipipeFlags |= meBUFFER_IPIPE_RAW;
     bp->dotLine = meLineGetPrev(bp->baseLine);
     bp->dotOffset = 0;
     bp->dotLineNo = bp->lineCount-1;
@@ -2624,6 +2624,8 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     if(((meSystemCfg & meSYSTEM_IO_UTF8) == 0) || (flags & (LAUNCH_NOUTF8|LAUNCH_RAW)))
 #endif
         ipipe->flag |= meIPIPE_NOUTF8;
+    else
+        bp->ipipeFlags |= meBUFFER_IPIPE_UTF8;
 #endif
     ipipe->ansiCc = 'A';
     ipipe->ansiFg = 0;

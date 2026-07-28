@@ -99,8 +99,6 @@ set-variable %compile-com "nmake "
 add-next-line "*compile*" "^ *%f(%l\\(,\\d+\\)?) ?: \\(fatal error\\|error\\|warning\\)"
 ; GNU gcc & Java style errors and warning
 add-next-line "*compile*" "^ *\\(\\[\\m+\\] \\)?%f:%l:\\(\\d+:\\)? \\(fatal error\\|error\\|warning\\)"
-; Load additional hooks required for windows.
-define-macro-file hkipipe ishell gdb perldb
 ; Pre windows 10 ~2018/19 there was no ConPTY and cmd's prompt echoing is broken, ishell is useless without
 ; the following 2 variables which enable ME's command-line support - these are only used when there's no PTY.
 ; NOTE - if you use a different prompt (i.e. not "PATH>") then you must configure .ishell.prompt appropriately

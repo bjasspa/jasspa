@@ -794,6 +794,9 @@ typedef struct  meBuffer {
     meUByte            isWordMask;              /* isWord lookup table bit mask */
     meUByte            xlateFlag;               /* translate flags              */
 #endif
+#if MEOPT_IPIPES
+    meUByte            ipipeFlags;              /* ipipe creation flags         */
+#endif
     meUByte            modeLineFlags;           /* buffer mode-line flags       */
 #if MEOPT_HILIGHT
     meUByte            hilight;                 /* hilight number               */
@@ -1184,6 +1187,14 @@ typedef struct meFrame
 #endif
 
 #if MEOPT_IPIPES
+/* The following adefine the bits of buffer ipipeFlags */
+#define meBUFFER_IPIPE_USED   0x01
+#define meBUFFER_IPIPE_PTY    0x02
+#define meBUFFER_IPIPE_RAW    0x04
+#define meBUFFER_IPIPE_WRAP   0x08
+#define meBUFFER_IPIPE_UTF8   0x10
+#define meBUFFER_IPIPE_COLOR  0x20
+
 /* The following is structure required for unix ipipes */
 
 /* Some of these must stay in sync with the LIUNCH_* flags, see init of ipipe flag */
@@ -1194,7 +1205,6 @@ typedef struct meFrame
 #define meIPIPE_NOAUTOWRAP  0x010       /* Auto-wrap disabled (\E[?7l)  */
 #define meIPIPE_HAVE_READ   0x020       /* Flags if not first read      */
 #define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
-#define meIPIPE_BUFIPIPE    0x080       /* Forced ipipe buffer          */
 #define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
 #define meIPIPE_ANSICOLOR   0x1000      /* Translate ANSI SGR to semantic scheme tags */
 

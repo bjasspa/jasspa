@@ -393,7 +393,7 @@ set-char-mask "1" ":_~"
 !emacro
 
 0 define-macro ctags-parse-tags
-  ml-write "All done! Parsing tags file."
+  -2 ml-write "Parsed files, processing tags file..."
   beginning-of-buffer
   set-mark
   replace-string "\\\\" "\\\\\\\\"
@@ -422,18 +422,14 @@ define-macro ctags-process-buffers
     !else
       beginning-of-buffer
       !force ctags-add-file
-      !if &not $status
-        ml-write &spr "[Warning: ctags-add-file failed on \"%s\"]" $buffer-fname
-        !bell
-        ;set-variable #l9 @cq
-      !endif
+      !iif &not $status  -2 ml-write &spr "Warning: ctags-add-file failed on \"%s\"" $buffer-fname
     !endif
     0 delete-buffer #l0
-  !until 0
+  !done
 !emacro
 
 define-macro ctags
-  !iif &seq &lget %tag-filemask 1 ""  -8 ml-write "[No input file mask set!]"
+  !iif &seq &lget %tag-filemask 1 ""  -10 ml-write "Error; No input file mask set!"
   delete-other-windows
   split-window-vertically
   find-buffer "*scratch*"

@@ -66,9 +66,10 @@ Disable the use of the command-line processor to launch the program (MS Win32 ve
 .IP
 Where \fC%COMSPEC%\fR is typically \fCcommand.com\fR. If this bit is set "\fIcommand\fR" is launched directly.
 .IP \fB0x08\fR
-.\"TODO need to update 0x08 and add 0x1000 & 0x2000
-Force the use of a pseudo PTY, ignored when bit \fB0x1000\fR is set. When bit bit \fB0x08\fR and \fB0x1000\fR are 
-clear, pseudo terminals are used on UNIX systems, but not on Windows. 
+Force the use of a pseudo terminal, i.e. a \s-1UNIX\s0 PTY or a Windows ConPTY, ignored when bit \fB0x2000\fR is set.
+When bits \fB0x08\fR and \fB0x2000\fR are both clear, pseudo terminals are used on \s-1UNIX\s0 systems, but not on
+Windows. A pseudo terminal cannot always be created, whether one was used can be determined from bit \fB0x02\fR of
+.Ht $buffer-ipipe-flags 5 .
 .IP \fB0x10\fR
 Disable the command name mangling (MS Win32 versions only). By default any \&'\fC/\fR' characters found in the command
 name (the first argument only) are converted to '\fC\\\fR' characters to make it Windows compliant.
@@ -107,8 +108,13 @@ combinations to meth based scheme codes. The buffer's
 .Ht $buffer-hilight 5
 variable must be set appropriately for the high-lighting to be recognisable. 
 .IP \fB0x2000\fR
-.\"TODO need to update 0x08 and add 0x1000 & 0x2000
-Stop the use of a pseudo PTY. 
+Stop the use of a pseudo terminal, forcing the use of a plain anonymous pipe, this overrides bit \fB0x08\fR.
+Note that many interactive programs, such as a shell, do not work well without a pseudo terminal.
+.PP
+As some of these settings may be changed by \*(mS, e.g. when a pseudo terminal cannot be created, the way in which
+the pipe was actually created is recorded in the buffer variable
+.Ht $buffer-ipipe-flags 5 ,
+this may be used by a macro to determine how the process was launched and how its output was processed.
 .PP
 Many other macro commands (see
 .Ht compile 3 ,
@@ -205,6 +211,7 @@ drives, version 2.5 does appear to work.
 .SH "SEE ALSO"
 .na
 .Ht $buffer-ipipe 5 ,
+.Ht $buffer-ipipe-flags 5 ,
 .Ht $buffer-input 5 ,
 .Ht compile 3 ,
 .Ht grep 3 ,

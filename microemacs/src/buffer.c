@@ -1145,6 +1145,10 @@ bclear(register meBuffer *bp)
     bp->hilight = 0;
     bp->indent = 0;
 #endif
+#if MEOPT_IPIPES
+    bp->ipipeFunc = -1;
+    bp->ipipeFlags = 0;
+#endif
 #if MEOPT_UNDO
     meUndoRemove(bp) ;
 #endif
@@ -1964,7 +1968,6 @@ adjustMode(meBuffer *bp, int nn)  /* change the editor mode status */
     case MDNACT:
     case MDNARROW:
     case MDPIPE:
-    case MDPTY:
 invalid_global:
         return mlwrite(MWABORT,(meUByte *)"[Cannot change this mode]");
     }

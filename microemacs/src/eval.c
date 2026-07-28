@@ -1542,6 +1542,7 @@ handle_namesvar:
     case EVBUFIPIPE:
         ii = frameCur->windowCur->buffer->ipipeFunc;
         goto hook_jump;
+    case EVBUFIPIPEFLG: return meItoa(frameCur->windowCur->buffer->ipipeFlags);
 #endif
 #if MEOPT_MAJORMODE
     case EVBUFMJRMOD:
@@ -1774,7 +1775,17 @@ gtarg(meUByte *tkn)
                     /* intercative single char read which will be quoted */
                     int cc;
                     key = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE);
-                    if((cc=quoteKeyToChar(key)) > 0)
+                    if(tkn[3] == 's')
+                    {
+                        if(key <= 255)
+                        {
+                            evalResult[0] = key;
+                            evalResult[1] = '\0';
+                            return evalResult;
+                        }
+                        kk = 1;
+                    }
+                    else if((cc=quoteKeyToChar(key)) > 0)
                     {
                         if(tkn[3] == 'k')
                         {

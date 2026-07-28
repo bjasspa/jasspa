@@ -9,12 +9,21 @@
 .so me.tni
 .TH $buffer-ipipe 5
 .XI $buffer-ipipe - "Divert buffer incremental pipe input through macro"
+.XI $buffer-ipipe-flags - "Incremental pipe creation flags"
 .SH NAME
+.Me "|$buffer-ipipe"
 $buffer-ipipe \- Divert buffer incremental pipe input through macro.
+.br
+.Me "|$buffer-ipipe-flags"
+$buffer-ipipe-flags \- Incremental pipe creation flags.
 .Me $a
 .SH SYNOPSIS
 .B $buffer-ipipe
 .I commandName
+.sp 2
+.B $buffer-ipipe-flags
+.I flags
+; read-only
 .SH DESCRIPTION
 .B $buffer-ipipe
 allows the buffer incremental pipe input mechanism to be diverted through a command macro defined by
@@ -38,11 +47,63 @@ The ipiped process core dumped.
 The ipiped process was terminated.
 .PP
 Not all platforms support all of these exit codes.
+.PP
+.B $buffer-ipipe-flags
+is a read-only variable which records how the incremental pipe running, or last run, in the current buffer was
+created by
+.Ht ipipe-shell-command 2 .
+It allows macros to determine how the process was launched, and how its output was processed, without having to
+retain this information themselves. \fIflags\fR is a bit based flag where:
+.IP \fB0x01\fR
+The buffer is, or was, running an ipiped process. This bit remains set after the process has exited, mode
+.Ht pipe 2m
+may be used to determine whether the process is still running. If this bit is clear the buffer has never run an
+ipiped process and all other bits are 0.
+.IP \fB0x02\fR
+The process was launched with a pseudo terminal, i.e. a \s-1UNIX\s0 PTY or a Windows ConPTY, as opposed to a plain
+anonymous pipe. A pseudo terminal may be requested but not granted, this bit reflects what was created and not what
+was asked for, see \fBipipe-shell-command\fR bits \fB0x08\fR and \fB0x2000\fR.
+.IP \fB0x04\fR
+The pipe was created as a raw pipe, see \fBipipe-shell-command\fR bit \fB0x40\fR. As no text annotation is added in
+this mode, the buffer does not contain the leading "\fCcd \fIpath\fR" and command lines, so the command-line which
+was executed cannot be recovered from the buffer.
+.IP \fB0x08\fR
+.Ht wrap 2m
+mode was enabled when the pipe was created, i.e. neither bit \fB0x200\fR nor bit \fB0x40\fR, raw mode which also
+forces \fBwrap\fR mode off, was given to \fBipipe-shell-command\fR. The buffer's \fBwrap\fR mode may subsequently be
+changed, by the user or a macro, this bit always records the state at creation.
+.IP \fB0x10\fR
+The pipe output is being decoded from UTF-8, see \fBipipe-shell-command\fR bit \fB0x800\fR. Note that this bit is
+clear when the output is not decoded for any reason, such as the terminal not operating in UTF-8 mode, and not
+simply when decoding was explicitly disabled.
+.IP \fB0x20\fR
+ANSI color processing was enabled, see \fBipipe-shell-command\fR bit \fB0x1000\fR.
+.PP
+The remaining bits are reserved for future use and are currently always 0.
+.SH EXAMPLE
+The following example, taken from the \fBipipe-rerun\fR macro, uses \fB$buffer-ipipe-flags\fR to construct the
+numeric argument required to re-launch the command in the current buffer with the same settings:
+.Me $emf-scheme
+.ne 12
+.CS
+; A raw pipe leaves no command-line in the buffer to re-run
+!iif &band 0x04 $buffer-ipipe-flags \\
+    -8 ml-write "[ipipe-rerun Error: command-line lost]"
+; Convert the flags back into an ipipe-shell-command argument
+set-variable #l0 &con &band 0x02 $buffer-ipipe-flags 0x08 0x2000
+set-variable #l0 &add #l0 &con &band 0x08 $buffer-ipipe-flags 0 0x200
+set-variable #l0 &add #l0 &con &band 0x20 $buffer-ipipe-flags 0x1000 0
+.CE
+.Me $ehf-scheme
+Note that bits \fB0x02\fR and \fB0x08\fR are inverted in the construction as \fBipipe-shell-command\fR bits
+\fB0x2000\fR and \fB0x200\fR disable the features which \fB$buffer-ipipe-flags\fR reports as enabled.
 .SH "SEE ALSO"
 .na
 .Ht ipipe-shell-command 2 ,
 .Ht goto-alpha-mark 2 ,
 .Ht $result 5 ,
-.Ht $buffer-input 5 .
+.Ht $buffer-input 5 ,
+.Ht pipe 2m ,
+.Ht wrap 2m .
 .ad
 .FH

@@ -325,7 +325,7 @@ set-char-mask "1" ":_~"
 !emacro
 
 0 define-macro javatags-parse-tags
-  ml-write "All done! Parsing tags file."
+  -2 ml-write "Parsed files, processing tags file..."
   beginning-of-buffer
   set-mark
   replace-string "\\\\" "\\\\\\\\"
@@ -354,21 +354,14 @@ define-macro javatags-process-buffers
     !else
       beginning-of-buffer
       !force javatags-add-file
-      !if &not $status
-        ml-write &spr "[Warning: javatags-add-file failed on \"%s\"]" $buffer-fname
-        !bell
-        ;set-variable #l9 @cq
-      !endif
+      !iif &not $status  -2 ml-write &spr "Warning: javatags-add-file failed on \"%s\"" $buffer-fname
     !endif
     0 delete-buffer #l0
-  !until 0
+  !done
 !emacro
 
 define-macro javatags
-  !if &seq &lget %tag-filemask 1 ""
-    ml-write "[No input file mask set!]"
-    !abort
-  !endif
+  !iif &seq &lget %tag-filemask 1 ""  -10 ml-write "Error; No input file mask set!"
   delete-other-windows
   split-window-vertically
   find-buffer "*scratch*"

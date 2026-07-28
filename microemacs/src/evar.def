@@ -58,6 +58,7 @@ DEFVAR ("buffer-indent-width", EVBUFINDWIDTH)   /* Buffer indent width */
 DEFVAR ("buffer-input",        EVBUFINP)        /* buffer input handler */
 #if MEOPT_IPIPES
 DEFVAR ("buffer-ipipe",        EVBUFIPIPE)      /* buffer ipipe input handler */
+DEFVAR ("buffer-ipipe-flags",  EVBUFIPIPEFLG)   /* buffer ipipe flags */
 #endif
 #if MEOPT_MAJORMODE
 DEFVAR ("buffer-major-mode",   EVBUFMJRMOD)     /* Buffer major mode  */

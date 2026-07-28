@@ -306,6 +306,7 @@
   !elif &set #l0 &lfi "|backspace|" #l2
     set-variable #l1 &lget "|\d|" #l0
   !elif &seq "yank" #l3
+    -98 yank
     set-variable #l1 @y
   !elif &seq "quote-char" #l3
     ml-write "Quote: "
@@ -346,16 +347,16 @@
     ml-write "[Input mode set to full-immersion - f3 to change]"
     !repeat
       screen-update
-      set-variable #l0 @cqk
+      set-variable #l0 @cqs
       !if &not &bmo "pipe"
         !return
-      !elif &set #l1 &sin #l0 "\CH\CP\CN\CF\CB"
-        ipipe-write &lget "|\d|\e[A|\e[B|\e[C|\e[D|" #l1
       !elif &equ &len #l0 1
         ipipe-write #l0
       !elif &seq #l0 "f3"
         0 ipipe-mode
         !return
+      !elif &set #l1 &lfind "|backspace|delete|tab|return|esc|up|down|right|left|page-up|page-down|home|end|insert|" #l0
+        ipipe-write &lget "|\d|\e[3~|\t|\r|\e|\e[A|\e[B|\e[C|\e[D|\e[5~|\e[6~|\e[H|\e[F|\e[2~|" #l1
       !endif
     !until 0
   !else
@@ -376,8 +377,9 @@
 !emacro
 
 0 define-macro ipipe-rerun
+  !iif &band 4 $buffer-ipipe-flags  -8 ml-write "[ipipe-rerun Error: Raw mode used, command-line lost]"
   set-variable #l0 $buffer-hilight
-  set-variable #l1 &add &add &con &bmod "wrap" 0 0x200 &con &bmod "pty" 0x08 0x2000 &con &seq #l0 .hilight.meth 0x1000 0
+  set-variable #l1 &add &add &con &band 2 $buffer-ipipe-flags 0x08 0x2000 &con &band 8 $buffer-ipipe-flags 0 0x200 &con &band 32 $buffer-ipipe-flags 0x1000 0
   beginning-of-buffer
   !iif &seq &lef @wl 3 "cd "  forward-line
   !if &seq "" &set #l2 $buffer-ipipe
@@ -401,11 +403,9 @@ define-macro fhook-ipipe
   !endif
   buffer-bind-create "bo" "C-return" "" ipipe-rerun
   buffer-bind-create "bo" "C-j" ""      ipipe-rerun
-  !if &seq $buffer-bname "*shell*"
-    set-variable $buffer-ipipe ipipe-input
+  !if &lfind "|*shell*|*claude*|" $buffer-bname
   !elif &seq $buffer-bname "*gdb*"
     set-variable $buffer-dhook debug-reset-line
-    set-variable $buffer-ipipe gdb-input
     !iif &band .hilight.flags 0x02  set-variable $buffer-hilight .hilight.gdb
     set-variable :last-line 1
   !elif &seq $buffer-bname "*dbx*"
@@ -414,7 +414,6 @@ define-macro fhook-ipipe
     set-variable :last-line 1
   !elif &seq $buffer-bname "*perldb*"
     set-variable $buffer-dhook debug-reset-line
-    set-variable $buffer-ipipe perldb-input
     set-variable :mode 0
     set-variable :prompt "^  DB<[0-9]*> "
     !iif &band $system 0x100  set-variable :noecho 1
@@ -431,6 +430,9 @@ define-macro fhook-ipipe
     !iif &exi my-fhook-ipipe  my-fhook-ipipe
     !return
   !endif
+  !if &band 0x20 $buffer-ipipe-flags
+    !iif &not $buffer-hilight  set-variable $buffer-hilight .hilight.meth
+  !endif
   -1 buffer-mode "wrap"
   1 buffer-mode "magic"
   buffer-bind-create "bo" "f3" "" ipipe-mode
@@ -440,7 +442,7 @@ define-macro fhook-ipipe
 
 define-macro ishell
   set-variable #l0 $buffer-bname
-  set-variable #l2 &con &band 1 @# 0x1008 8
+  set-variable #l2 &con &band 1 @# 0x1088 0x88
   !force 0 find-buffer "*shell*"
   !if &and $status &bmod "pipe"
     set-variable #l2 -1
@@ -449,9 +451,9 @@ define-macro ishell
     !return
   !elif &band $system 0x100           ; is it MS-DOS type system ?
     !if &seq $platform "windows"
-      &add #l2 4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*"
+      &add #l2 4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*" ipipe-input
     !else
-      #l2 ipipe-shell-command $COMSPEC "*shell*"
+      #l2 ipipe-shell-command $COMSPEC "*shell*" ipipe-input
     !endif
   !elif &seq $platform "cygwin"
     ; For cygwin then convert the COMSPEC path into a cygwin path for
@@ -459,22 +461,32 @@ define-macro ishell
     ; space.
     set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
     set-variable #l1 &xir #l1 "\\\\" "/"
-    #l2 ipipe-shell-command #l1 "*shell*"
+    #l2 ipipe-shell-command #l1 "*shell*" ipipe-input
   !else
     ; UNIX based platforms then we may simply run the shell.
-    #l2 ipipe-shell-command $SHELL "*shell*"
+    #l2 ipipe-shell-command $SHELL "*shell*" ipipe-input
   !endif
   popup-window "*shell*"
-  !if &gre #l2 -1
-    !iif &band #l2 0x1000  set-variable $buffer-hilight .hilight.meth
-    !if &not &bmo "pty"
-      !if &exi .ishell.prompt
-        set-variable :mode 0
-        set-variable :prompt .ishell.prompt
-        set-variable :noecho .ishell.noecho
-      !endif
-      ml-write "[Warning: Failed to create as proper PTY terminal - this is unlikely to work well]"  
+  !if &les #l2 0
+  !elif &not &band 2 $buffer-ipipe-flags
+    !if &exi .ishell.prompt
+      set-variable :mode 0
+      set-variable :prompt .ishell.prompt
+      set-variable :noecho .ishell.noecho
     !endif
+    ml-write "[Warning: Failed to create as proper PTY terminal - this is unlikely to work well]"  
+  !endif
+!emacro
+
+define-macro claude
+  !force set-variable #l0 &nbm "*claude*" "pipe"
+  !if &and $status #l0
+    popup-window "*claude*"
+  !else
+    0x1088 ipipe-shell-command &cat "claude" &con &band 2 @# " --resume" "" "*claude*" ipipe-input
+    popup-window "*claude*"
+    !iif &not &band 2 $buffer-ipipe-flags  -8 ml-write "[Error: Failed to create a proper PTY terminal, required by Claude]"
+    !iif &not &bmod "pipe"  -8 ml-write "[Failed to start Claude - is claude in PATH?]"
   !endif
 !emacro
 
@@ -560,7 +572,7 @@ define-macro gdb
   set-variable #l0 @ml01 "gdb program"
   set-variable #l1 @ml "gdb args"
   ; TODO test with colour
-  8 ipipe-shell-command &spr "gdb -f %s %s" #l0 #l1 "*gdb*"
+  0x88 ipipe-shell-command &spr "gdb -f %s %s" #l0 #l1 "*gdb*" gdb-input
   popup-window "*gdb*"
   major-mode "ipipe"
   global-bind-key gdb-add-breakpoint "f9"
@@ -606,34 +618,6 @@ define-macro gdb
   !endif
 !emacro
 
-0 define-macro dbx-input-irix
-  set-variable #l2 $buffer-bname
-  goto-alpha-mark "I"
-  beginning-of-line
-  !force &sub -1 &sub $window-line :last-line search-buffer "bem" "stopped at \\[[^:\n]*:\\(\\d+\\)\\s+\\S+\\s+\\([^]\n]+\\)]"
-  !if $status
-    debug-reset-line
-    set-variable %gdbdbx2 @s1
-    set-variable #l0 @s2
-    popup-window ""
-    find-file #l0 @mna
-    set-variable %gdbdbx1 $buffer-bname
-    !force 0 goto-line %gdbdbx2
-    !if $status
-      set-variable $line-scheme .scheme.trace
-      recenter
-    !endif
-    popup-window #l2
-  !endif
-  goto-alpha-mark  "I"
-  set-variable :last-line $window-line
-  !if &not @#
-    ; process has ended, clear-up
-    debug-reset-line
-    0 ipipe-input
-  !endif
-!emacro
-
 define-macro dbx
   set-variable #l0 $buffer-bname
   !force 0 find-buffer "*dbx*"
@@ -645,20 +629,13 @@ define-macro dbx
   !endif
   set-variable #l0 @ml01 "dbx program"
   set-variable #l1 @ml "dbx args"
-  8 ipipe-shell-command &spr "dbx %s %s" #l0 #l1 "*dbx*"
+  0x88 ipipe-shell-command &spr "dbx %s %s" #l0 #l1 "*dbx*" dbx-input
   popup-window "*dbx*"
   major-mode "ipipe"
   set-variable :mode 0
   set-variable :prompt "^\\((dbx) \\)+"
-  !if &seq $platform "irix"
-    set-variable $buffer-ipipe dbx-input-irix
-    ipipe-write "set $showfilename=2\CMset $repeatmode=1\CM"
-    ipipe-write "alias n `next`\CMalias s `step`\CMalias p `print`\CMalias c `cont`\CMalias b `stop in`\CM"
-  !else
-    set-variable $buffer-ipipe dbx-input
-    ipipe-write "dbxenv output_short_file_name off\CM"
-    ipipe-write "alias n=next\CMalias s=step\CMalias p=print\CMalias c=cont\CMalias b=\"stop in\"\CM"
-  !endif
+  ipipe-write "dbxenv output_short_file_name off\CM"
+  ipipe-write "alias n=next\CMalias s=step\CMalias p=print\CMalias c=cont\CMalias b=\"stop in\"\CM"
   global-bind-key dbx-add-breakpoint "f9"
 !emacro
 
@@ -727,7 +704,7 @@ define-macro perldb
     set-variable #l0 $buffer-fname
   !endif
   set-variable #l1 @ml "perldb - script args"
-  8 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*"
+  0x88 ipipe-shell-command &spr "perl -d %s %s" #l0 #l1 "*perldb*" perldb-input
   popup-window "*perldb*"
   major-mode "ipipe"
   global-bind-key perldb-add-breakpoint "f9"
