@@ -1,0 +1,24 @@
+; -!- emf -!-
+; Copyright (c) 2026 JASSPA (www.jasspa.com).
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Command-line wrapper for R help pages
+; Authors:     Detlef Groth, Steven Phillips
+; Usage:       mec @rdoc [topic]
+;              mec @rdoc             - Prompt for topic
+;
+  execute-file "me"
+0 define-macro start-up
+  delete-other-windows
+  !if &not &seq &set #l0 $buffer-bname "*scratch*"
+    !force 0 delete-buffer #l0
+    r-doc #l0
+    delete-other-windows
+  !else
+    ; no topic seems to be given on the command line, load default info page
+    r-doc
+    delete-other-windows
+  !endif
+!emacro
