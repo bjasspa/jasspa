@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/07/25 00:16:01 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/07/31 18:27:20 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -932,21 +932,6 @@ variables:
 .PP
 .Ss
 search MicroEmacs 5 modeline
-output * "%N
-.Se
-.NH FileHandlings - "MicroEmacs Files"
-.XI FileHandlings - -
-.SH "FILE HANDLING COMMANDS"
-Commands to read, write and interact with files:
-.SS Commands
-.Ss
-search MicroEmacs 2 file
-search MicroEmacs 3 file
-output * "%N
-.Se
-.SS Variables
-.Ss
-search MicroEmacs 5 file
 output * "%N
 .Se
 .NH Games - "\*(mS \- Games"
