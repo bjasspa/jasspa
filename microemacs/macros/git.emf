@@ -1605,8 +1605,8 @@ define-macro git-show-file
   !if $status
     set-variable #l4 &rig #l3 &set #l5 &sin ":" #l3
     !iif &set #l2 &rsin "/" &lef #l4 -1  set-variable #l4 &rig #l4 #l2
-    set-variable #l4 &spr "*%s:%s" #l4 &lef #l3 &sub #l5 1
-    !iif &not &exi &spr ":%s:" #l4  7 git-get-file-list 1 0 &spr "%s show \"%s\"" .git.com #l3
+    set-variable #l5 &spr "*%s:%s" #l4 &lef #l3 &sub #l5 1
+    !iif &not &exi &spr ":%s:" #l5  7 git-get-file-list 1 0 &spr "%s show \"%s\"" .git.com #l3
   !else
     14 git-osd
     !if &les &lget &set #l9 .git-osd.values 1 4
@@ -1624,17 +1624,21 @@ define-macro git-show-file
     insert-string "\""
     goto-position "\x82"
     !iif &set #l2 &rsin "/" &lef #l4 -1  set-variable #l4 &rig #l4 #l2
-    set-variable #l4 &spr "*%s:%s" #l4 #l3
+    set-variable #l5 &spr "*%s:%s" #l4 #l3
   !endif
-  !if &exi &spr ":%s:" #l4
+  !if &exi &spr ":%s:" #l5
     !force 0 delete-buffer "*git-cmdline*"
-    popup-window #l4
+    popup-window #l5
     ml-write "[View of file version already exists!]"
   !else
     14 git-exec 5 $buffer-fname
     popup-window "*git-show-file*"
     beginning-of-buffer
-    change-buffer-name #l4
+    !if &gre $window-eline 1
+      !force change-buffer-name &spr "%s--%s" #l3 #l4
+      !iif $status  -1 major-mode
+    !endif
+    change-buffer-name #l5
   !endif
 !emacro
 

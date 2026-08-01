@@ -2025,7 +2025,11 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
             noCols = meBUF_SIZE_MAX - 2;
     }
 #if (IPIPE_DUMP == 2)
-    fprintf(logFp,":IPIPE-SIZE:%d %d -> %d %d (%d %d):",ipipe->noRows,ipipe->noCols,noRows,noCols,meModeTest(bp->mode,MDWRAP),wp->textWidth);
+    if(logFp != NULL)
+    {
+        fprintf(logFp,":IPIPE-SIZE:%d %d -> %d %d (%d %d):",ipipe->noRows,ipipe->noCols,noRows,noCols,meModeTest(bp->mode,MDWRAP),wp->textWidth);
+        fflush(logFp);
+    }
 #endif
     if((ipipe->noRows != noRows) || (ipipe->noCols != noCols))
     {

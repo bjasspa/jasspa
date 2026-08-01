@@ -1270,8 +1270,8 @@ define-macro svn-cat
   !if $status
     set-variable #l1 @1
     !iif &set #l2 &rsin "/" &lef &set #l4 #l1 -1  set-variable #l4 &rig #l4 #l2
-    set-variable #l4 &spr "*%s:%s" #l4 #l3
-    !iif &not &exi &spr ":%s:" #l4  7 svn-get-file-list 1 0 &spr "%s cat -r %s \"%s\"" .svn.com #l3 #l1
+    set-variable #l5 &spr "*%s:%s" #l4 #l3
+    !iif &not &exi &spr ":%s:" #l5  7 svn-get-file-list 1 0 &spr "%s cat -r %s \"%s\"" .svn.com #l3 #l1
   !else
     19 svn-osd
     !if &les &lget .svn.cvalues19 1 6
@@ -1288,17 +1288,21 @@ define-macro svn-cat
     goto-position "\x82"
     !iif &seq "\"" &lef #l4 1  set-variable #l4 &mid #l4 1 -1
     !iif &set #l2 &rsin "/" &lef #l4 -1  set-variable #l4 &rig #l4 #l2
-    set-variable #l4 &spr "*%s:%s" #l4 #l3
+    set-variable #l5 &spr "*%s:%s" #l4 #l3
   !endif
-  !if &exi &spr ":%s:" #l4
+  !if &exi &spr ":%s:" #l5
     !force 0 delete-buffer "*svn-cmdline*"
-    popup-window #l4
+    popup-window #l5
     ml-write "[View of file version already exists!]"
   !else
     19 svn-exec 5 $buffer-fname
     popup-window "*svn-cat*"
     beginning-of-buffer
-    change-buffer-name #l4
+    !if &gre $window-eline 1
+      !force change-buffer-name &spr "%s--%s" #l3 #l4
+      !iif $status  -1 major-mode
+    !endif
+    change-buffer-name #l5
   !endif
 !emacro
 
@@ -1636,37 +1640,27 @@ define-macro svn-revert
 
 ;; SVN Status ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-0 define-macro svn-exec-ipipe10
-  !if &band @# 1
-    set-variable $window-line 3
-    !if &lget .svn.cvalues10 3
-      insert-string "\n Flags     Work Rev Comt Rev Comt Author  Name  <Order by Extension>"
-      set-variable :fmpf 42
-    !elif &lget .svn.cvalues10 5
-      insert-string "\n Flags     Work Rev   Name  <Order by Extension>"
-      set-variable :fmpf 22
-    !else
-      insert-string "\n Flags   Name  <Order by Extension>"
-      set-variable :fmpf 9
-    !endif
-    -1 buffer-mode "edit"
-    1 buffer-mode "view"
-    major-mode "svn-status"
-    set-variable :svn-last 5
+0 define-macro svn-exec-complete10
+  set-variable $window-line 3
+  !if &lget .svn.cvalues10 3
+    insert-string "\n Flags     Work Rev Comt Rev Comt Author  Name  <Order by Extension>"
+    set-variable :fmpf 42
+  !elif &lget .svn.cvalues10 5
+    insert-string "\n Flags     Work Rev   Name  <Order by Extension>"
+    set-variable :fmpf 22
+  !else
+    insert-string "\n Flags   Name  <Order by Extension>"
+    set-variable :fmpf 9
   !endif
-  goto-alpha-mark "I"
-  !iif &equ $window-line :svn-last  !return
-  -1 buffer-mode "view"
-  1 buffer-mode "edit" "y"
-  set-variable #l0 $window-line
-  goto-line :svn-last
-  !while &gre #l0 $window-line
+  beginning-of-line
+  forward-line
+  set-variable #l1 ""
+  !while &not &seq @wc ""
     !if &seq &lef @wl 24 "Status against revision:"
-      set-variable :svn-srev &trb &rig @wl 24
+      set-variable #l1 &trb &rig @wl 24
       set-mark
       forward-line
       -1 kill-region
-      set-variable #l0 &sub #l0 1
       backward-line
     !elif &xse @wl "\\( +> moved \\(from\\|to\\) +\\).*"
       &len @s1 forward-delete-char
@@ -1674,36 +1668,26 @@ define-macro svn-revert
       backward-delete-char
       insert-string &con &seq @s2 "to" " -> " " <- "
       beginning-of-line
-      set-variable #l0 &sub #l0 1
     !elif &sin @wc " ACDIMRX?!~"
-      insert-string " "
+      insert-space
       beginning-of-line
     !endif
     forward-line
   !done
-  goto-line :svn-last
+  5 goto-line
   replace-string &con &bmo "magic" "\\\\" "\\" "/"
-  goto-alpha-mark  "I"
-  1 buffer-mode "view"
-  -1 buffer-mode "edit"
-  set-variable :svn-last $window-line
-  !iif &band @# 2  dirlst-sort-list
-!emacro
-
-0 define-macro svn-exec-complete10
-  !if &exi :svn-srev
+  !if &len #l1
     end-of-buffer
     backward-line
     !if &not &seq &lef @wl 9 "[**** SVN"
     !elif &seq &rig @wl -6 " ****]"
       end-of-line
       6 backward-char
-      insert-string &cat "; Server revision: " :svn-srev
+      insert-string &cat "; Server revision: " #l1
     !endif
   !endif
-  beginning-of-buffer
-  1 buffer-mode "view"
-  -1 buffer-mode "edit"
+  dirlst-sort-list
+  major-mode "svn-status"
   set-variable #l4 $window-id
   !repeat
     !iif &seq $buffer-bname "*svn-status*"  beginning-of-buffer

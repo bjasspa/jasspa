@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd003.2,v 2.7 2026/02/17 19:45:57 jon Exp $
+.Id $Id: m2cmd003.2,v 2.7 2026/08/01 08:21:17 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH major-mode 2
@@ -15,6 +15,8 @@ major-mode \- Declare or set a buffer major mode
 .SH SYNOPSIS
 .na
 \fBmajor-mode\fR \fIid\fR
+.br
+\fI-1\fR \fBmajor-mode\fR
 .br
 \fI0\fR \fBmajor-mode\fR \fIid\fR
 .br
@@ -31,42 +33,41 @@ major-mode \- Declare or set a buffer major mode
 .SH DESCRIPTION
 The
 .B major-mode 
-command is used to define the main content \fItype\fR of a buffer, such as
-\fCC\fR or \fCHTML\fR etc. The command changes the \fImajor-mode\fR assignment
-of the current buffer, defines or modifies the \fImajor-mode\fR properties
+command is used to define the main content \fItype\fR of a buffer, such as \fCC\fR or \fCHTML\fR etc. The command
+changes the \fImajor-mode\fR assignment of the current buffer, defines or modifies the \fImajor-mode\fR properties
 i.e. the file extension list etc.
 .PP
 When the \fImajor-mode\fR of a buffer is assigned, the buffer variables 
 .Ht $buffer-major-mode 5
 and
 .Ht $buffer-fhook 5
-are updated and the \fB$buffer-fhook\fR macro is executed. The
-\fB$buffer-fhook\fR macro (and hook file that it is defined in) configure the
-major mode features such as hilighting, indentation rules, etc.
+are updated and the \fB$buffer-fhook\fR macro is executed. The \fB$buffer-fhook\fR macro (and hook file that it is
+defined in) configure the major mode features such as hilighting, indentation rules, etc.
 .PP
-\fBmajor-mode\fR, with no argument \fIn\fR, prompts for a new major mode
-\fIid\fR and is immediately applied. If \fIid\fR matches the buffers current
-\fImajor-mode\fR identity then the command prints the full name of the current
+\fBmajor-mode\fR, with no argument \fIn\fR, prompts for a new major mode \fIid\fR and is immediately applied. If
+\fIid\fR matches the buffers current \fImajor-mode\fR identity then the command prints the full name of the current
 \fImajor-mode\fR, the content label (if enabled) and name of the hook file.
 .PP
-\fBmajor-mode\fR, with a positive numeric argument \fIn\fR modifies the major
-mode settings, the \fIid\fR argument must be supplied and the effect of the
-numeric argument \fIn\fR bits are as follows:
+When a argument of \fI-1\fR is given, \fBmajor-mode\fR reevaluates and assigned the best major mode for the current
+buffer. This will be based on the buffer's content, file name or buffer name if it has no file name. Note that when
+the \fB$buffer-fhook\fR is executed for a buffer without an associated file, it is only given the \fInew file\fR flag
+if the buffer is empty, this avoids
+.Hl "inserting new file templates" insert-template 3
+into buffers with content.
+.PP
+\fBmajor-mode\fR, with a positive numeric argument \fIn\fR modifies the major mode settings, the \fIid\fR argument
+must be supplied and the effect of the numeric argument \fIn\fR bits are as follows:
 .IP \fB0x01\fR
-When set, the \fImajor-mode\fR is created if it does not already exist. An
-error is returned if the bit is clear and the major-mode \fIid\fR does not
-exist.
+When set, the \fImajor-mode\fR is created if it does not already exist. An error is returned if the bit is clear and
+the major-mode \fIid\fR does not exist.
 .IP \fB0x02\fR
-When set, the \fIcontent-ID label\fR of the \fImajor-mode\fR is assigned the
-argument value \fIcid-label\fR. If \fIcid-label\fR is an empty string (i.e.
-"") the feature is disabled. 
+When set, the \fIcontent-ID label\fR of the \fImajor-mode\fR is assigned the argument value \fIcid-label\fR. If
+\fIcid-label\fR is an empty string (i.e. "") the feature is disabled. 
 .IP
-When clear, the \fIcontent-ID label\fR remains unchanged unless the call is
-creating the \fImajor-mode\fR, in this case, the \fIcid-label\fR is set to the
-same value as the \fIid\fR.
+When clear, the \fIcontent-ID label\fR remains unchanged unless the call is creating the \fImajor-mode\fR, in this
+case, the \fIcid-label\fR is set to the same value as the \fIid\fR.
 .IP
-Refer to the \fBNotes\fR section below for more information on the use of the
-\fIcontent-ID label\fR. 
+Refer to the \fBNotes\fR section below for more information on the use of the \fIcontent-ID label\fR. 
 .IP \fB0x04\fR
 When set, the file extensions associated with the major-mode are set to
 \fIextension-list\fR. \fIextension-list\fR is a space separated list of
