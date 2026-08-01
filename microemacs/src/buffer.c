@@ -606,10 +606,10 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
         }
         meModeClear(bp->mode,MDNACT) ;
 #if MEOPT_MAJORMODE
-        /* Now set the buffer context */
-        if((bp->intFlag & BIFNOHOOK) == 0)
+        /* Now set the buffer context (this could be an ipipe and the buffer-ipipe macro could have assign a major-mode */
+        if(((bp->intFlag & BIFNOHOOK) == 0) && (bp->majorMode == NULL))
         {
-            setBufferContext(bp) ;
+            setBufferContext(bp);
             /* the buffer's fhook could have done some really whacky things like
              * delete the buffer. If it has avoid crashing by checking the buffer
              * is still a buffer! */

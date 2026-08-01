@@ -97,9 +97,6 @@ define-macro vcs-cat
 define-macro vcs-commit
   3 vcs-id $buffer-fname "-commit"
 !emacro
-define-macro vcs-commit-log
-  3 vcs-id $buffer-fname "-show" "-commit-log"
-!emacro
 define-macro vcs-delete
   3 vcs-id $buffer-fname "-delete" "-remove"
 !emacro
@@ -131,7 +128,7 @@ define-macro vcs-revert
   3 vcs-id $buffer-fname "-revert"
 !emacro
 define-macro vcs-show
-  3 vcs-id $buffer-fname "-show" "-commit-log"
+  3 vcs-id $buffer-fname "-show"
 !emacro
 define-macro vcs-show-file
   3 vcs-id $buffer-fname "-cat" "-show-file"

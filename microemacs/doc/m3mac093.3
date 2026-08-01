@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac093.3,v 2.12 2025/11/29 00:57:27 jon Exp $
+.Id $Id: m3mac093.3,v 2.12 2026/08/01 08:01:22 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH svn 3
@@ -30,6 +30,7 @@
 .XI svn-revert - "\*(mS SVN interface - revert local changes"
 .XI svn-server-copy - "\*(mS SVN interface - server based copy items"
 .XI svn-server-move - "\*(mS SVN interface - server based move items"
+.XI svn-show - "\*(mS SVN interface - show log for a specific commit"
 .XI svn-status - "\*(mS SVN interface - status of items"
 .XI svn-update - "\*(mS SVN interface - update directory files"
 .XI svn-xdiff - "\*(mS SVN interface - External diff changes"
@@ -55,8 +56,8 @@ svn-checkout \- \*(mS SVN interface - checkout a working copy
 .Me "|svn-commit"
 svn-commit \- \*(mS SVN interface - commit changes back
 .br
-.Me "|svn-commit-log"
-svn-commit-log \- \*(mS SVN interface - get log for a commit
+.Me "|svn-show"
+svn-show \- \*(mS SVN interface - get log for a commit
 .br
 .Me "|svn-copy"
 svn-copy \- \*(mS SVN interface - copy items
@@ -117,7 +118,7 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .br
 .B svn-commit
 .br
-.B svn-commit-log
+.B svn-show
 .br
 .B svn-copy
 .br
@@ -212,7 +213,7 @@ current directory. The user specifies the item via an SVN repository URL.
 The  \fBsvn-commit\fR  command  commits  any  changes  made to the  current  buffer's  file or  selection  list to the
 repository. The user is prompted for a commit log message.
 .PP
-The  \fBsvn-commit-log\fR  command  opens a \fI*svn-commit-log*\fR window displaying the SVN log for the given commit. 
+The  \fBsvn-show\fR  command  opens a \fI*svn-show*\fR window displaying the SVN log for the given commit. 
 If the output is processed then clicking on or pressing enter on any of the file names listed will execute a 
 \fBsvn-diff\fR showing the changes made. 
 .PP
@@ -319,6 +320,9 @@ if \fBQuick browser mode\fR is enabled the same filter is used, but when disable
 are also removed by the filter. Use
 .Ht buffer-setup 3
 in the buffer to enable/disable the filter.
+.PP
+The svn-commit-log was renamed to svn-show in August 2026 to align it with Git's show command which has the same 
+functionality.  
 .SH "SEE ALSO"
 .na
 .Ht git 3 ,

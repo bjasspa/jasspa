@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Mon Jul 20 00:00:00 2026
 .\"
-.Id $Id: m3mac109.3,v 2.2 2026/07/21 00:10:29 jon Exp $
+.Id $Id: m3mac109.3,v 2.2 2026/08/01 08:04:55 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH vcs 3
@@ -19,7 +19,6 @@
 .XI vcs-checkout - "\*(mS VCS interface - checkout (create) a working copy"
 .XI vcs-coci - "\*(mS VCS interface - check-out/check-in a file"
 .XI vcs-commit - "\*(mS VCS interface - commit changes to repository"
-.XI vcs-commit-log - "\*(mS VCS interface - get log for a commit"
 .XI vcs-delete - "\*(mS VCS interface - delete/remove items"
 .XI vcs-diff - "\*(mS VCS interface - diff changes"
 .XI vcs-fetch - "\*(mS VCS interface - download from another repository"
@@ -31,6 +30,7 @@
 .XI vcs-remove - "\*(mS VCS interface - remove items"
 .XI vcs-revert - "\*(mS VCS interface - revert local changes"
 .XI vcs-setup - "\*(mS VCS interface - setup the underlying VCS"
+.XI vcs-show - "\*(mS VCS interface - show log for a commit"
 .XI vcs-status - "\*(mS VCS interface - status of items"
 .XI vcs-switch - "\*(mS VCS interface - switch or create branches"
 .XI vcs-unstage - "\*(mS VCS interface - unstage items"
@@ -59,9 +59,6 @@ vcs-coci \- \*(mS VCS interface - check-out/check-in a file
 .br
 .Me "|vcs-commit"
 vcs-commit \- \*(mS VCS interface - commit changes to repository
-.br
-.Me "|vcs-commit-log"
-vcs-commit-log \- \*(mS VCS interface - get log for a commit
 .br
 .Me "|vcs-delete"
 vcs-delete \- \*(mS VCS interface - delete/remove items
@@ -96,6 +93,9 @@ vcs-revert \- \*(mS VCS interface - revert local changes
 .Me "|vcs-setup"
 vcs-setup \- \*(mS VCS interface - setup the underlying VCS
 .br
+.Me "|vcs-show"
+vcs-show \- \*(mS VCS interface - show log for a commit
+.br
 .Me "|vcs-status"
 vcs-status \- \*(mS VCS interface - status of items
 .br
@@ -129,8 +129,6 @@ vcs-update \- \*(mS VCS interface - update directory files
 .br
 .B vcs-commit
 .br
-.B vcs-commit-log
-.br
 .B vcs-delete
 .br
 .B vcs-diff
@@ -152,6 +150,8 @@ vcs-update \- \*(mS VCS interface - update directory files
 .B vcs-revert
 .br
 .B vcs-setup
+.br
+.B vcs-show
 .br
 .B vcs-status
 .br
@@ -251,9 +251,6 @@ currently supported for ClearCase, use
 .Ht ClearCase 3 's
 own check-in command instead.
 .PP
-The \fBvcs-commit-log\fR command displays the log message and affected files of a specific commit. Only supported by
-\s-1SVN\s0 at present.
-.PP
 The \fBvcs-delete\fR command removes the current buffer or selected items from \s-1VCS\s0 control, and typically the
 local file too - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! \fBvcs-remove\fR is a synonym for this command.
 .PP
@@ -287,6 +284,9 @@ changes. Currently only supported by \s-1Git\s0 and \s-1SVN\s0, not \s-1CVS\s0 o
 The \fBvcs-setup\fR command opens the setup dialog of the current buffer's underlying \s-1VCS\s0 interface, e.g.
 .Ht git 3 's
 \fBgit-setup\fR; it does not have any configuration of its own, each underlying interface must be set up individually.
+.PP
+The \fBvcs-show\fR command displays the log message and affected files of a specific commit. Only supported by
+\s-1Git\s0 anf \s-1SVN\s0 at present.
 .PP
 The \fBvcs-status\fR command opens a window showing the state of all the items within the current directory. Not
 currently mapped for ClearCase, which names its equivalent command \fBcc-state\fR, see
