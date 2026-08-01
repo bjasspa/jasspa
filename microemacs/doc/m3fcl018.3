@@ -1,0 +1,58 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 21:40:07 1999
+.\"
+.Id $Id: m3fcl002.3,v 2.11 2026/08/01 05:42:39 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH info 3f
+.XI info - "Display Info pages in MicroEmacs."
+.XI pydoc - "Display Python nodule documentation in MicroEmacs." 
+.XI rdoc - "Display R help pages in MicroEmacs."
+.SH NAME
+info \-  Display Info pages.
+.br
+pydoc \-  Display Python module documentation.
+.br
+rdoc \-  Display R help pages.
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@info" \fI<topic>\fR
+.br
+\fBme\fR "@pydoc" \fI<modulname>\fR
+.br
+\fBme\fR "@rdoc" \fI<helppage>\fR
+.ad
+.SH DESCRIPTION
+The start-up files  \fCinfo.emf\fR,  \fCpydoc.emf\fR  or \fCrdoc.emf\fR may be
+invoked  from the command line as interactive documentation browser for
+info pages, Python module help pages or R help pages to be displayed
+in MicroEmacs as a more sophisticated documention tool than the standard
+Unix tools.
+.SH EXAMPLE
+Here are some  examples  how to use these  command  line  arguments to  display
+specific help pages within \s-1ME\s0 as a command line filter, i.e.
+.CS
+me @info coreutils
+me @pydoc argparse
+me @rdoc mean
+me @rdoc cluster::pam
+.CE 0
+.SH NOTES
+The  start-up code is stored in the files info.emf,  pydoc.emf  and  rdoc.emf  were 
+added in December 2025 and July 2026.
+.SH "SEE ALSO"
+.na
+.Ht me 1 ,
+.Ht start-up 3 ,
+.Ht info 3 ,
+.Ht py-doc 3 ,
+.Ht r-doc 3 .
+.ad
+.FH
