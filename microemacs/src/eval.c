@@ -1779,7 +1779,7 @@ gtarg(meUByte *tkn)
                     {
                         if(key <= 255)
                         {
-                            evalResult[0] = key;
+                            evalResult[0] = (meUByte) key;
                             evalResult[1] = '\0';
                             return evalResult;
                         }

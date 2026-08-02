@@ -128,228 +128,6 @@ assignMajorMode(meBuffer *bp, meMajorMode *mm, int tstF)
     return 0;
 }
 
-int
-majorMode(int f, int n)
-{
-    meMajorMode *mm;
-    meUByte id[meMAJORMODE_ID_SIZE], lbl[meMAJORMODE_CIDL_SIZE], extList[128], name[128], cidr[256];
-    int cidl;
-
-    if(!f)
-    {
-        meBuffer *bp=frameCur->windowCur->buffer;
-        if((mm = bp->majorMode) != NULL)
-        {
-            addHistory(0,mm->id,meFALSE);
-            cidl = 1;
-        }
-        else
-            cidl = 0;
-        if(meGetString((meUByte *)"Major-mode",MLLOWER|MLMAJORMODE,cidl,id,meMAJORMODE_ID_SIZE) <= 0)
-            return meFALSE;
-        if(id[0] == '\0')
-        {
-            if(mm == NULL)
-                return mlwrite(0,(meUByte *) "Current major-mode is default (not defined)");
-            if(bp->ehook >= 0)
-                execBufferFunc(bp,bp->ehook,0,1);
-            bp->majorMode = NULL;
-            bp->fhook = -1;
-            bp->bhook = -1;
-            bp->dhook = -1;
-            bp->ehook = -1;
-            return meTRUE;
-        }
-        else if((mm != NULL) && !meStrcmp(id,mm->id))
-        {
-            f = sprintf((char *) cidr,"Current major-mode is %s",mm->name);
-            if(mm->cidLabelLen)
-                f += sprintf((char *) cidr+f," (%s)",(mm->cidLabel != NULL) ? mm->cidLabel:mm->id);
-            if(meStrchr(mm->id,'-') == NULL)
-                sprintf((char *) cidr+f,", defined in hk%s.emf",mm->id);
-            return mlwrite(MWSPEC,cidr);
-        }
-    }
-    else if((meGetString((meUByte *)"Major-mode",MLLOWER|MLMAJORMODE,0,id,32) <= 0) || (id[0] == '\0'))
-        return meFALSE;
-    if(((n & 2) && (meGetString((meUByte *)"CID label",0,0,lbl,meMAJORMODE_CIDL_SIZE) <= 0)) ||
-       ((n & 4) && (meGetString((meUByte *)"Extension list",0,0,extList,128) <= 0)) ||
-       ((n & 8) && (meGetString((meUByte *)"Name",0,0,name,128) <= 0)) ||
-       ((n & 16) && ((meGetString((meUByte *)"CID lines",0,0,cidr,16) <= 0) || ((cidl = meAtoi(cidr)) == 0) ||
-                     (cidl < -255) || (cidl > 255) ||
-                     (meGetString((meUByte *)"CID regex",0,0,cidr,256) <= 0))))
-        return meFALSE;
-    if((n & 16) && (cidl < 0))
-        cidl = 0x08000 | (0-cidl);
-    
-    if((n == 16) && (id[0] =='\\') && (id[2] == '\0'))
-    {
-        /* This is a regex replace based content regex-id, handle separately */
-        if(((f = ((int) id[1]) - '0') < 0) || (f > 7))
-            return meFALSE;
-        cidl |= (f << 8);
-        mm = NULL;
-    }
-    else
-    {
-        meMajorMode *pmm=NULL;
-        mm = majorModeHead;
-        while((mm != NULL) && meStrcmp(mm->id,id))
-            mm = (pmm = mm)->next;
-        if(mm == NULL)
-        {
-            if((f == 0) || ((n & 1) == 0))
-                return mlwrite(MWABORT,(meUByte *) "[Error: Major-mode \"%s\" not defined]",id);
-            f = (int) meStrlen(id);
-            if((mm = (meMajorMode*) meMalloc(((size_t) (&(((meMajorMode *) 0)->id[1])))+f)) == NULL)
-                return meFALSE;
-            /* add to the head as newer modes have higher priority */
-            mm->next = majorModeHead;
-            mm->cidLabel = NULL;
-            mm->extList = NULL;
-            mm->name = NULL;
-            mm->fhook = 0;
-            memcpy(mm->id,id,f+1);
-            majorModeHead = mm;
-            if(f == 5)
-            {
-                if((mmRbin == NULL) && !memcmp(id,mmRbinId,5))
-                    mmRbin = mm;
-            }
-            else if(f == 6)
-            {
-                if((mmBinary == NULL) && !memcmp(id,mmBinaryId,6))
-                    mmBinary = mm;
-            }
-            else if((f == 7) && (mmDefault == NULL) && !memcmp(id,mmDefaultId,7))
-                mmDefault = mm;
-            mm->cidLabelLen = ((n & 2) == 0) ? f:0;
-            if((n & 4) == 0)
-            {
-                extList[0] = '.';
-                memcpy(extList+1,id,f+1);
-                n |= 4;
-            }
-            if((n & 8) == 0)
-            {
-                meUByte cc,*dd=name,*ss=((n & 2) && (lbl[0] != '\0')) ? lbl:id;
-                cc = *ss;
-                *dd++ = toUpper(cc);
-                if((meStrchr(ss,'a') != NULL) || (meStrchr(ss,'e') != NULL) || (meStrchr(ss,'i') != NULL) || (meStrchr(ss,'o') != NULL) || (meStrchr(ss,'u') != NULL))
-                    meStrcpy(dd,ss+1);
-                else
-                {
-                    while((cc=*++ss) != '\0')
-                        *dd++ = toUpper(cc);
-                    *dd = '\0';
-                }
-                n |= 8;
-            }
-        }
-        else if(f == 0)
-        {
-            meBuffer *bp=frameCur->windowCur->buffer;
-            if(assignMajorMode(bp,mm,0) != 0)
-                return meFALSE;
-            meRegCurr->next->val[9][0] = '\0';
-            /* When run manually the insert-template flag is determined by whether the buffer is empty and unedited */
-            return execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->lineCount || meModeTest(bp->mode,MDEDIT)) ? 1:0);
-        }
-        else if(n == 0)
-        {
-            if(mm->fhook > 0)
-                n = 3 + ((mm->ftest > 0) ? 4:0) + ((mm->bhook > 0) ? 8:0) + ((mm->ehook > 0) ? 16:0) + ((mm->dhook > 0) ? 32:0);
-            else if(mm->fhook < 0)
-                n = 1;
-            sprintf((char *) resultStr,"\x08%s\x08%d\x08%s\x08%s\x08%s\x08",mm->id,n,(mm->cidLabelLen == 0) ? "":(char *) ((mm->cidLabel != NULL) ? mm->cidLabel:mm->id),(mm->extList != NULL) ? (char *) mm->extList:"",(mm->name != NULL) ? (char *) mm->name:"");
-            return meTRUE;
-        }
-        else if((n & 1) && (pmm != NULL))
-        {
-            /* push this back to the head so it takes priority */
-            pmm->next = mm->next;
-            mm->next = majorModeHead;
-            majorModeHead = mm;
-        }
-    }
-    if(n & 2)
-    {
-        if(((lbl[0] != '\0') || (mm->cidLabelLen > 0)) &&
-           ((lbl[0] == '\0') || (mm->cidLabelLen == 0) || meStrcmp((mm->cidLabel != NULL) ? mm->cidLabel:mm->id,lbl)))
-        {
-            if(mm->cidLabel != NULL)
-            {
-                meFree(mm->cidLabel);
-                mm->cidLabel = NULL;
-            }
-            if(lbl[0] != '\0')
-            {
-                if(meStrcmp(mm->id,lbl) && ((mm->cidLabel = meStrdup(lbl)) == NULL))
-                   return meFALSE;
-                mm->cidLabelLen = (meUByte) meStrlen(lbl);
-            }
-            else
-                mm->cidLabelLen = 0;
-            mm->fhook = 0;
-        }
-    }
-    if(n & 4)
-    {
-        if((mm->extList != NULL) && ((extList[0] == '\0') || meStrcmp(mm->extList,extList)))
-        {
-            meFree(mm->extList);
-            mm->extList = NULL;
-        }
-        if((mm->extList == NULL) && (extList[0] != '\0') && ((mm->extList = meStrdup(extList)) == NULL))
-            return meFALSE;
-    }
-    if(n & 8)
-    {
-        if((mm->name != NULL) && ((name[0] == '\0') || meStrcmp(mm->name,name)))
-        {
-            meFree(mm->name);
-            mm->name = NULL;
-        }
-        if((mm->name == NULL) && (name[0] != '\0') && ((mm->name = meStrdup(name)) == NULL))
-            return meFALSE;
-    }
-    if(n & 16)
-    {
-        f = fileCidCount;
-        while((--f >= 0) && meStrcmp(fileCidRegex[f],cidr))
-            ;
-        if(f < 0)
-        {
-            if((((f=fileCidCount) & 0x07) == 0) &&
-               (((fileCidRegex = meRealloc(fileCidRegex,(f+8)*sizeof(meUByte *))) == NULL) ||
-                ((fileCidMjrMd = meRealloc(fileCidMjrMd,(f+8)*sizeof(meMajorMode *))) == NULL) ||
-                ((fileCidFlags = meRealloc(fileCidFlags,(f+8)*sizeof(meUShort))) == NULL)))
-            {
-                fileCidCount=0;
-                return meFALSE;
-            }
-            if((fileCidRegex[f] = meStrdup(cidr)) == NULL)
-                return meFALSE;
-            fileCidCount++;
-        }
-        fileCidMjrMd[f] = mm;
-        fileCidFlags[f] = cidl;
-    }
-    if(n & 1)
-    {
-        meMacro *mac;
-        name[0] = 'h';
-        name[1] = 'k';
-        meStrcpy(name+2,mm->id);
-        while((mac=createMacro(NULL)) != NULL)
-        {
-            mac->hlp->flag |= meMACRO_FILE;
-            mac->fname = meStrdup(name);
-        }
-    }
-    return meTRUE ;
-}
-
 /* Check extent.
    Check the extent string for the filename extent. */
 static int
@@ -553,7 +331,7 @@ setBufferContext(meBuffer *bp)
     if(mm != NULL)
     {
         /* copy the magic string identifier or "" to fhook's #l9 */
-        ii = (bp->intFlag & BIFFILE) ? 1:0;
+        ii = ((bp->intFlag & BIFFILE) || (bp->lineCount > 0)) ? 1:0;
         if(ml)
         {
             if(ml >= meBUF_SIZE_MAX)
@@ -565,6 +343,234 @@ setBufferContext(meBuffer *bp)
         execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,ii);
     }
 }
+
+int
+majorMode(int f, int n)
+{
+    meMajorMode *mm;
+    meUByte id[meMAJORMODE_ID_SIZE], lbl[meMAJORMODE_CIDL_SIZE], extList[128], name[128], cidr[256];
+    int cidl;
+
+    if(!f)
+    {
+        meBuffer *bp=frameCur->windowCur->buffer;
+        if((mm = bp->majorMode) != NULL)
+        {
+            addHistory(0,mm->id,meFALSE);
+            cidl = 1;
+        }
+        else
+            cidl = 0;
+        if(meGetString((meUByte *)"Major-mode",MLLOWER|MLMAJORMODE,cidl,id,meMAJORMODE_ID_SIZE) <= 0)
+            return meFALSE;
+        if(id[0] == '\0')
+        {
+            if(mm == NULL)
+                return mlwrite(0,(meUByte *) "Current major-mode is default (not defined)");
+            if(bp->ehook >= 0)
+                execBufferFunc(bp,bp->ehook,0,1);
+            bp->majorMode = NULL;
+            bp->fhook = -1;
+            bp->bhook = -1;
+            bp->dhook = -1;
+            bp->ehook = -1;
+            return meTRUE;
+        }
+        else if((mm != NULL) && !meStrcmp(id,mm->id))
+        {
+            f = sprintf((char *) cidr,"Current major-mode is %s",mm->name);
+            if(mm->cidLabelLen)
+                f += sprintf((char *) cidr+f," (%s)",(mm->cidLabel != NULL) ? mm->cidLabel:mm->id);
+            if(meStrchr(mm->id,'-') == NULL)
+                sprintf((char *) cidr+f,", defined in hk%s.emf",mm->id);
+            return mlwrite(MWSPEC,cidr);
+        }
+    }
+    else if(n < 0)
+    {
+        setBufferContext(frameCur->windowCur->buffer);
+        return meTRUE;
+    }
+    else if((meGetString((meUByte *)"Major-mode",MLLOWER|MLMAJORMODE,0,id,32) <= 0) || (id[0] == '\0'))
+        return meFALSE;
+    if(((n & 2) && (meGetString((meUByte *)"CID label",0,0,lbl,meMAJORMODE_CIDL_SIZE) <= 0)) ||
+       ((n & 4) && (meGetString((meUByte *)"Extension list",0,0,extList,128) <= 0)) ||
+       ((n & 8) && (meGetString((meUByte *)"Name",0,0,name,128) <= 0)) ||
+       ((n & 16) && ((meGetString((meUByte *)"CID lines",0,0,cidr,16) <= 0) || ((cidl = meAtoi(cidr)) == 0) ||
+                     (cidl < -255) || (cidl > 255) ||
+                     (meGetString((meUByte *)"CID regex",0,0,cidr,256) <= 0))))
+        return meFALSE;
+    if((n & 16) && (cidl < 0))
+        cidl = 0x08000 | (0-cidl);
+    
+    if((n == 16) && (id[0] =='\\') && (id[2] == '\0'))
+    {
+        /* This is a regex replace based content regex-id, handle separately */
+        if(((f = ((int) id[1]) - '0') < 0) || (f > 7))
+            return meFALSE;
+        cidl |= (f << 8);
+        mm = NULL;
+    }
+    else
+    {
+        meMajorMode *pmm=NULL;
+        mm = majorModeHead;
+        while((mm != NULL) && meStrcmp(mm->id,id))
+            mm = (pmm = mm)->next;
+        if(mm == NULL)
+        {
+            if((f == 0) || ((n & 1) == 0))
+                return mlwrite(MWABORT,(meUByte *) "[Error: Major-mode \"%s\" not defined]",id);
+            f = (int) meStrlen(id);
+            if((mm = (meMajorMode*) meMalloc(((size_t) (&(((meMajorMode *) 0)->id[1])))+f)) == NULL)
+                return meFALSE;
+            /* add to the head as newer modes have higher priority */
+            mm->next = majorModeHead;
+            mm->cidLabel = NULL;
+            mm->extList = NULL;
+            mm->name = NULL;
+            mm->fhook = 0;
+            memcpy(mm->id,id,f+1);
+            majorModeHead = mm;
+            if(f == 5)
+            {
+                if((mmRbin == NULL) && !memcmp(id,mmRbinId,5))
+                    mmRbin = mm;
+            }
+            else if(f == 6)
+            {
+                if((mmBinary == NULL) && !memcmp(id,mmBinaryId,6))
+                    mmBinary = mm;
+            }
+            else if((f == 7) && (mmDefault == NULL) && !memcmp(id,mmDefaultId,7))
+                mmDefault = mm;
+            mm->cidLabelLen = ((n & 2) == 0) ? f:0;
+            if((n & 4) == 0)
+            {
+                extList[0] = '.';
+                memcpy(extList+1,id,f+1);
+                n |= 4;
+            }
+            if((n & 8) == 0)
+            {
+                meUByte cc,*dd=name,*ss=((n & 2) && (lbl[0] != '\0')) ? lbl:id;
+                cc = *ss;
+                *dd++ = toUpper(cc);
+                if((meStrchr(ss,'a') != NULL) || (meStrchr(ss,'e') != NULL) || (meStrchr(ss,'i') != NULL) || (meStrchr(ss,'o') != NULL) || (meStrchr(ss,'u') != NULL))
+                    meStrcpy(dd,ss+1);
+                else
+                {
+                    while((cc=*++ss) != '\0')
+                        *dd++ = toUpper(cc);
+                    *dd = '\0';
+                }
+                n |= 8;
+            }
+        }
+        else if(f == 0)
+        {
+            meBuffer *bp=frameCur->windowCur->buffer;
+            if(assignMajorMode(bp,mm,0) != 0)
+                return meFALSE;
+            meRegCurr->next->val[9][0] = '\0';
+            /* When run manually the insert-template flag is determined by whether the buffer is empty and unedited */
+            return execBufferFunc(bp,bp->fhook,meEBF_ARG_GIVEN,(bp->lineCount || meModeTest(bp->mode,MDEDIT)) ? 1:0);
+        }
+        else if(n == 0)
+        {
+            if(mm->fhook > 0)
+                n = 3 + ((mm->ftest > 0) ? 4:0) + ((mm->bhook > 0) ? 8:0) + ((mm->ehook > 0) ? 16:0) + ((mm->dhook > 0) ? 32:0);
+            else if(mm->fhook < 0)
+                n = 1;
+            sprintf((char *) resultStr,"\x08%s\x08%d\x08%s\x08%s\x08%s\x08",mm->id,n,(mm->cidLabelLen == 0) ? "":(char *) ((mm->cidLabel != NULL) ? mm->cidLabel:mm->id),(mm->extList != NULL) ? (char *) mm->extList:"",(mm->name != NULL) ? (char *) mm->name:"");
+            return meTRUE;
+        }
+        else if((n & 1) && (pmm != NULL))
+        {
+            /* push this back to the head so it takes priority */
+            pmm->next = mm->next;
+            mm->next = majorModeHead;
+            majorModeHead = mm;
+        }
+    }
+    if(n & 2)
+    {
+        if(((lbl[0] != '\0') || (mm->cidLabelLen > 0)) &&
+           ((lbl[0] == '\0') || (mm->cidLabelLen == 0) || meStrcmp((mm->cidLabel != NULL) ? mm->cidLabel:mm->id,lbl)))
+        {
+            if(mm->cidLabel != NULL)
+            {
+                meFree(mm->cidLabel);
+                mm->cidLabel = NULL;
+            }
+            if(lbl[0] != '\0')
+            {
+                if(meStrcmp(mm->id,lbl) && ((mm->cidLabel = meStrdup(lbl)) == NULL))
+                   return meFALSE;
+                mm->cidLabelLen = (meUByte) meStrlen(lbl);
+            }
+            else
+                mm->cidLabelLen = 0;
+            mm->fhook = 0;
+        }
+    }
+    if(n & 4)
+    {
+        if((mm->extList != NULL) && ((extList[0] == '\0') || meStrcmp(mm->extList,extList)))
+        {
+            meFree(mm->extList);
+            mm->extList = NULL;
+        }
+        if((mm->extList == NULL) && (extList[0] != '\0') && ((mm->extList = meStrdup(extList)) == NULL))
+            return meFALSE;
+    }
+    if(n & 8)
+    {
+        if((mm->name != NULL) && ((name[0] == '\0') || meStrcmp(mm->name,name)))
+        {
+            meFree(mm->name);
+            mm->name = NULL;
+        }
+        if((mm->name == NULL) && (name[0] != '\0') && ((mm->name = meStrdup(name)) == NULL))
+            return meFALSE;
+    }
+    if(n & 16)
+    {
+        f = fileCidCount;
+        while((--f >= 0) && meStrcmp(fileCidRegex[f],cidr))
+            ;
+        if(f < 0)
+        {
+            if((((f=fileCidCount) & 0x07) == 0) &&
+               (((fileCidRegex = meRealloc(fileCidRegex,(f+8)*sizeof(meUByte *))) == NULL) ||
+                ((fileCidMjrMd = meRealloc(fileCidMjrMd,(f+8)*sizeof(meMajorMode *))) == NULL) ||
+                ((fileCidFlags = meRealloc(fileCidFlags,(f+8)*sizeof(meUShort))) == NULL)))
+            {
+                fileCidCount=0;
+                return meFALSE;
+            }
+            if((fileCidRegex[f] = meStrdup(cidr)) == NULL)
+                return meFALSE;
+            fileCidCount++;
+        }
+        fileCidMjrMd[f] = mm;
+        fileCidFlags[f] = cidl;
+    }
+    if(n & 1)
+    {
+        meMacro *mac;
+        name[0] = 'h';
+        name[1] = 'k';
+        meStrcpy(name+2,mm->id);
+        while((mac=createMacro(NULL)) != NULL)
+        {
+            mac->hlp->flag |= meMACRO_FILE;
+            mac->fname = meStrdup(name);
+        }
+    }
+    return meTRUE ;
+}
+
 #endif
 
 int
