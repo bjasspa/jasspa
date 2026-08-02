@@ -9,7 +9,8 @@
 ; Usage:       mec @rdoc [topic]
 ;              mec @rdoc             - Prompt for topic
 ;
-  execute-file "me"
+execute-file "me"
+
 0 define-macro start-up
   delete-other-windows
   !if &not &seq &set #l0 $buffer-bname "*scratch*"

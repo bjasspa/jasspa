@@ -1579,12 +1579,17 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     buf[0] = ' ' ;
     buf[1] = ' ' ;
     len = 2 ;
-    if (totSizeHigh > 0)
+    if(totSizeHigh > 0)
     {
-        ui = (totSizeHigh << 12) | (totSizeLow >> 20) ;
-        len += sprintf((char *)buf+len, "%7dM ",ui) ;
+        if((totSizeHigh > 0x0100000) && ((ui = (totSizeHigh << 12) | (totSizeLow >> 20)) > 9999999))
+            len += sprintf((char *)buf+len, "%7dM ",ui);
+        else
+        {
+            ui = (totSizeHigh << 2) | (totSizeLow >> 30);
+            len += sprintf((char *)buf+len, "%7dg ",ui);
+        }
     }
-    else if (totSizeLow > 9999999)
+    else if(totSizeLow > 9999999)
         len += sprintf((char *)buf+len, "%7dK ",totSizeLow >> 10) ;
     else
         len += sprintf((char *)buf+len, "%7d  ",totSizeLow) ;
@@ -1600,8 +1605,13 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         /* Add the file statistics */
         if(fnode->sizeHigh > 0)
         {
-            ui = (fnode->sizeHigh << 12) | (fnode->sizeLow >> 20) ;
-            len += sprintf((char *)buf+len, "%7dM ",ui) ;
+            if((fnode->sizeHigh > 0x0100000) && ((ui = (fnode->sizeHigh << 12) | (fnode->sizeLow >> 20)) > 9999999))
+                len += sprintf((char *)buf+len, "%7dM ",ui);
+            else
+            {
+                ui = (fnode->sizeHigh << 2) | (fnode->sizeLow >> 30);
+                len += sprintf((char *)buf+len, "%7dg ",ui);
+            }
         }
         else if (fnode->sizeLow > 9999999)
             len += sprintf((char *)buf+len, "%7dK ", fnode->sizeLow >> 10);
@@ -1642,12 +1652,12 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 
         if(fnode->lname != NULL)
         {
-            sprintf((char *)buf+len, " -> %s", fnode->lname);
-            free(fnode->lname) ;
+            len += sprintf((char *)buf+len, " -> %s", fnode->lname);
+            free(fnode->lname);
+            if(fnode->attrib[0] == 'd')
+                buf[len++] = '/' ;
         }
-        else
-            buf[len] = '\0' ;
-
+        buf[len] = '\0' ;
         bp->lineCount += addLine(blp,buf) ;
         free(fnode->fname) ;
         fnode = fnode->next ;

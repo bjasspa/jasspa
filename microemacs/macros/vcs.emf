@@ -109,6 +109,9 @@ define-macro vcs-fetch
 define-macro vcs-gdiff
   3 vcs-id $buffer-fname "-gdiff"
 !emacro
+define-macro vcs-info
+  3 vcs-id $buffer-fname "-info"
+!emacro
 define-macro vcs-log
   3 vcs-id $buffer-fname "-log"
 !emacro
@@ -123,6 +126,9 @@ define-macro vcs-push
 !emacro
 define-macro vcs-remove
   3 vcs-id $buffer-fname "-delete" "-remove"
+!emacro
+define-macro vcs-resolve
+  3 vcs-id $buffer-fname "-resolve"
 !emacro
 define-macro vcs-revert
   3 vcs-id $buffer-fname "-revert"

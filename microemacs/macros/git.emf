@@ -184,6 +184,10 @@ set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|"
 set-variable .git.cnames &lins .git.cnames -1 "Unstage"
 set-variable .git.cflags &lins .git.cflags -1 "rS*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|"
+; Command 17 - Info
+set-variable .git.cnames &lins .git.cnames -1 "Info"
+set-variable .git.cflags &lins .git.cflags -1 "s$!"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "|"
 
 set-variable .git.ccount &sub &len .git.cnames &len &rep .git.cnames "\b" ""
 set-variable .git.cvals  &spr "%n" &pdec .git.ccount 1 "\b"
@@ -1038,6 +1042,48 @@ define-macro git-status
   set-variable #l2 &spr "%s status --porcelain %s-- " .git.com &con &lget #l9 1 "--ignored=matching " ""
   7 git-get-file-list 0 1 #l2
   4 git-exec 3 $buffer-fname
+!emacro
+
+;; GIT Info ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+define-macro git-info
+  !force git-dirlst-detect
+  !iif &not $status  -8 ml-write "[Current path does not appear to be within a Git repository]"
+  17 git-osd
+  set-variable #l1 .git-dirlst-detect.ld
+  !force 0x404 pipe-shell-command &spr "%s remote get-url %s" .git.com .git.rep #l2
+  set-variable #l2 &con $status &rep &rep #l2 "\r" "" "\n" "" &spr "<no '%s' remote>" .git.rep
+  !force 0x404 pipe-shell-command &cat .git.com " rev-parse --abbrev-ref HEAD" #l3
+  set-variable #l3 &rep &rep #l3 "\r" "" "\n" ""
+  !iif &seq #l3 "HEAD"  set-variable #l3 "(detached HEAD)"
+  !force 0x404 pipe-shell-command &cat .git.com " rev-parse --short HEAD" #l4
+  set-variable #l4 &con $status &rep &rep #l4 "\r" "" "\n" "" "<no commits yet>"
+  !force 0 delete-buffer "*git-info-tmp*"
+  !force 0x46 pipe-shell-command &cat .git.com " log -1 --date=iso --pretty=format:\"Author:       %an <%ae>%nDate:         %ad%nSubject:      %s\"" "*git-info-tmp*"
+  set-variable #l5 $status
+  find-buffer "*git-info-tmp*"
+  beginning-of-buffer
+  set-variable #l6 &con #l5 @wl "Author:       <none>"
+  !iif #l5  forward-line
+  set-variable #l7 &con #l5 @wl "Date:         <none>"
+  !iif #l5  forward-line
+  set-variable #l8 &con #l5 @wl "Subject:      <none>"
+  !force 0 delete-buffer "*git-info-tmp*"
+  goto-position "\x82"
+  !force 0 delete-buffer "*git-info*"
+  find-buffer "*git-info*"
+  insert-string &spr "Git Info:  %s\n\n" #l1
+  insert-string &spr "  Remote:       %s (%s)\n" #l2 .git.rep
+  insert-string &spr "  Local root:   %s\n" #l1
+  insert-string &spr "  Branch:       %s\n" #l3
+  insert-string &spr "  Head commit:  %s\n" #l4
+  insert-string &spr "  %s\n" #l6
+  insert-string &spr "  %s\n" #l7
+  insert-string &spr "  %s\n" #l8
+  beginning-of-buffer
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  popup-window "*git-info*"
 !emacro
 
 ;; GIT Log ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1906,32 +1952,33 @@ define-macro git
     osd @# 0 "bB"
   !endif
   osd @# 10  "" "Current \HStatus" f git-status
-  osd @# 20 "" "\HDiff files"      f git-diff
+  osd @# 20 "" "\HDiff Files"      f git-diff
   osd @# 50 "" "Item Blame"
   osd @# 100 "-"
   !if :tag-count
     osd @# 40 "" "Item \HLog"      f git-log
-    !iif &equ :tag-count 1  osd @# 50 "" "Item \HBlame"  f git-blame
-    osd @# 110 "" "\HAdd items"     f git-add
-    osd @# 130 "" "\HMove items"    f git-move
-    osd @# 140 "" "Remove items"    f git-remove
-    osd @# 150 "" "Revert items"    f git-revert
-    osd @# 160 "" "Unstage items"   f git-unstage
-    osd @# 230 "" "\HCommit files"  f git-commit
+    !iif &equ :tag-count 1  osd @# 50 "" "Item \HBlame" f git-blame
+    osd @# 110 "" "\HAdd Items"     f git-add
+    osd @# 130 "" "\HMove Items"    f git-move
+    osd @# 140 "" "Remove Items"    f git-remove
+    osd @# 150 "" "Revert Items"    f git-revert
+    osd @# 160 "" "Unstage Items"   f git-unstage
+    osd @# 230 "" "\HCommit Files"  f git-commit
   !else
     osd @# 40 "" "Item Log"
-    osd @# 110 "" "Add items"
-    osd @# 130 "" "Move items"
-    osd @# 140 "" "Remove items"
-    osd @# 150 "" "Revert items"
-    osd @# 160 "" "Unstage items"
-    osd @# 230 "" "Commit files"
+    osd @# 110 "" "Add Items"
+    osd @# 130 "" "Move Items"
+    osd @# 140 "" "Remove Items"
+    osd @# 150 "" "Revert Items"
+    osd @# 160 "" "Unstage Items"
+    osd @# 230 "" "Commit Files"
   !endif
   osd @# 200 "-"
-  osd @# 210 "" "\HUpdate files"   f git-pull
+  osd @# 210 "" "\HUpdate Files"    f git-pull
   osd @# 300 "-"
-  osd @# 310 "" "Clear \HGit console" f git-clear-console
-  osd @# 320 "" "Git Setup"        f git-setup
+  osd @# 310 "" "Git \HInfo"        f git-info
+  osd @# 320 "" "Git Setu\Hp"       f git-setup
+  osd @# 310 "" "Clear C\Honsole"   f git-clear-console
 !emacro
 
 ;; GIT status help dialog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -3655,8 +3655,17 @@ get_flag:
                             else
                             {
                                 v2 = (ftype & meIOTYPE_DIRECTORY) ? 'D':'R';
+#ifndef NDEBUG
                                 /* TODO: why call this and not use stats.stmode ?? */ 
+                                /* temporary addition to verify the veracity of above TODO */
+                                /* SP: Found wine files in ~/.wine/dosdevices/z:/proc/self/map_files/ are not REG or DIR
+                                 * and call to meFileGetAttributes(arg3) returns -1, but stats.stmode is correct so changing
+                                 * to use stats.stmode. But need to test Windows & macOS */
                                 v4 = meFileGetAttributes(arg3);
+                                if(v4 != stats.stmode)
+                                    printf("Warning: &stat i attrib differs: %x %x : %s\n",v4,stats.stmode,arg3);
+#endif
+                                v4 = stats.stmode;
                                 v5 = 1;
                                 v51 = stats.stsizeHigh;
                                 v52 = stats.stsizeLow;

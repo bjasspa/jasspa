@@ -325,7 +325,7 @@ define-macro cvs-log-list
   -8 ml-write &spr "[Failed to generate %s version of file]" &cond @# "repository" "local"
 !emacro
 
-0 define-macro cvs-resolve-conflictsi
+0 define-macro cvs-resolve-i
   beginning-of-buffer
   1 buffer-mode "magic"
   !force search-forward "^=======$"
@@ -928,7 +928,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
   !endif
   !if &sin "s" &lget .cvs.flags @#
     !iif &not &equ .find-file.file-count 1  osd-dialog &cat "CVS - " &lget .cvs.names @# "    This tool can only opperate on one specific file at a time!    " "  \HAbort  "
-    !iif &seq &lget .cvs.cmds @# "res-conf"  cvs-resolve-conflictsi
+    !iif &seq &lget .cvs.cmds @# "res-conf"  cvs-resolve-i
   !endif
   !if &seq &lget .cvs.cmds @# "remove"
     !if &not #l9
@@ -1254,7 +1254,7 @@ define-macro cvs-update
 define-macro cvs-annotate
   12 cvs-osd
 !emacro
-define-macro cvs-resolve-conflicts
+define-macro cvs-resolve
   13 cvs-osd
 !emacro
 

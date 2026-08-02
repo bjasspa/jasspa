@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.12 2026/07/25 00:15:09 jon Exp $
+.Id $Id: m3mac057.3,v 2.12 2026/08/02 12:31:29 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -22,6 +22,7 @@
 .XI cvs-gdiff - "\*(mS CVS interface - graphical diff changes"
 .XI cvs-log - "\*(mS CVS interface - log changes"
 .XI cvs-remove - "\*(mS CVS interface - remove file"
+.XI cvs-resolve - "\*(mS CVS interface - resolve conflicts"
 .XI cvs-resolve-conflicts - "\*(mS CVS interface - resolve conflicts"
 .XI cvs-status - "\*(mS CVS interface - list state of directory files"
 .XI cvs-tag - "\*(mS CVS interface - tag files"
@@ -61,8 +62,8 @@ cvs-log \- \*(mS CVS interface - log changes
 .Me "|cvs-remove"
 cvs-remove \- \*(mS CVS interface - remove file
 .br
-.Me "|cvs-resolve-conflicts"
-cvs-resolve-conflicts \- \*(mS CVS interface - resolve conflicts
+.Me "|cvs-resolve"
+cvs-resolve \- \*(mS CVS interface - resolve conflicts
 .br
 .Me "|cvs-status"
 cvs-status \- \*(mS CVS interface - list state of directory files
@@ -98,7 +99,7 @@ cvs-update \- \*(mS CVS interface - update directory files
 .br
 .B cvs-remove
 .br
-.B cvs-resolve-conflicts
+.B cvs-resolve
 .br
 .B cvs-status
 .br
@@ -236,7 +237,7 @@ repository. Instead the main \fBcvs\fR file-browser menu or
 .Hr cvs 1
 itself must be used.
 .PP
-The  \fBcvs-resolve-conflicts\fR  command may be used to resolve any conflicts
+The  \fBcvs-resolve\fR  command may be used to resolve any conflicts
 created by CVS when the current buffer's file is updated. The command opens a
 gdiff window  displaying  the areas of conflict,  the user may then select the
 correct version in each case and save the resultant new version over the local
@@ -316,6 +317,9 @@ enabled the same filter is used, but when disabled all files ignored by
 are also removed by the filter. Use
 .Ht buffer-setup 3
 in the buffer to enable/disable the filter.
+.PP
+The cvs-resolve-conflicts was renamed to cvs-resolve in August 2026 to align it with SVN's resolve command which has the same 
+functionality.
 .SH "SEE ALSO"
 .na
 .Ht git 3 ,

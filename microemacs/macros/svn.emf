@@ -1540,8 +1540,9 @@ define-macro svn-info
   set-variable #l2 &spr "%s proplist -v " .svn.com
   7 svn-get-file-list 0 0 #l2
   !force 16 svn-exec 0 .find-file.file-dir
+  set-variable #l3 $status
   !force unset-variable .svn.lock
-  !if $status
+  !if #l3
     find-buffer "*svn-cmdline*"
     0x404 pipe-shell-command &rep @wl " proplist -v " " info " #l1
     popup-window "*svn-info*"
@@ -2139,37 +2140,39 @@ define-macro svn
     osd @# 0 "bB"
   !endif
   osd @# 10  "" "Current \HStatus"    f svn-status
-  osd @# 20 "" "\HDiff files"        f svn-diff
-  !if &equ :tag-count 1
-    osd @# 40 "" "Item \HLog"          f svn-log
-    osd @# 50 "" "Item \HBlame"        f svn-blame
+  osd @# 20 "" "\HDiff Files"         f svn-diff
+  osd @# 50 "" "Item Blame"
+  !if &les :tag-count 2
+    osd @# 30 "" "Item \HInfo"        f svn-info
+    osd @# 40 "" "Item \HLog"         f svn-log
+    !iif &equ :tag-count 1  osd @# 50 "" "Item \HBlame" f svn-blame
   !else
+    osd @# 30 "" "Item Info"
     osd @# 40 "" "Item Log"
-    osd @# 50 "" "Item Blame"
   !endif
   osd @# 100 "-"
   !if :tag-count
-    osd @# 110 "" "\HAdd items"       f svn-add
-    osd @# 120 "" "\HCopy items"      f svn-copy
-    osd @# 130 "" "\HMove items"      f svn-move
-    osd @# 140 "" "Delete items"      f svn-delete
-    osd @# 150 "" "Revert items"      f svn-revert
-    osd @# 220 "" "\HResolve conflicts" f svn-resolve
-    osd @# 230 "" "\HCommit files"      f svn-commit
+    osd @# 110 "" "\HAdd Items"       f svn-add
+    osd @# 120 "" "\HCopy Items"      f svn-copy
+    osd @# 130 "" "\HMove Items"      f svn-move
+    osd @# 140 "" "Delete Items"      f svn-delete
+    osd @# 150 "" "Revert Items"      f svn-revert
+    osd @# 220 "" "\HResolve Conflicts" f svn-resolve
+    osd @# 230 "" "\HCommit Files"    f svn-commit
   !else
-    osd @# 110 "" "Add items"
-    osd @# 120 "" "Copy items"
-    osd @# 130 "" "Move items"
-    osd @# 140 "" "Delete items"
-    osd @# 150 "" "Revert items"
-    osd @# 220 "" "Resolve conflicts"
-    osd @# 230 "" "Commit files"
+    osd @# 110 "" "Add Items"
+    osd @# 120 "" "Copy Items"
+    osd @# 130 "" "Move Items"
+    osd @# 140 "" "Delete Items"
+    osd @# 150 "" "Revert Items"
+    osd @# 220 "" "Resolve Conflicts"
+    osd @# 230 "" "Commit Files"
   !endif
   osd @# 200 "-"
-  osd @# 210 "" "\HUpdate files"      f svn-update
+  osd @# 210 "" "\HUpdate Files"      f svn-update
   osd @# 300 "-"
-  osd @# 310 "" "Clear S\HVN console" f svn-clear-console
-  osd @# 320 "" "SVN Setup"           f svn-setup
+  osd @# 310 "" "SVN Setup"           f svn-setup
+  osd @# 320 "" "Clear C\Honsole"     f svn-clear-console
 !emacro
 
 ;; SVN status help dialog ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

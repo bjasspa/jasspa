@@ -176,17 +176,15 @@ define-macro man-clean
 define-macro man
   !force set-variable #l9 @1
   !iif &not $status  set-variable #l9 @ml "Man on"
-  set-variable #l0 #l9
+  set-variable #l3 &len &set #l0 &trb #l9
   set-variable #l1 ""
   ; is there a section ? if so remove it
-  set-variable #l3 &len #l0
-  !if &equ &rsin ")" #l0 #l3
-    !if &gre &set #l2 &rsin "(" #l0 &sub #l3 5
-      set-variable #l1 &rig #l0 #l2
-      set-variable #l1 &lef #l1 &sub &len #l1 1
-      set-variable #l0 &lef #l0 &sub #l2 1
-      !iif &seq $platform "sunos"  set-variable #l1 &cat "-s " #l1
-    !endif
+  !if &sub &rsin ")" #l0 #l3
+  !elif &set #l2 &rsin "(" #l0
+    set-variable #l1 &rig #l0 #l2
+    set-variable #l1 &lef #l1 &sub &len #l1 1
+    set-variable #l0 &lef #l0 &sub #l2 1
+    !iif &seq $platform "sunos"  set-variable #l1 &cat "-s " #l1
   !endif
   !iif &sub $MANWIDTH &set #l3 &con &les 140 &set #l3 &con &gre 70 $window-width 70 $window-width 140 #l3  set-variable $MANWIDTH #l3
   0 pipe-shell-command &spr "%s %s %s" %man-com #l1 #l0 &cat "*Man on " #l9
