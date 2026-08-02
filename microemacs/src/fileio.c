@@ -213,7 +213,7 @@ utf8ToMeChar(meUInt uc)
     case 0x2192: case 0x23F5: return windowChars[WCHSBDOWN];
     case 0x2193: case 0x23F7: return windowChars[WCVSBDOWN];
     case 0x2212: return '-';
-    case 0x2213: (charToUnicode[0xb1] == 0x00b1) ? 0xb1:meCHAR_UNDEF;
+    case 0x2213: return (charToUnicode[0xb1] == 0x00b1) ? 0xb1:meCHAR_UNDEF;
     case 0x2215: return '/';
     case 0x2217: return '*';
     case 0x23BF: case 0x2514: case 0x2515: case 0x2516: case 0x2517: case 0x2570: case 0x259d: case 0x2599: return boxChars[BCNE];
