@@ -271,8 +271,8 @@
     !return
   !elif &les &len @cc 2
     set-variable #l1 @cc
-  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|" #l3
-    set-variable #l1 &lget "|\t|\d|\CM|" #l0
+  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|forward-delete-char|" #l3
+    set-variable #l1 &lget "|\t|\d|\r|\e[3~|" #l0
   !elif &set #l0 &lfi "|backspace|" #l2
     set-variable #l1 &lget "|\d|" #l0
   !elif &seq "quote-char" #l3
@@ -302,7 +302,7 @@
   !if &les &len #l3 2
     set-variable #l1 #l3
   !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
-    set-variable #l1 &lget "|\CI|\d|\CM|\CA|\e[D|\CD|\CE|\e[C|\CK|\CL|\e[B|\e[A|\e\e|\ef|\eb|" #l0
+    set-variable #l1 &lget "|\t|\d|\r|\CA|\e[D|\e[3~|\CE|\e[C|\CK|\CL|\e[B|\e[A|\e\e|\ef|\eb|" #l0
   !elif &set #l0 &lfi "|backspace|" #l2
     set-variable #l1 &lget "|\d|" #l0
   !elif &seq "yank" #l3
@@ -403,6 +403,9 @@ define-macro fhook-ipipe
   !endif
   buffer-bind-create "bo" "C-return" "" ipipe-rerun
   buffer-bind-create "bo" "C-j" ""      ipipe-rerun
+  !if &band 0x20 $buffer-ipipe-flags
+    !iif &not $buffer-hilight  set-variable $buffer-hilight .hilight.meth
+  !endif
   !if &lfind "|*shell*|*claude*|" $buffer-bname
   !elif &seq $buffer-bname "*gdb*"
     set-variable $buffer-dhook debug-reset-line
@@ -429,9 +432,6 @@ define-macro fhook-ipipe
     !endif
     !iif &exi my-fhook-ipipe  my-fhook-ipipe
     !return
-  !endif
-  !if &band 0x20 $buffer-ipipe-flags
-    !iif &not $buffer-hilight  set-variable $buffer-hilight .hilight.meth
   !endif
   -1 buffer-mode "wrap"
   1 buffer-mode "magic"

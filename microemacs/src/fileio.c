@@ -200,6 +200,11 @@ utf8ToMeChar(meUInt uc)
         if(charToUnicode[ii] == (meUShort) uc)
             return (meUByte)(ii + 128);
     } while(--ii >= 0);
+    /* Unicode chars with no obvious conversion which are common and significant:
+     * U+2026: … 
+     * U+2194: <->
+     * U+2264, U+2265: <= & >=
+     */
     switch(uc)
     {
     case 0x00b4: case 0x2018: case 0x2019: return '\'';
@@ -208,14 +213,18 @@ utf8ToMeChar(meUInt uc)
     case 0x201a: case 0x201e: return ',';
     case 0x201b: return '`';
     case 0x201c: case 0x201d: case 0x201f: return '"';
-    case 0x2190: case 0x23F4: return windowChars[WCHSBUP];
-    case 0x2191: case 0x23F6: return windowChars[WCVSBUP];
-    case 0x2192: case 0x23F5: return windowChars[WCHSBDOWN];
-    case 0x2193: case 0x23F7: return windowChars[WCVSBDOWN];
+    case 0x2190: return '<';
+    case 0x2191: return '^';
+    case 0x2192: return '>';
+    case 0x2193: return 'v';
     case 0x2212: return '-';
-    case 0x2213: return (charToUnicode[0xb1] == 0x00b1) ? 0xb1:meCHAR_UNDEF;
+    case 0x2213: return (charToUnicode[0x7f&0xb1] == 0x00b1) ? 0xb1:meCHAR_UNDEF;
     case 0x2215: return '/';
     case 0x2217: return '*';
+    case 0x23F4: return windowChars[WCHSBUP];
+    case 0x23F6: return windowChars[WCVSBUP];
+    case 0x23F5: return windowChars[WCHSBDOWN];
+    case 0x23F7: return windowChars[WCVSBDOWN];
     case 0x23BF: case 0x2514: case 0x2515: case 0x2516: case 0x2517: case 0x2570: case 0x259d: case 0x2599: return boxChars[BCNE];
     case 0x23F8: case 0x2502: case 0x2503: case 0x254E: case 0x254F: case 0x258E: case 0x258F: case 0x2595: return boxChars[BCNS];
     case 0x2500: case 0x2501: case 0x254C: case 0x254D: case 0x2581: case 0x2582: case 0x2583: case 0x2594: return boxChars[BCEW];

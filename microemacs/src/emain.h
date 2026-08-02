@@ -74,6 +74,7 @@
 #ifdef _CYGWIN
 #define meSYSTEM_NAME  "cygwin"         /* Identity name of the system   */
 #undef  _WIN32                          /* This is not win32             */
+#define _PTY_MASTER    1                /* Open /dev/ptmx to get PTY     */
 #define _UNIXV_BASE    1                /* Uses UNIX V as base           */
 #define _USEPOLL       1                /* use poll() for stdin polling  */
 #endif /* _CYGWIN */

@@ -2321,7 +2321,12 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     }
     
     /* Allocate a pseudo terminal to do the work */
+#ifdef _CYGWIN
+    /* Cygwin has to use windows ConPTY which aren't great, favour non-PTY unless explicitly told to (like Windows) */
+    if((flags & LAUNCH_USEPTY) && ((ptyFp=allocatePty(line)) >= 0))
+#else
     if(((flags & LAUNCH_NOPTY) == 0) && ((ptyFp=allocatePty(line)) >= 0))
+#endif
     {
         flags |= LAUNCH_USEPTY;
         fds[0] = outFds[1] = ptyFp;

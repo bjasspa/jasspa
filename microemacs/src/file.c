@@ -205,31 +205,50 @@ getFileStats(meUByte *file, int flag, meStat *stats, meUByte *lname)
 
 #ifdef _DOS
     {
-        int ii ;
+        meUByte cc;
+        int ll, ii;
 
-        if(((ii = meStrlen(file)) == 0) ||
+        if(((ll = meStrlen(file)-1) == 0) ||
            (strchr((char *) file,'*') != NULL) || (strchr((char *) file,'?') != NULL))
         {
             if(flag & gfsERRON_ILLEGAL_NAME)
                 mlwrite(MWABORT|MWPAUSE,(meUByte *)"[%s illegal name]", file);
             return (ft|meIOTYPE_NOTEXIST);
         }
-        if((file[ii-1] == DIR_CHAR) || ((ii == 2) && (file[1] == _DRV_CHAR)))
+        if((file[1] == _DRV_CHAR) && ((ll == 1) || ((ll == 2) && file[2] == DIR_CHAR)))
+        {
+            if(stats != NULL)
+                stats->stmode = meFILE_ATTRIB_DIRECTORY;
             goto gft_directory;
+        }
+        if((cc = file[ll]) == DIR_CHAR)
+            file[ll] = '\0';
 
 #ifdef __DJGPP2__
         ii = meFileGetAttributes(file);
+        file[ll] = cc;
         if(ii < 0)
-            return (ft|meIOTYPE_NOTEXIST);
+        {
+            ft |= meIOTYPE_NOTEXIST;
+            if(cc == DIR_CHAR)
+                goto gft_directory;
+            return ft;
+        }
 #else
         {
             union REGS reg;                /* cpu register for use of DOS calls */
             reg.x.ax = 0x4300;
             reg.x.dx = ((unsigned long) file);
             intdos(&reg, &reg);
+            file[ll] = cc;
 
             if(reg.x.cflag)
-                return (ft|meIOTYPE_NOTEXIST);
+            {
+                ft |= meIOTYPE_NOTEXIST;
+                if(cc == DIR_CHAR)
+                    goto gft_directory;
+                return ft;
+            }
             ii = reg.x.cx;
         }
 #endif
@@ -318,7 +337,7 @@ gft_directory:
             stats->stmtime.dwHighDateTime = fd.ftLastWriteTime.dwHighDateTime;
             stats->stmtime.dwLowDateTime = fd.ftLastWriteTime.dwLowDateTime;
             FindClose(fh);
-            stats->stmode = (meUShort) status | FILE_ATTRIBUTE_ARCHIVE;
+            stats->stmode = (meUShort) status;
         }
         else if((file[1] == _DRV_CHAR) && ((len == 2) || ((len == 3) && (file[2] == DIR_CHAR))))
             goto gft_directory;
@@ -1581,7 +1600,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
     len = 2 ;
     if(totSizeHigh > 0)
     {
-        if((totSizeHigh > 0x0100000) && ((ui = (totSizeHigh << 12) | (totSizeLow >> 20)) > 9999999))
+        if((totSizeHigh < 0x0100000) && ((ui = (totSizeHigh << 12) | (totSizeLow >> 20)) < 10000000))
             len += sprintf((char *)buf+len, "%7dM ",ui);
         else
         {
@@ -1605,7 +1624,7 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
         /* Add the file statistics */
         if(fnode->sizeHigh > 0)
         {
-            if((fnode->sizeHigh > 0x0100000) && ((ui = (fnode->sizeHigh << 12) | (fnode->sizeLow >> 20)) > 9999999))
+            if((fnode->sizeHigh < 0x0100000) && ((ui = (fnode->sizeHigh << 12) | (fnode->sizeLow >> 20)) < 10000000))
                 len += sprintf((char *)buf+len, "%7dM ",ui);
             else
             {

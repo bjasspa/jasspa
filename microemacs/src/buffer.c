@@ -1145,6 +1145,7 @@ bclear(register meBuffer *bp)
     bp->fillmode = fillmode;
 #endif
 #if MEOPT_MAJORMODE
+    bp->majorMode = NULL;
     bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1;
 #endif
 #if MEOPT_HILIGHT
