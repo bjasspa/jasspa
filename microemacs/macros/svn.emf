@@ -122,15 +122,15 @@ set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
 ; * = Console, ! = wait, $ = no file select
 set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log File|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Log Commit|Cat File|Revert|"
-set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|JRrS*!|"
+set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRL*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|JRrS*!|"
 ; 1 Add - flags: RIS*!
 set-variable .svn.cdefs1  "|1|0|"
 ; 2 Blame - flags: Vhpvs
 set-variable .svn.cdefs2  "|0|0|1|3|"
 ; 4 Checkout - flags: UR$
 set-variable .svn.cdefs3  "||1|0|"
-; 6 Commit - flags: CRS*!
-set-variable .svn.cdefs4  "||1|0|"
+; 6 Commit - flags: CRSL*!
+set-variable .svn.cdefs4  "||1|"
 ; 7 Copy - flags: NPrS*!
 set-variable .svn.cdefs5  "||1|0|"
 ; 8 Delete - flags: KrS*!
@@ -531,6 +531,7 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
       !abort
     !endif
   !endif
+  !iif &sin "L" #l9  save-some-buffers @mna
   !iif &sin "^" #l9  !return
   -1 osd .osd.svn-osd
   osd .osd.svn-osd 0 ""
@@ -2123,26 +2124,32 @@ define-macro svn
     -1 osd @#
     osd @# 0 "bB"
   !endif
-  osd @# 10  "" "Current \HStatus"    f svn-status
-  osd @# 20 "" "\HDiff Files"         f svn-diff
+  !if &exi :tag-count
+    set-variable #l1 :tag-count
+  !else
+    set-variable #l1 &con &or &seq "*" &lef $buffer-bname 1 &seq "" $buffer-fname 0 1
+  !endif
+  set-variable #l2 &con &equ #l1 1 "" "s"
+  osd @# 10 "" "Current \HStatus" f svn-status
+  osd @# 20 "" &cat "\HDiff File" #l2 f svn-diff
   osd @# 50 "" "Item Blame"
-  !if &les :tag-count 2
-    osd @# 30 "" "Item \HInfo"        f svn-info
-    osd @# 40 "" "Item \HLog"         f svn-log-file
-    !iif &equ :tag-count 1  osd @# 50 "" "Item \HBlame" f svn-blame
+  !if &les #l1 2
+    osd @# 30 "" "Item \HInfo" f svn-info
+    osd @# 40 "" "Item \HLog"  f svn-log-file
+    !iif &equ #l1 1  osd @# 50 "" "Item \HBlame" f svn-blame
   !else
     osd @# 30 "" "Item Info"
     osd @# 40 "" "Item Log"
   !endif
   osd @# 100 "-"
-  !if :tag-count
-    osd @# 110 "" "\HAdd Items"       f svn-add
-    osd @# 120 "" "\HCopy Items"      f svn-copy
-    osd @# 130 "" "\HMove Items"      f svn-move
-    osd @# 140 "" "Delete Items"      f svn-delete
-    osd @# 150 "" "Revert Items"      f svn-revert
-    osd @# 220 "" "\HResolve Conflicts" f svn-resolve
-    osd @# 230 "" "\HCommit Files"    f svn-commit
+  !if #l1
+    osd @# 110 "" &cat "\HAdd Item" #l2    f svn-add
+    osd @# 120 "" &cat "\HCopy Item" #l2   f svn-copy
+    osd @# 130 "" &cat "\HMove Item" #l2   f svn-move
+    osd @# 140 "" &cat "Delete Item" #l2   f svn-delete
+    osd @# 150 "" &cat "Revert Item" #l2   f svn-revert
+    osd @# 220 "" "\HResolve Conflicts"    f svn-resolve
+    osd @# 230 "" &cat "\HCommit File" #l2 f svn-commit
   !else
     osd @# 110 "" "Add Items"
     osd @# 120 "" "Copy Items"

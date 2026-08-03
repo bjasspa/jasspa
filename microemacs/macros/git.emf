@@ -162,7 +162,7 @@ set-variable .git.cflags &lins .git.cflags -1 "RrS*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|0|0|"
 ; Command 11 - Commit
 set-variable .git.cnames &lins .git.cnames -1 "Commit"
-set-variable .git.cflags &lins .git.cflags -1 "CS*!"
+set-variable .git.cflags &lins .git.cflags -1 "CL*!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 12 - Switch
 set-variable .git.cnames &lins .git.cnames -1 "Switch"
@@ -439,6 +439,7 @@ set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpeci
     !force 0x404 pipe-shell-command &cat .git.com " rev-parse --abbrev-ref HEAD" #l0
     !iif $status  set-variable .git.brc &rep &rep #l0 "\r" "" "\n" ""
   !endif
+  !iif &sin "L" #l9  save-some-buffers @mna
   !iif &sin "^" #l9  !return
   -1 osd .osd.git-osd
   osd .osd.git-osd 0 ""
@@ -1955,19 +1956,25 @@ define-macro git
     -1 osd @#
     osd @# 0 "bB"
   !endif
-  osd @# 10  "" "Current \HStatus" f git-status
-  osd @# 20 "" "\HDiff Files"      f git-diff
+  !if &exi :tag-count
+    set-variable #l1 :tag-count
+  !else
+    set-variable #l1 &con &or &seq "*" &lef $buffer-bname 1 &seq "" $buffer-fname 0 1
+  !endif
+  set-variable #l2 &con &equ #l1 1 "" "s"
+  osd @# 10 "" "Current \HStatus  " f git-status
+  osd @# 20 "" &cat "\HDiff File" #l2 f git-diff
   osd @# 50 "" "Item Blame"
   osd @# 100 "-"
-  !if :tag-count
+  !if #l1
     osd @# 40 "" "Item \HLog"      f git-log-file
-    !iif &equ :tag-count 1  osd @# 50 "" "Item \HBlame" f git-blame
-    osd @# 110 "" "\HAdd Items"     f git-add
-    osd @# 130 "" "\HMove Items"    f git-move
-    osd @# 140 "" "Remove Items"    f git-remove
-    osd @# 150 "" "Revert Items"    f git-revert
-    osd @# 160 "" "Unstage Items"   f git-unstage
-    osd @# 230 "" "\HCommit Files"  f git-commit
+    !iif &equ #l1 1  osd @# 50 "" "Item \HBlame" f git-blame
+    osd @# 110 "" &cat "\HAdd Item" #l2    f git-add
+    osd @# 130 "" &cat "\HMove Item" #l2   f git-move
+    osd @# 140 "" &cat "Remove Item" #l2   f git-remove
+    osd @# 150 "" &cat "Revert Item" #l2   f git-revert
+    osd @# 160 "" &cat "Unstage Item" #l2  f git-unstage
+    osd @# 230 "" &cat "\HCommit File" #l2 f git-commit
   !else
     osd @# 40 "" "Item Log"
     osd @# 110 "" "Add Items"
