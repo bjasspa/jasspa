@@ -91,8 +91,8 @@ define-macro vcs-coci
     -8 ml-write &spr "[VCS Error: %s does not support check-out-check-in]" &lget #l8 1
   !endif
 !emacro
-define-macro vcs-cat
-  3 vcs-id $buffer-fname "-cat" "-show-file"
+define-macro vcs-cat-file
+  3 vcs-id $buffer-fname "-cat-file"
 !emacro
 define-macro vcs-commit
   3 vcs-id $buffer-fname "-commit"
@@ -112,8 +112,11 @@ define-macro vcs-gdiff
 define-macro vcs-info
   3 vcs-id $buffer-fname "-info"
 !emacro
-define-macro vcs-log
-  3 vcs-id $buffer-fname "-log"
+define-macro vcs-log-commit
+  3 vcs-id $buffer-fname "-log-commit"
+!emacro
+define-macro vcs-log-file
+  3 vcs-id $buffer-fname "-log-file"
 !emacro
 define-macro vcs-move
   3 vcs-id $buffer-fname "-move"
@@ -132,12 +135,6 @@ define-macro vcs-resolve
 !emacro
 define-macro vcs-revert
   3 vcs-id $buffer-fname "-revert"
-!emacro
-define-macro vcs-show
-  3 vcs-id $buffer-fname "-show"
-!emacro
-define-macro vcs-show-file
-  3 vcs-id $buffer-fname "-cat" "-show-file"
 !emacro
 define-macro vcs-setup
   3 vcs-id $buffer-fname "-setup"

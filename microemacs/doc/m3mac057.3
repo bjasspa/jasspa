@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.12 2026/08/02 12:31:29 jon Exp $
+.Id $Id: m3mac057.3,v 2.12 2026/08/03 10:37:50 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -20,7 +20,7 @@
 .XI cvs-diff - "\*(mS CVS interface - diff changes"
 .XI cvs-file-status - "\*(mS CVS interface - status of files"
 .XI cvs-gdiff - "\*(mS CVS interface - graphical diff changes"
-.XI cvs-log - "\*(mS CVS interface - log changes"
+.XI cvs-log-file - "\*(mS CVS interface - log changes"
 .XI cvs-remove - "\*(mS CVS interface - remove file"
 .XI cvs-resolve - "\*(mS CVS interface - resolve conflicts"
 .XI cvs-resolve-conflicts - "\*(mS CVS interface - resolve conflicts"
@@ -56,8 +56,8 @@ cvs-file-status \- \*(mS CVS interface - status of files
 .Me "|cvs-gdiff"
 cvs-gdiff \- \*(mS CVS interface - graphical diff changes
 .br
-.Me "|cvs-log"
-cvs-log \- \*(mS CVS interface - log changes
+.Me "|cvs-log-file"
+cvs-log-file \- \*(mS CVS interface - log changes
 .br
 .Me "|cvs-remove"
 cvs-remove \- \*(mS CVS interface - remove file
@@ -95,7 +95,7 @@ cvs-update \- \*(mS CVS interface - update directory files
 .br
 .B cvs-gdiff
 .br
-.B cvs-log
+.B cvs-log-file
 .br
 .B cvs-remove
 .br
@@ -226,57 +226,46 @@ The \fBcvs-gdiff\fR command opens a
 window displaying the differences  between the current buffer's local file and
 repository version.
 .PP
-The \fBcvs-log\fR  command opens a \fI*cvs-log*\fR  window  displaying the CVS
+The \fBcvs-log-file\fR  command opens a \fI*cvs-log-file*\fR  window  displaying the CVS
 log of the current buffer's file.
 .PP
-The  \fBcvs-remove\fR  command  removes  the  current  buffer's  file from the
-repository  - PLEASE  NOTE THIS CAN LEAD TO LOST  DATA!!!  This  command  only
-performs   the  local   removal;  as  it  deletes  the  buffer  and  file  the
-\fBcvs-commit\fR  command  cannot  be used to commit  the  removal  to the CVS
-repository. Instead the main \fBcvs\fR file-browser menu or
+The \fBcvs-remove\fR command removes the current buffer's file from the repository - PLEASE NOTE THIS CAN LEAD TO LOST
+DATA!!! This command only performs the local removal; as it deletes the buffer and file the \fBcvs-commit\fR command
+cannot be used to commit the removal to the CVS repository. Instead the main \fBcvs\fR file-browser menu or
 .Hr cvs 1
 itself must be used.
 .PP
-The  \fBcvs-resolve\fR  command may be used to resolve any conflicts
-created by CVS when the current buffer's file is updated. The command opens a
-gdiff window  displaying  the areas of conflict,  the user may then select the
-correct version in each case and save the resultant new version over the local
-file.
+The \fBcvs-resolve\fR command may be used to resolve any conflicts created by CVS when the current buffer's file is
+updated. The command opens a gdiff window displaying the areas of conflict, the user may then select the correct
+version in each case and save the resultant new version over the local file.
 .PP
-The \fBcvs-status\fR command opens a \fI*cvs-status*\fR window listing the state
-of any file in the current directory which is not up-to-date. Note that unlike
-most cvs sub  commands  this  command  executes  over all files in the current
+The \fBcvs-status\fR command opens a \fI*cvs-status*\fR window listing the state of any file in the current directory
+which is not up-to-date. Note that unlike most cvs sub commands this command executes over all files in the current
 buffer's file directory.
 .PP
-The  \fBcvs-tag\fR  command  opens a dialog  box and  allows  the user to add,
-remove or delete a CVS tag. 
+The \fBcvs-tag\fR command opens a dialog box and allows the user to add, remove or delete a CVS tag. 
 .PP
-The  \fBcvs-update\fR  command updates all files in the current directory, the
-output  being  reported to a new  \fI*cvs-update*\fR  window. Note that unlike
-most cvs sub  commands  this  command  executes  over all files in the current
+The \fBcvs-update\fR command updates all files in the current directory, the output being reported to a new
+\fI*cvs-update*\fR window. Note that unlike most cvs sub commands this command executes over all files in the current
 buffer's file directory.
 .SS Setup
 .B cvs-setup
-provides  a  dialog   interface   to   configure   the  \*(mS  CVS   interface
-if required. On a typical  system  installation  then it is sufficient to have
-\fB$CVSROOT\fR  defined in the environment and the CVS tools will operate from
-this environment variable without any further configuration of \*(mS. If \*(mS
-CVS  configuration  is  provided  then  this will  over-ride  the  environment
-variable. 
+provides a dialog interface to configure the \*(mS CVS interface if required. On a typical system installation then it
+is sufficient to have \fB$CVSROOT\fR defined in the environment and the CVS tools will operate from this environment
+variable without any further configuration of \*(mS. If \*(mS CVS configuration is provided then this will over-ride
+the environment variable. 
 .PP
 .B cvs-setup
 may also be accessed from 
 .Ht user-setup 3 
-from  the  \fBMiscellaneous\fR  configuration.  The the  dialog  provides  the
-following configuration controls:
+from the \fBMiscellaneous\fR configuration. The the dialog provides the following configuration controls:
 .PP
 \fBCVS Command Setup\fR
 .RS
 .IP "\fCCVSROOT\fR"
 If set, overrides the CVS \fB$CVSROOT\fR environment variable.
 .IP "\fCCVS_RSH\fR"
-If set, overrides the CVS \fB$CVS_RSH\fR environment variable.
-rsh.
+If set, overrides the CVS \fB$CVS_RSH\fR environment variable. rsh.
 .IP "\fCCVS Command\fR"
 Defines the
 .Hr cvs 1 
@@ -284,23 +273,19 @@ system command. The default when not defined is \fBcvs\fR.
 .IP "\fCCompression\fR"
 Sets the compression level to use with all CVS commands.
 .IP "\fCQuieter CVS output\fR"
-When enabled the \fC-q\fR CVS command-line  option is used to suppress some of
-the more verbose print-out. 
+When enabled the \fC-q\fR CVS command-line option is used to suppress some of the more verbose print-out. 
 .RE
 .SS "CVS File Browser"
 The \fBCVS File Browser\fR is an extension to the 
 .Ht file-browser 3 
 and shows the state of CVS files in a directory listing.
 .IP "\fCQuick browser mode\fR"
-When  enabled the CVS file  browser does not launch a cvs command to determine
-the current state of all files in the  directory,  instead it extracts as much
-information  as it can from the local file system,  inserting  '\fCQ\fR's  for
-information  it cannot  determine.  This is useful when the  connection to the
-server is slow. The full CVS  information  can be  obtained by  executing  the
-command \fBcvs-full-reread\fR, typically bound to \fCC-f5\fR.
+When enabled the CVS file browser does not launch a cvs command to determine the current state of all files in the
+directory, instead it extracts as much information as it can from the local file system, inserting '\fCQ\fR's for
+information it cannot determine. This is useful when the connection to the server is slow. The full CVS information
+can be obtained by executing the command \fBcvs-full-reread\fR, typically bound to \fCC-f5\fR.
 .IP "\fBTool Defaults\fR"
-The  following  define the default  settings  for options  used in various CVS
-commands:   
+The following define the default settings for options used in various CVS commands: 
 .IP
 \fCRecurse into sub-directories\fR
 .IP
@@ -310,16 +295,15 @@ commands:
 .SH NOTES
 \fBcvs\fR and sub-commands are macros defined in file \fCcvs.emf\fR.
 .PP
-When  filtering  is  enabled in the file  browser  the filter  used by the CVS
-interface  depends on the file browser  mode, if \fBQuick  browser  mode\fR is
-enabled the same filter is used, but when disabled all files ignored by
+When filtering is enabled in the file browser the filter used by the CVS interface depends on the file browser mode,
+if \fBQuick browser mode\fR is enabled the same filter is used, but when disabled all files ignored by
 .Hr cvs 1
 are also removed by the filter. Use
 .Ht buffer-setup 3
 in the buffer to enable/disable the filter.
 .PP
-The cvs-resolve-conflicts was renamed to cvs-resolve in August 2026 to align it with SVN's resolve command which has the same 
-functionality.
+The cvs-log, cvs-state, cvs-status and cvs-resolve-conflicts commands were renamed to cvs-log-file, cvs-status,
+cvs-file-status and cvs-resolve in August 2026 to align them with the equivalent SVN and VCS commands.
 .SH "SEE ALSO"
 .na
 .Ht git 3 ,

@@ -177,7 +177,7 @@ define-macro change-company
   !force unset-variable %company-name
   !force unset-variable %company-url
   !force unset-variable %company-license
-  !if &or &sin #l1 "-" &seq #l1 "No company"
+  !if &or &sin &set .current #l1 "-" &seq #l1 "No company"
     !iif &exi %no-company-url  set-variable %company-url %no-company-url
     !iif &exi %no-company-license  set-variable %company-license %no-company-license
   !elif &seq &find #l1 ".emf" "ERROR"

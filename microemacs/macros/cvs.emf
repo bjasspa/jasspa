@@ -50,7 +50,7 @@ set-variable .fhook-cvs-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-cvs-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on CVS States" 4 "Open CVS menu" 5 "Rerun cvs-status" 6 "" 2
 set-variable .fhook-cvs-status.refresh "cvs-status-refresh"
 
-set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log|Remove|Status|File Status|Tag|Update|Annotate|Resolve Conflicts|"
+set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log File|Remove|Status|File Status|Tag|Update|Annotate|Resolve Conflicts|"
 set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|"
 set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRS*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
@@ -1233,7 +1233,7 @@ define-macro cvs-diff
 define-macro cvs-gdiff
   5 cvs-osd
 !emacro
-define-macro cvs-log
+define-macro cvs-log-file
   6 cvs-osd
 !emacro
 define-macro cvs-remove

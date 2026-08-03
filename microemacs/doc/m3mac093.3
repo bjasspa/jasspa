@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac093.3,v 2.12 2026/08/02 12:31:32 jon Exp $
+.Id $Id: m3mac093.3,v 2.12 2026/08/03 10:43:48 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH svn 3
@@ -15,22 +15,21 @@
 .XI svn-setup - "\*(mS SVN interface setup"
 .XI svn-add - "\*(mS SVN interface - add items"
 .XI svn-blame - "\*(mS SVN interface - annotate a file"
-.XI svn-cat - "\*(mS SVN interface - output specific version of a file"
+.XI svn-cat-file - "\*(mS SVN interface - output specific version of a file"
 .XI svn-checkout - "\*(mS SVN interface - checkout a working copy"
 .XI svn-commit - "\*(mS SVN interface - commit changes back"
-.XI svn-commit-log - "\*(mS SVN interface - get log for a commit"
 .XI svn-copy - "\*(mS SVN interface - copy items"
 .XI svn-delete - "\*(mS SVN interface - delete items"
 .XI svn-diff - "\*(mS SVN interface - diff changes"
 .XI svn-ignore - "\*(mS SVN interface - edit directory item ignore list"
 .XI svn-info - "\*(mS SVN interface - display info about an item"
-.XI svn-log - "\*(mS SVN interface - list log of changes"
+.XI svn-log-commit - "\*(mS SVN interface - get log for a commit"
+.XI svn-log-file - "\*(mS SVN interface - list log of changes"
 .XI svn-move - "\*(mS SVN interface - move an item"
 .XI svn-resolve - "\*(mS SVN interface - resolve conflicts"
 .XI svn-revert - "\*(mS SVN interface - revert local changes"
 .XI svn-server-copy - "\*(mS SVN interface - server based copy items"
 .XI svn-server-move - "\*(mS SVN interface - server based move items"
-.XI svn-show - "\*(mS SVN interface - show log for a specific commit"
 .XI svn-status - "\*(mS SVN interface - status of items"
 .XI svn-update - "\*(mS SVN interface - update directory files"
 .XI svn-xdiff - "\*(mS SVN interface - External diff changes"
@@ -47,17 +46,14 @@ svn-add \- \*(mS SVN interface - add items
 .Me "|svn-blame"
 svn-blame \- \*(mS SVN interface - annotate a file
 .br
-.Me "|svn-cat"
-svn-cat \- \*(mS SVN interface - output specific version of a file
+.Me "|svn-cat-file"
+svn-cat-file \- \*(mS SVN interface - output specific version of a file
 .br
 .Me "|svn-checkout"
 svn-checkout \- \*(mS SVN interface - checkout a working copy
 .br
 .Me "|svn-commit"
 svn-commit \- \*(mS SVN interface - commit changes back
-.br
-.Me "|svn-show"
-svn-show \- \*(mS SVN interface - get log for a commit
 .br
 .Me "|svn-copy"
 svn-copy \- \*(mS SVN interface - copy items
@@ -74,8 +70,11 @@ svn-ignore \- \*(mS SVN interface - edit directory item ignore list
 .Me "|svn-info"
 svn-info \- \*(mS SVN interface - display info about an item
 .br
-.Me "|svn-log"
-svn-log \- \*(mS SVN interface - list log of changes
+.Me "|svn-log-commit"
+svn-log-commit \- \*(mS SVN interface - get log for a commit
+.br
+.Me "|svn-log-file"
+svn-log-file \- \*(mS SVN interface - list log of changes
 .br
 .Me "|svn-move"
 svn-move \- \*(mS SVN interface - move an item
@@ -112,13 +111,11 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .br
 .B svn-blame
 .br
-.B svn-cat
+.B svn-cat-file
 .br
 .B svn-checkout
 .br
 .B svn-commit
-.br
-.B svn-show
 .br
 .B svn-copy
 .br
@@ -130,7 +127,9 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .br
 .B svn-info
 .br
-.B svn-log
+.B svn-log-commit
+.br
+.B svn-log-file
 .br
 .B svn-move
 .br
@@ -150,7 +149,7 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .ad
 .SH DESCRIPTION
 The svn and  sub-commands  provide  \*(mS  with an  interface  to Subversion's
-.Hr svn 1 
+.Hr svn 1
 command.
 \fBSubversion\fR is a version control system; using it, you can record the history of
 your source file modifications. Subversion is licensed under the Apache Software Foundation and is freely available on
@@ -161,8 +160,8 @@ The \*(mS \fBsvn\fR command opens up a modified
 with an additional  "\fC*svn-console*\fR"  window. The "\fC*files*\fR"  window includes additional columns showing the
 SVN state, revisions and commit author. The browser by default opens with 3 windows including a representation of the
 file tree. When \fBsvn\fR is provided with a numeric argument \fIn\fR of zero (0) then a single window  displaying the
-directory is used only (i.e. 
-.BR "0 svn") 
+directory is used only (i.e.
+.BR "0 svn")
 .PP
 The  functionality  of the  file-browser  is the same as a non-SVN folder with the exception that  additional SVN item
 controls  are  located in the mouse  context  menu  (opened by clicking  the right mouse  button in the  \fC*files*\fR
@@ -179,7 +178,7 @@ Executes the svn-commit command.
 .IP "\fBDiff files\fR"
 Executes the svn-diff command.
 .IP "\fBItem Log\fR"
-Executes the svn-log command, one item must be selected.
+Executes the svn-log-file command, one item must be selected.
 .IP "\fBItem Blame\fR"
 Executes the svn-blame command, one file must be selected.
 .IP "\fBCopy items\fR"
@@ -198,82 +197,82 @@ Clears the \fI*svn-console*\fR buffer.
 Executes the svn-setup command.
 .SS Sub-Commands
 .PP
-The  \fBsvn-add\fR  command adds the current buffer or selected items to the  repository.  Note that this command only
+The \fBsvn-add\fR command adds the current buffer or selected items to the repository. Note that this command only
 performs the local addition, a \fISVN\fR \fIcommit\fR is required to make the addition permanent.
 .PP
 The \fBsvn-blame\fR  command opens a \fI*svn-blame*\fR window annotating the revision and author of each line in the current
 buffer or single selected file.
 .PP
-The \fBsvn-cat\fR  command opens a \fI*<file-name>:<revision>\fR window with the contents set to the specified revision of a 
-selected file.
+The \fBsvn-cat-file\fR command opens a \fI*<file-name>:<revision>\fR window with the contents set to the specified
+revision of a selected file.
 .PP
-The  \fBsvn-checkout\fR  command checks out a working copy of an item (file or directory)  from a repository  into the
+The \fBsvn-checkout\fR command checks out a working copy of an item (file or directory) from a repository into the
 current directory. The user specifies the item via an SVN repository URL.
 .PP
-The  \fBsvn-commit\fR  command  commits  any  changes  made to the  current  buffer's  file or  selection  list to the
+The \fBsvn-commit\fR command commits any changes made to the current buffer's file or selection list to the
 repository. The user is prompted for a commit log message.
 .PP
-The  \fBsvn-show\fR  command  opens a \fI*svn-show*\fR window displaying the SVN log for the given commit. 
-If the output is processed then clicking on or pressing enter on any of the file names listed will execute a 
-\fBsvn-diff\fR showing the changes made. 
-.PP
-The \fBsvn-copy\fR  command creates a local copy of the current buffer's file or selected items;  alternatively a full
+The \fBsvn-copy\fR command creates a local copy of the current buffer's file or selected items; alternatively a full
 SVN repository URL can be given as the destination which will immediately commit the items back to the repository. The
-advantage  of using copy over  simply  adding a new item is that the item's  change log history up to the point of the
+advantage of using copy over simply adding a new item is that the item's change log history up to the point of the
 copy should be maintained by SVN.
 .PP
-The \fBsvn-delete\fR  command flags the current buffer or selected files for removal from the repository, additionally
-the command can remove the local file too - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! This  command only  performs the
-local removal, the  \fBsvn-commit\fR  command must be used to make the deletion permanent. Note that as the local file
-is typically removed the file itself cannot be selected when committing the change, use the  \fBsvn-status\fR  command
+The \fBsvn-delete\fR command flags the current buffer or selected files for removal from the repository, additionally
+the command can remove the local file too - PLEASE NOTE THIS CAN LEAD TO LOST DATA!!! This command only performs the
+local removal, the \fBsvn-commit\fR command must be used to make the deletion permanent. Note that as the local file
+is typically removed the file itself cannot be selected when committing the change, use the \fBsvn-status\fR command
 to list change as this list includes all items flagged for removal.
 .PP
-The  \fBsvn-diff\fR  command opens a  \fI*svn-diff*\fR  window  displaying the differences  between the current buffer
-or selected local files and the repository version.
+The \fBsvn-diff\fR command opens a \fI*svn-diff*\fR window displaying the differences between the current buffer or
+selected local files and the repository version.
 .PP
-The  \fBsvn-ignore\fR  command opens a dialog to edit the list of items contained with the current directory which are
-to be ignored by SVN. Currently  selected  items are appended to this list and any changes made are only to the  local
-working copy until the changes to the directory are committed  back. Note that this command is obtaining and modifying
+The \fBsvn-ignore\fR command opens a dialog to edit the list of items contained with the current directory which are
+to be ignored by SVN. Currently selected items are appended to this list and any changes made are only to the local
+working copy until the changes to the directory are committed back. Note that this command is obtaining and modifying
 the directory's \fCsvn:ignore\fR property.
 .PP
-The  \fBsvn-info\fR  command opens a  \fI*svn-info*\fR  window displaying the SVN info of the current buffer or single
+The \fBsvn-info\fR command opens a \fI*svn-info*\fR window displaying the SVN info of the current buffer or single
 selected file.
 .PP
-The \fBsvn-log\fR  command opens a \fI*svn-log*\fR  window displaying the SVN commit log history of the current buffer
-or single selected file.
+The \fBsvn-log-commit\fR command opens a \fI*svn-log-commit*\fR window displaying the SVN log for the given commit. If
+the output is processed then clicking on or pressing enter on any of the file names listed will execute a
+\fBsvn-diff\fR showing the changes made.
 .PP
-The  \fBsvn-move\fR  command  moves  (i.e. same as rename  when the  destination  directory  is the same) the  current
-buffer's file or selected items, any required changes to the buffer should be saved first and the new file loaded once
-moved. Note that unlike copy, SVN does not support a direct local to reposition move. The advantage of using move over
-simply deleting and adding a new item is that the item's  change log history will be  maintained.
+The \fBsvn-log-file\fR command opens a \fI*svn-log-file*\fR window displaying the SVN commit log history of the
+current buffer or single selected file.
 .PP
-The  \fBsvn-resolve\fR  command may be used to resolve conflicts caused by SVN updating the local working copy.
+The \fBsvn-move\fR command moves (i.e. same as rename when the destination directory is the same) the current buffer's
+file or selected items, any required changes to the buffer should be saved first and the new file loaded once moved.
+Note that unlike copy, SVN does not support a direct local to reposition move. The advantage of using move over simply
+deleting and adding a new item is that the item's change log history will be maintained.
 .PP
-The \fBsvn-revert\fR  command reverts local modifications made to the current buffer's file or selected items back to
+The \fBsvn-resolve\fR command may be used to resolve conflicts caused by SVN updating the local working copy.
+.PP
+The \fBsvn-revert\fR command reverts local modifications made to the current buffer's file or selected items back to
 the last checked out revision, discarding the local changes; unlike \fBsvn-delete\fR this does not affect the
 repository. Items previously scheduled for addition via \fBsvn-add\fR are by default simply unscheduled (returned to
 an unversioned state), the local file itself is left untouched; enabling the \fCRemove added file(s)\fR option
 additionally deletes these local files. Sub-directories are recursed into by default, this can be disabled via the
 \fCRecurse into sub-directories\fR option so that only the top-level of a selected directory is reverted.
 .PP
-The \fBsvn-server-copy\fR  command performs a repository based copy of the current buffer's file or selected item, to a
-new  location  in the  repository.  In SVN this is the easiest way to create a  development  branch or a release,  for
-example   to  create  the   \*(mS   2022   release   one  could   server   copy   \fC<svn-rep>/trunk/MicroEmacs\fR   to
-\fC<svn-rep>/releases/MicroEmacs-2022\fR.  As the copy is performed on the server it is  immediately  committed so the
+The \fBsvn-server-copy\fR command performs a repository based copy of the current buffer's file or selected item, to a
+new location in the repository. In SVN this is the easiest way to create a development branch or a release, for
+example to create the \*(mS 2022 release one could server copy \fC<svn-rep>/trunk/MicroEmacs\fR to
+\fC<svn-rep>/releases/MicroEmacs-2022\fR. As the copy is performed on the server it is immediately committed so the
 command prompts for a commit log comment.
 .PP
-Similar to \fBsvn-server-copy\fR,  the  \fBsvn-server-move\fR  command performs a repository based move of the current
+Similar to \fBsvn-server-copy\fR, the \fBsvn-server-move\fR command performs a repository based move of the current
 buffer's file or selected item.
 .PP
-The \fBsvn-status\fR  command opens a \fI*svn-state*\fR window and shows the state of all the items within the current
-directory,  including the modification state, and optionally whether items are out-of-date (i.e. have been modified in
+The \fBsvn-status\fR command opens a \fI*svn-state*\fR window and shows the state of all the items within the current
+directory, including the modification state, and optionally whether items are out-of-date (i.e. have been modified in
 the repository).
 .PP
-The  \fBsvn-update\fR  command  updates  all files in the  current  directory,  the  output  being  reported  to a new
-\fI*svn-update*\fR  window. Note that unlike most svn sub commands this command executes over all files in the current
+The \fBsvn-update\fR command updates all files in the current directory, the output being reported to a new
+\fI*svn-update*\fR window. Note that unlike most svn sub commands this command executes over all files in the current
 buffer's file directory.
 .PP
-The  \fBsvn-xdiff\fR  command launches an external diff application to display  differences, the command be configured
+The \fBsvn-xdiff\fR command launches an external diff application to display differences, the command be configured
 first by setting the \fB%svn-xdiff-com\fR to an appropriate command-line, e.g. '\fCMeld -n %f\fR'. See
 .Ht %xdiff-com 5
 for more information.
@@ -284,45 +283,44 @@ is sufficient to have the \fBsvn\fR program in the \fB$PATH\fR and the SVN tools
 repository.
 .PP
 .B svn-setup
-may also be accessed from 
-.Ht user-setup 3 
-from  the  \fBMiscellaneous\fR  configuration.  The the  dialog  provides  the
-following configuration tabs and controls:
+may also be accessed from
+.Ht user-setup 3
+from the \fBMiscellaneous\fR configuration. The the dialog provides the following configuration tabs and controls:
 .PP
 \fBGeneral\fR
 .RS
 .IP "\fCSVN Command\fR"
 Sets the svn command-line program name, this can be an absolute path.
 .IP "\fCGlobal opts\fR"
-Sets  command-line  arguments which are to be always given to the svn command, the default of  \fC--non-interactive\fR
+Sets command-line arguments which are to be always given to the svn command, the default of \fC--non-interactive\fR
 informs SVN that the program is being run in the background so cannot interact with the user.
 .IP "\fCDef Rep URL\fR"
 Defines the default SVN repository URL, this is only used when using the \fBsvn-checkout\fR command.
 .IP "\fCEnable Support on Start-Up\fR"
-When  enabled  the svn  support  macros are loaded on start-up  enabling  the  file-browser  to detect SVN  controlled
+When enabled the svn support macros are loaded on start-up enabling the file-browser to detect SVN controlled
 directories.
 .IP "\fCQuick browser mode\fR"
-When  enabled the SVN file  browser does not include the '\fC-u\fR'  option when launching the svn status command
-to get the current state of all files in the  directory,  this means SVN does not need to go to the repository  server
-to get the update  information. This can make a big improvement to performance,  particularly if the connection to the
-server is slow. In Quick mode the status of locally  unmodified  files is set to '\fCQ\fR'  indicating  the repository
-state of the file has not been ascertained. The full SVN  information  can be  obtained by  executing  the
-command \fBsvn-full-reread\fR, typically bound to \fCC-f5\fR.
+When enabled the SVN file browser does not include the '\fC-u\fR' option when launching the svn status command to get
+the current state of all files in the directory, this means SVN does not need to go to the repository server to get
+the update information. This can make a big improvement to performance, particularly if the connection to the server
+is slow. In Quick mode the status of locally unmodified files is set to '\fCQ\fR' indicating the repository state of
+the file has not been ascertained. The full SVN information can be obtained by executing the command
+\fBsvn-full-reread\fR, typically bound to \fCC-f5\fR.
 .RE
 .IP "\fBTools\fR"
 In this tab each sub-command can be selected and their default option settings changed as required.
 .SH NOTES
 \fBsvn\fR and sub-commands are macros defined in file \fCsvn.emf\fR.
 .PP
-When  filtering is enabled in the file browser the filter used by the SVN interface  depends on the file browser mode,
+When filtering is enabled in the file browser the filter used by the SVN interface depends on the file browser mode,
 if \fBQuick browser mode\fR is enabled the same filter is used, but when disabled all files ignored by
 .Hr svn 1
 are also removed by the filter. Use
 .Ht buffer-setup 3
 in the buffer to enable/disable the filter.
 .PP
-The svn-commit-log was renamed to svn-show in August 2026 to align it with Git's show command which has the same 
-functionality.
+The svn-cat, svn-log and svn-commit-log commands were renamed to svn-cat-file, svn-log-file and svn-log-commit in
+August 2026 to align them with the equivalent Git and VCS commands.
 .SH "SEE ALSO"
 .na
 .Ht git 3 ,

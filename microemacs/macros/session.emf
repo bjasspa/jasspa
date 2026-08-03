@@ -122,6 +122,10 @@ set-variable .session.kill 1
   insert-string &spr "\bupdate\b%s\n" .session.update
   insert-string &spr "\bamark\b%s\n" .session.amark
   insert-string &spr "\bkill\b%s\n" .session.kill
+  !if &not &exi .change-company.current
+  !elif &not &seq .change-company.current &lget &spr " %s " &reg "/history/company" "" 1
+    insert-string &spr "\bcompany\b%s\n" .change-company.current
+  !endif
   !if &band $system 0x01
     set-variable #l1 "c-"
     set-variable #l2 "w-"
@@ -458,6 +462,7 @@ define-macro read-session
         set-variable .svp &cond &band $system 0x01 ".session.c-" ".session.w-"
         set-variable #l2 &cat .svp "scheme"
         &exi &ind #l2 change-scheme &ind #l2
+        !iif &exi .session.company  change-company .session.company
       !elif &seq #l1 "hist"
         !while &len &set #l3 &lget @wl 1
           2 search-buffer "eM" "\b"

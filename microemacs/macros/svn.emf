@@ -121,7 +121,7 @@ set-variable .fhook-svn-status.command-desc  &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
 ; * = Console, ! = wait, $ = no file select
-set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Commit Log|Cat|Revert|"
+set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log File|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Log Commit|Cat File|Revert|"
 set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRS*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|JRrS*!|"
 ; 1 Add - flags: RIS*!
 set-variable .svn.cdefs1  "|1|0|"
@@ -1218,7 +1218,7 @@ define-macro svn-commit
       !if &les $window-col 8
         svn-diff-file &cat .svn.crep-rot #l1 &spr "%s:%s" &sub #l2 1 #l2
       !else
-        svn-cat &cat .svn.crep-rot #l1 #l2
+        svn-cat-file &cat .svn.crep-rot #l1 #l2
       !endif
     !endif
   !elif &xseq @wl "^   [MAD] \\(.*\\)$"
@@ -1247,25 +1247,25 @@ define-macro svn-commit
   !iif &lget .svn.cvalues18 1  0 svn-log-process
   beginning-of-buffer
 !emacro
-define-macro svn-commit-log
+define-macro svn-log-commit
   18 svn-osd
   !if &les &lget .svn.cvalues18 2 6
     set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues18 2
   !elif &les &set #l3 .svn.cfver 1
-    osd-dialog "Subversion - Commit Log" "    The specific revision number must be given!    " "  \HAbort  "
+    osd-dialog "Subversion - Log Commit" "    The specific revision number must be given!    " "  \HAbort  "
     !abort
   !endif
   !force svn-get-base-url
   set-variable #l2 &spr "%s log -v -r %s %s" .svn.com #l3 .svn.crep-rot
   7 svn-get-file-list 1 0 #l2
   18 svn-exec 1 $buffer-fname
-  popup-window "*svn-commit-log*"
+  popup-window "*svn-log-commit*"
   beginning-of-buffer
 !emacro
 
 ;; SVN Cat ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-define-macro svn-cat
+define-macro svn-cat-file
   !force set-variable #l3 @2
   !if $status
     set-variable #l1 @1
@@ -1277,7 +1277,7 @@ define-macro svn-cat
     !if &les &lget .svn.cvalues19 1 6
       set-variable #l3 &lget "|HEAD|HEAD|BASE|COMMITTED|PREV|" &lget .svn.cvalues2 4
     !elif &les &set #l3 .svn.cfver 1
-      osd-dialog "Subversion - Cat" "    The specific revision number must be given!    " "  \HAbort  "
+      osd-dialog "Subversion - Cat File" "    The specific revision number must be given!    " "  \HAbort  "
       !abort
     !endif
     set-variable #l2 &spr "%s cat -r %s " .svn.com #l3
@@ -1296,7 +1296,7 @@ define-macro svn-cat
     ml-write "[View of file version already exists!]"
   !else
     19 svn-exec 5 $buffer-fname
-    popup-window "*svn-cat*"
+    popup-window "*svn-cat-file*"
     beginning-of-buffer
     !if &gre $window-eline 1
       !force change-buffer-name &spr "%s--%s" #l3 #l4
@@ -1572,7 +1572,7 @@ define-macro svn-info
   !iif &lget .svn.cvalues8 3  svn-log-process
   beginning-of-buffer
 !emacro
-define-macro svn-log
+define-macro svn-log-file
   8 svn-osd
   !if &len &set #l1 &trb .svn.logfs
     !if &sin "\"" #l1
@@ -1584,7 +1584,7 @@ define-macro svn-log
   set-variable #l2 &spr "%s log %s%s" .svn.com &con &lget .svn.cvalues8 2 "-v " "" #l1
   7 svn-get-file-list 0 &lget .svn.cvalues8 1 #l2
   8 svn-exec 1 $buffer-fname
-  popup-window "*svn-log*"
+  popup-window "*svn-log-file*"
   beginning-of-buffer
 !emacro
 
@@ -2128,7 +2128,7 @@ define-macro svn
   osd @# 50 "" "Item Blame"
   !if &les :tag-count 2
     osd @# 30 "" "Item \HInfo"        f svn-info
-    osd @# 40 "" "Item \HLog"         f svn-log
+    osd @# 40 "" "Item \HLog"         f svn-log-file
     !iif &equ :tag-count 1  osd @# 50 "" "Item \HBlame" f svn-blame
   !else
     osd @# 30 "" "Item Info"
