@@ -201,6 +201,7 @@ extern void TCAPmove(int row, int col);
 #define TCAPflush()    fflush(stdout)
 extern void TCAPinitDrawChar(void);
 extern void TCAPdrawChar(meUByte c);
+extern void TCAPoscCopyKill(void);
 extern void TCAPhideCur(void);
 extern void TCAPshowCur(void);
 extern void TCAPhandleBlink(void);

@@ -143,8 +143,16 @@ copyRegion(int f, int n)
     if(n < 0)
     {
 #ifdef _CLIPBRD
-        TTsetClipboard(1);        
+        TTsetClipboard(1);
 #endif
+#ifdef _UNIX
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+        if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
+            TCAPoscCopyKill();
+#endif /* _ME_CONSOLE */
+#endif /* _UNIX */
         return meTRUE;
     }
     if(getregion(&region) <= 0)

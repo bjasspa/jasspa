@@ -1005,6 +1005,126 @@ TCAPdrawChar(meUByte cc)
     else
         TCAPputc(uc);
 }
+
+/* Copy the current kill buffer to the terminal/multiplexer clipboard using
+ * an OSC 52 escape sequence: ESC ] 52 ; cp ; <base64> ESC \.
+ *
+ * This is a data path, not a display path, so it deliberately does not
+ * reuse TCAPdrawChar()'s per-character table lookups: that function is on
+ * the screen-redraw hot path and is left untouched, and its "show a glyph
+ * for this control character" substitution is a rendering concern that
+ * would corrupt clipboard bytes < 0x20 (e.g. an embedded escape). Only
+ * bytes >= 0x80 are translated (to UTF-8), and only when the terminal is
+ * running in UTF-8 mode; this mirrors the equivalent conversion already
+ * done for the X11 clipboard SelectionRequest handler above.
+ *
+ * The target is hardcoded to "cp" (clipboard + primary) for now; splitting
+ * c and p out to a caller-supplied selector can follow once this has been
+ * tried out for real. */
+void
+TCAPoscCopyKill(void)
+{
+    meUByte obuf[1024];
+    meUByte *op;
+    meUByte grp[3];
+    int gi;
+    int useUtf8;
+    meKillNode *killp;
+    meUByte *ss, cc;
+
+    if(klhead == NULL)
+        return;
+
+    useUtf8 = (meSystemCfg & meSYSTEM_IO_UTF8) ? 1:0;
+    op = obuf;
+    gi = 0;
+    fputs("\x1b]52;cp;",stdout);
+    for(killp=klhead->kill ; killp != NULL ; killp=killp->next)
+    {
+        ss = killp->data;
+        while((cc = *ss++) != '\0')
+        {
+#if MEOPT_EXTENDED
+            if(useUtf8 && (cc & 0x80))
+            {
+                meUByte utf[3];
+                int uc, nn, ii;
+
+                if((uc = (int) charToUnicode[cc-128]) == 0)
+                {
+                    /* No mapping, convert to UNICODE replacement char (U+fffd) */
+                    utf[0] = 0xEF; utf[1] = 0xBF; utf[2] = 0xBD;
+                    nn = 3;
+                }
+                else if(uc & 0x0f800)
+                {
+                    utf[0] = 0xe0 | (uc >> 12);
+                    utf[1] = 0x80 | ((uc >> 6) & 0x3f);
+                    utf[2] = 0x80 | (uc & 0x3f);
+                    nn = 3;
+                }
+                else if(uc & 0x00780)
+                {
+                    utf[0] = 0xc0 | (uc >> 6);
+                    utf[1] = 0x80 | (uc & 0x3f);
+                    nn = 2;
+                }
+                else
+                {
+                    utf[0] = (meUByte) uc;
+                    nn = 1;
+                }
+                for(ii=0 ; ii<nn ; ii++)
+                {
+                    grp[gi++] = utf[ii];
+                    if(gi == 3)
+                    {
+                        meStrBase64Encode3(op,grp[0],grp[1],grp[2]);
+                        op += 4;
+                        gi = 0;
+                        if(op == obuf+sizeof(obuf))
+                        {
+                            fwrite(obuf,1,sizeof(obuf),stdout);
+                            op = obuf;
+                        }
+                    }
+                }
+                continue;
+            }
+#endif /* MEOPT_EXTENDED */
+            grp[gi++] = cc;
+            if(gi == 3)
+            {
+                meStrBase64Encode3(op,grp[0],grp[1],grp[2]);
+                op += 4;
+                gi = 0;
+                if(op == obuf+sizeof(obuf))
+                {
+                    fwrite(obuf,1,sizeof(obuf),stdout);
+                    op = obuf;
+                }
+            }
+        }
+    }
+    /* Pad and encode the final short group, if any is left over */
+    if(gi == 1)
+    {
+        meStrBase64Encode3(op,grp[0],0,0);
+        op[2] = '=';
+        op[3] = '=';
+        op += 4;
+    }
+    else if(gi == 2)
+    {
+        meStrBase64Encode3(op,grp[0],grp[1],0);
+        op[3] = '=';
+        op += 4;
+    }
+    if(op != obuf)
+        fwrite(obuf,1,(size_t) (op-obuf),stdout);
+    fputs("\x1b\\",stdout);
+    fflush(stdout);
+}
 #endif /* _TCAP */
 #endif /* _ME_CONSOLE */
 

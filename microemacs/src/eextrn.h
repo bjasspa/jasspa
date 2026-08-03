@@ -832,6 +832,7 @@ extern  void    meStrrep(meUByte **d, const meUByte *s);
 extern  int     meStricmp(const meUByte *str1, const meUByte *str2);
 extern  int     meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn);
 extern  int     meStridif(const meUByte *str1, const meUByte *str2);
+extern  void    meStrBase64Encode3(meUByte *dd, meUByte c1, meUByte c2, meUByte c3);
 extern  void    sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc);
 extern  int     sortLines(int f, int n);
 extern	int	bufferInfo(int f, int n);

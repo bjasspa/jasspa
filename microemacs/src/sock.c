@@ -272,16 +272,6 @@ static int timeoutRcv=300 * MESOCK_TIMEO_MULT;
 
 
 
-static void
-strBase64Encode3(meUByte *dd, meUByte c1, meUByte c2, meUByte c3)
-{
-    static meUByte base64Table[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    dd[0] = base64Table[(c1 >> 2)];
-    dd[1] = base64Table[((c1 << 4) & 0x30) | ((c2 >> 4) & 0x0f)];
-    dd[2] = base64Table[((c2 << 2) & 0x3c) | ((c3 >> 6) & 0x03)];
-    dd[3] = base64Table[(c3 & 0x3f)];
-}
-
 static meUByte *
 strBase64Encode(meUByte *dd, meUByte *ss)
 {
@@ -292,7 +282,7 @@ strBase64Encode(meUByte *dd, meUByte *ss)
         if((c2=*ss++) == '\0')
         {
             c3 = '\0';
-            strBase64Encode3(dd,c1,c2,c3);
+            meStrBase64Encode3(dd,c1,c2,c3);
             dd += 2;
             *dd++ = '=';
             *dd++ = '=';
@@ -300,12 +290,12 @@ strBase64Encode(meUByte *dd, meUByte *ss)
         }
         else if((c3=*ss++) == '\0')
         {
-            strBase64Encode3(dd,c1,c2,c3);
+            meStrBase64Encode3(dd,c1,c2,c3);
             dd += 3;
             *dd++ = '=';
             break;
         }
-        strBase64Encode3(dd,c1,c2,c3);
+        meStrBase64Encode3(dd,c1,c2,c3);
         dd += 4;
     }
     *dd = '\0';

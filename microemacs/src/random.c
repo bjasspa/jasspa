@@ -168,6 +168,19 @@ meStridif(const meUByte *str1, const meUByte *str2)
     return rr;
 }
 
+/* Encode exactly 3 input bytes as 4 base64 characters into dd. Caller is
+ * responsible for padding ('=') when encoding the final, short group of a
+ * stream. */
+void
+meStrBase64Encode3(meUByte *dd, meUByte c1, meUByte c2, meUByte c3)
+{
+    static meUByte base64Table[]="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    dd[0] = base64Table[(c1 >> 2)];
+    dd[1] = base64Table[((c1 << 4) & 0x30) | ((c2 >> 4) & 0x0f)];
+    dd[2] = base64Table[((c2 << 2) & 0x3c) | ((c3 >> 6) & 0x03)];
+    dd[3] = base64Table[(c3 & 0x3f)];
+}
+
 /* sort the given list of strings out on the nth plus character. Can be used
  * on lines by adding (sizeof(meLine)-1) to the offset. */
 #ifdef _NOQSORT
