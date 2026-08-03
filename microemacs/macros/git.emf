@@ -188,6 +188,10 @@ set-variable .git.cdefs  &lins .git.cdefs  -1 "|0|"
 set-variable .git.cnames &lins .git.cnames -1 "Info"
 set-variable .git.cflags &lins .git.cflags -1 "s$!"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "|"
+; Command 18 - GDiff
+set-variable .git.cnames &lins .git.cnames -1 "GDiff"
+set-variable .git.cflags &lins .git.cflags -1 "vSs@"
+set-variable .git.cdefs  &lins .git.cdefs  -1 "|4|"
 
 set-variable .git.ccount &sub &len .git.cnames &len &rep .git.cnames "\b" ""
 set-variable .git.cvals  &spr "%n" &pdec .git.ccount 1 "\b"
@@ -373,6 +377,7 @@ set-variable .git-revision-op.lbl6 "|\HMaster|\HHead|\HPrevious to head|\HSpecif
 set-variable .git-revision-op.lbl7 "|Head \Hto Master|\HMaster to Local|Head to Inde\Hx|\HHead to Local|\HIndex to Local|\HPrevious to Head|\HSpecific commit|Specific \Hrange|"
 set-variable .git-revision-op.lbl13 "|\HMaster|\HHead|\HPrevious to head|\HSpecific commit|"
 set-variable .git-revision-op.lbl14 "|\HMaster|\HHead|\HPrevious to head|\HSpecific commit|"
+set-variable .git-revision-op.lbl18 "|Head \Hto Master|\HMaster to Local|Head to Inde\Hx|\HHead to Local|\HIndex to Local|\HPrevious to Head|\HSpecific commit|Specific \Hrange|"
 0 define-macro git-revision-ops
   set-variable .git-osd.values &lset .git-osd.values .git-osd.o-v @#
 !emacro
@@ -1469,6 +1474,105 @@ define-macro git-diff
   beginning-of-buffer
 !emacro
 
+;; GIT Graphical Diff ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; git-gdiff-get-rev - extract the given revision of a file into a temporary file.
+;   @1 - the ' -C <root>' option for git, may be an empty string
+;   @2 - the repository relative path of the file
+;   @3 - the revision, e.g. '@', 'origin/main' or '<hash>~'. An empty string
+;        gives the index (staged) version of the file.
+; The name of the temporary file is returned in #p9, the caller must remove it.
+0 define-macro git-gdiff-get-rev
+  set-variable #l9 $temp-name
+  set-variable #l4 #l9
+  !if &sin " " #l4
+    set-variable #l4 &rep &rep #l4 "\\" "\\\\" "\"" "\\\""
+    set-variable #l4 &cat &cat "\"" #l4 "\""
+  !endif
+  set-variable #l8 &spr "%s%s show \"%s:%s\" > %s" .git.com @1 @3 @2 #l4
+  !iif &band $system 0x080  set-variable #l8 &cat #l8 " 2> /dev/null"
+  shell-command #l8
+  set-variable #p9 #l9
+!emacro
+
+; git-gdiff-name - the gdiff display name for a revision, a leading '*' stops
+; gdiff from offering to save the pane back over a repository version.
+0 define-macro git-gdiff-name
+  set-variable $result &spr "*git %s*" &cond &seq @1 "" "index" @1
+!emacro
+
+define-macro git-gdiff
+  18 git-osd
+  ; locate the file within the repository
+  !if .find-file.file-dcount
+    osd-dialog "Git - GDiff" "    This tool can only opperate on a single file!    " "  \HAbort  "
+    !abort
+  !endif
+  set-variable #l4 &cat .find-file.file-dir .find-file.file1
+  !force git-dirlst-detect
+  !if &not &seq .git-dirlst-detect.ld &lef #l4 &len .git-dirlst-detect.ld
+    osd-dialog "Git - GDiff" "    Failed to locate the git repository root!    " "  \HAbort  "
+    !abort
+  !endif
+  set-variable #l2 &rig #l4 &len .git-dirlst-detect.ld
+  !iif &sin " " &set #l3 .git-dirlst-detect.ld  set-variable #l3 &spr "\"%s\"" #l3
+  set-variable #l3 &cat " -C " #l3
+  ; work out the two revisions to compare, an empty revision is the index and
+  ; #l5 is set when the right hand side is the local (working tree) file.
+  set-variable #l5 0
+  !if &les &set #l0 &lget .git-osd.values 1 6
+    set-variable #l6 &rep &rep &lget "|@|#REP#/#BRC#|@|@||" #l0 "#REP#" .git.rep "#BRC#" .git.brc
+    set-variable #l7 &rep &rep &lget "|#REP#/#BRC#|||||" #l0 "#REP#" .git.rep "#BRC#" .git.brc
+    set-variable #l5 &lget "|0|1|0|1|1|" #l0
+  !elif &equ #l0 6
+    !force 0x404 pipe-shell-command &spr "%s%s log -1 --pretty=format:%%h -- \"%s\"" .git.com #l3 #l2 #l7
+    !iif &or &not $status &not &xse #l7 "\\h+"  -8 ml-write &spr "[ERROR: Failed to get last commit hash for: %s - %s]" #l2 #l7
+    set-variable #l6 &cat #l7 "~"
+  !elif &equ #l0 7
+    !if &seq "" &set #l7 &trl .git.cstrv2
+      osd-dialog "Git - GDiff" "    The specific commit must be given!    " "  \HAbort  "
+      !abort
+    !endif
+    set-variable #l6 &cat #l7 "~"
+  !elif &les &set #l1 &sin ".." &set #l6 &trl .git.cstrv2 2
+    osd-dialog "Git - GDiff" "    A specific range \"<commit>..<commit>\" must be given!    " "  \HAbort  "
+    !abort
+  !else
+    set-variable #l7 &rig #l6 &add #l1 1
+    set-variable #l6 &lef #l6 &sub #l1 1
+  !endif
+  ; get the left hand side, always a repository version
+  git-gdiff-get-rev #l3 #l2 #l6
+  set-variable #l8 #l9
+  !if #l5
+    ; the right hand side is the local file, gdiff is given a copy of it so that
+    ; it does not disturb the file's buffer, but is named after the real file so
+    ; that any changes may be saved back to it.
+    set-variable #l9 $temp-name
+    0x80 file-op #l4 #l9
+    set-variable #l1 #l4
+  !else
+    git-gdiff-get-rev #l3 #l2 #l7
+    git-gdiff-name #l7
+    set-variable #l1 $result
+  !endif
+  git-gdiff-name #l6
+  set-variable #l2 $result
+  !force !force gdiff #l8 #l9 #l2 #l1
+  set-variable #l0 $status
+  ; Remove the temp files
+  !force 0x20 file-op #l8
+  !force 0x20 file-op #l9
+  !if &and #l0 #l5
+    ; the local file may have been written, reload it if it is being edited
+    set-position "\x83"
+    !force 2 find-buffer #l4
+    !iif $status  !force reread-file
+    goto-position "\x83"
+  !endif
+  !return #l0
+!emacro
+
 ;; GIT Add ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 define-macro git-add
@@ -1964,10 +2068,12 @@ define-macro git
   set-variable #l2 &con &equ #l1 1 "" "s"
   osd @# 10 "" "Current \HStatus  " f git-status
   osd @# 20 "" &cat "\HDiff File" #l2 f git-diff
+  osd @# 30 "" "Graphical Diff"
   osd @# 50 "" "Item Blame"
   osd @# 100 "-"
   !if #l1
     osd @# 40 "" "Item \HLog"      f git-log-file
+    !iif &equ #l1 1  osd @# 30 "" "\HGraphical Diff" f git-gdiff
     !iif &equ #l1 1  osd @# 50 "" "Item \HBlame" f git-blame
     osd @# 110 "" &cat "\HAdd Item" #l2    f git-add
     osd @# 130 "" &cat "\HMove Item" #l2   f git-move

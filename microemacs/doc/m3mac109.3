@@ -7,7 +7,7 @@
 .\"  Created By    : Steven Phillips
 .\"  Created       : Mon Jul 20 00:00:00 2026
 .\"
-.Id $Id: m3mac109.3,v 2.2 2026/08/03 10:34:50 jon Exp $
+.Id $Id: m3mac109.3,v 2.2 2026/08/03 23:29:36 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH vcs 3
@@ -240,7 +240,7 @@ The \fBvcs-blame\fR command opens a window annotating each line of the current b
 the revision/commit and author that last changed it.
 .PP
 The \fBvcs-cat-file\fR command opens a window with the contents of the current buffer's file, or a single selected
-file, set to a specific revision/commit. Only supported by \s-1Git\s0 and \s-1SVN\s0 at present.
+file, set to a specific revision/commit. Currently not supported by ClearCase.
 .PP
 The \fBvcs-checkout\fR command checks out (creates) a working copy from the repository. Not supported by \s-1Git\s0;
 \s-1Git\s0 users should use \fBvcs-switch\fR to change branches, or \fBvcs-revert\fR/\fBvcs-unstage\fR to discard
@@ -275,10 +275,7 @@ repository version.
 The \fBvcs-fetch\fR command downloads changes from a remote repository without altering the local files or index.
 Only supported by \s-1Git\s0 at present.
 .PP
-The \fBvcs-gdiff\fR command launches a graphical diff to display changes. Only supported by \s-1CVS\s0 at present, for
-other systems see
-.Ht %xdiff-com 5
-based commands such as \fBsvn-xdiff\fR.
+The \fBvcs-gdiff\fR command launches a graphical diff to display changes. Currently not supported by ClearCase.
 .PP
 The \fBvcs-log-commit\fR command displays the log message and affected files of a specific commit. Only supported by
 \s-1Git\s0 and \s-1SVN\s0 at present.

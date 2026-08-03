@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac093.3,v 2.12 2026/08/03 10:35:09 jon Exp $
+.Id $Id: m3mac093.3,v 2.12 2026/08/03 23:30:09 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH git 3
@@ -19,6 +19,7 @@
 .XI git-commit - "\*(mS GIT interface - commit changes to repository"
 .XI git-diff - "\*(mS GIT interface - diff changes"
 .XI git-fetch - "\*(mS GIT interface - download from another repository"
+.XI git-gdiff - "\*(mS GIT interface - graphical diff changes"
 .XI git-log-commit - "\*(mS GIT interface - show information about a specific commit"
 .XI git-log-file - "\*(mS GIT interface - list log of changes"
 .XI git-move - "\*(mS GIT interface - move an item"
@@ -53,6 +54,9 @@ git-diff \- \*(mS GIT interface - diff changes
 .br
 .Me "|git-fetch"
 git-fetch \- \*(mS GIT interface - download from another repository
+.br
+.Me "|git-gdiff"
+git-gdiff \- \*(mS GIT interface - graphical diff changes
 .br
 .Me "|git-log-commit"
 git-log-commit \- \*(mS GIT interface - show information about a specific commit
@@ -103,6 +107,8 @@ git-unstage \- \*(mS GIT interface - unstage items
 .br
 .B git-fetch
 .br
+.B git-gdiff
+.br
 .B git-log-commit
 .br
 .B git-log-file
@@ -146,6 +152,8 @@ Executes the git-status command.
 Executes the git-commit command.
 .IP "\fBDiff files\fR"
 Executes the git-diff command.
+.IP "\fBGraphical Diff\fR"
+Executes the git-gdiff command, one file must be selected.
 .IP "\fBItem Log\fR"
 Executes the git-log-file command, one or more items must be selected.
 .IP "\fBItem Blame\fR"
@@ -188,6 +196,12 @@ selected local files and the repository version.
 .PP
 The \fBgit-fetch\fR command downloads branches and changes from the external repository, the command does not change the
 current index or local files.
+.PP
+The \fBgit-gdiff\fR command opens a
+.Ht gdiff 3
+window displaying the differences between two versions of the current buffer's file, the two versions being selected
+from the command's dialog. The command operates on a single file only. Where the right hand side is the local file
+any changes made may be saved back over it, repository versions cannot be saved.
 .PP
 The \fBgit-log-commit\fR command opens a \fI*git-log-commit*\fR windows displaying information about a specified GIT commit.
 .PP
@@ -284,6 +298,7 @@ August 2026 to align them with the equivalent SVN and VCS commands.
 .Ht svn 3 ,
 .Ht cvs 3 ,
 .Ht ClearCase 3 ,
+.Ht gdiff 3 ,
 .Ht file-browser 3 ,
 .Ht $rcs-file 5 .
 .ad

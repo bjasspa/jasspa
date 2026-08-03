@@ -21,6 +21,7 @@
 .XI svn-copy - "\*(mS SVN interface - copy items"
 .XI svn-delete - "\*(mS SVN interface - delete items"
 .XI svn-diff - "\*(mS SVN interface - diff changes"
+.XI svn-gdiff - "\*(mS SVN interface - graphical diff changes"
 .XI svn-ignore - "\*(mS SVN interface - edit directory item ignore list"
 .XI svn-info - "\*(mS SVN interface - display info about an item"
 .XI svn-log-commit - "\*(mS SVN interface - get log for a commit"
@@ -63,6 +64,9 @@ svn-delete \- \*(mS SVN interface - delete items
 .br
 .Me "|svn-diff"
 svn-diff \- \*(mS SVN interface - diff changes
+.br
+.Me "|svn-gdiff"
+svn-gdiff \- \*(mS SVN interface - graphical diff changes
 .br
 .Me "|svn-ignore"
 svn-ignore \- \*(mS SVN interface - edit directory item ignore list
@@ -123,6 +127,8 @@ svn-xdiff \- \*(mS SVN interface - external diff changes
 .br
 .B svn-diff
 .br
+.B svn-gdiff
+.br
 .B svn-ignore
 .br
 .B svn-info
@@ -177,6 +183,8 @@ Executes the svn-update command.
 Executes the svn-commit command.
 .IP "\fBDiff files\fR"
 Executes the svn-diff command.
+.IP "\fBGraphical Diff\fR"
+Executes the svn-gdiff command, one file must be selected.
 .IP "\fBItem Log\fR"
 Executes the svn-log-file command, one item must be selected.
 .IP "\fBItem Blame\fR"
@@ -225,6 +233,12 @@ to list change as this list includes all items flagged for removal.
 .PP
 The \fBsvn-diff\fR command opens a \fI*svn-diff*\fR window displaying the differences between the current buffer or
 selected local files and the repository version.
+.PP
+The \fBsvn-gdiff\fR command opens a
+.Ht gdiff 3
+window displaying the differences between two versions of the current buffer's file, the two versions being selected
+from the command's dialog. The command operates on a single file only. Where the right hand side is the local file
+any changes made may be saved back over it, repository versions cannot be saved.
 .PP
 The \fBsvn-ignore\fR command opens a dialog to edit the list of items contained with the current directory which are
 to be ignored by SVN. Currently selected items are appended to this list and any changes made are only to the local
@@ -321,11 +335,14 @@ in the buffer to enable/disable the filter.
 .PP
 The svn-cat, svn-log and svn-commit-log commands were renamed to svn-cat-file, svn-log-file and svn-log-commit in
 August 2026 to align them with the equivalent Git and VCS commands.
+.PP
+The svn-gdiff command was added in August 2026 to align with the equivalent CVS, Git and VCS commands.
 .SH "SEE ALSO"
 .na
 .Ht git 3 ,
 .Ht cvs 3 ,
 .Ht ClearCase 3 ,
+.Ht gdiff 3 ,
 .Ht file-browser 3 ,
 .Ht $rcs-file 5 .
 .ad

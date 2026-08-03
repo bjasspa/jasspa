@@ -50,10 +50,10 @@ set-variable .fhook-cvs-status.command-kbind &rig &lset &lset &lset &lset &lset 
 set-variable .fhook-cvs-status.command-desc  &rig &lset &lset &lset &lset &lset &lset .fhook-dirlst.command-desc  1 "" 2 "" 3 "Help on CVS States" 4 "Open CVS menu" 5 "Rerun cvs-status" 6 "" 2
 set-variable .fhook-cvs-status.refresh "cvs-status-refresh"
 
-set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log File|Remove|Status|File Status|Tag|Update|Annotate|Resolve Conflicts|"
-set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|"
-set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRL*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|"
-set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|"
+set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log File|Remove|Status|File Status|Tag|Update|Annotate|Resolve Conflicts|Cat File|"
+set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|cat-file|"
+set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRL*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|vs|"
+set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|0|"
 set-variable .cvs.options "mfDtvOZkRdAPCcwbrFo"
 set-variable .cvs.values  "  0 111010000110000"
 set-variable .cvs.revs    "|||||"
@@ -507,6 +507,79 @@ define-macro cvs-log-list
   !force 0x20 file-op #l2
   !force 0x20 file-op #l3
   !return #l4
+!emacro
+
+; cvs-view-file-rev - create a read-only view of the given revision of a file.
+;   @1 - directory containing the file, with a trailing '/'
+;   @2 - leaf name of the file
+;   @3 - the cvs revision option, e.g. '-r HEAD'
+;   @4 - display name of the revision, e.g. 'HEAD' or '1.5'
+0 define-macro cvs-view-file-rev
+  set-position "\x83"
+  set-variable #l1 @2
+  set-variable #l4 @4
+  set-variable #l5 &spr "*%s:%s" #l1 #l4
+  !if &exi &spr ":%s:" #l5
+    popup-window #l5
+    ml-write "[View of file version already exists!]"
+    !return
+  !endif
+  !if &seq $platform "windows"
+    ; system does not maintain the correct starting dir so use whole file name
+    set-variable #l3 &cat @1 #l1
+  !else
+    set-variable #l3 #l1
+  !endif
+  !if &sin " " #l3
+    set-variable #l3 &rep &rep #l3 "\\" "\\\\" "\"" "\\\""
+    set-variable #l3 &cat &cat "\"" #l3 "\""
+  !endif
+  !force !force !force 0x2c6 pipe-shell-command &spr "%s -n update -p %s %s" .cvs.com @3 #l3 &set #l6 &spr "%s--%s" #l4 #l1
+  !iif &or &not $status $result  -8 ml-write &spr "[Failed to get revision %s of file %s]" #l4 #l1
+  find-buffer #l6
+  beginning-of-buffer
+  !if &seq "" &rep @wl "=" ""
+    set-mark
+    4 forward-line
+    !if &seq "" &rep @wl "*" ""
+      -1 buffer-mode "view"
+      forward-line
+      -1 kill-region "y"
+      -1 buffer-mode "edit"
+      -1 buffer-mode "undo"
+      1 buffer-mode "view"
+    !endif
+    beginning-of-buffer
+  !endif
+  -1 major-mode
+  change-buffer-name #l5
+  goto-position "\x83"
+  popup-window #l5
+  beginning-of-buffer
+!emacro
+
+; cvs-exec-cat-file - view a revision of the current file, the revision is
+; taken from the cvs-osd 'Version' setting. @1 is the current directory.
+0 define-macro cvs-exec-cat-file
+  set-variable #l0 @1
+  set-variable #l1 .find-file.file1
+  set-variable #l2 &sub &sin "v" .cvs.options 1
+  set-variable #l2 &mid .cvs.values #l2 1
+  !if &equ #l2 3
+    set-variable #l8 "D"
+    set-variable #l9 &trb &lget .cvs.revs 2
+  !elif &equ #l2 2
+    set-variable #l8 "r"
+    set-variable #l9 &trb &lget .cvs.revs 1
+  !else
+    set-variable #l8 "r"
+    set-variable #l9 "HEAD"
+  !endif
+  !if &seq #l9 ""
+    osd-dialog "CVS - Cat File" "    A revision, tag or date must be given!    " "  \HAbort  "
+    !abort
+  !endif
+  cvs-view-file-rev #l0 #l1 &spr "-%s \"%s\"" #l8 #l9 #l9
 !emacro
 
 0 define-macro cvs-exec-state-ipipe
@@ -1071,6 +1144,11 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     cvs-exec-gdiff .cvs.cwd
     !return
   !endif
+  ; as are cat-files
+  !if &seq &lget .cvs.cmds @# "cat-file"
+    cvs-exec-cat-file .cvs.cwd
+    !return
+  !endif
   ; construct the base command-line
   set-variable #l8 ""
   set-variable #l7 ""
@@ -1127,7 +1205,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
   set-variable #l8 &spr "%s%s %s%s%s" .cvs.com #l6 &lget .cvs.cmds @# #l8 #l7
   ; get the output buffer name
   set-variable #l2 0
-  set-variable #l6 &spr "*cvs-%s*" &slow &lget .cvs.names @#
+  set-variable #l6 &spr "*cvs-%s*" &rep &slow &lget .cvs.names @# " " "-"
   !if .toolbar.open
     !if &sin "*" &lget .cvs.flags @#
       !force toolbar-make-tool-visible "*cvs-console*"
@@ -1258,6 +1336,24 @@ define-macro cvs-annotate
 define-macro cvs-resolve
   13 cvs-osd
 !emacro
+; cvs-cat-file - view a revision of a file, either the given file and revision
+; (@1 and @2) or, when no arguments are given, the current buffer's file at a
+; revision selected from the cvs-osd dialog.
+define-macro cvs-cat-file
+  !force set-variable #l3 @2
+  !if $status
+    set-variable #l1 @1
+    !if &set #l2 &rsin "/" #l1
+      set-variable #l0 &lef #l1 #l2
+      set-variable #l1 &rig #l1 #l2
+    !else
+      set-variable #l0 &lef $buffer-fname &rsin "/" $buffer-fname
+    !endif
+    cvs-view-file-rev #l0 #l1 &spr "-r \"%s\"" #l3 #l3
+  !else
+    14 cvs-osd
+  !endif
+!emacro
 
 0 define-macro cvs-clear-console
   set-position "\x82"
@@ -1284,9 +1380,11 @@ define-macro cvs-resolve
   osd @# 50 "" "A\Hnnotate files"   12 cvs-osd
   !if &equ :tag-count 1
     osd @# 30 "" "\HGraphical diff"      5 cvs-osd
+    osd @# 35 "" "Cat \Hfile"           14 cvs-osd
     osd @# 220 "" "\HResolve conflicts"  13 cvs-osd
   !else
     osd @# 30 "" "Graphical diff"
+    osd @# 35 "" "Cat file"
     osd @# 220 "" "Resolve conflicts"
   !endif
   osd @# 100 "-"

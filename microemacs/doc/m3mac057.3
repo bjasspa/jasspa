@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Jul 5 18:16:21 1999
 .\"
-.Id $Id: m3mac057.3,v 2.12 2026/08/03 10:37:50 jon Exp $
+.Id $Id: m3mac057.3,v 2.12 2026/08/03 23:29:57 jon Exp $
 .Im MicroEmacs shell|command
 .so me.tni
 .TH cvs 3
@@ -15,6 +15,7 @@
 .XI cvs-setup - "\*(mS CVS interface setup"
 .XI cvs-add - "\*(mS CVS interface - add file"
 .XI cvs-annotate - "\*(mS CVS interface - annotate file"
+.XI cvs-cat-file - "\*(mS CVS interface - output specific revision of a file"
 .XI cvs-checkout - "\*(mS CVS interface - checkout files"
 .XI cvs-commit - "\*(mS CVS interface - commit changes"
 .XI cvs-diff - "\*(mS CVS interface - diff changes"
@@ -40,6 +41,9 @@ cvs-add \- \*(mS CVS interface - add file
 .br
 .Me "|cvs-annotate"
 cvs-annotate \- \*(mS CVS interface - annotate file
+.br
+.Me "|cvs-cat-file"
+cvs-cat-file \- \*(mS CVS interface - output specific revision of a file
 .br
 .Me "|cvs-checkout"
 cvs-checkout \- \*(mS CVS interface - checkout files and directories
@@ -84,6 +88,8 @@ cvs-update \- \*(mS CVS interface - update directory files
 .B cvs-add
 .br
 .B cvs-annotate
+.br
+.B cvs-cat-file
 .br
 .B cvs-checkout
 .br
@@ -188,6 +194,10 @@ This command opens a
 .Ht gdiff 3
 window showing the differences between the currently selected file and the CVS
 repository version. Note this command only works with a single file.
+.IP "\fBCat file\fR"
+This  command  opens a  \fI*<file-name>:<revision>\fR  window  containing  the
+selected  file as it was at a given  revision,  the  revision  being  selected
+from the command's  dialog. Note this command only works with a single file.
 .IP "\fBResolve conflicts\fR"
 This  command  may be used to  resolve  merge  conflicts  created  by a \fICVS\fR
 \fIupdate\fR operation. The command opens a
@@ -203,6 +213,10 @@ local addition, a \fICVS\fR \fIcommit\fR is required to make the addition perman
 .PP
 The \fBcvs-annotate\fR command displays information about the most recent change for each line of the current buffer's 
 file, very useful when trying to locate the cause of a problem.
+.PP
+The \fBcvs-cat-file\fR command opens a \fI*<file-name>:<revision>\fR window with the contents set to the specified
+revision of the current buffer's file. The revision is selected from the command's dialog and may be given as
+\fCHEAD\fR, an explicit revision or tag, or a date.
 .PP
 The  \fBcvs-checkout\fR  command  checks  out a file  or  directory  from  the
 repository  into the current  directory.  The user  specifies  the file on the
