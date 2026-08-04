@@ -4,20 +4,20 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac102.3,v 2.2 2025/07/22 23:53:47 jon Exp $
+.Id $Id: m3mac102.3,v 2.2 2026/08/04 23:12:19 jon Exp $
 .Im MicroEmacs command|shell
 .so me.tni
-.TH keep-next-buffer 3
-.XI keep-next-buffer - "Rename a next command buffer"
+.TH keep-buffer 3
+.XI keep-buffer - "Rename the current buffer"
 .SH NAME
-keep-next-buffer \- Rename a next command buffer
+keep-buffer \- Rename the current buffer
 .Me $a
 .SH SYNOPSIS
 .na
-.B keep-next-buffer
+.B keep-buffer
 .ad
 .SH DESCRIPTION
-.B keep-next-buffer
+.B keep-buffer
 renames the current buffer by appending a number to the end of the current buffer name. This ensures that, if the command used to 
 generate the buffer (such as
 .Ht compile 3
@@ -27,16 +27,17 @@ is rerun, the current buffer will not be deleted.
 .PP
 This command is useful when the current buffer is time consuming to generate and another compile or grep is needed 
 before it has been fully processed.
-.SH NOTES
-The command returns and error if the current buffer is not a 'next' command buffer, leaving the buffer name 
-unchanged.
 .PP
-\fBkeep-next-buffer\fR is a macro defined in \fCtools.emf\fR.
+It can also be used as a quick way to create multiple
+.Hl ishells ishell 3 ,
+by executing this macro on the first \fC*shell*\fR buffer, which will rename it to \fC*shell*1\fR, executing 
+\fBishell\fR will create a new shell. 
+.SH NOTES
+\fBkeep-buffer\fR is a macro defined in \fCtools.emf\fR.
 .SH "SEE ALSO"
 .na
-.Ht add-next-line 2 ,
-.Ht get-next-line 2 ,
 .Ht compile 3 ,
-.Ht grep 3 .
+.Ht grep 3 ,
+.Ht ishell 3 .
 .ad
 .FH

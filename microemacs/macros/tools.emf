@@ -152,12 +152,9 @@ define-macro compile
 define-macro recompile
   &bor @# 12 compile
 !emacro
-define-macro keep-next-buffer
-  !force 10 get-next-line
-  !iif &not $status  -8 ml-write "[ERROR: not in a next command buffer]"
+define-macro keep-buffer
   set-variable #l1 0
-  !while &exi &spr ":%s%s:" $buffer-bname &inc #l1 1
-  !done
+  !tjump &exi &spr ":%s%s:" $buffer-bname &inc #l1 1 0
   change-buffer-name &cat $buffer-bname #l1
 !emacro
 
