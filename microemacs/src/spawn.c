@@ -880,24 +880,30 @@ do {                                                                         \
 static int
 ipipeDecodeColorLine(const meUByte *src, meUByte *buff, meUByte *cbuff, int offs)
 {
-    meUByte cc = 'A';
-    int rr=0, i = 0;
-    while(*src)
+    meUByte cc='A', dd;
+    int rr=0, ii=0;
+    
+    while((dd=*src++) != '\0')
     {
-        if((*src == '\x03') && src[1])
+        if(dd == '\x03')
         {
-            cc = *++src;
-            src++;
+            if(--offs == 0)
+                rr = ii;
+            if((dd = *src++) != '\0')
+                cc = dd;
+            else
+                /* consume a bare \CC at the end of a line */ 
+                --src;
         }
         else
         {
-            cbuff[i] = cc;
-            buff[i++] = *src++;
-            if(--offs == 0)
-                rr = i;
-        }
+            cbuff[ii] = cc;
+            buff[ii++] = dd;
+        }            
+        if(--offs == 0)
+            rr = ii;
     }
-    buff[i] = '\0';
+    buff[ii] = '\0';
     return rr;
 }
 
