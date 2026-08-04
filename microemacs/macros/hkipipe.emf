@@ -291,7 +291,6 @@
     ipipe-write-prompt #l1
   !else
     goto-alpha-mark "I"
-    !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     ipipe-write #l1
   !endif
 !emacro
@@ -301,10 +300,30 @@
   set-variable #l3 @cc
   !if &les &len #l3 2
     set-variable #l1 #l3
-  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|" #l3
-    set-variable #l1 &lget "|\t|\d|\r|\CA|\e[D|\e[3~|\CE|\e[C|\CK|\CL|\e[B|\e[A|\e\e|\ef|\eb|" #l0
+  !elif &set #l0 &lfi "|tab|backward-delete-char|newline|beginning-of-line|backward-char|forward-delete-char|end-of-line|forward-char|kill-line|recenter|forward-line|backward-line|expand-abbrev|forward-word|backward-word|recenter|" #l3
+    set-variable #l1 &lget "|\t|\d|\r|\CA|\e[D|\e[3~|\CE|\e[C|\CK|\CL|\e[B|\e[A|\e\e|\ef|\eb|\CL|" #l0
   !elif &set #l0 &lfi "|backspace|" #l2
     set-variable #l1 &lget "|\d|" #l0
+  !elif &seq "backward-kill-word" #l3
+    !iif &not &set #l4 $window-col  !return
+    set-variable #l5 $window-line
+    backward-word
+    !if &sub #l5 $window-line
+      goto-alpha-mark "I"
+      !return
+    !endif
+    set-variable #l5 &sub #l4 $window-col
+    set-variable #l1 &spr "%n" #l5 "\d"
+  !elif &seq "forward-kill-word" #l3
+    set-variable #l4 $window-col
+    set-variable #l5 $window-line
+    forward-word
+    !if &sub #l5 $window-line
+      goto-alpha-mark "I"
+      !return
+    !endif
+    set-variable #l5 &sub $window-col #l4
+    set-variable #l1 &spr "%n" #l5 "\e[3~"
   !elif &seq "yank" #l3
     -98 yank
     set-variable #l1 @y
@@ -324,7 +343,6 @@
     ipipe-write-prompt #l1
   !else
     goto-alpha-mark "I"
-    !iif &or &band $system 0x100 &seq $platform "cygwin"  set-variable #l1 &rep #l1 "\CM" "\CM\CJ"
     ipipe-write #l1
   !endif
 !emacro

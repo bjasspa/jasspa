@@ -834,15 +834,16 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
  (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff,doSleep)) > 0) ?        \
   (((cc)=rbuff[0]),curROff=1): 0))
 
-#define ipipeAddLine(ipipe,lp_old,buff,cbuff)                                \
-((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeAddColorLine(lp_old,buff,cbuff):addLine(lp_old,buff))
+#define ipipeAddLine(ipipe,lp_old,buff,cbuff,dotoP)                          \
+((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeAddColorLine(lp_old,buff,cbuff,dotoP):addLine(lp_old,buff))
 #define ipipeDecodeLine(ipipe,src,buff,cbuff,offs)                           \
 ((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeDecodeColorLine(src,buff,cbuff,offs):(meStrcpy(buff,src),offs))
 
 #define ipipeStoreInputPos()                                                 \
 do {                                                                         \
     meLine *lp_new;                                                          \
-    noLines += ipipeAddLine(ipipe,lp_old,buff,cbuff);                        \
+    int doto = (int) (p1 - buff);                                            \
+    noLines += ipipeAddLine(ipipe,lp_old,buff,cbuff,&doto);                  \
     lp_new = meLineGetPrev(lp_old);                                          \
     if(lp_old != bp->baseLine)                                               \
     {                                                                        \
@@ -867,7 +868,7 @@ do {                                                                         \
     else                                                                     \
         bp->vertScroll = bp->dotLineNo-curRow;                               \
     bp->dotLine = lp_new;                                                    \
-    bp->dotOffset = (meUShort) (p1 - buff);                                  \
+    bp->dotOffset = (meUShort) doto;                                         \
     meBufferUpdateLocation(bp,noLines,bp->dotOffset);                        \
 } while(0)
 
@@ -919,11 +920,12 @@ ipipeClearColorLine(meLine *lp)
 }
 
 static int
-ipipeAddColorLine(meLine *lp, const meUByte *buff, const meUByte *cbuff)
+ipipeAddColorLine(meLine *lp, const meUByte *buff, const meUByte *cbuff, int *dotoP)
 {
     meUByte encbuff[3*meBUF_SIZE_MAX+1];
     meUByte cc='A', sc;
     meUByte *op=encbuff;
+    int doto = (dotoP == NULL) ? 0:*dotoP;
     int i = 0;
     while(buff[i])
     {
@@ -935,6 +937,8 @@ ipipeAddColorLine(meLine *lp, const meUByte *buff, const meUByte *cbuff)
             *op++ = cc;
         }
         *op++ = buff[i++];
+        if(--doto == 0)
+            *dotoP = (int) (op-encbuff);
     }
     if(cc != 'A')
     {
@@ -1271,7 +1275,7 @@ ipipeRead(meIPipe *ipipe)
                 prmL = 0;
                 goto move_cursor_pos;
             }
-            ii = ipipeAddLine(ipipe,lp_old,buff,cbuff);
+            ii = ipipeAddLine(ipipe,lp_old,buff,cbuff,NULL);
             noLines += ii;
             if(curRow < ipipe->noRows-1)
                 curRow += ii;
@@ -1812,7 +1816,7 @@ cant_handle_this:
                         cbuff[splitIdx] = ipipe->ansiCc;
                     p1[0] = windowChars[WCDISPSPLTLN];
                     p1[1] = '\0';
-                    ii = ipipeAddLine(ipipe,lp_old,buff,cbuff);
+                    ii = ipipeAddLine(ipipe,lp_old,buff,cbuff,NULL);
                     noLines += ii;
                     if(lp_old != bp->baseLine)
                     {

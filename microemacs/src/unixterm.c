@@ -1024,18 +1024,19 @@ TCAPdrawChar(meUByte cc)
 void
 TCAPoscCopyKill(void)
 {
+    meKillNode *killp;
     meUByte obuf[1024];
     meUByte *op;
+    meUByte *ss, cc;
     meUByte grp[3];
     int gi;
-    int useUtf8;
-    meKillNode *killp;
-    meUByte *ss, cc;
+#if MEOPT_EXTENDED
+    int useUtf8 = (meSystemCfg & meSYSTEM_IO_UTF8) ? 1:0;
+#endif /* MEOPT_EXTENDED */
 
     if(klhead == NULL)
         return;
 
-    useUtf8 = (meSystemCfg & meSYSTEM_IO_UTF8) ? 1:0;
     op = obuf;
     gi = 0;
     fputs("\x1b]52;cp;",stdout);
