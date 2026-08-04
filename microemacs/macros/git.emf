@@ -450,7 +450,7 @@ set-variable .git-revision-op.lbl18 "|Head \Hto Master|\HMaster to Local|Head to
   osd .osd.git-osd 0 ""
   set-variable #l0 &set #l2 &set #l3 0
   !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-    !if &not &sin #l1 "DSs*!$@"
+    !if &not &sin #l1 "DLSs*!$@"
       set-variable #l2 &mul #l0 100
       osd .osd.git-osd &inc #l2 1 ""
       !if &seq #l1 "B"
@@ -1880,7 +1880,7 @@ define-macro git-unstage
   set-variable #l0 0
   set-variable #l4 &mul @# 0x1000
   !while &not &seq "" &set #l1 &mid #l9 &pinc #l0 1 1
-    !if &not &sin #l1 "BDfNSsv*!$@"
+    !if &not &sin #l1 "BDfLNSsv*!$@"
       set-variable #l2 &mul #l0 100
       osd #l8 &inc #l2 1 ""
       !if &seq #l1 "b"

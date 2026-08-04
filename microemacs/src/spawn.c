@@ -1490,8 +1490,9 @@ move_cursor_pos:
                                     ipipe->flag &= ~meIPIPE_NOAUTOWRAP;
 #ifndef NDEBUG
                                 /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), show/hide cursor (25), focus in/out (1004)
-                                 * synchronized output (2026), unknown private mode (2031) */
-                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031))
+                                 * synchronized output (2026), unknown private mode (2031), win32-input-mode (9001 - set by ConPTY to request
+                                 * key events are sent as '\E[<vk>;<sc>;<uc>;<kd>;<cs>;<rc>_' records, ME does not so it falls back to plain VT) */
+                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
                                     goto cant_handle_this;
 #endif
                             }
@@ -1509,8 +1510,8 @@ move_cursor_pos:
                                     ipipe->flag |= meIPIPE_NOAUTOWRAP;
 #ifndef NDEBUG
                                 /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), show/hide cursor (25), focus in/out (1004)
-                                 * synchronized output (2026), unknown private mode (2031) */
-                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031))
+                                 * synchronized output (2026), unknown private mode (2031), win32-input-mode (9001 - see the 'h' handler above) */
+                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
                                     goto cant_handle_this;
 #endif
                             }
@@ -1703,7 +1704,27 @@ move_cursor_pos:
                         case 'r': /* Ignore DECSTBM � scrolling region */
                         case 'u': /* Ignore Kitty keyboard protocol */
                             break;
-                            
+
+                        case 't':
+                            {
+                                /* XTWINOPS - window manipulation, the first parameter is the operation.
+                                 * All requests are ignored, in particular the resize '\E[8;<rows>;<cols>t'
+                                 * which ConPTY sends whenever the child changes the console size - ME owns
+                                 * the ipipe size (see ipipeSetSize) so honouring it would create a resize
+                                 * loop. Only the text area size report (18) is answered. */
+                                char outb[24];
+
+                                if((prmC ? prmS[0]:prmL) != 18)
+                                    break;
+                                sprintf(outb,"\033[8;%d;%dt",ipipe->noRows,ipipe->noCols);
+#ifdef _WIN32
+                                { DWORD wr; WriteFile(ipipe->outWfd,outb,(DWORD)strlen(outb),&wr,NULL); }
+#else
+                                write(ipipe->outWfd,outb,strlen(outb));
+#endif
+                                break;
+                            }
+
                         default:
 #ifndef NDEBUG
 cant_handle_this:

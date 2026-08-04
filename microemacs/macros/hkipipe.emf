@@ -459,34 +459,32 @@ define-macro fhook-ipipe
 !emacro
 
 define-macro ishell
-  set-variable #l0 $buffer-bname
-  set-variable #l2 &con &band 1 @# 0x1088 0x88
-  !force 0 find-buffer "*shell*"
-  !if &and $status &bmod "pipe"
-    set-variable #l2 -1
-    find-buffer #l0
+  !force set-variable #l0 &nbm "*shell*" "pipe"
+  !if &and $status #l0
+    popup-window "*shell*"
+    !return
   !elif &les @# 0
     !return
-  !elif &band $system 0x100           ; is it MS-DOS type system ?
-    !if &seq $platform "windows"
-      &add #l2 4 ipipe-shell-command &cond &seq $ME_ISHELL "ERROR" $COMSPEC $ME_ISHELL "*shell*" ipipe-input
-    !else
-      #l2 ipipe-shell-command $COMSPEC "*shell*" ipipe-input
-    !endif
-  !elif &seq $platform "cygwin"
-    ; For cygwin then convert the COMSPEC path into a cygwin path for
-    ; pipe execution. This is executed in cygwin space rather than MS-DOS
-    ; space.
-    set-variable #l1 &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1"
-    set-variable #l1 &xir #l1 "\\\\" "/"
-    #l2 ipipe-shell-command #l1 "*shell*" ipipe-input
-  !else
-    ; UNIX based platforms then we may simply run the shell.
-    #l2 ipipe-shell-command $SHELL "*shell*" ipipe-input
   !endif
+  set-variable #l2 &con &band 16 @# 0x88 0x1088
+  set-variable @# &band @# 15
+  !if &seq $platform "cygwin"
+    set-variable #l0 &spr "\b%s\bpowershell\b%s\b" &xir &xir $COMSPEC "^\\([a-z]\\):" "/cygdrive/\\1" "\\\\" "/" $SHELL
+  !elif &band $system 0x100
+    set-variable #l0 &spr "\b%s\bpowershell\b" $COMSPEC
+    set-variable #l2 &add #l2 4
+  !else
+    set-variable #l0 &spr "\b%s\b" $SHELL
+  !endif
+  !iif &exi %ishell  set-variable #l0 &lins %ishell 0
+  !if &equ 1 &len #l0
+    set-variable #l1 &lget #l0 1
+  !elif &seq "" &set #l1 &lget #l0 @#
+    set-variable #l1 @ml09 "Select shell" #l0
+  !endif
+  #l2 ipipe-shell-command #l1 "*shell*" ipipe-input
   popup-window "*shell*"
-  !if &les #l2 0
-  !elif &not &band 2 $buffer-ipipe-flags
+  !if &not &band 2 $buffer-ipipe-flags
     !if &exi .ishell.prompt
       set-variable :mode 0
       set-variable :prompt .ishell.prompt
