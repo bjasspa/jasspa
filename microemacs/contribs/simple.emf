@@ -1,0 +1,13 @@
+; -!- emf -!-
+; Simple startup tester can be run to test
+; start-up times like this:
+;
+; time mec @./contribs/simple
+; 
+
+execute-file "me"
+
+define-macro start-up
+  1000 ml-write "MicroEmacs runs!"
+  exit-emacs
+!emacro
