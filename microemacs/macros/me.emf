@@ -40,9 +40,9 @@ define-macro-file cvs cvs cvs-add cvs-annotate cvs-cat-file cvs-checkout cvs-com
 define-macro-file misc save-all set-title encase open-line get-next-indent-change check-line-length number-items time compare-windows-exact display-whitespaces write-region execute-region
 define-macro-file cc cc-add cc-add-view cc-annotate cc-checkin cc-checkout cc-delete cc-describe cc-diff cc-explorer cc-merge cc-move cc-setup cc-status cc-uncheckout cc-update cc-vtree
 define-macro-file osdmisc insert-symbol buffer-setup alarm browse alias-path-setup file-type-setup file-tool-setup file-tool-menu shell-tool-setup find-setup
+define-macro-file games cross-word Brag Fahtzee Hearts Mahjongg Match-It Matrix Metris Patience Triangle Typing
 define-macro-file abbrev expand-abbrev-handle expand-iso-accents expand-look-back expand-word iso-accents-mode
 define-macro-file comment comment-line uncomment-line comment-to-end-of-line comment-start comment-restyle
-define-macro-file games cross-word Brag Fahtzee Mahjongg Match-It Matrix Metris Patience Triangle Typing
 define-macro-file find find grep grep-for-region replace-string-in-files query-replace-string-in-files
 define-macro-file rect string-rectangle space-rectangle copy-rectangle yank-rectangle-overwrite
 define-macro-file majormod major-mode-setup major-mode-help major-mode-tool add-file-hook

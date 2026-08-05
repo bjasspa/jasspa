@@ -28,7 +28,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	filetype.emf	find.emf	fold.emf	\
 	format.emf	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	gentagsc.emf	gentags.emf	\
-	git.emf	\
+	git.emf		hearts.emf	\
 	hkada.emf	hkadoc.emf	hkapache.emf	hkapt.emf	\
 	hkasm.emf	\
 	hkasn1.emf	hkasp.emf	hkautoit.emf	hkawk.emf	\

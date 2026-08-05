@@ -519,6 +519,7 @@ osd 21 0   b
 osd 21 10  ""  "\HBrag"       f Brag
 osd 21 20  ""  "\HCross-Word" f cross-word
 osd 21 30  ""  "\HFahtzee"    f Fahtzee
+osd 21 35  ""  "\HHearts"     f Hearts
 osd 21 40  ""  "\HMahjongg"   f Mahjongg
 osd 21 50  ""  "Match-\HIt"   f Match-It
 osd 21 50  ""  "Matri\Hx"     f Matrix

@@ -20,6 +20,10 @@ define-macro Fahtzee
   execute-file fahtzee
   Fahtzee
 !emacro
+define-macro Hearts
+  execute-file hearts
+  Hearts
+!emacro
 define-macro Mahjongg
   execute-file mahjongg
   Mahjongg

@@ -1,119 +1,144 @@
 .\" -*- nroff -*-
-.\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.\"  Created By    : Detlef Groth & Steven Phillips
-.\"  Created       : Mon Aug 31 21:02:32 1998
-.\"
-.Id $Id: m3mac101.3,v 2.10 2026/08/01 05:38:51 dgroth Exp $
-.Im MicroEmacs command
+.Id $Id: m3mac110.3,v 1.1 2026/08/05 00:00:00 steve Exp $
+.Im MicroEmacs command|games
 .so me.tni
-.TH py-doc 3
-.XI py-doc - "Display Python manual page"
-.XI py-exec - "Executes the current Python buffer"
-.XI py-format - "Format the current Python buffer"
-.XI py-lint - "Check the current Python buffer using lint"
-.XI %python-com 5 "Python command line path"
-.XI %py-format-opts 5 "Python format command options"
-.XI %py-lint-opts 5 "Python lint format options"
+.TH Hearts 3
+.XI Hearts - "\*(mS version of the card game Hearts"
 .SH NAME
-.Me "|py-doc"
-py-doc \- Display Python manual page"
-.br
-.Me "|py-exec"
-py-exec - Executes the current Python buffer
-.br
-.Me "|py-format"
-py-format \- Format the current Python buffer
-.br
-.Me "|py-lint"
-py-lint \- Check the current Python buffer using lint
-.br
-.Me "|%python-com"
-\&%python-com \- Python command line path
-.br
-.Me "|%py-format-opts"
-\&%py-format-opts \- Python format command options
-.br
-.Me "|%py-lint-opts"
-\&%py-lint-opts \- Python lint command options
+Hearts \- \*(mS version of the card game Hearts
 .Me $a
 .SH SYNOPSIS
 .na
-\fBpy-doc\fR "\fIman-page\fR"
-.sp
-.I n
-\fBpy-exec\fR [ "\fIcommand-line-arguments\fR" ]
-.br
-.I n
-\fBpy-format\fR [ "\fIformat-options\fR" ]
-.br
-.I n
-\fBpy-lint\fR [ "\fIlint-options\fR" ]
-.sp
-\fB%python-com\fR \fIstring\fR; Default is "\fCpython3\fR"
-.br
-\fB%py-format-opts\fR \fIstring\fR; Default is "\fCyapf -i\fR" or "\fCblack -q\fR"
-.br
-\fB%py-lint-opts\fR \fIstring\fR; Default is ""
+\fBHearts\fR
 .ad
 .SH DESCRIPTION
-\fBpy-doc\fR provides a mechanism to display a Python manual page within \*(mS. On invoking \fBpy-doc\fR the
-user is prompted for the name of the manual page to display:
-.CS
-Python help on ?
-.CE
-The command invokes
-.Hr Python 1
-using the \fBpydoc\fR module to generate the requested manual page in a "*py-doc*" buffer. This buffer supports
-.Ht item-list 3
-to help browse the content generated.
+\fBHearts\fR  is a  trick-taking  card game for four  players,  played  with a
+standard  pack of 52 cards. The user plays the south hand  against three
+computer  opponents  named West, North and East. The object of the game is to
+score as few points as possible.
 .PP
-The \fBpy-exec\fR macro executes the current buffer using the Python command line interpreter. Before the script is executed
-.Ht save-some-buffers 2
-is executed to allow the user to ensure that all relevant buffers are saved. If bit \fC0x01\fR of the numeric argument
-\fIn\fR is clear then all modified buffers are automatically saved, when set (the default) the user is prompted for
-each buffer. If bit 0x02 of the numeric argument is clear (the default) the user is prompted for any additional
-\fIcommand-line-arguments\fR which are passed to the Python command. The arguments given are stored in a buffer variable,
-\fB:py-exec-args\fR, and used as the default arguments next time the script is executed.
+Each  player is dealt 13 cards. Before play begins each player passes 3 cards
+to another  player, and receives 3 in return. The queen of spades may never be
+passed. The three cards received are held up out of the hand for a moment
+before they settle into it, so that they can be seen.  The player to the  dealer's  left leads the first  trick and may lead
+any card. Each player in turn must follow the suit that was led if they are able,
+otherwise  they may play any card. The  highest  card of the suit led wins the
+trick, and the winner leads the next one.
 .PP
-After executing the script, a \fC*py-exec*\fR buffer is opened with the output of the script execution.
+By  default  there  are no  restrictions  on what may be led or  played \- any
+card may be led to the first trick, hearts may be led at any time and points may
+be taken on the very first trick. Each of the three traditional restrictions may
+be turned on individually from the options page.
+.SH SCORING
+Under the default house scoring a hand is worth 33 points:
+.IP "\fBQueen of spades\fR"
+10 points
+.IP "\fBAce of hearts\fR"
+5 points
+.IP "\fBKing of hearts\fR"
+4 points
+.IP "\fBQueen of hearts\fR"
+3 points
+.IP "\fBJack of hearts\fR"
+2 points
+.IP "\fBTwo to ten of hearts\fR"
+1 point each
 .PP
-The \fBpy-format\fR macro formats the current buffer using either \fByapf\fR or \fBblack\fR Python formatters, you can
-usually  install  these modules using your system  package  manager or using  python's pip package  manager. \*mS will
-attempt to identify  which  formatter is installed and and configure  \fBpy-format\fR  to use it, however the variable
-\fB%py-format-opts\fR  can be used to override  this. If bit \fC0x02\fR of the numeric  argument  \fBn\fR is set or 
-the variable is undefined the user is prompted to adjust the options before executing the format command.
+The  classic  scoring, in which  every  heart is worth 1 point and the queen of
+spades is worth 13 for a total of 26, may be selected from the options page.
 .PP
-The  \fBpy-lint\fR  macro invokes  Python's lint module to check the current  buffer for any issues, the pylint module
-must be installed before using this command.
+If a single player takes  every  point in a hand they have  \fBshot the moon\fR.
+That player scores nothing and every other player is given the full value of the
+hand instead.
 .PP
-The command opens a \fC*py-lint*\fR buffer with the output from pylint, any warnings or styling issues raised are 
-typically high-lighted. the buffer is configured to for
-.Ht get-next-line 2
-to make traverse through the issues as easy as possible.
+The game ends when any player  reaches  the target  score, 100 points by
+default. The player with the lowest score at that point is the winner.
+.SH CONTROLS
+The game may be played with the mouse or the keyboard. To play a card, or to
+select a card to be passed, click on it with the left mouse button. Cards
+selected for passing are raised out of the hand.
 .PP
-The \fB%py-lint-opts\fR variable can be used to configure \fBpy-lint\fR to the format/style you require, if the
-variable is undefined, or bit \fC0x02\fR of the numeric argument \fBn\fR is set, the user is prompted to adjust the
-options before executing \fBpylint\fR.
+Using the keyboard:
+.IP "\fIleft\fR and \fIright\fR"
+Move the highlight along the hand.
+.IP "\fIspace\fR or \fIreturn\fR"
+Play the highlighted card, or select it to be passed.
+.IP "\fId\fR"
+Deal the next hand.
+.IP "\fIp\fR"
+Pass the selected cards.
+.IP "\fIc\fR"
+Clear the current pass selection.
+.IP "\fBContinue\fR"
+While the cards just received are on show, any key or click puts them into the
+hand and starts play without waiting for the pause to run out.
+.IP "\fIo\fR"
+Show the options page.
+.IP "\fIs\fR"
+Save the options and leave the options page.
+.IP "\fIx\fR"
+Quit the game. On the options page it cancels instead, so the game cannot be
+left by accident from there.
+.IP "\fIesc h\fR"
+This help page.
+.PP
+To the right of the board are the control  buttons.  These are shown only when
+they may be used, so \fBDeal\fR and \fBOptions\fR appear between hands, and
+\fBPass\fR and \fBClear\fR while cards are being passed.
+.PP
+Note that the screen may be updated at any time using "\fIC-l\fR".
+.SH OPTIONS
+The options page is reached with the \fBOptions\fR button between hands. Press
+\fI1\fR to \fI9\fR to change a setting, then \fBSave\fR ("\fIs\fR") to keep the
+changes  and  remember  them  between  sessions,  or  \fBCancel\fR ("\fIc\fR")
+to put everything back as it was. Saved changes take effect from the next hand
+dealt.
+.IP "\fBDifficulty\fR"
+Five levels from \fBBeginner\fR to \fBExpert\fR. The lower three play by
+judgement alone; the upper two also search, playing the hand out many times over
+against guessed  distributions of the cards they cannot see before choosing. The
+weaker levels are weaker  because they miss things  \- they do not always find
+the best card, and they do not keep track of who has shown out of a suit \- not
+because they play at random.
+.IP "\fBPassing\fR"
+Pass left every hand, or rotate left, right and across. There is no hold hand.
+.IP "\fBScoring\fR"
+House scoring for a 33 point hand, or classic scoring for a 26 point hand.
+.IP "\fBJack of Diamonds\fR"
+The Omnibus  Hearts  variant, off by default. When  enabled the jack of diamonds
+is worth -10  points to  whoever  captures  it. It is not needed to shoot the
+moon, and the bonus still applies if the player shooting the moon takes it.
+.IP "\fBFirst lead\fR"
+When enabled the holder of the two of clubs must lead it to the first trick.
+Off by default, in which case the player to the dealer's left leads any card.
+.IP "\fBLeading hearts\fR"
+When enabled a heart may not be led until a heart has been played to some
+earlier trick, unless the hand holds nothing else. Off by default.
+.IP "\fBFirst trick\fR"
+When enabled no card carrying points may be played to the first trick unless
+there is no alternative. Off by default.
+.IP "\fBGame ends at\fR"
+The target score, 50, 100 or 200 points.
+.IP "\fBPlay speed\fR"
+How quickly the computer players play their cards.
 .SH NOTES
-\fBpy-doc\fR, \fBpy-exec\fR, \fBpy-format\fR and \fBpy-lint\fR are macros defined in \fCpytools.emf\fR.
+\fBHearts\fR is a macro defined in \fChearts.emf\fR.
 .PP
-These  commands  all use  \fB%python-com\fR  to launch  Python, if the  variable  is not  defined  \*(mS  attempts  to
-auto-configure by first searching for a \fBpython3\fR executable, then \fBpython2\fR before finally searching for \fBpython\fR.
-If Python is not in the path, or a different command is used, set the \fB%python-com\fR user variable to the command needed to
-run Python.
-.PP
-On Windows, the \fB%python-com\fR variable is typically set to the full path to the Python interpreter within the
-program files directory.
+The computer players use no information that is not available to the user. They
+see their own cards, the cards that have been played, the points taken and which
+players have shown out of a suit \- all of it on the table for anyone to follow.
+At the higher levels they also count how many cards each player still holds, and
+deal the unseen cards out at random among them to search; the identity of those
+cards is never consulted.
 .SH "SEE ALSO"
 .na
-.Hr python 1 ,
-.Hr man 1 ,
-.Ht get-next-line 2 ,
-.Ht pydoc 3f ,
-.Ht py 9 .
+.Ht Brag 3 ,
+.Ht Patience 3 ,
+.Ht Triangle 3 .
 .ad
-.FH
+.Me $b

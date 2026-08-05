@@ -1,0 +1,1521 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Hearts card game, user against 3 computer players
+; Authors:     Steve
+;
+;  Card encoding (as per brag.emf):
+;    code = 32 + (suit * 16) + rank,  suit 0=Hearts 1=Clubs 2=Diamonds 3=Spades
+;    rank 0=2, 1=3 .. 8=10, 9=Jack, 10=Queen, 11=King, 12=Ace
+;    suit = &band code 112  ->  32 48 64 80        rank = &band code 15
+;    So the Queen of Spades is 80+10 = 90 and the Jack of Diamonds is 64+9 = 73.
+;
+;  Scoring is driven entirely from the .hvm.pts table, never hard-coded, so the
+;  house scoring (Q-spade 10, A-heart 5 .. 2-heart 1, total 33) and the classic
+;  scoring (Q-spade 13, every heart 1, total 26) are the same code path.
+;
+;  Players are numbered clockwise from the user: 0=You 1=West 2=North 3=East.
+;  Passing left is therefore always to player+1.
+;
+; Still to-do:
+;    - Monte-Carlo (determinized) card play to replace the heuristic
+;    - Use the cards seen in a pass to bias play against that opponent
+;
+
+; Hidden command used purely as a namespace for the game state, see .hvm.* below
+0 define-macro hvm
+!emacro
+
+;-------------------------------------------------------------------------------
+; Utilities
+;-------------------------------------------------------------------------------
+
+; Build the card -> points table.  Index is (code-32), value is (char-48) so the
+; table can hold negative scores for variants such as the Omnibus jack.
+0 define-macro hvmMakePoints
+  set-variable .hvm.pts ""
+  set-variable #l0 0
+  !repeat
+    set-variable #l1 &add 32 #l0
+    set-variable #l2 &band #l1 15
+    set-variable #l3 0
+    !if &and &equ &band #l1 112 32 &les #l2 13
+      ; a heart - house scoring runs 2..10 = 1, Jack 2, Queen 3, King 4, Ace 5,
+      ; classic scoring makes every heart worth 1
+      set-variable #l3 &con .hvm.oscm 1 &con &les #l2 9 1 &sub #l2 7
+    !elif &equ #l1 90
+      set-variable #l3 &con .hvm.oscm 13 10
+    !elif &and .hvm.ojd &equ #l1 73
+      set-variable #l3 -10                       ; Omnibus - the jack of diamonds
+    !endif
+    set-variable .hvm.pts &cat .hvm.pts &itoa &add #l3 48
+  !until &gre &inc #l0 1 60
+  ; Derive the hand total from the table - only positive cards count towards a
+  ; moon, so a negative variant card cannot make the moon unreachable.
+  set-variable .hvm.max 0
+  set-variable #l0 0
+  !repeat
+    set-variable #l1 &sub &atoi &mid .hvm.pts #l0 1 48
+    !iif &gre #l1 0  set-variable .hvm.max &add .hvm.max #l1
+  !until &gre &inc #l0 1 60
+!emacro
+
+; @1 = card code, @2 <- points
+0 define-macro hvmPoints
+  set-variable @2 &sub &atoi &mid .hvm.pts &sub @1 32 1 48
+!emacro
+
+; Fisher-Yates shuffle, @1 = string to shuffle, @2 <- shuffled string
+0 define-macro hvmShuffle
+  set-variable #l1 @1
+  set-variable #l2 ""
+  set-variable #l3 &len #l1
+  !repeat
+    set-variable #l4 &mod $random #l3
+    set-variable #l2 &cat #l2 &mid #l1 #l4 1
+    set-variable #l1 &cat &lef #l1 #l4 &rig #l1 &add #l4 1
+  !until &les &dec #l3 1 1
+  set-variable @2 #l2
+!emacro
+
+; Sort a hand into display order - spades, hearts, clubs, diamonds, low to high
+; within each suit.  @1 = hand, @2 <- sorted hand
+0 define-macro hvmSortHand
+  set-variable #l1 @1
+  set-variable #l2 ""
+  !while &len #l1
+    set-variable #l3 0
+    set-variable #l4 999
+    set-variable #l5 0
+    !while &len &set #l6 &mid #l1 &pinc #l5 1 1
+      set-variable #l7 &atoi #l6
+      ; sort key - suit display order in the high bits, rank in the low
+      set-variable #l7 &add &mul &mid .hvm.sord &sub &div &band #l7 112 16 2 1 16 &band #l7 15
+      !if &les #l7 #l4
+        set-variable #l4 #l7
+        set-variable #l3 &sub #l5 1
+      !endif
+    !done
+    set-variable #l2 &cat #l2 &mid #l1 #l3 1
+    set-variable #l1 &cat &lef #l1 #l3 &rig #l1 &add #l3 1
+  !done
+  set-variable @2 #l2
+!emacro
+
+; Legal moves.  @1 = hand, @2 = led suit (-1 when leading), @3 <- legal cards.
+; The three traditional restrictions are all optional and all default to off,
+; which is the house game.  The trick number and the hearts-broken flag are
+; read from the game state rather than passed in, so the signature is unchanged.
+0 define-macro hvmLegal
+  set-variable #l1 @1
+  set-variable #l2 @2
+  set-variable #l3 ""
+  set-variable #l4 0
+  !if &les #l2 0
+    ;--- leading ---------------------------------------------------------
+    !if &and .hvm.o2c &equ .hvm.tno 1
+      ; the two of clubs must lead the first trick
+      set-variable #l3 &itoa 48
+      !iif &not &sin #l3 #l1  set-variable #l3 ""
+    !endif
+    !if &not &len #l3
+      !if &and .hvm.ohrt &not .hvm.brok
+        ; hearts may not be led until they have been broken
+        !while &len &set #l5 &mid #l1 &pinc #l4 1 1
+          !iif &not &equ &band &atoi #l5 112 32  set-variable #l3 &cat #l3 #l5
+        !done
+      !endif
+      !iif &not &len #l3  set-variable #l3 #l1
+    !endif
+  !else
+    ;--- following -------------------------------------------------------
+    !while &len &set #l5 &mid #l1 &pinc #l4 1 1
+      !iif &equ &band &atoi #l5 112 #l2  set-variable #l3 &cat #l3 #l5
+    !done
+    !iif &not &len #l3  set-variable #l3 #l1
+  !endif
+  ; No points on the first trick.  Applied as a filter over whatever is legal
+  ; so it covers leading, following and discarding alike, and it gives way when
+  ; it would leave nothing to play.  Only cards that cost points are barred, so
+  ; a bonus card such as the Omnibus jack is unaffected.
+  !if &and .hvm.of1t &equ .hvm.tno 1
+    set-variable #l6 ""
+    set-variable #l4 0
+    !while &len &set #l5 &mid #l3 &pinc #l4 1 1
+      hvmPoints &atoi #l5 #l7
+      !iif &les #l7 1  set-variable #l6 &cat #l6 #l5
+    !done
+    !iif &len #l6  set-variable #l3 #l6
+  !endif
+  set-variable @3 #l3
+!emacro
+
+; Number of cards of suit @2 held in hand @1, result in @3
+0 define-macro hvmSuitLen
+  set-variable #l1 @1
+  set-variable #l2 @2
+  set-variable #l3 0
+  set-variable #l4 0
+  !while &len &set #l5 &mid #l1 &pinc #l4 1 1
+    !iif &equ &band &atoi #l5 112 #l2  set-variable #l3 &add #l3 1
+  !done
+  set-variable @3 #l3
+!emacro
+
+;-------------------------------------------------------------------------------
+; Computer players - heuristics only, working purely from public information
+;-------------------------------------------------------------------------------
+
+; Choose .hvm.npass cards for player @1 to pass, result in @2.
+;
+; The queen of spades cannot be passed under the house rules, which removes the
+; single strongest passing heuristic and makes spade length the dominant
+; consideration instead - holding the queen you want low spades to duck with,
+; so the ace and king become the cards you most want rid of either way.
+0 define-macro hvmAiPass
+  set-variable #l0 &ind &spr ".hvm.h%d" @1
+  set-variable #l9 ""
+  set-variable #l8 .hvm.npass
+  !repeat
+    set-variable #l1 -99999
+    set-variable #l2 0
+    set-variable #l3 0
+    !while &len &set #l4 &mid #l0 &pinc #l3 1 1
+      set-variable #l5 &atoi #l4
+      set-variable #l6 &band #l5 15
+      set-variable #l7 #l6
+      !if &equ &band #l5 112 80
+        !if &equ #l6 10
+          set-variable #l7 -99999                ; the queen may not be passed
+        !elif &gre #l6 10
+          set-variable #l7 &add #l7 40           ; shed the ace and king of spades
+        !else
+          set-variable #l7 &sub #l7 12           ; keep low spades to duck with
+        !endif
+      !else
+        hvmPoints #l5 #l4
+        !iif #l4  set-variable #l7 &add #l7 &mul #l4 4
+        ; a void is worth having, so favour cards from an already short suit
+        !if .hvm.lpvd
+          hvmSuitLen #l0 &band #l5 112 #l4
+          !iif &les #l4 4  set-variable #l7 &add #l7 &mul &sub 4 #l4 7
+        !endif
+      !endif
+      !iif &les #l6 1  set-variable #l7 &sub #l7 8    ; low cards are exits, keep them
+      !if &gre #l7 #l1
+        set-variable #l1 #l7
+        set-variable #l2 &sub #l3 1
+      !endif
+    !done
+    set-variable #l9 &cat #l9 &mid #l0 #l2 1
+    set-variable #l0 &cat &lef #l0 #l2 &rig #l0 &add #l2 1
+  !until &les &dec #l8 1 1
+  set-variable @2 #l9
+!emacro
+
+; Decide whether a moon is on for player @1.  Result in @2:
+;   0 = nothing doing, 1 = someone else is shooting so break it up, 2 = I am
+; Only one player holding every point so far is evidence of a shoot, and enough
+; points must be on the table for that to mean anything.
+0 define-macro hvmMoonMode
+  !if &not .hvm.lmoon
+    set-variable @2 0
+    !return
+  !endif
+  set-variable #l1 @1
+  set-variable #l2 0                             ; total points taken
+  set-variable #l3 -1                            ; sole holder, or -1
+  set-variable #l4 0
+  !repeat
+    set-variable #l5 &ind &spr ".hvm.m%d" #l4
+    !if &gre #l5 0
+      set-variable #l2 &add #l2 #l5
+      set-variable #l3 &con &les #l3 0 #l4 99
+    !endif
+  !until &gre &inc #l4 1 3
+  !if &or &les #l3 0 &gre #l3 3
+    set-variable @2 0
+  !elif &equ #l3 #l1
+    ; I hold the lot - worth going for once a big enough slice is in.  Commit
+    ; too early and a failed shoot is expensive, so .hvm.mk2 is deliberately low.
+    set-variable @2 &con &gre &mul #l2 .hvm.mk2 .hvm.max 2 0
+  !else
+    ; Someone else holds the lot.  Breaking up a shoot means taking tricks, and
+    ; taking tricks means taking points, so this must not fire on a position
+    ; that was never going to be a moon - hence .hvm.mk1.
+    set-variable @2 &con &gre &mul #l2 .hvm.mk1 .hvm.max 1 0
+  !endif
+!emacro
+
+; Choose a card for player @1 to play, result in @2.
+; NOTE: the player number is copied into a register before being handed on.
+; Forwarding @1 straight to a nested macro breaks that macro's write-back to a
+; later argument - hvmAiScore's result never reaches #l5 and comes back empty,
+; which silently reduces the whole evaluation to "play the first legal card".
+0 define-macro hvmHeurPlay
+  set-variable #l4 @1
+  set-variable #l0 &ind &spr ".hvm.h%d" #l4
+  hvmLegal #l0 .hvm.tsuit #l0
+  !if &equ &len #l0 1
+    set-variable @2 #l0
+    !return
+  !endif
+  hvmMoonMode #l4 .hvm.mmode
+  set-variable #l9 ""
+  set-variable #l8 999999
+  set-variable #l2 ""
+  set-variable #l3 999999
+  set-variable #l7 0
+  !while &len &set #l6 &mid #l0 &pinc #l7 1 1
+    hvmAiScore #l4 #l6 #l5
+    !if &les #l5 #l8
+      set-variable #l3 #l8
+      set-variable #l2 #l9
+      set-variable #l8 #l5
+      set-variable #l9 #l6
+    !elif &les #l5 #l3
+      set-variable #l3 #l5
+      set-variable #l2 #l6
+    !endif
+  !done
+  ; A weaker player does not always find the best card.  Taking the second best
+  ; rather than a random one keeps the mistakes plausible - the play is merely
+  ; not the strongest, never absurd.
+  !iif &and &and .hvm.lerr &len #l2 &les &mod $random 100 .hvm.lerr  set-variable #l9 #l2
+  set-variable @2 #l9
+!emacro
+
+; Score a candidate card - lower is better.  @1 = player, @2 = card, @3 <- score
+0 define-macro hvmAiScore
+  set-variable #l0 &atoi @2
+  set-variable #l1 &band #l0 112                 ; suit
+  set-variable #l2 &band #l0 15                  ; rank
+  set-variable #l3 0
+  hvmPoints #l0 #l4                              ; points on the card itself
+  !if &les .hvm.tsuit 0
+    ;--- leading -------------------------------------------------------------
+    set-variable #l3 &mul #l2 4                  ; a low lead is a safe lead
+    !if &equ #l1 80
+      !if &sin &itoa 90 &ind &spr ".hvm.h%d" @1
+        set-variable #l3 &add #l3 60             ; holding the queen, stay off spades
+      !elif &gre #l2 10
+        set-variable #l3 &add #l3 50             ; the ace and king will catch her
+      !elif &and .hvm.lqfl &not &sin &itoa 90 .hvm.played
+        set-variable #l3 &sub #l3 28             ; flush the queen out with a low spade
+      !endif
+    !elif #l4
+      set-variable #l3 &add #l3 &add 20 &mul #l4 3
+    !endif
+    ; when breaking up a shoot, get on lead with something that wins
+    !iif &equ .hvm.mmode 1  set-variable #l3 &sub #l3 &mul #l2 8
+    ; when shooting, lead the top of a suit
+    !iif &equ .hvm.mmode 2  set-variable #l3 &sub #l3 &mul #l2 10
+  !elif &equ #l1 .hvm.tsuit
+    ;--- following suit ------------------------------------------------------
+    !if &les #l2 .hvm.twrnk
+      set-variable #l3 &sub -100 #l2             ; safely under, so throw the highest
+      !iif &equ .hvm.mmode 2  set-variable #l3 900   ; no good if I mean to win it
+    !else
+      ; this card takes the trick as things stand
+      set-variable #l3 &add &add 100 &mul .hvm.tpts 10 #l2
+      !if &equ .hvm.mmode 2
+        set-variable #l3 &sub -200 #l2           ; shooting - take it, and take it high
+      !elif &and &equ .hvm.mmode 1 .hvm.tpts
+        set-variable #l3 &sub -150 #l2           ; deny the shooter the points
+      !endif
+    !endif
+    !if &equ #l1 80
+      !if &equ #l2 10
+        ; the queen - a gift when someone above her has already played
+        !iif &gre .hvm.twrnk 10  set-variable #l3 -500
+      !elif &and .hvm.lqtr &and &gre #l2 10 &not &sin &itoa 90 .hvm.played
+        set-variable #l3 &add #l3 45             ; the queen is still out there
+      !endif
+    !endif
+  !else
+    ;--- void in the led suit, so discarding ---------------------------------
+    !if &equ #l0 90
+      set-variable #l3 -1000                     ; best discard in the pack
+    !elif &gre #l4 0
+      set-variable #l3 &sub -200 &mul #l4 12     ; shed the dearest hearts first
+    !elif &and &equ #l1 80 &gre #l2 10
+      set-variable #l3 &sub -150 #l2             ; lose the ace and king of spades
+    !else
+      set-variable #l3 &neg #l2                  ; otherwise throw the highest
+    !endif
+    !iif &equ .hvm.mmode 2  set-variable #l3 &add 500 &neg #l2
+  !endif
+  ;--- Omnibus: the jack of diamonds is chased, not shed ---------------------
+  ; The trick score above already nets the -10 in through .hvm.tpts, so these
+  ; are nudges on top of that arithmetic rather than flat overrides - a trick
+  ; holding both the jack and the queen nets to nothing and stays a close call.
+  !if .hvm.ojd
+    !if &equ #l0 73
+      !if &les .hvm.tsuit 0
+        ; leading the jack only pays once every diamond above it has gone
+        !if &and &sin &itoa 74 .hvm.played &and &sin &itoa 75 .hvm.played &sin &itoa 76 .hvm.played
+          set-variable #l3 &sub #l3 400
+        !else
+          set-variable #l3 &add #l3 200
+        !endif
+      !elif &equ #l1 .hvm.tsuit
+        ; following in diamonds - worth playing only if it takes the trick,
+        ; otherwise it is a present for whoever does
+        !if &gre #l2 .hvm.twrnk
+          set-variable #l3 &sub #l3 400
+        !else
+          set-variable #l3 &add #l3 300
+        !endif
+      !else
+        set-variable #l3 &add #l3 400            ; never throw the bonus away
+      !endif
+    !elif &and &sin &itoa 73 .hvm.trick &and &equ #l1 .hvm.tsuit &gre #l2 .hvm.twrnk
+      ; the jack is on the table and this card would take it
+      set-variable #l3 &sub #l3 220
+    !endif
+  !endif
+  set-variable @3 #l3
+!emacro
+
+;-------------------------------------------------------------------------------
+; Determinized Monte-Carlo search (PIMC)
+;
+; For each of .hvm.lsamp samples the unseen cards are dealt out at random among
+; the other three players - respecting the voids they have shown, when the level
+; allows it - and every candidate card is then played out to the end of the hand
+; under that assumption.  The card with the best average outcome is chosen.
+;
+; The search sees exactly what the user sees: its own hand, the cards played,
+; the points taken and the voids shown.  The only thing it takes from the other
+; players' hands is how many cards they hold, which is on the table for anyone
+; to count.
+;-------------------------------------------------------------------------------
+
+; Snapshot the whole position into slot @1 ("r" for the real position, "d" for
+; the determinized one).  A playout destroys the position, so it has to be put
+; back before the next candidate card is tried.
+0 define-macro hvmSaveState
+  set-variable #l9 @1
+  set-variable #l0 0
+  !repeat
+    set-variable &spr ".hvm.%sh%d" #l9 #l0 &ind &spr ".hvm.h%d" #l0
+    set-variable &spr ".hvm.%sc%d" #l9 #l0 &ind &spr ".hvm.c%d" #l0
+    set-variable &spr ".hvm.%sw%d" #l9 #l0 &ind &spr ".hvm.w%d" #l0
+    set-variable &spr ".hvm.%sm%d" #l9 #l0 &ind &spr ".hvm.m%d" #l0
+    set-variable &spr ".hvm.%sv%d" #l9 #l0 &ind &spr ".hvm.vd%d" #l0
+  !until &gre &inc #l0 1 3
+  set-variable &spr ".hvm.%str" #l9 .hvm.trick
+  set-variable &spr ".hvm.%spl" #l9 .hvm.played
+  set-variable &spr ".hvm.%sbk" #l9 .hvm.brok
+  set-variable &spr ".hvm.%sts" #l9 .hvm.tsuit
+  set-variable &spr ".hvm.%stw" #l9 .hvm.twrnk
+  set-variable &spr ".hvm.%stp" #l9 .hvm.tpts
+  set-variable &spr ".hvm.%stm" #l9 .hvm.tmpt
+  set-variable &spr ".hvm.%swn" #l9 .hvm.twin
+  set-variable &spr ".hvm.%stu" #l9 .hvm.turn
+  set-variable &spr ".hvm.%sld" #l9 .hvm.lead
+  set-variable &spr ".hvm.%stn" #l9 .hvm.tno
+  set-variable &spr ".hvm.%sst" #l9 .hvm.stt
+!emacro
+
+0 define-macro hvmLoadState
+  set-variable #l9 @1
+  set-variable #l0 0
+  !repeat
+    set-variable &spr ".hvm.h%d" #l0 &ind &spr ".hvm.%sh%d" #l9 #l0
+    set-variable &spr ".hvm.c%d" #l0 &ind &spr ".hvm.%sc%d" #l9 #l0
+    set-variable &spr ".hvm.w%d" #l0 &ind &spr ".hvm.%sw%d" #l9 #l0
+    set-variable &spr ".hvm.m%d" #l0 &ind &spr ".hvm.%sm%d" #l9 #l0
+    set-variable &spr ".hvm.vd%d" #l0 &ind &spr ".hvm.%sv%d" #l9 #l0
+  !until &gre &inc #l0 1 3
+  set-variable .hvm.trick &ind &spr ".hvm.%str" #l9
+  set-variable .hvm.played &ind &spr ".hvm.%spl" #l9
+  set-variable .hvm.brok &ind &spr ".hvm.%sbk" #l9
+  set-variable .hvm.tsuit &ind &spr ".hvm.%sts" #l9
+  set-variable .hvm.twrnk &ind &spr ".hvm.%stw" #l9
+  set-variable .hvm.tpts &ind &spr ".hvm.%stp" #l9
+  set-variable .hvm.tmpt &ind &spr ".hvm.%stm" #l9
+  set-variable .hvm.twin &ind &spr ".hvm.%swn" #l9
+  set-variable .hvm.turn &ind &spr ".hvm.%stu" #l9
+  set-variable .hvm.lead &ind &spr ".hvm.%sld" #l9
+  set-variable .hvm.tno &ind &spr ".hvm.%stn" #l9
+  set-variable .hvm.stt &ind &spr ".hvm.%sst" #l9
+!emacro
+
+; Cards player @1 cannot see - the pack less its own hand and everything played
+0 define-macro hvmUnseen
+  set-variable #l1 &ind &spr ".hvm.h%d" @1
+  set-variable #l2 ""
+  set-variable #l3 0
+  !while &len &set #l4 &mid .hvm.pack &pinc #l3 1 1
+    !if &not &sin #l4 .hvm.played
+      !iif &not &sin #l4 #l1  set-variable #l2 &cat #l2 #l4
+    !endif
+  !done
+  set-variable @2 #l2
+!emacro
+
+; Take @2 cards from pool @1 skipping any suit marked in the void string @3.
+; @4 <- the cards taken, @5 <- what is left of the pool.
+0 define-macro hvmTake
+  set-variable #l1 @1
+  set-variable #l2 @2
+  set-variable #l3 @3
+  set-variable #l4 ""
+  set-variable #l5 0
+  !while &and &les &len #l4 #l2 &len &set #l6 &mid #l1 #l5 1
+    !if &seq "1" &mid #l3 &sub &div &band &atoi #l6 112 16 2 1
+      set-variable #l5 &add #l5 1
+    !else
+      set-variable #l4 &cat #l4 #l6
+      set-variable #l1 &cat &lef #l1 #l5 &rig #l1 &add #l5 1
+    !endif
+  !done
+  set-variable @4 #l4
+  set-variable @5 #l1
+!emacro
+
+; Deal the unseen cards out among the other three players, from @1's viewpoint
+0 define-macro hvmDeterminize
+  set-variable #l0 @1
+  hvmUnseen #l0 #l1
+  set-variable #l9 6
+  !repeat
+    hvmShuffle #l1 #l2
+    set-variable #l8 0
+    set-variable #l3 1
+    !repeat
+      set-variable #l4 &band &add #l0 #l3 3
+      set-variable #l6 &ind &spr ".hvm.n%d" #l4
+      hvmTake #l2 #l6 &con .hvm.lvoid &ind &spr ".hvm.vd%d" #l4 "0000" #l5 #l2
+      !iif &les &len #l5 #l6  set-variable #l8 1
+      set-variable &spr ".hvm.h%d" #l4 #l5
+    !until &gre &inc #l3 1 3
+  !until &or &not #l8 &les &dec #l9 1 1
+  !if #l8
+    ; the void constraints could not be satisfied - deal without them
+    hvmShuffle #l1 #l2
+    set-variable #l3 1
+    !repeat
+      set-variable #l4 &band &add #l0 #l3 3
+      set-variable #l6 &ind &spr ".hvm.n%d" #l4
+      set-variable &spr ".hvm.h%d" #l4 &lef #l2 #l6
+      set-variable #l2 &rig #l2 #l6
+    !until &gre &inc #l3 1 3
+  !endif
+!emacro
+
+; Rollout policy.  This is the inner loop of the whole search - a playout makes
+; 52 of these calls and a decision makes hundreds of playouts - so the scoring
+; is inlined rather than calling out to hvmAiScore per candidate card.  It keeps
+; the tactics that matter for evaluating a position (duck under, dump the queen,
+; shed dear hearts) and drops the refinements that only matter for real play.
+0 define-macro hvmFastPlay
+  set-variable #l0 @1
+  hvmLegal &ind &spr ".hvm.h%d" #l0 .hvm.tsuit #l1
+  !if &equ &len #l1 1
+    set-variable @2 #l1
+    !return
+  !endif
+  set-variable #l8 9999999
+  set-variable #l9 ""
+  set-variable #l7 0
+  !while &len &set #l6 &mid #l1 &pinc #l7 1 1
+    set-variable #l2 &atoi #l6
+    set-variable #l3 &band #l2 15
+    set-variable #l4 &sub &atoi &mid .hvm.pts &sub #l2 32 1 48
+    !if &les .hvm.tsuit 0
+      set-variable #l5 &mul #l3 4
+      !iif &gre #l4 0  set-variable #l5 &add #l5 &add 20 &mul #l4 3
+    !elif &equ &band #l2 112 .hvm.tsuit
+      !if &les #l3 .hvm.twrnk
+        set-variable #l5 &sub -100 #l3
+      !else
+        set-variable #l5 &add &add 100 &mul .hvm.tpts 10 #l3
+      !endif
+      !iif &and &equ #l2 90 &gre .hvm.twrnk 10  set-variable #l5 -500
+    !elif &equ #l2 90
+      set-variable #l5 -1000
+    !elif &gre #l4 0
+      set-variable #l5 &sub -200 &mul #l4 12
+    !else
+      set-variable #l5 &neg #l3
+    !endif
+    !if &les #l5 #l8
+      set-variable #l8 #l5
+      set-variable #l9 #l6
+    !endif
+  !done
+  set-variable @2 #l9
+!emacro
+
+; Play the hand out to the end
+0 define-macro hvmRollout
+  set-variable .hvm.inpo 1
+  !while &les .hvm.tno 14
+    hvmFastPlay .hvm.turn #l1
+    !if &not &len #l1
+      ; a player with no cards left means the position is inconsistent - stop
+      ; rather than spin here for ever
+      set-variable .hvm.tno 14
+      !break
+    !endif
+    hvmPlayCard .hvm.turn #l1
+    !iif &equ &len .hvm.trick 4  hvmEndTrick
+  !done
+  set-variable .hvm.inpo 0
+!emacro
+
+; What the finished hand cost player @1, moon included.  Lower is better.
+0 define-macro hvmHandCost
+  set-variable #l0 @1
+  set-variable #l1 -1
+  set-variable #l2 0
+  !repeat
+    !iif &equ &ind &spr ".hvm.m%d" #l2 .hvm.max  set-variable #l1 #l2
+  !until &gre &inc #l2 1 3
+  !if &les #l1 0
+    set-variable @2 &ind &spr ".hvm.w%d" #l0
+  !elif &equ #l1 #l0
+    set-variable @2 &sub &ind &spr ".hvm.w%d" #l0 &ind &spr ".hvm.m%d" #l0
+  !else
+    set-variable @2 .hvm.max
+  !endif
+!emacro
+
+; Cut the candidate list down to the @3 best by heuristic before searching.
+; Leading the first trick offers 13 legal cards and the search cost is linear in
+; that, so this is where most of the saving is - and the cards it drops are ones
+; the heuristic already rates as poor.
+0 define-macro hvmShortlist
+  set-variable #l0 @1
+  set-variable #l1 @2
+  set-variable #l2 @3
+  !if &les &len #l1 &add #l2 1
+    set-variable @4 #l1
+    !return
+  !endif
+  set-variable #l9 ""
+  !repeat
+    set-variable #l8 9999999
+    set-variable #l7 0
+    set-variable #l6 0
+    !while &len &set #l5 &mid #l1 &pinc #l6 1 1
+      hvmAiScore #l0 #l5 #l4
+      !if &les #l4 #l8
+        set-variable #l8 #l4
+        set-variable #l7 &sub #l6 1
+      !endif
+    !done
+    set-variable #l9 &cat #l9 &mid #l1 #l7 1
+    set-variable #l1 &cat &lef #l1 #l7 &rig #l1 &add #l7 1
+  !until &les &dec #l2 1 1
+  set-variable @4 #l9
+!emacro
+
+0 define-macro hvmPimcPlay
+  set-variable #l0 @1
+  hvmLegal &ind &spr ".hvm.h%d" #l0 .hvm.tsuit #l1
+  !if &equ &len #l1 1
+    set-variable @2 #l1
+    !return
+  !endif
+  hvmMoonMode #l0 .hvm.mmode
+  hvmShortlist #l0 #l1 .hvm.lcand #l1
+  hvmSaveState "r"
+  set-variable #l2 0
+  !repeat
+    ; how many cards each player holds is public, their identity is not
+    set-variable &spr ".hvm.n%d" #l2 &len &ind &spr ".hvm.h%d" #l2
+    set-variable &spr ".hvm.tot%d" #l2 0
+  !until &gre &inc #l2 1 3
+  set-variable #l2 4
+  !repeat
+    set-variable &spr ".hvm.tot%d" #l2 0
+  !until &gre &inc #l2 1 12
+  set-variable #l9 .hvm.lsamp
+  !repeat
+    hvmLoadState "r"
+    hvmDeterminize #l0
+    hvmSaveState "d"
+    set-variable #l3 0
+    !while &len &set #l4 &mid #l1 #l3 1
+      hvmLoadState "d"
+      hvmPlayCard #l0 #l4
+      !iif &equ &len .hvm.trick 4  hvmEndTrick
+      hvmRollout
+      hvmHandCost #l0 #l5
+      set-variable &spr ".hvm.tot%d" #l3 &add &ind &spr ".hvm.tot%d" #l3 #l5
+      set-variable #l3 &add #l3 1
+    !done
+  !until &les &dec #l9 1 1
+  hvmLoadState "r"
+  set-variable #l6 9999999
+  set-variable #l7 ""
+  set-variable #l2 ""
+  set-variable #l8 9999999
+  set-variable #l3 0
+  !while &len &set #l4 &mid #l1 #l3 1
+    set-variable #l5 &ind &spr ".hvm.tot%d" #l3
+    !if &les #l5 #l6
+      set-variable #l8 #l6
+      set-variable #l2 #l7
+      set-variable #l6 #l5
+      set-variable #l7 #l4
+    !elif &les #l5 #l8
+      set-variable #l8 #l5
+      set-variable #l2 #l4
+    !endif
+    set-variable #l3 &add #l3 1
+  !done
+  ; the same error rate the heuristic uses, so one dial spans both engines
+  !iif &and &and .hvm.lerr &len #l2 &les &mod $random 100 .hvm.lerr  set-variable #l7 #l2
+  set-variable @2 #l7
+!emacro
+
+; The entry point every caller uses - search when the level asks for it, and
+; always fall back to the heuristic inside a playout so this cannot recurse.
+0 define-macro hvmAiPlay
+  set-variable #l0 @1
+  !if &and .hvm.lsamp &not .hvm.inpo
+    hvmPimcPlay #l0 #l1
+  !else
+    hvmHeurPlay #l0 #l1
+  !endif
+  set-variable @2 #l1
+!emacro
+
+; Expand the difficulty level into the settings everything else reads
+0 define-macro hvmSetLevel
+  set-variable .hvm.lsamp &lget .hvm.lvsamp .hvm.olvl
+  set-variable .hvm.lvoid &lget .hvm.lvvoid .hvm.olvl
+  set-variable .hvm.lmoon &lget .hvm.lvmoon .hvm.olvl
+  set-variable .hvm.lqfl  &lget .hvm.lvqfl .hvm.olvl
+  set-variable .hvm.lqtr  &lget .hvm.lvqtr .hvm.olvl
+  set-variable .hvm.lpvd  &lget .hvm.lvpvd .hvm.olvl
+  set-variable .hvm.lcand &lget .hvm.lvcand .hvm.olvl
+  set-variable .hvm.lerr  &lget .hvm.lverr .hvm.olvl
+!emacro
+
+;-------------------------------------------------------------------------------
+; Game mechanics
+;-------------------------------------------------------------------------------
+
+0 define-macro hvmDeal
+  hvmShuffle .hvm.pack #l0
+  set-variable #l1 0
+  !repeat
+    hvmSortHand &mid #l0 &mul #l1 13 13 #l2
+    set-variable &spr ".hvm.h%d" #l1 #l2
+    set-variable &spr ".hvm.w%d" #l1 0
+    set-variable &spr ".hvm.m%d" #l1 0
+    set-variable &spr ".hvm.vd%d" #l1 "0000"
+    set-variable &spr ".hvm.p%d" #l1 ""
+  !until &gre &inc #l1 1 3
+  set-variable .hvm.played ""
+  set-variable .hvm.brok 0
+  set-variable .hvm.trick ""
+  set-variable .hvm.tsuit -1
+  set-variable .hvm.twrnk -1
+  set-variable .hvm.tpts 0
+  set-variable .hvm.tno 1
+  set-variable .hvm.sel ""
+  set-variable .hvm.cur 0
+  set-variable .hvm.msg ""
+  set-variable .hvm.dealer &band &add .hvm.dealer 1 3
+  set-variable .hvm.lead &band &add .hvm.dealer 1 3
+  set-variable .hvm.turn .hvm.lead
+  ; Pass direction - left every hand, or the left/right/across rotation.  There
+  ; is deliberately no hold hand, so the cycle is 1 or 3 long.
+  !if .hvm.opas
+    set-variable .hvm.pdir &lget "|1|3|2|" &add 1 &mod .hvm.hno 3
+  !else
+    set-variable .hvm.pdir 1
+  !endif
+  set-variable .hvm.hno &add .hvm.hno 1
+  set-variable .hvm.stt 1
+!emacro
+
+; Collect the computer players' passes and swap the lot over
+0 define-macro hvmDoPass
+  set-variable #l0 1
+  !repeat
+    hvmAiPass #l0 #l1
+    set-variable &spr ".hvm.p%d" #l0 #l1
+  !until &gre &inc #l0 1 3
+  set-variable .hvm.p0 .hvm.sel
+  ; take every pass out of its owner's hand before anything is dealt back in
+  set-variable #l0 0
+  !repeat
+    set-variable #l1 &ind &spr ".hvm.h%d" #l0
+    set-variable #l2 &ind &spr ".hvm.p%d" #l0
+    set-variable #l3 0
+    !while &len &set #l4 &mid #l2 &pinc #l3 1 1
+      set-variable #l1 &rep #l1 #l4 ""
+    !done
+    set-variable &spr ".hvm.h%d" #l0 #l1
+  !until &gre &inc #l0 1 3
+  set-variable #l0 0
+  !repeat
+    set-variable #l1 &band &add #l0 .hvm.pdir 3
+    set-variable #l2 &spr ".hvm.h%d" #l1
+    hvmSortHand &cat &ind #l2 &ind &spr ".hvm.p%d" #l0 #l3
+    set-variable &spr ".hvm.h%d" #l1 #l3
+  !until &gre &inc #l0 1 3
+  ; With the two of clubs rule the holder of that card leads, and it has only
+  ; just finished moving, so the leader can only be settled now.
+  !if .hvm.o2c
+    set-variable #l0 0
+    !while &and &les #l0 3 &not &sin &itoa 48 &ind &spr ".hvm.h%d" #l0
+      set-variable #l0 &add #l0 1
+    !done
+    set-variable .hvm.lead #l0
+    set-variable .hvm.turn #l0
+  !endif
+  set-variable .hvm.cur 0
+  set-variable .hvm.stt 2
+!emacro
+
+; Play card @2 for player @1
+0 define-macro hvmPlayCard
+  set-variable #l0 @1
+  set-variable #l1 @2
+  set-variable #l2 &spr ".hvm.h%d" #l0
+  set-variable &spr ".hvm.h%d" #l0 &rep &ind #l2 #l1 ""
+  set-variable .hvm.trick &cat .hvm.trick #l1
+  set-variable .hvm.played &cat .hvm.played #l1
+  set-variable &spr ".hvm.c%d" #l0 #l1
+  set-variable #l3 &atoi #l1
+  ; A player who cannot follow has shown void in the led suit.  This is public
+  ; information - anyone at the table can see it - and it is what lets the
+  ; search deal out plausible hands rather than uniformly random ones.
+  set-variable #l5 .hvm.tsuit
+  !if &and &gre #l5 0 &not &equ &band #l3 112 #l5
+    set-variable #l6 &sub &div #l5 16 2
+    set-variable &spr ".hvm.vd%d" #l0 &cat &cat &lef &ind &spr ".hvm.vd%d" #l0 #l6 "1" &rig &ind &spr ".hvm.vd%d" #l0 &add #l6 1
+  !endif
+  !if &les .hvm.tsuit 0
+    set-variable .hvm.tsuit &band #l3 112
+    set-variable .hvm.twrnk &band #l3 15
+    set-variable .hvm.twin #l0
+  !elif &and &equ &band #l3 112 .hvm.tsuit &gre &band #l3 15 .hvm.twrnk
+    set-variable .hvm.twrnk &band #l3 15
+    set-variable .hvm.twin #l0
+  !endif
+  hvmPoints #l3 #l4
+  set-variable .hvm.tpts &add .hvm.tpts #l4
+  ; the positive points are tallied apart from the net score - a bonus card
+  ; such as the Omnibus jack must not disguise a moon
+  !iif &gre #l4 0  set-variable .hvm.tmpt &add .hvm.tmpt #l4
+  !iif &equ &band #l3 112 32  set-variable .hvm.brok 1
+  set-variable .hvm.turn &band &add #l0 1 3
+!emacro
+
+0 define-macro hvmEndTrick
+  set-variable #l0 .hvm.twin
+  set-variable &spr ".hvm.w%d" #l0 &add &ind &spr ".hvm.w%d" #l0 .hvm.tpts
+  set-variable &spr ".hvm.m%d" #l0 &add &ind &spr ".hvm.m%d" #l0 .hvm.tmpt
+  set-variable .hvm.lead #l0
+  set-variable .hvm.turn #l0
+  ; back to playing - the trick-complete pause state is over.  hvmEndHand
+  ; overrides this when the last trick has just been taken.
+  set-variable .hvm.stt 2
+  set-variable .hvm.trick ""
+  set-variable .hvm.tsuit -1
+  set-variable .hvm.twrnk -1
+  set-variable .hvm.tpts 0
+  set-variable .hvm.tmpt 0
+  set-variable #l1 0
+  !repeat
+    set-variable &spr ".hvm.c%d" #l1 ""
+  !until &gre &inc #l1 1 3
+  set-variable .hvm.tno &add .hvm.tno 1
+!emacro
+
+; Apply the hand result to the running score, shooting the moon included
+0 define-macro hvmEndHand
+  ; a moon is every point card taken, judged on the positive tally so that a
+  ; bonus card cannot mask it
+  set-variable #l0 -1
+  set-variable #l1 0
+  !repeat
+    !iif &equ &ind &spr ".hvm.m%d" #l1 .hvm.max  set-variable #l0 #l1
+  !until &gre &inc #l1 1 3
+  !if &les #l0 0
+    set-variable .hvm.msg "Hand over"
+    set-variable #l1 0
+    !repeat
+      set-variable #l2 &spr ".hvm.s%d" #l1
+      set-variable &spr ".hvm.s%d" #l1 &add &ind #l2 &ind &spr ".hvm.w%d" #l1
+    !until &gre &inc #l1 1 3
+  !else
+    ; the shooter scores nothing, everyone else takes the full hand
+    set-variable .hvm.msg &spr "%s shot the moon!" &lget .hvm.names &add #l0 1
+    set-variable #l1 0
+    !repeat
+      set-variable #l2 &spr ".hvm.s%d" #l1
+      !if &sub #l1 #l0
+        set-variable &spr ".hvm.s%d" #l1 &add &ind #l2 .hvm.max
+      !else
+        ; the shooter scores nothing bar any bonus cards they also took
+        set-variable &spr ".hvm.s%d" #l1 &add &ind #l2 &sub &ind &spr ".hvm.w%d" #l1 &ind &spr ".hvm.m%d" #l1
+      !endif
+    !until &gre &inc #l1 1 3
+  !endif
+  set-variable .hvm.stt 4
+  ; has anybody gone out?
+  set-variable #l1 0
+  !repeat
+    !iif &gre &ind &spr ".hvm.s%d" #l1 &sub .hvm.otgt 1  set-variable .hvm.stt 5
+  !until &gre &inc #l1 1 3
+!emacro
+
+; Drive the computer players.  Each call plays at most one card and then
+; re-schedules itself, so the display keeps up and the editor stays responsive.
+; Drop the received cards back into the hand and get play under way.  Called
+; either by the timer or by the user clicking to skip the pause.
+0 define-macro hvmEndRecv
+  !force -1 create-callback hvmStep
+  set-variable .hvm.sel ""
+  set-variable .hvm.msg ""
+  set-variable .hvm.stt 2
+  1 hvmDraw
+  !iif .hvm.turn  .hvm.dly create-callback hvmStep
+!emacro
+
+0 define-macro hvmStep
+  !if &not &seq $buffer-bname "*Hearts*"
+    ; the game buffer has gone away, drop the callback
+    !return
+  !endif
+  !if &equ .hvm.stt 3
+    hvmEndTrick
+    !if &gre .hvm.tno 13
+      hvmEndHand
+    !endif
+    1 hvmDraw
+    !iif &and &equ .hvm.stt 2 .hvm.turn  .hvm.dly create-callback hvmStep
+    !return
+  !endif
+  !if &equ .hvm.stt 7
+    hvmEndRecv
+    !return
+  !endif
+  !iif &not &equ .hvm.stt 2  !return
+  !iif &not .hvm.turn  !return                   ; the user is to play
+  hvmAiPlay .hvm.turn #l1
+  hvmPlayCard .hvm.turn #l1
+  !if &equ &len .hvm.trick 4
+    set-variable .hvm.stt 3
+    1 hvmDraw
+    .hvm.tdly create-callback hvmStep
+  !else
+    1 hvmDraw
+    !iif .hvm.turn  .hvm.dly create-callback hvmStep
+  !endif
+!emacro
+
+;-------------------------------------------------------------------------------
+; Display
+;-------------------------------------------------------------------------------
+
+; @1 = row, @2 = col, @3 = card ("" blank, "\b" face down, else a card), @4 = highlight
+0 define-macro hvmDrawCard
+  set-variable #l0 @1
+  set-variable #l1 @2
+  set-variable #l2 @3
+  !if &not &len #l2
+    3 screen-poke #l0 #l1 .scheme.cardback .hvm.cblk
+    3 screen-poke &add #l0 1 #l1 .scheme.cardback .hvm.cblk
+    3 screen-poke &add #l0 2 #l1 .scheme.cardback .hvm.cblk
+    3 screen-poke &add #l0 3 #l1 .scheme.cardback .hvm.cblk
+    3 screen-poke &add #l0 4 #l1 .scheme.cardback .hvm.cblk
+    !return
+  !endif
+  !if &seq #l2 "\b"
+    3 screen-poke #l0 #l1 .scheme.cardback .hvm.ctop
+    3 screen-poke &add #l0 1 #l1 .scheme.cardback .hvm.cbk1
+    3 screen-poke &add #l0 2 #l1 .scheme.cardback .hvm.cbk2
+    3 screen-poke &add #l0 3 #l1 .scheme.cardback .hvm.cbk1
+    3 screen-poke &add #l0 4 #l1 .scheme.cardback .hvm.cbot
+    !return
+  !endif
+  set-variable #l3 &atoi #l2
+  set-variable #l4 &mid .hvm.rnks &band #l3 15 1
+  set-variable #l5 &mid .hvm.suts &sub &div &band #l3 112 16 2 1
+  ; hearts and diamonds in the red colour pair, clubs and spades in the black
+  set-variable #l6 &con &sin #l5 "HD" 35 3
+  !if @4
+    set-variable #l6 &con &sin #l5 "HD" 51 19
+  !endif
+  #l6 screen-poke #l0 #l1 .scheme.cardfore .hvm.ctop
+  #l6 screen-poke &add #l0 1 #l1 .scheme.cardfore &spr "%s%s  %s" .hvm.cvrt #l4 .hvm.cvrt
+  #l6 screen-poke &add #l0 2 #l1 .scheme.cardfore &spr "%s %s %s" .hvm.cvrt #l5 .hvm.cvrt
+  #l6 screen-poke &add #l0 3 #l1 .scheme.cardfore &spr "%s  %s%s" .hvm.cvrt #l4 .hvm.cvrt
+  #l6 screen-poke &add #l0 4 #l1 .scheme.cardfore .hvm.cbot
+!emacro
+
+; A button, @1 = row, @2 = label (13 chars), @3 = accelerator offset (-1 none)
+0 define-macro hvmDrawButton
+  67 screen-poke @1 .hvm.bcol .scheme.cardback .hvm.btop
+  67 screen-poke &add @1 1 .hvm.bcol .scheme.cardback &spr "%s%s%s" .hvm.cvrt &lef &cat @2 .hvm.spcs 13 .hvm.cvrt
+  67 screen-poke &add @1 2 .hvm.bcol .scheme.cardback .hvm.bbot
+  !iif &gre @3 -1  99 screen-poke &add @1 1 &add &add .hvm.bcol 1 @3 .scheme.cardback &mid @2 @3 1
+!emacro
+
+; The panel runs from column 12 to column 68, so the text set at column 14 has
+; 54 columns to play with before it would run through the right hand border.
+0 define-macro hvmDrawOptions
+  set-variable #l0 3
+  67 screen-poke #l0 12 .scheme.cardback &spr "%s%55s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  set-variable #l1 0
+  !repeat
+    67 screen-poke &add #l0 &add #l1 1 12 .scheme.cardback &spr "%s%55s%s" .hvm.cvrt " " .hvm.cvrt
+  !until &gre &inc #l1 1 15
+  67 screen-poke &add #l0 16 12 .scheme.cardback &spr "%s%55s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  99 screen-poke &add #l0 1 32 .scheme.cardback "Hearts - Options"
+  67 screen-poke &add #l0 3 14 .scheme.cardback &spr "1  Difficulty       %d - %s" .hvm.olvl &lget .hvm.lvname .hvm.olvl
+  67 screen-poke &add #l0 4 14 .scheme.cardback &spr "2  Passing          %s" &con .hvm.opas "left, right, across" "left every hand"
+  67 screen-poke &add #l0 5 14 .scheme.cardback &spr "3  Scoring          %s" &con .hvm.oscm "classic - QS 13, hearts 1 (26)" "house - QS 10, AH 5 (33)"
+  67 screen-poke &add #l0 6 14 .scheme.cardback &spr "4  Jack of Diamonds %s" &con .hvm.ojd "-10 to whoever wins it" "not played"
+  67 screen-poke &add #l0 8 14 .scheme.cardback &spr "5  First lead       %s" &con .hvm.o2c "must be the 2 of clubs" "any card"
+  67 screen-poke &add #l0 9 14 .scheme.cardback &spr "6  Leading hearts   %s" &con .hvm.ohrt "only once hearts are broken" "allowed at any time"
+  67 screen-poke &add #l0 10 14 .scheme.cardback &spr "7  First trick      %s" &con .hvm.of1t "no points may be played" "points allowed"
+  67 screen-poke &add #l0 12 14 .scheme.cardback &spr "8  Game ends at     %d points" .hvm.otgt
+  67 screen-poke &add #l0 13 14 .scheme.cardback &spr "9  Play speed       %s" &lget .hvm.spdn &add 1 .hvm.ospd
+  99 screen-poke &add #l0 15 14 .scheme.cardback "1-9 to change, S to save, C to cancel"
+!emacro
+
+; Options are edited live so that the panel shows the effect, with the entry
+; values kept aside so that Cancel can put everything back.
+0 define-macro hvmOptEnter
+  set-variable .hvm.blvl .hvm.olvl
+set-variable .hvm.bpas .hvm.opas
+  set-variable .hvm.bscm .hvm.oscm
+  set-variable .hvm.bjd  .hvm.ojd
+  set-variable .hvm.b2c  .hvm.o2c
+  set-variable .hvm.bhrt .hvm.ohrt
+  set-variable .hvm.bf1t .hvm.of1t
+  set-variable .hvm.btgt .hvm.otgt
+  set-variable .hvm.bspd .hvm.ospd
+  set-variable .hvm.pstt .hvm.stt
+  set-variable .hvm.stt 6
+!emacro
+
+0 define-macro hvmOptSave
+  !force set-registry "/history/hearts/level"  .hvm.olvl
+  !force set-registry "/history/hearts/pass"   .hvm.opas
+  !force set-registry "/history/hearts/scheme" .hvm.oscm
+  !force set-registry "/history/hearts/jdiam"  .hvm.ojd
+  !force set-registry "/history/hearts/twoclub" .hvm.o2c
+  !force set-registry "/history/hearts/hbreak" .hvm.ohrt
+  !force set-registry "/history/hearts/clean1" .hvm.of1t
+  !force set-registry "/history/hearts/target" .hvm.otgt
+  !force set-registry "/history/hearts/speed"  .hvm.ospd
+  !iif &not &seq &lef &reg "/history" "" 6 "tfs://"  !force mark-registry "/history" "u"
+  set-variable .hvm.stt .hvm.pstt
+  set-variable .hvm.msg "Options saved - they take effect from the next deal"
+!emacro
+
+0 define-macro hvmOptCancel
+  set-variable .hvm.olvl .hvm.blvl
+  set-variable .hvm.opas .hvm.bpas
+  set-variable .hvm.oscm .hvm.bscm
+  set-variable .hvm.ojd  .hvm.bjd
+  set-variable .hvm.o2c  .hvm.b2c
+  set-variable .hvm.ohrt .hvm.bhrt
+  set-variable .hvm.of1t .hvm.bf1t
+  set-variable .hvm.otgt .hvm.btgt
+  set-variable .hvm.ospd .hvm.bspd
+  ; anything derived from an option has to be put back too
+  hvmMakePoints
+  hvmSetLevel
+  set-variable .hvm.dly &lget .hvm.spdv &add 1 .hvm.ospd
+  set-variable .hvm.tdly &add .hvm.dly &add .hvm.dly 300
+  set-variable .hvm.rdly &add 1500 .hvm.dly
+  set-variable .hvm.stt .hvm.pstt
+  set-variable .hvm.msg ""
+!emacro
+
+0 define-macro hvmDraw
+  !if &not &seq $buffer-bname "*Hearts*"
+    find-buffer "*Hearts*"
+  !endif
+  !iif @#  screen-update
+  ; clear the board
+  set-variable #l0 0
+  !repeat
+    3 screen-poke #l0 0 .scheme.cardback &spr "%88s" " "
+  !until &gre &inc #l0 1 29
+  !if &equ .hvm.stt 6
+    hvmDrawOptions
+    hvmDrawButton 21 "  Save       " 2
+    hvmDrawButton 25 "  Cancel     " 2
+    ; the final poke of a draw must leave bit 0x02 clear so that the whole
+    ; batch of no-flush pokes above it is flushed to the screen
+    65 screen-poke 28 2 .scheme.cardback &lef .hvm.spcs &sub .hvm.bcol 2
+    !return
+  !endif
+  ;--- the three computer players ------------------------------------------
+  set-variable #l0 1
+  !repeat
+    set-variable #l1 &lget .hvm.prow #l0
+    set-variable #l2 &lget .hvm.pcol #l0
+    67 screen-poke &sub #l1 1 &sub #l2 4 .scheme.cardback &spr "%s%2d  %3d /%3d" &lef &cat &lget .hvm.names &add #l0 1 .hvm.spcs 6 &len &ind &spr ".hvm.h%d" #l0 &ind &spr ".hvm.w%d" #l0 &ind &spr ".hvm.s%d" #l0
+    hvmDrawCard #l1 #l2 &ind &spr ".hvm.c%d" #l0 0
+  !until &gre &inc #l0 1 3
+  ;--- the user's card in the trick ----------------------------------------
+  hvmDrawCard .hvm.srow .hvm.scol .hvm.c0 0
+  67 screen-poke &sub .hvm.srow 1 &sub .hvm.scol 4 .scheme.cardback &spr "%s%2d  %3d /%3d" &lef &cat &lget .hvm.names 1 .hvm.spcs 6 &len .hvm.h0 .hvm.w0 .hvm.s0
+  ;--- the user's hand ------------------------------------------------------
+  set-variable #l0 0
+  !while &len &set #l1 &mid .hvm.h0 #l0 1
+    set-variable #l2 &add .hvm.hcol &mul #l0 5
+    ; a card raises up a row when it is selected to be passed, and the card
+    ; under the cursor is drawn in the highlight colour
+    set-variable #l3 &con &sin #l1 .hvm.sel 1 0
+    hvmDrawCard &sub .hvm.hrow #l3 #l2 #l1 &equ #l0 .hvm.cur
+    !iif #l3  3 screen-poke &add .hvm.hrow 4 #l2 .scheme.cardback .hvm.cblk
+    set-variable #l0 &add #l0 1
+  !done
+  ;--- buttons --------------------------------------------------------------
+  !if &or &equ .hvm.stt 0 &or &equ .hvm.stt 4 &equ .hvm.stt 5
+    hvmDrawButton 1 "  Deal       " 2
+    hvmDrawButton 5 "  Options    " 2
+  !elif &equ .hvm.stt 1
+    hvmDrawButton 1 &spr "  Pass %d      " &len .hvm.sel 2
+    hvmDrawButton 5 "  Clear      " 2
+  !elif &equ .hvm.stt 7
+    hvmDrawButton 1 "  Continue   " 2
+  !endif
+  hvmDrawButton 21 "  Help       " 2
+  hvmDrawButton 25 "  Quit       " 2
+  ;--- status ---------------------------------------------------------------
+  set-variable #l0 .hvm.msg
+  !if &len #l0
+  !elif &equ .hvm.stt 1
+    set-variable #l0 &spr "Choose %d cards to pass %s - the queen of spades may not be passed" .hvm.npass &lget .hvm.pdirn .hvm.pdir
+  !elif &equ .hvm.stt 5
+    set-variable #l0 "Game over - press Deal to start again"
+  !elif &and &equ .hvm.stt 2 &not .hvm.turn
+    set-variable #l0 &spr "Trick %d - your lead" .hvm.tno
+    !iif &gre .hvm.tsuit 0  set-variable #l0 &spr "Trick %d - %s led" .hvm.tno &lget .hvm.sutn &add 1 &sub &div .hvm.tsuit 16 2
+  !endif
+  ; these lines are padded out to clear whatever was under them, so they must
+  ; stop short of the button column or they wipe the bottom of the last button
+  !iif &equ .hvm.stt 4  99 screen-poke 27 2 .scheme.cardback &lef &cat "Hand complete - press Deal for the next one" .hvm.spcs &sub .hvm.bcol 2
+  ; the status line is drawn last and is the only poke without bit 0x02, so it
+  ; flushes the whole page - see screen-poke(2)
+  97 screen-poke 28 2 .scheme.cardback &lef &cat #l0 .hvm.spcs &sub .hvm.bcol 2
+!emacro
+
+;-------------------------------------------------------------------------------
+; Input
+;-------------------------------------------------------------------------------
+
+; Work out what is under the mouse, result in @1 - 0 nothing, 1..13 a hand card,
+; 21.. a button
+0 define-macro hvmMouseWhere
+  set-variable #l0 $mouse-x
+  set-variable #l1 $mouse-y
+  set-variable #l2 0
+  !if &and &gre #l0 &sub .hvm.bcol 1 &les #l0 &add .hvm.bcol 15
+    !iif &mod #l1 4  set-variable #l2 &add 21 &div #l1 4
+  !elif &and &gre #l1 &sub .hvm.hrow 2 &les #l1 &add .hvm.hrow 5
+    !if &gre #l0 &sub .hvm.hcol 1
+      set-variable #l3 &div &sub #l0 .hvm.hcol 5
+      !iif &les #l3 &len .hvm.h0  set-variable #l2 &add #l3 1
+    !endif
+  !endif
+  set-variable @1 #l2
+!emacro
+
+0 define-macro hearts-mouse-pick-left
+  hvmMouseWhere #l1
+  set-variable .hvm.mdl #l1
+!emacro
+
+0 define-macro hearts-mouse-drop-left
+  hvmMouseWhere #l1
+  !iif &and #l1 &not &sub #l1 .hvm.mdl  #l1 hearts-command
+!emacro
+
+; Act on the card at hand index @1 (0 based)
+; Explain why card @1 may not be played, result in @2.  Any of the optional
+; restrictions can reject a card, so the reason has to be worked out rather
+; than assumed to be a failure to follow suit.
+0 define-macro hvmWhyNot
+  set-variable #l0 &atoi @1
+  set-variable #l1 &band #l0 112
+  hvmPoints #l0 #l2
+  hvmSuitLen .hvm.h0 .hvm.tsuit #l3
+  !if &les .hvm.tsuit 0
+    !if &and .hvm.o2c &equ .hvm.tno 1
+      set-variable @2 "You must lead the 2 of clubs"
+    !elif &and &and .hvm.ohrt &not .hvm.brok &equ #l1 32
+      set-variable @2 "Hearts have not been broken yet"
+    !elif &and &and .hvm.of1t &equ .hvm.tno 1 &gre #l2 0
+      set-variable @2 "No points may be played on the first trick"
+    !else
+      set-variable @2 "You cannot lead that card"
+    !endif
+  !elif &and &not &equ #l1 .hvm.tsuit &gre #l3 0
+    set-variable @2 &spr "You must follow %s" &lget .hvm.sutn &add 1 &sub &div .hvm.tsuit 16 2
+  !elif &and &and .hvm.of1t &equ .hvm.tno 1 &gre #l2 0
+    set-variable @2 "No points may be played on the first trick"
+  !else
+    set-variable @2 "You cannot play that card"
+  !endif
+!emacro
+
+0 define-macro hvmSelect
+  ; while the received cards are on show, any click or key skips the pause
+  !if &equ .hvm.stt 7
+    hvmEndRecv
+    !return
+  !endif
+  set-variable #l0 @1
+  set-variable #l1 &mid .hvm.h0 #l0 1
+  !iif &not &len #l1  !return
+  set-variable .hvm.cur #l0
+  !if &equ .hvm.stt 1
+    !if &sin #l1 .hvm.sel
+      set-variable .hvm.sel &rep .hvm.sel #l1 ""
+    !elif &equ &atoi #l1 90
+      set-variable .hvm.msg "The queen of spades may not be passed"
+    !elif &les &len .hvm.sel .hvm.npass
+      set-variable .hvm.sel &cat .hvm.sel #l1
+      set-variable .hvm.msg ""
+    !else
+      set-variable .hvm.msg &spr "Only %d cards may be passed" .hvm.npass
+    !endif
+  !elif &and &equ .hvm.stt 2 &not .hvm.turn
+    hvmLegal .hvm.h0 .hvm.tsuit #l2
+    !if &not &sin #l1 #l2
+      hvmWhyNot #l1 .hvm.msg
+    !else
+      set-variable .hvm.msg ""
+      hvmPlayCard 0 #l1
+      !iif &gre .hvm.cur &sub &len .hvm.h0 1  set-variable .hvm.cur &sub &len .hvm.h0 1
+      !iif &les .hvm.cur 0  set-variable .hvm.cur 0
+      !if &equ &len .hvm.trick 4
+        set-variable .hvm.stt 3
+        1 hvmDraw
+        .hvm.tdly create-callback hvmStep
+        !return
+      !endif
+      1 hvmDraw
+      .hvm.dly create-callback hvmStep
+      !return
+    !endif
+  !endif
+  1 hvmDraw
+!emacro
+
+0 define-macro hearts-command
+  set-variable #l9 @#
+  !if &not #l9
+  !elif &les #l9 14
+    hvmSelect &sub #l9 1
+  !elif &equ #l9 21
+    ; Deal, Pass, or Continue past the cards just received
+    !if &equ .hvm.stt 7
+      hvmEndRecv
+    !elif &equ .hvm.stt 1
+      !if &les &len .hvm.sel .hvm.npass
+        set-variable .hvm.msg &spr "Select %d cards to pass" .hvm.npass
+        1 hvmDraw
+      !else
+        hvmDoPass
+        ; Hold the three cards just received up out of the hand for a moment.
+        ; They have already been sorted in, so without this they simply appear
+        ; somewhere in the fan with no way to tell which they were.
+        set-variable #l0 &band &sub 4 .hvm.pdir 3
+        set-variable .hvm.sel &ind &spr ".hvm.p%d" #l0
+        set-variable .hvm.msg &spr "You receive these %d cards from %s" .hvm.npass &lget .hvm.names &add #l0 1
+        set-variable .hvm.stt 7
+        1 hvmDraw
+        .hvm.rdly create-callback hvmStep
+      !endif
+    !elif &or &equ .hvm.stt 0 &or &equ .hvm.stt 4 &equ .hvm.stt 5
+      !if &equ .hvm.stt 5
+        set-variable #l0 0
+        !repeat
+          set-variable &spr ".hvm.s%d" #l0 0
+        !until &gre &inc #l0 1 3
+        set-variable .hvm.hno 0
+      !endif
+      hvmDeal
+      1 hvmDraw
+    !endif
+  !elif &equ #l9 22
+    ; Options between hands, Clear during the pass, Cancel on the options page
+    !if &equ .hvm.stt 1
+      set-variable .hvm.sel ""
+      set-variable .hvm.msg ""
+      1 hvmDraw
+    !elif &equ .hvm.stt 6
+      hvmOptCancel
+      1 hvmDraw
+    !elif &or &equ .hvm.stt 0 &or &equ .hvm.stt 4 &equ .hvm.stt 5
+      hvmOptEnter
+      1 hvmDraw
+    !endif
+  !elif &equ #l9 26
+    ; Help, but the same button is Save while the options are up
+    !if &equ .hvm.stt 6
+      hvmOptSave
+      1 hvmDraw
+    !else
+      hearts-help
+    !endif
+  !elif &equ #l9 27
+    ; Quit, but the same button is Cancel while the options are up
+    !if &equ .hvm.stt 6
+      hvmOptCancel
+      1 hvmDraw
+    !else
+      !force 0 delete-buffer "*Hearts*"
+    !endif
+  !elif &equ #l9 51
+    !iif &not &equ .hvm.stt 6  !return
+    hvmOptSave
+    1 hvmDraw
+  !elif &equ #l9 31
+    ; cursor left
+    !iif &gre .hvm.cur 0  set-variable .hvm.cur &sub .hvm.cur 1
+    1 hvmDraw
+  !elif &equ #l9 32
+    !iif &les .hvm.cur &sub &len .hvm.h0 1  set-variable .hvm.cur &add .hvm.cur 1
+    1 hvmDraw
+  !elif &equ #l9 33
+    hvmSelect .hvm.cur
+  !elif &and &gre #l9 40 &les #l9 50
+    ; an option toggle
+    !iif &not &equ .hvm.stt 6  !return
+    set-variable #l0 &sub #l9 40
+    !if &equ #l0 1
+      set-variable .hvm.olvl &con &gre .hvm.olvl 4 1 &add .hvm.olvl 1
+      hvmSetLevel
+    !elif &equ #l0 2
+      set-variable .hvm.opas &not .hvm.opas
+    !elif &equ #l0 3
+      set-variable .hvm.oscm &not .hvm.oscm
+      hvmMakePoints
+    !elif &equ #l0 4
+      set-variable .hvm.ojd &not .hvm.ojd
+      hvmMakePoints
+    !elif &equ #l0 5
+      set-variable .hvm.o2c &not .hvm.o2c
+    !elif &equ #l0 6
+      set-variable .hvm.ohrt &not .hvm.ohrt
+    !elif &equ #l0 7
+      set-variable .hvm.of1t &not .hvm.of1t
+    !elif &equ #l0 8
+      set-variable .hvm.otgt &con &equ .hvm.otgt 100 50 &con &equ .hvm.otgt 50 200 100
+    !elif &equ #l0 9
+      set-variable .hvm.ospd &mod &add .hvm.ospd 1 3
+      set-variable .hvm.dly &lget .hvm.spdv &add 1 .hvm.ospd
+      set-variable .hvm.tdly &add .hvm.dly &add .hvm.dly 300
+      set-variable .hvm.rdly &add 1500 .hvm.dly
+    !endif
+    1 hvmDraw
+  !endif
+!emacro
+
+0 define-macro hearts-help
+  !force help-command "Hearts"
+  !if $status
+    delete-window
+  !endif
+!emacro
+
+0 define-macro bhook-hearts
+  -1 show-cursor
+  !force osd -1 0
+  set-variable :scroll-bar $scroll-bar
+  set-variable $scroll-bar 0
+!emacro
+
+0 define-macro ehook-hearts
+  1 show-cursor
+  set-variable $scroll-bar :scroll-bar
+  !force osd -1 1
+  !force -1 create-callback hvmStep
+!emacro
+
+;-------------------------------------------------------------------------------
+
+define-macro Hearts
+  delete-other-windows
+  find-buffer "*Hearts*"
+  !if &not &seq $buffer-bhook "bhook-hearts"
+    set-variable $buffer-scheme .scheme.cardback
+    !force buffer-bind-key hearts-mouse-pick-left "mouse-pick-1"
+    !force buffer-bind-key hearts-mouse-drop-left "mouse-drop-1"
+    !force buffer-bind-key void "mouse-pick-2"
+    !force buffer-bind-key void "mouse-drop-2"
+    !force buffer-bind-key void "mouse-pick-3"
+    !force buffer-bind-key void "mouse-drop-3"
+    buffer-bind-create "bo" "esc h" "" hearts-help
+    31 buffer-bind-key hearts-command "left"
+    32 buffer-bind-key hearts-command "right"
+    33 buffer-bind-key hearts-command "space"
+    33 buffer-bind-key hearts-command "return"
+    21 buffer-bind-key hearts-command "d"
+    21 buffer-bind-key hearts-command "p"
+    22 buffer-bind-key hearts-command "o"
+    22 buffer-bind-key hearts-command "c"
+    26 buffer-bind-key hearts-command "?"
+    27 buffer-bind-key hearts-command "x"
+    41 buffer-bind-key hearts-command "1"
+    42 buffer-bind-key hearts-command "2"
+    43 buffer-bind-key hearts-command "3"
+    44 buffer-bind-key hearts-command "4"
+    45 buffer-bind-key hearts-command "5"
+    46 buffer-bind-key hearts-command "6"
+    47 buffer-bind-key hearts-command "7"
+    48 buffer-bind-key hearts-command "8"
+    49 buffer-bind-key hearts-command "9"
+    51 buffer-bind-key hearts-command "s"
+    1 buffer-bind-key hvmDraw "C-l"
+    buffer-bind-key hvmDraw "redraw"
+    set-variable $buffer-bhook bhook-hearts
+    set-variable $buffer-ehook ehook-hearts
+    bhook-hearts
+  !endif
+  !iif &not .hvm.stt  set-variable .hvm.msg "Press Deal to start"
+  1 hvmDraw
+!emacro
+
+;-------------------------------------------------------------------------------
+; Constants and initial state
+;-------------------------------------------------------------------------------
+
+!iif &exi .hvm.pts  !return
+
+set-variable .hvm.spcs &spr "%n" 90 " "
+; the full pack, built once - hvmDeal and the search both work from it
+set-variable .hvm.pack ""
+set-variable #g0 0
+!repeat
+  set-variable .hvm.pack &cat .hvm.pack &itoa &add &add 32 &mul 16 &div #g0 13 &mod #g0 13
+!until &gre &inc #g0 1 51
+; difficulty levels - each expands into the settings the rest of the code reads
+set-variable .hvm.lvname "|Beginner|Casual|Club|Strong|Expert|"
+set-variable .hvm.lvsamp "|0|0|0|5|15|"
+set-variable .hvm.lvvoid "|0|0|0|0|1|"
+set-variable .hvm.lvmoon "|1|1|1|1|1|"
+set-variable .hvm.lvqfl  "|1|1|1|1|1|"
+set-variable .hvm.lvqtr  "|0|0|0|0|0|"
+set-variable .hvm.lvpvd  "|0|0|0|0|0|"
+set-variable .hvm.lvcand "|0|0|0|5|6|"
+set-variable .hvm.lverr  "|80|50|0|0|0|"
+; moon thresholds - defend when one player holds more than max/mk1, go for it
+; when I hold more than max/mk2.  Both tuned by measurement, see the round-robin.
+set-variable .hvm.mk1 2
+set-variable .hvm.mk2 3
+set-variable .hvm.rnks "23456789TJQKA"
+set-variable .hvm.suts "HCDS"
+set-variable .hvm.sord "1230"
+set-variable .hvm.names "|You|West|North|East|"
+set-variable .hvm.sutn "|hearts|clubs|diamonds|spades|"
+set-variable .hvm.pdirn "|left|across|right|"
+set-variable .hvm.spdn "|Fast|Normal|Slow|"
+set-variable .hvm.spdv "|250|600|1100|"
+; board geometry - the trick cards sit in a diamond around the middle
+set-variable .hvm.prow "|10|3|10|"
+set-variable .hvm.pcol "|22|40|58|"
+set-variable .hvm.srow 16
+set-variable .hvm.scol 40
+set-variable .hvm.hrow 22
+set-variable .hvm.hcol 4
+set-variable .hvm.bcol 72
+; card and button furniture
+set-variable .hvm.cvrt &lef $box-chars 1
+set-variable .hvm.ctop &spr "%s%3s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+set-variable .hvm.cbot &spr "%s%3s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+set-variable .hvm.cblk "     "
+set-variable .hvm.cbk1 &spr "%s+X+%s" .hvm.cvrt .hvm.cvrt
+set-variable .hvm.cbk2 &spr "%sX+X%s" .hvm.cvrt .hvm.cvrt
+set-variable .hvm.btop &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+set-variable .hvm.bbot &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+; options
+set-variable .hvm.olvl &reg "/history/hearts/level" "3"
+set-variable .hvm.opas &reg "/history/hearts/pass" "0"
+set-variable .hvm.oscm &reg "/history/hearts/scheme" "0"
+set-variable .hvm.ojd  &reg "/history/hearts/jdiam" "0"
+set-variable .hvm.o2c  &reg "/history/hearts/twoclub" "0"
+set-variable .hvm.ohrt &reg "/history/hearts/hbreak" "0"
+set-variable .hvm.of1t &reg "/history/hearts/clean1" "0"
+set-variable .hvm.otgt &reg "/history/hearts/target" "100"
+set-variable .hvm.ospd &reg "/history/hearts/speed" "1"
+set-variable .hvm.blvl .hvm.olvl
+set-variable .hvm.bpas .hvm.opas
+set-variable .hvm.bscm .hvm.oscm
+set-variable .hvm.bjd  .hvm.ojd
+set-variable .hvm.b2c  .hvm.o2c
+set-variable .hvm.bhrt .hvm.ohrt
+set-variable .hvm.bf1t .hvm.of1t
+set-variable .hvm.btgt .hvm.otgt
+set-variable .hvm.bspd .hvm.ospd
+set-variable .hvm.npass 3
+set-variable .hvm.dly &lget .hvm.spdv &add 1 .hvm.ospd
+set-variable .hvm.tdly &add .hvm.dly &add .hvm.dly 300
+set-variable .hvm.rdly &add 1500 .hvm.dly
+; running state
+set-variable .hvm.stt 0
+set-variable .hvm.pstt 0
+set-variable .hvm.hno 0
+set-variable .hvm.dealer 3
+set-variable .hvm.lead 0
+set-variable .hvm.turn 0
+set-variable .hvm.tno 1
+set-variable .hvm.tsuit -1
+set-variable .hvm.twrnk -1
+set-variable .hvm.twin 0
+set-variable .hvm.tpts 0
+set-variable .hvm.mmode 0
+set-variable .hvm.trick ""
+set-variable .hvm.played ""
+set-variable .hvm.brok 0
+set-variable .hvm.inpo 0
+set-variable .hvm.vd0 "0000"
+set-variable .hvm.vd1 "0000"
+set-variable .hvm.vd2 "0000"
+set-variable .hvm.vd3 "0000"
+set-variable .hvm.sel ""
+set-variable .hvm.cur 0
+set-variable .hvm.mdl 0
+set-variable .hvm.msg ""
+set-variable .hvm.h0 ""
+set-variable .hvm.h1 ""
+set-variable .hvm.h2 ""
+set-variable .hvm.h3 ""
+set-variable .hvm.c0 ""
+set-variable .hvm.c1 ""
+set-variable .hvm.c2 ""
+set-variable .hvm.c3 ""
+set-variable .hvm.p0 ""
+set-variable .hvm.p1 ""
+set-variable .hvm.p2 ""
+set-variable .hvm.p3 ""
+set-variable .hvm.tmpt 0
+set-variable .hvm.m0 0
+set-variable .hvm.m1 0
+set-variable .hvm.m2 0
+set-variable .hvm.m3 0
+set-variable .hvm.w0 0
+set-variable .hvm.w1 0
+set-variable .hvm.w2 0
+set-variable .hvm.w3 0
+set-variable .hvm.s0 0
+set-variable .hvm.s1 0
+set-variable .hvm.s2 0
+set-variable .hvm.s3 0
+hvmMakePoints
+hvmSetLevel
