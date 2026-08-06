@@ -125,8 +125,8 @@
       !else
         set-variable #l0 &spr "%s%7dM " #l0 #l1
       !endif
-    !elif &gre &len &set #l1 &add 0 &lget #p5 6 7
-      set-variable #l0 &spr "%s%7dK " #l0 &div #l1 1024
+    !elif &or &les &set #l1 &add 0 &lget #p5 6 0 &gre &len #l1 7
+      set-variable #l0 &spr "%s%7dK " #l0 &div &lef &lget #p5 6 -2 4
     !else
       set-variable #l0 &spr "%s%7d  " #l0 #l1
     !endif
