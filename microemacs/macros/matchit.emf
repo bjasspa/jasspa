@@ -82,7 +82,7 @@
   ; Fill in the centre with data
   set-variable #g2 #g1
   mi-get-corner-char
-  !iif &not &equ &band #g1 0x12 0x02  3 screen-poke #g8 &add #g9 1 #g5 &spr "%4s" &rig #g7 10
+  !iif &not &equ &band #g1 0x12 0x02  3 screen-poke #g8 &add #g9 1 #g5 &spr "%n" 4 &rig #g7 10
   set-variable #g9 &add #g9 5
   set-variable #g2 &div #g1 2
   mi-get-corner-char
@@ -97,7 +97,7 @@
   !endif
   set-variable #g2 &div #g1 16
   mi-get-corner-char
-  !iif &not &equ &band #g1 0x90 0x80  3 screen-poke #g8 &sub #g9 4 #g5 &spr "%4s" &rig #g7 10
+  !iif &not &equ &band #g1 0x90 0x80  3 screen-poke #g8 &sub #g9 4 #g5 &spr "%n" 4 &rig #g7 10
   set-variable #g9 &sub #g9 5
   set-variable #g2 &div #g1 8
   mi-get-corner-char
@@ -193,7 +193,7 @@
   set-variable #l7 @wl
   -1 find-buffer $buffer-bname
   ; Fill the table with data
-  set-variable #l8 &spr "%19s" "\xfe"
+  set-variable #l8 &spr "%n" 19 "\xfe"
   set-variable #l0 96
   set-variable #l1 6
   !while &pdec #l1 1
@@ -203,7 +203,7 @@
     !until &not &mod #l0 16
     set-variable #l8 &cat #l8 "\xfe\xfe"
   !done
-  set-variable #l8 &spr "%s%17s" #l8 "\xfe"
+  set-variable #l8 &spr "%s%n" #l8 17 "\xfe"
 
   set-variable :mi-sel-tile-id 254   ; No tile selected
   set-variable :mi-tiles #l8         ; Allocate the tiles.
@@ -242,8 +242,8 @@
     !endif
     set-variable :mi-lives &sub :mi-lives 1
   !endif
-  #l0 screen-poke &add :mi-y0 2 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-  #l0 screen-poke &add :mi-y0 5 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  #l0 screen-poke &add :mi-y0 2 &add :mi-x0 35 .scheme.mi3 &spr "%s%n%s" &mid $box-chars 1 1 16 &rig $box-chars 10 &mid $box-chars 2 1
+  #l0 screen-poke &add :mi-y0 5 &add :mi-x0 35 .scheme.mi3 &spr "%s%n%s" &mid $box-chars 3 1 16 &rig $box-chars 10 &mid $box-chars 4 1
   !if &not :mi-lives
     #l0 screen-poke &add :mi-y0 4 &add :mi-x0 35 .scheme.mi3 &spr "%s * Game Over! * %s" &lef $box-chars 1 &lef $box-chars 1
   !else
@@ -295,7 +295,7 @@
   !endif
   set-variable #l0 :mi-y0
   !repeat
-    35 screen-poke #l0 :mi-x0 .scheme.mi1 &spr "%90s" " "
+    35 screen-poke #l0 :mi-x0 .scheme.mi1 &spr "%n" 90 " "
   !until &gre &inc #l0 1 &add :mi-y0 35
   !if :mi-togo
     33 screen-poke &add :mi-y0 6 &add :mi-x0 40 .scheme.mi1 &spr "%d L%s left!" :mi-lives &cond &equ :mi-lives 1 "ife" "ives"
@@ -354,21 +354,21 @@
   35 screen-poke 1 &add :mi-x0 51 .scheme.mi1 "I"
   ; Draw frames for the menu options.
   !if :mi-helps
-    35 screen-poke 0 &add :mi-x0 60 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    35 screen-poke 0 &add :mi-x0 60 .scheme.mi1 &spr "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
     35 screen-poke 1 &add :mi-x0 60 .scheme.mi1 &spr "%sHelp%s %d" &lef $box-chars 1 &lef $box-chars 1 :mi-helps
-    35 screen-poke 2 &add :mi-x0 60 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    35 screen-poke 2 &add :mi-x0 60 .scheme.mi1 &spr "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
   !else
     35 screen-poke 0 &add :mi-x0 60 .scheme.mi1 "      "
     35 screen-poke 1 &add :mi-x0 60 .scheme.mi1 " Help  0"
     35 screen-poke 2 &add :mi-x0 60 .scheme.mi1 "      "
   !endif
-  35 screen-poke 0 &add :mi-x0 70 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  35 screen-poke 0 &add :mi-x0 70 .scheme.mi1 &spr "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 1 &add :mi-x0 70 .scheme.mi1 &spr "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
-  35 screen-poke 2 &add :mi-x0 70 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  35 screen-poke 2 &add :mi-x0 70 .scheme.mi1 &spr "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  35 screen-poke 0 &add :mi-x0 80 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  35 screen-poke 0 &add :mi-x0 80 .scheme.mi1 &spr "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 1 &add :mi-x0 80 .scheme.mi1 &spr "%sBoss%s" &lef $box-chars 1 &lef $box-chars 1
-  35 screen-poke 2 &add :mi-x0 80 .scheme.mi1 &spr "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  35 screen-poke 2 &add :mi-x0 80 .scheme.mi1 &spr "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
   mi-draw-score
 !emacro
@@ -393,10 +393,10 @@
       !else
         set-variable #l0 1
       !endif
-      #l0 screen-poke &add :mi-y0 2 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+      #l0 screen-poke &add :mi-y0 2 &add :mi-x0 35 .scheme.mi3 &spr "%s%n%s" &mid $box-chars 1 1 16 &rig $box-chars 10 &mid $box-chars 2 1
       #l0 screen-poke &add :mi-y0 3 &add :mi-x0 35 .scheme.mi3 &spr "%s   Sheet-Over   %s" &lef $box-chars 1 &lef $box-chars 1
       #l0 screen-poke &add :mi-y0 4 &add :mi-x0 35 .scheme.mi3 &spr "%s * Click Here * %s" &lef $box-chars 1 &lef $box-chars 1
-      #l0 screen-poke &add :mi-y0 5 &add :mi-x0 35 .scheme.mi3 &spr "%s%16s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+      #l0 screen-poke &add :mi-y0 5 &add :mi-x0 35 .scheme.mi3 &spr "%s%n%s" &mid $box-chars 3 1 16 &rig $box-chars 10 &mid $box-chars 4 1
     !endif
   !elif &equ :mi-status 3
     33 screen-poke &add :mi-y0 15 &add :mi-x0 30 .scheme.mi1 "Press left mouse button to continue"
@@ -995,17 +995,17 @@
   screen-update
   35 screen-poke  5 40 .scheme.mi1 "Match-It II"
   35 screen-poke  6 40 .scheme.mi1 "==========="
-  35 screen-poke 15 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  35 screen-poke 15 70 .scheme.mi1 &spr "%s%n%s"  &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 16 70 .scheme.mi1 &spr "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
-  35 screen-poke 17 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  35 screen-poke 17 70 .scheme.mi1 &spr "%s%n%s"  &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  35 screen-poke 20 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  35 screen-poke 20 70 .scheme.mi1 &spr "%s%n%s"  &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 21 70 .scheme.mi1 &spr "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
-  35 screen-poke 22 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  35 screen-poke 22 70 .scheme.mi1 &spr "%s%n%s"  &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  35 screen-poke 25 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  35 screen-poke 25 70 .scheme.mi1 &spr "%s%n%s"  &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   35 screen-poke 26 70 .scheme.mi1 &spr "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
-  35 screen-poke 27 70 .scheme.mi1 &spr "%s%4s%s"  &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  35 screen-poke 27 70 .scheme.mi1 &spr "%s%n%s"  &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
   35 screen-poke 17 10 .scheme.mi1 "Pos Name                       Level   Score"
   set-variable #l1 0
@@ -1096,95 +1096,95 @@ set-variable #l9 &itoa .scheme.mi3
 ; | MER| TER| UMN| ING| 2 of each = 8
 ; | ** | ** | ** | ** |
 ; +----+----+----+----+
-set-variable #l0 &spr "%16s" #l8
-set-variable #l1 &spr "%16s" #l7
-set-variable #l2 &spr "%16s" #l7
-set-variable #l3 &spr "%16s" #l8
+set-variable #l0 &spr "%n" 16 #l8
+set-variable #l1 &spr "%n" 16 #l7
+set-variable #l2 &spr "%n" 16 #l7
+set-variable #l3 &spr "%n" 16 #l8
 ; +----+----+----+----+
 ; |P  @|O  @|B  @|C  @| Flowers
 ; | L  | R  | B  | H  |
 ; |  U |  C |  O |  R | 2 of each = 8
 ; |@  M|@  H|@  O|@  Y|
 ; +----+----+----+----+
-set-variable #l0 &cat #l0 &spr "%2s%2s%2s%2s%2s%2s%2s%2s" #l7 #l8 #l7 #l8 #l7 #l8 #l7 #l8
-set-variable #l1 &cat #l1 &spr "%16s" #l7
-set-variable #l2 &cat #l2 &spr "%16s" #l7
-set-variable #l3 &cat #l3 &spr "%2s%2s%2s%2s%2s%2s%2s%2s" #l8 #l7 #l8 #l7 #l8 #l7 #l8 #l7
+set-variable #l0 &cat #l0 &spr "%n%n%n%n%n%n%n%n" 2 #l7 2 #l8 2 #l7 2 #l8 2 #l7 2 #l8 2 #l7 2 #l8
+set-variable #l1 &cat #l1 &spr "%n" 16 #l7
+set-variable #l2 &cat #l2 &spr "%n" 16 #l7
+set-variable #l3 &cat #l3 &spr "%n%n%n%n%n%n%n%n" 2 #l8 2 #l7 2 #l8 2 #l7 2 #l8 2 #l7 2 #l8 2 #l7
 ; +----+----+----+----+----+----+----+----+----+
 ; |   9| oo8|oo 7|   6|   5|   4|   3|   2| o 1| Dots
 ; |ooo | oo |  o | oo |o o |o o |o   | o  |oOo |
 ; |ooo | oo | oo | oo | o  |    | o  |    |oOo | 2 of each = 18
 ; |ooo | oo | oo | oo |o o |o o |  o | o  | o  |
 ; +----+----+----+----+----+----+----+----+----+
-set-variable #l0 &cat #l0 &spr "%4s%3s%s%2s%23s%s%2s" #l9 #l8 #l9 #l7 #l9 #l7 #l9
-set-variable #l1 &cat #l1 &spr "%s%s%2s%4s%8s%2s%2s%2s%10s%s%s%2s" #l8 #l9 #l7 #l8 #l7 #l7 #l8 #l7 #l8 #l7 #l9 #l7
-set-variable #l2 &cat #l2 &spr "%s%s%2s%4s%8s%16s%s%s%2s" #l8 #l9 #l7 #l8 #l9 #l9 #l7 #l9 #l7
-set-variable #l3 &cat #l3 &spr "%s%s%2s%4s%8s%2s%2s%2s%14s" #l8 #l9 #l7 #l8 #l9 #l8 #l7 #l8 #l7
+set-variable #l0 &cat #l0 &spr "%n%n%s%n%n%s%n" 4 #l9 3 #l8 #l9 2 #l7 23 #l9 #l7 2 #l9
+set-variable #l1 &cat #l1 &spr "%s%s%n%n%n%n%n%n%n%s%s%n" #l8 #l9 2 #l7 4 #l8 8 #l7 2 #l7 2 #l8 2 #l7 10 #l8 #l7 #l9 2 #l7
+set-variable #l2 &cat #l2 &spr "%s%s%n%n%n%n%s%s%n" #l8 #l9 2 #l7 4 #l8 8 #l9 16 #l9 #l7 #l9 2 #l7
+set-variable #l3 &cat #l3 &spr "%s%s%n%n%n%n%n%n%n" #l8 #l9 2 #l7 4 #l8 8 #l9 2 #l8 2 #l7 2 #l8 14 #l7
 ; +----+----+----+----+----+----+----+----+----+
 ; |   9|\  /|   7|   6| 5  |   4|   3|   2|   1| Bamboo
 ; |!!! |!88!| !  |! ! |! ! |! ! |    | !  | \o |
 ; |!!! |!88!|!!! |! ! | !  |    | !  |    | /@@| 2 of each = 18
 ; |!!! |/  \|!!! |! ! |! ! |! ! |! ! | !  |  /\|
 ; +----+----+----+----+----+----+----+----+----+
-set-variable #l0 &cat #l0 &spr "%4s%2s%2s%28s" #l9 #l7 #l8 #l9
-set-variable #l1 &cat #l1 &spr "%s%s%3s%2s%s%4s%2s%4s%2s%2s%2s%4s%4s%4s" #l7 #l9 #l8 #l9 #l7 #l9 #l8 #l7 #l8 #l7 #l8 #l7 #l8 #l7
-set-variable #l2 &cat #l2 &spr "%s%s%2s%s%2s%s%s%s%2s%2s%2s%4s%16s" #l7 #l9 #l8 #l7 #l9 #l8 #l7 #l8 #l7 #l8 #l7 #l9 #l7
-set-variable #l3 &cat #l3 &spr "%s%s%4s%3s%s%2s%2s%2s%2s%2s%2s%14s" #l7 #l9 #l8 #l7 #l8 #l7 #l8 #l7 #l8 #l7 #l8 #l7
+set-variable #l0 &cat #l0 &spr "%n%n%n%n" 4 #l9 2 #l7 2 #l8 28 #l9
+set-variable #l1 &cat #l1 &spr "%s%s%n%n%s%n%n%n%n%n%n%n%n%n" #l7 #l9 3 #l8 2 #l9 #l7 4 #l9 2 #l8 4 #l7 2 #l8 2 #l7 2 #l8 4 #l7 4 #l8 4 #l7
+set-variable #l2 &cat #l2 &spr "%s%s%n%s%n%s%s%s%n%n%n%n%n" #l7 #l9 2 #l8 #l7 2 #l9 #l8 #l7 #l8 2 #l7 2 #l8 2 #l7 4 #l9 16 #l7
+set-variable #l3 &cat #l3 &spr "%s%s%n%n%s%n%n%n%n%n%n%n" #l7 #l9 4 #l8 3 #l7 #l8 2 #l7 2 #l8 2 #l7 2 #l8 2 #l7 2 #l8 14 #l7
 ; +----+----+----+----+----+----+----+----+----+
 ; | # 9|   8|   7| o 6|/~5 |   4| ~3 |  2 |   1| Characters
 ; |/@\ |~|~ |~~  |--- | #~ |CD  |~~  | ~  |~~~ |
 ; | #  | ~  | #  | %  | ## | @  | #  |~~~ | $  | 2 of each = 18
 ; |/ } |##  |/ } |oOo |<#> |<#\ |/ } | #  |/#D |
 ; +----+----+----+----+----+----+----+----+----+
-set-variable #l0 &cat #l0 &spr "%2s%10s%2s%2s%2s%6s%2s%10s" #l8 #l7 #l8 #l7 #l8 #l7 #l8 #l7
-set-variable #l1 &cat #l1 &spr "%36s" #l8
-set-variable #l2 &cat #l2 &spr "%36s" #l8
-set-variable #l3 &cat #l3 &spr "%36s" #l8
+set-variable #l0 &cat #l0 &spr "%n%n%n%n%n%n%n%n" 2 #l8 10 #l7 2 #l8 2 #l7 2 #l8 6 #l7 2 #l8 10 #l7
+set-variable #l1 &cat #l1 &spr "%n" 36 #l8
+set-variable #l2 &cat #l2 &spr "%n" 36 #l8
+set-variable #l3 &cat #l3 &spr "%n" 36 #l8
 ; +----+----+----+
 ; |+--+|   C|   F| Dragons
 ; || B||o|o |/#\ |
 ; ||  || |  |### | 4 of each = 12
 ; |+--+| |  |### |
 ; +----+----+----+
-set-variable #l0 &cat #l0 &spr "%4s%8s" #l8 #l7
-set-variable #l1 &cat #l1 &spr "%2s%1s%9s" #l8 #l7 #l8
-set-variable #l2 &cat #l2 &spr "%12s" #l8
-set-variable #l3 &cat #l3 &spr "%12s" #l8
+set-variable #l0 &cat #l0 &spr "%n%n" 4 #l8 8 #l7
+set-variable #l1 &cat #l1 &spr "%n%n%n" 2 #l8 1 #l7 9 #l8
+set-variable #l2 &cat #l2 &spr "%n" 12 #l8
+set-variable #l3 &cat #l3 &spr "%n" 12 #l8
 ; +----+----+----+----+
 ; |   N|   E|   S|   W| Winds
 ; || | ||-- ||-- || | |
 ; ||\| ||-  |+-+ ||^| | 4 of each = 16
 ; || | ||-- |--| |/ \ |
 ; +----+----+----+----+
-set-variable .mi-draw-tile.tile-c0 &cat #l0 &spr "%16s" #l7
-set-variable .mi-draw-tile.tile-c1 &cat #l1 &spr "%16s" #l8
-set-variable .mi-draw-tile.tile-c2 &cat #l2 &spr "%16s" #l8
-set-variable .mi-draw-tile.tile-c3 &cat #l3 &spr "%16s" #l8
+set-variable .mi-draw-tile.tile-c0 &cat #l0 &spr "%n" 16 #l7
+set-variable .mi-draw-tile.tile-c1 &cat #l1 &spr "%n" 16 #l8
+set-variable .mi-draw-tile.tile-c2 &cat #l2 &spr "%n" 16 #l8
+set-variable .mi-draw-tile.tile-c3 &cat #l3 &spr "%n" 16 #l8
 
 set-variable #l0 " **  **  **  ** P  @O  @B  @C  @   9 oo8oo 7   6   5   4   3   2 o 1   9\\  /   7   6   5   4   3   2\   1 # 9\   8   7 o 6/~5   \ 4 ~3   2    1"
 set-variable #l1 "SUM WIN AUT SPR  L   R   A   H  ooo  oo   o  oo o o o o o    o  oOo !!! !88!\ !  ! ! ! ! ! !      !   \\o /@\\ ~|~ ~~  ---  #~ CD\  ~~   ~  ~~~ "
 set-variable #l2 " MER TER UMN ING  U   C   M   R ooo  oo  oo  oo  o       o      oOo !!! !88!\!!! ! !  !       !      \ /@@ # \  ~   #   %   ##  @\   #  ~~~  $  "
 set-variable #l3 " **  **  **  ** @  M@  H@  B@  Yooo  oo  oo  oo o o o o   o  o   o  !!! /  \\!!! ! ! ! ! ! ! ! !  !    /\\/ }\ ##  / } oOo <#> <#\\ / }  #  /#D "
 ; Dragons
-set-variable #l0 &spr "%s%s%2s%s%s" #l0 &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
+set-variable #l0 &spr "%s%s%n%s%s" #l0 &mid $box-chars 1 1 2 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
 set-variable #l1 &spr "%s%s B%s%s"  #l1 &lef $box-chars 1 &lef $box-chars 1 "o|o /#\\ "
 set-variable #l2 &spr "%s%s  %s%s"  #l2 &lef $box-chars 1 &lef $box-chars 1 " |  ### "
-set-variable #l3 &spr "%s%s%2s%s%s" #l3 &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
+set-variable #l3 &spr "%s%s%n%s%s" #l3 &mid $box-chars 3 1 2 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
 ; Winds
 set-variable .mi-draw-tile.tile-r0 &cat #l0 "   N   E   S   W"
 ; North
 set-variable #l1 &spr "%s%s%s%s " #l1 &mid $box-chars 1 1 &mid $box-chars 2 1 &mid $box-chars 5 1
-set-variable #l2 &spr "%s%3s "    #l2 &lef $box-chars 1
+set-variable #l2 &spr "%s%n "    #l2 3 &lef $box-chars 1
 set-variable #l3 &spr "%s%s%s%s " #l3 &mid $box-chars 9 1 &mid $box-chars 3 1 &mid $box-chars 4 1
 ; East
-set-variable #l1 &spr "%s%s%2s "  #l1 &mid $box-chars 1 1 &rig $box-chars 10
+set-variable #l1 &spr "%s%s%n "  #l1 &mid $box-chars 1 1 2 &rig $box-chars 10
 set-variable #l2 &spr "%s%s%s  "  #l2 &mid $box-chars 6 1 &rig $box-chars 10
-set-variable #l3 &spr "%s%s%2s "  #l3 &mid $box-chars 3 1 &rig $box-chars 10
+set-variable #l3 &spr "%s%s%n "  #l3 &mid $box-chars 3 1 2 &rig $box-chars 10
 ; South
 set-variable #l1 &spr "%s%s%s%s " #l1 &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
 set-variable #l2 &spr "%s%s%s%s " #l2 &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 2 1
 set-variable #l3 &spr "%s%s%s%s " #l3 &mid $box-chars 3 1 &rig $box-chars 10  &mid $box-chars 4 1
 ; West
 set-variable .mi-draw-tile.tile-r1 &spr "%s%s %s "  #l1 &lef $box-chars 1   &lef $box-chars 1
-set-variable .mi-draw-tile.tile-r2 &spr "%s%3s "    #l2 &lef $box-chars 1
+set-variable .mi-draw-tile.tile-r2 &spr "%s%n "    #l2 3 &lef $box-chars 1
 set-variable .mi-draw-tile.tile-r3 &spr "%s%s%s%s " #l3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1

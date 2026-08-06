@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar011.2,v 2.4 2022/06/12 17:13:41 jon Exp $
+.Id $Id: m2nar011.2,v 2.4 2026/08/06 21:37:03 jon Exp $
 .Im MicroEmacs 
 .so me.tni
 .TH macroDebugging 4
@@ -137,7 +137,41 @@ are  made.  For  performance  reasons  it is not  possible  to  check  for all
 permutations  of every  command that could be issued that may possibly  change
 the state of the  editor and then  recover.  Provided  that the calls are used
 within their calling remit then no ill effects will be observed.
-.SH "SEE ALSO" 
+.SS "Running macros without the editor"
+Macro logic can be run and checked without a terminal, and without starting the editor, using the piped mode option
+\fB\-p\fR. This is useful for regression tests and for timing, as the macro runs to completion and the process exits.
+.PP
+The macro file is given with \fB@\fR and it \fBmust\fR define a
+.Ht start-up 3
+macro, as there is no user input to drive the editor; without one the editor reports
+"\fCPipe script failed to exit\fR" and stops. Exit with
+.Ht exit-emacs 2 ,
+giving a numeric  argument of 4 so that the user is not prompted. Use
+.Ht ml-write 2
+with a numeric argument of \-2 to write to the standard output.
+.Me $emf-scheme
+.CS
+define-macro start-up
+    -2 ml-write &spr "2 + 2 = %d" &add 2 2
+    4 exit-emacs 0
+!emacro
+.CE
+.Me $ehf-scheme
+Run with:
+.Me $emf-scheme
+.CS
+export MEPATH=<install>/macros:$PWD
+mec -p "@./mytest" < /dev/null
+.CE
+.Me $ehf-scheme
+The  output  uses  carriage  returns  as line  endings, so pipe it  through
+"\fCtr '\\r' '\\n'\fR" when reading it from a shell script. Note that the
+\fB\-P\fR option is piped mode with  debugging, which waits for input and is
+not suitable for an unattended run.
+.PP
+See \fCtest/emf/\fR and \fCtest/hearts/\fR for worked examples, the latter
+including a test runner script.
+.SH "SEE ALSO"
 .na
 .nf
 .Ht $debug 5 ,

@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar012.2,v 2.5 2026/02/23 11:03:58 jon Exp $
+.Id $Id: m2nar012.2,v 2.5 2026/08/06 21:57:27 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH macroOverview 4
@@ -193,6 +193,61 @@ variables include:
 \fB@3\fR ... \fB@\fR\fIn\fR
 .sp
 \fB@p\fR \- The name of the calling (or parent) macro.
+.SS "Arguments and returning values"
+Arguments  are not copied into the macro, they are the caller's  text and are
+evaluated  each time they are used. Reading \fC@1\fR evaluates the caller's
+first argument at that moment, in the caller's  context, and reading it twice
+evaluates it twice.
+.PP
+This is what allows a macro to \fBreturn\fR a value. Assigning to an argument
+assigns  to whatever  the caller  named, so by  convention  a macro takes its
+results in its last arguments:
+.Me $emf-scheme
+.CS
+0 define-macro suit-of
+    ; @1 = card, @2 <- the suit of that card
+    set-variable @2 &band @1 112
+!emacro
+
+suit-of 90 #l3
+; #l3 now holds 80
+.CE
+.Me $ehf-scheme
+The caller may name a register, a buffer variable, a command variable or one
+of its own arguments; whichever it names is what gets written.
+.PP
+Passing one of the macro's own arguments straight on to another macro is supported, and the value is written back to
+the frame the argument originally came from rather than the immediate caller. So in the following, \fCTest\fR's
+\fC#l0\fR is the register that ends up holding 500:
+.Me $emf-scheme
+.CS
+0 define-macro l2
+    set-variable @1 @2
+!emacro
+0 define-macro l1
+    l2 @1 @2
+!emacro
+define-macro Test
+    l1 #l0 500
+    ml-write #l0
+!emacro
+.CE
+.Me $ehf-scheme
+.\" TODO: SP Remove once fixed
+Note that a call which passes on one of the macro's own arguments \fBand\fR names one of its own registers to be
+written to in the same call does not currently work; the value written does not reach the caller. Copy the argument
+into a register before passing it on:
+.Me $emf-scheme
+.CS
+; wrong - the result never reaches #l5
+suit-of @1 #l5
+; right
+set-variable #l0 @1
+suit-of #l0 #l5
+.CE
+.Me $ehf-scheme
+See \fCtest/emf/macroarg.emf\fR for the cases that do and do not work.
+.\" TODO: SP Remove end
 .SS "Directives"
 The
 .Hl "Macro Directives" MacroGlossary -

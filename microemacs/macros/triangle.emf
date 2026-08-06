@@ -195,20 +195,20 @@
   set-variable :tri-row 0
   set-variable :tri-col &add 1 &mul 3 :tri-card-width
   ; Draw frames for the menu options.
-  67 screen-poke &add :tri-row  1 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke &add :tri-row  1 &add :tri-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke &add :tri-row  2 &add :tri-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke &add :tri-row  2 &add :tri-x0 73 .scheme.cardback "D"
-  67 screen-poke &add :tri-row  3 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke &add :tri-row  3 &add :tri-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  67 screen-poke &add :tri-row  4 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke &add :tri-row  4 &add :tri-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke &add :tri-row  5 &add :tri-x0 72 .scheme.cardback &sprint "%sExit%s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke &add :tri-row  5 &add :tri-x0 74 .scheme.cardback "x"
-  67 screen-poke &add :tri-row  6 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke &add :tri-row  6 &add :tri-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  67 screen-poke &add :tri-row  7 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke &add :tri-row  7 &add :tri-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke &add :tri-row  8 &add :tri-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke &add :tri-row  8 &add :tri-x0 73 .scheme.cardback "H"
-  67 screen-poke &add :tri-row  9 &add :tri-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke &add :tri-row  9 &add :tri-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
   ; Record the card positions
   set-variable :tri-colhomemin :tri-col
   set-variable :tri-colhomemax &add :tri-col &mul 4 :tri-card-width
@@ -752,9 +752,9 @@ define-macro Triangle
     ;
     ; Define the card patterns
     ;
-    set-variable :tri-card-top  &sprint "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    set-variable :tri-card-bot  &sprint "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    set-variable :tri-card-clr  &sprint "%s%7s%s" &lef $box-chars 1 " " &lef $box-chars 1
+    set-variable :tri-card-top  &sprint "%s%n%s" &mid $box-chars 1 1 7 &rig $box-chars 10 &mid $box-chars 2 1
+    set-variable :tri-card-bot  &sprint "%s%n%s" &mid $box-chars 3 1 7 &rig $box-chars 10 &mid $box-chars 4 1
+    set-variable :tri-card-clr  &sprint "%s       %s" &lef $box-chars 1 &lef $box-chars 1
     set-variable :tri-card-hld1 &sprint "%s X   X %s" &lef $box-chars 1 &lef $box-chars 1
     set-variable :tri-card-hld2 &sprint "%s  X X  %s" &lef $box-chars 1 &lef $box-chars 1
     set-variable :tri-card-hld3 &sprint "%s   X   %s" &lef $box-chars 1 &lef $box-chars 1

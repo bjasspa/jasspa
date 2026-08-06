@@ -1,0 +1,97 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Check macro argument write-back through forwarded arguments
+; Authors:     Steve
+;
+; Run with:    mec -p "@./macroarg"
+;
+; A macro returns a value by assigning to one of its arguments, and the caller
+; may pass one of its own arguments straight on.  The comment above
+; gmaLocalRegPtr in src/eval.c describes the case and the machinery that makes
+; it work; cases C, D and E below are that example, at three depths.
+;
+; Case A is the one that FAILS: a call that mixes a forwarded @n with a
+; caller-local register as the write-back target.  The written value does not
+; reach the caller - it lands in the register of the frame the forwarded
+; argument came from, silently overwriting an unrelated macro's variable.
+; Case B is the same thing with the argument copied to a register first, which
+; is the workaround.
+;
+; A, B and F should all report their expected value once the write-back is
+; fixed.  C, D and E pass today and must not regress.
+;
+
+; hidden namespace command for this test's state
+0 define-macro maNs
+!emacro
+set-variable .maNs.fail 0
+
+0 define-macro maChk
+  ; @1 = label, @2 = got, @3 = wanted
+  !if &seq @2 @3
+    -2 ml-write &spr "  ok    %s  [%s]" @1 @2
+  !else
+    -2 ml-write &spr "  FAIL  %s  got [%s] want [%s]" @1 @2 @3
+    set-variable .maNs.fail 1
+  !endif
+!emacro
+
+; --- the failing shape: forwarded @n plus a local write-back target ---------
+0 define-macro maWrite
+  set-variable @2 "OK"
+!emacro
+0 define-macro maForward
+  maWrite @1 #l5
+  set-variable @2 #l5
+!emacro
+0 define-macro maCopy
+  set-variable #l0 @1
+  maWrite #l0 #l5
+  set-variable @2 #l5
+!emacro
+
+; --- the shape from the eval.c comment, which works ------------------------
+0 define-macro l3
+  set-variable @1 @2
+!emacro
+0 define-macro l2
+  l3 @1 @2
+!emacro
+0 define-macro l1
+  l2 @1 @2
+!emacro
+
+define-macro start-up
+  -2 ml-write "macro argument write-back"
+  set-variable #l1 "unset"
+  maForward 7 #l1
+  maChk "A forwarded @n, local write-back target " #l1 "OK"
+  set-variable #l2 "unset"
+  maCopy 7 #l2
+  maChk "B same, argument copied first           " #l2 "OK"
+  set-variable #l0 "unset"
+  l1 #l0 500
+  maChk "C eval.c example, three deep            " #l0 "500"
+  set-variable #l0 "unset"
+  l2 #l0 500
+  maChk "D eval.c example, two deep              " #l0 "500"
+  set-variable #l0 "unset"
+  l3 #l0 500
+  maChk "E eval.c example, direct                " #l0 "500"
+  ; F: the stray write must not land in this frame's register of the same name
+  set-variable #l5 "untouched"
+  set-variable #l1 "unset"
+  maForward 7 #l1
+  maChk "F caller's frame left alone             " #l5 "untouched"
+  !if .maNs.fail
+    -2 ml-write "macroarg: FAILURES - see the comment at the head of this file"
+  !else
+    -2 ml-write "macroarg: all passed"
+  !endif
+  4 exit-emacs .maNs.fail
+!emacro

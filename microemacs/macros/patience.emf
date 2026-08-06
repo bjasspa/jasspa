@@ -217,17 +217,17 @@
   set-variable :pat-coldealdnmin :pat-col
   set-variable :pat-coldealdnmax &add :pat-col :pat-card-width
   ; Draw frames for the menu options.
-  65 screen-poke &add :pat-row  1 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  65 screen-poke &add :pat-row  1 &add :pat-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   65 screen-poke &add :pat-row  2 &add :pat-x0 72 .scheme.cardback &sprint "%sDeal%s" &lef $box-chars 1 &lef $box-chars 1
-  65 screen-poke &add :pat-row  3 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  65 screen-poke &add :pat-row  3 &add :pat-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  65 screen-poke &add :pat-row  4 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  65 screen-poke &add :pat-row  4 &add :pat-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   65 screen-poke &add :pat-row  5 &add :pat-x0 72 .scheme.cardback &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
-  65 screen-poke &add :pat-row  6 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  65 screen-poke &add :pat-row  6 &add :pat-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  65 screen-poke &add :pat-row  7 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  65 screen-poke &add :pat-row  7 &add :pat-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   65 screen-poke &add :pat-row  8 &add :pat-x0 72 .scheme.cardback &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
-  65 screen-poke &add :pat-row  9 &add :pat-x0 72 .scheme.cardback &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  65 screen-poke &add :pat-row  9 &add :pat-x0 72 .scheme.cardback &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
   ;
   ; Draw the down facing deck.
   !if &len :pat-dealdn
@@ -747,9 +747,9 @@ define-macro Patience
     set-variable :pat-outchr ""
     set-variable :pat-inchr ""
     ; Define the card patterns
-    set-variable :pat-card-top  &sprint "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-    set-variable :pat-card-bot  &sprint "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-    set-variable :pat-card-clr  &sprint "%s%7s%s" &lef $box-chars 1 " " &lef $box-chars 1
+    set-variable :pat-card-top  &sprint "%s%n%s" &mid $box-chars 1 1 7 &rig $box-chars 10 &mid $box-chars 2 1
+    set-variable :pat-card-bot  &sprint "%s%n%s" &mid $box-chars 3 1 7 &rig $box-chars 10 &mid $box-chars 4 1
+    set-variable :pat-card-clr  &sprint "%s       %s" &lef $box-chars 1 &lef $box-chars 1
     set-variable :pat-card-hld1 &sprint "%s X   X %s" &lef $box-chars 1 &lef $box-chars 1
     set-variable :pat-card-hld2 &sprint "%s  X X  %s" &lef $box-chars 1 &lef $box-chars 1
     set-variable :pat-card-hld3 &sprint "%s   X   %s" &lef $box-chars 1 &lef $box-chars 1

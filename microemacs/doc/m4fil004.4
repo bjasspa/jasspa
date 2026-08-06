@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil004.4,v 2.6 2022/06/12 15:10:43 jon Exp $
+.Id $Id: m4fil004.4,v 2.6 2026/08/06 23:29:07 jon Exp $
 .Im MicroEmacs macro;function;string
 .so me.tni
 .TH &sprintf 4
@@ -41,7 +41,8 @@ insert strings and numbers into the base  \fIformat\fR  string. The format for
 the '\fB%\fR' commands is "\fB%nc\fR" where:
 .IP \fBn\fR
 An optional  numerical  argument, the  interpretation  of the numeric value is
-determined by the following command (\fBc\fR).
+determined by the following command (\fBc\fR). As in 'C' it may be preceded
+by a minus sign, and may be followed by a full stop and a second number.
 .IP \fBc\fR
 The command determines the interpretation of the next argument \fIarg\fR which
 are specified as follows:
@@ -61,17 +62,19 @@ Expects a single numeric argument \fIarg\fR which is inserted into the \fIformat
 \fIn\fR  is  specified  it  must  be of  the  form  [min-width][.<precision>]  where  either  the  [min-width]  or the
 [.<precision>] can be omitted.
 .IP "\fBn\fR (Repeat String)"
-Expects two arguments  \fIarg\fR, the first is a numeric  argument  giving the
-number of times to insert the given string (the second  argument).  If \fIn\fR
-is  specified  then the string is  inserted  \fIn\fR *  \fInumeric-argument\fR
-times.
+Expects two arguments \fIarg\fR, the first is a numeric argument giving the number of times to insert the given string
+(the second argument). The optional argument \fIn\fR is ignored if specified.
 .IP "\fBo\fR (Octal integer)"
 Expects a single numeric argument \fIarg\fR which is inserted into the \fIformat\fR string as an octal text string. If
 \fIn\fR is  specified  then the inserted  text string is fixed to \fIn\fR  character in length, if \fIn\fR is prefixed
 with a 0 then the number is padded with zeros otherwise spaces are used.
 .IP "\fBs\fR (String)"
-Expects a single argument  \fIarg\fR which is a string to be inserted into the
-key. If \fIn\fR is given then it is inserted\fIn\fR times.
+Expects a single  argument  \fIarg\fR which is a string to be inserted into the
+\fIformat\fR  string. If \fIn\fR is given it is the minimum field width and the
+string is padded with spaces on the left, or on the right when \fIn\fR is
+prefixed with a '\fC\-\fR'. A '\fC.\fR' followed by a number gives the maximum
+number of  characters to take from the string. To insert a string  more than
+once use the \fBn\fR command.
 .IP "\fBx\fR (Hexadecimal integer)"
 Expects a single numeric  argument  \fIarg\fR which is inserted into the format string as hexadecimal  text string. If
 \fIn\fR is given then the  inserted  text string will be fixed to \fIn\fR  character in length, if \fIn\fR is prefixed
@@ -109,6 +112,26 @@ generates "\fC[10] [\ 11] [c] [\ \ d]\fR"
 It is the  callers  responsibility  to  ensure  that  the  correct  number  of
 arguments is supplied to match the  requested  formatting  string. The results
 are undefined if an incorrect number of arguments are supplied.
+.PP
+A '\fB%\fR'  followed by a  character  that is not a  recognised  command is
+inserted  literally  and  consumes  no  argument, so a  mistyped  command is
+not reported as an error; every following  argument is then matched  against
+the wrong command, which can be difficult to spot. Use only the commands
+listed above.
+.SH COMPATIBILITY
+Prior to the 2026 release the \fBs\fR command treated \fIn\fR as a repeat count
+rather than a field width, so "\fC%13s\fR" inserted the string thirteen times.
+Macros written  against the older  behaviour  must be changed to use the
+\fBn\fR command, which is unaffected:
+.Me $emf-scheme
+.CS
+; before - inserted the box character 13 times
+set-variable %line &sprintf "%13s" %box-char
+; now
+set-variable %line &sprintf "%n" 13 %box-char
+.CE
+.Me $ehf-scheme
+A "\fC%\fR" followed by digits and an "\fCs\fR" is the construct to look for.
 .SH "SEE ALSO"
 .na
 .Hl "Variable Functions" Functions - ,

@@ -70,7 +70,6 @@
 #define meInet_addr        inet_addr
 #define meHtons            htons
 #define meClock            GetTickCount
-#define snprintf           sprintf_s
 #define MESOCK_TIMEO_MULT  1000
 #else
 #include <errno.h>
@@ -2114,7 +2113,8 @@ meSockFtpCommand(meIo *io, meUByte *rbuff, char *fmt, ...)
     meInt ii, ret;
 
     va_start(ap,fmt);
-    ii = vsnprintf((char *) rbuff,meSOCK_BUFF_SIZE,fmt,ap);
+    if((ii = vsnprintf((char *) rbuff,meSOCK_BUFF_SIZE-3,fmt,ap)) > meSOCK_BUFF_SIZE-3)
+        ii = meSOCK_BUFF_SIZE-3;
     va_end(ap);
     if(io->urlOpts & (meSOCKOPT_LOG_DETAILS|meSOCKOPT_LOG_VERBOSE))
     {

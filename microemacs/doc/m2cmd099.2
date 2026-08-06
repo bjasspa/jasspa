@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd099.2,v 2.6 2026/06/01 22:35:33 jon Exp $
+.Id $Id: m2cmd099.2,v 2.6 2026/08/06 21:32:12 jon Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH screen-poke 2
@@ -51,10 +51,19 @@ poked  information  remains on the screen until a forced  refresh is performed
 (i.e. \fB1\ screen-update\fR) or the window information under the poked screen
 data is modified.
 .PP
-In macros using many consecutive screen-pokes (e.g. 
+In macros using many consecutive screen-pokes (e.g.
 .Ht Patience 3
 to  display a pack of cards)  most  pokes use the 'No flush'  flag to  improve
 performance and look on some platforms.
+.PP
+When using the 'No flush' flag for performance, it must not be used on the last poke of the drawing sequence,
+otherwise nothing that was poked appears at all. It is the flush that puts the accumulated pokes on the screen;
+\fBscreen-update\fR does not do this, it is a redraw of the underlying window and will not display poked data. A page
+is therefore drawn with flags such as \fB3\fR, \fB67\fR or \fB99\fR throughout except for the final poke which would
+use \fB1\fR, \fB65\fR or \fB97\fR.
+.Ht Hearts 3
+uses this  arrangement,  with the status line drawn last as the single
+flushing poke of each drawing path.
 .PP
 The use of \fBscreen-poke\fR has largely been reduced to games such as
 .Ht Metris 3

@@ -231,12 +231,12 @@
   !if &gre #g0 599                     ; Check out the special tiles.
     set-variable #g8 &add 18 :mjg-y0 ; The row
     !if &equ @# 120                 ; West single
-      :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &sprint "%s%4s" &mid #g7 1 1 &rig #g7 10
+      :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &sprint "%s%n" &mid #g7 1 1 4 &rig #g7 10
       :mjg-cpf screen-poke &add #g8 1 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 2 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 3 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 4 &sub #g9 1 :mjg-cps &sprint "%s    "  &lef #g7 1
-      :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &sprint "%s%4s" &mid #g7 3 1 &rig #g7 10
+      :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &sprint "%s%n" &mid #g7 3 1 4 &rig #g7 10
       !if &gre #g3 0
         :mjg-cpf screen-poke      #g8   &add #g9 4 :mjg-cps &mid #g7 8 1
         :mjg-cpf screen-poke &add #g8 5 &add #g9 4 :mjg-cps &mid #g7 8 1
@@ -246,24 +246,24 @@
       set-variable #g9 &sub #g9 2    ; Offset to centre
       !goto fill-normal
     !elif &equ @# 133                ; East single
-      :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 2 1
+      :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%n%s" 4 &rig #g7 10 &mid #g7 2 1
       :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 4 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-      :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 4 1
+      :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%n%s" 4 &rig #g7 10 &mid #g7 4 1
       !if &gre #g3 0
         :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &mid #g7 6 1
         :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &mid #g7 6 1
       !endif
       !goto fill-centre
     !elif &equ @# 134                ; East double
-      :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 2 1
+      :mjg-cpf screen-poke      #g8   #g9 :mjg-cps &sprint "%n%s" 4 &rig #g7 10 &mid #g7 2 1
       :mjg-cpf screen-poke &add #g8 1 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 2 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 3 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
       :mjg-cpf screen-poke &add #g8 4 #g9 :mjg-cps &sprint "    %s"  &lef #g7 1
-      :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s%s" &rig #g7 10 &mid #g7 4 1
+      :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%n%s" 4 &rig #g7 10 &mid #g7 4 1
       !if &gre #g3 0
         :mjg-cpf screen-poke      #g8   &sub #g9 1 :mjg-cps &mid #g7 5 1
         :mjg-cpf screen-poke &add #g8 5 &sub #g9 1 :mjg-cps &mid #g7 9 1
@@ -302,7 +302,7 @@
 
   ; Compute the North side wall and put the pixel edge.
   !if &not &les #g3 #g6                 ; if (C >= N) render edge.
-    :mjg-cpf screen-poke #g8 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
+    :mjg-cpf screen-poke #g8 #g9 :mjg-cps &sprint "%n" 4 &rig #g7 10
   !endif
 
   ; Set up for the upper right side.
@@ -351,7 +351,7 @@
 
   ; Compute the South side wall and put the pixel edge.
   !if &not &les #g3 #g6                 ; if (C >= S) render edge.
-    :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%4s" &rig #g7 10
+    :mjg-cpf screen-poke &add #g8 5 #g9 :mjg-cps &sprint "%n" 4 &rig #g7 10
   !endif
 
   ; Set up for the lower left side
@@ -447,7 +447,7 @@
 
   ml-write "Allocating Tiles..."
   ; Fill the 3D table with data
-  set-variable #g8 &sprint "%675s" "\xfe" ; Table size is 600
+  set-variable #g8 &sprint "%n" 675 "\xfe" ; Table size is 600
   mjg-fill   5 12       ; [0,1,0] =   5. Level 0 - line 0.
   mjg-fill  90  8       ; [1,3,0] =  90. Level 0 - line 1.
   mjg-fill 160 10       ; [2,2,0] = 160. Level 0 - line 2.
@@ -499,25 +499,25 @@
 ;
 0 define-macro mjg-score-draw
   ; Draw the frame for the score
-  3 screen-poke      :mjg-y0    &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke      :mjg-y0    &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0  1 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s    %s" &lef $box-chars 1 &lef $box-chars 1
-  3 screen-poke &add :mjg-y0  2 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  3 screen-poke &add :mjg-y0  2 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
   ; Draw frames for the menu options.
-  3 screen-poke &add :mjg-y0  3 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0  3 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0  4 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sNew %s" &lef $box-chars 1 &lef $box-chars 1
-  3 screen-poke &add :mjg-y0  5 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  3 screen-poke &add :mjg-y0  5 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  3 screen-poke &add :mjg-y0  6 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0  6 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0  7 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sSame%s" &lef $box-chars 1 &lef $box-chars 1
-  3 screen-poke &add :mjg-y0  8 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  3 screen-poke &add :mjg-y0  8 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  3 screen-poke &add :mjg-y0  9 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0  9 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0 10 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sQuit%s" &lef $box-chars 1 &lef $box-chars 1
-  3 screen-poke &add :mjg-y0 11 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  3 screen-poke &add :mjg-y0 11 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
 
-  3 screen-poke &add :mjg-y0 12 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  3 screen-poke &add :mjg-y0 12 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 1 1 4 &rig $box-chars 10 &mid $box-chars 2 1
   3 screen-poke &add :mjg-y0 13 &add :mjg-x0 70 .scheme.mjg1 &sprint "%sHelp%s" &lef $box-chars 1 &lef $box-chars 1
-  3 screen-poke &add :mjg-y0 14 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%4s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  3 screen-poke &add :mjg-y0 14 &add :mjg-x0 70 .scheme.mjg1 &sprint "%s%n%s" &mid $box-chars 3 1 4 &rig $box-chars 10 &mid $box-chars 4 1
   ; Draw the color levels
   67 screen-poke &add :mjg-y0 28 &add :mjg-x0 66 .scheme.mjg2 " Level 5 "
   35 screen-poke &add :mjg-y0 29 &add :mjg-x0 66 .scheme.mjg2 " Level 4 "
@@ -893,10 +893,10 @@ define-macro Mahjongg
     ; || | | |  |### | 4 of each = 12
     ; |+-+ | |  |### |
     ; +----+----+----+
-    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 &sprint "%s%2s%s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
+    set-variable :mjg-tile-r0 &cat :mjg-tile-r0 &sprint "%s%n%s%s" &mid $box-chars 1 1 2 &rig $box-chars 10 &mid $box-chars 2 1 "   C   F"
     set-variable :mjg-tile-r1 &cat :mjg-tile-r1 &sprint "%s B%s%s"  &lef $box-chars 1 &lef $box-chars 1 "o|o /#\\ "
     set-variable :mjg-tile-r2 &cat :mjg-tile-r2 &sprint "%s  %s%s"  &lef $box-chars 1 &lef $box-chars 1 " |  ### "
-    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 &sprint "%s%2s%s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
+    set-variable :mjg-tile-r3 &cat :mjg-tile-r3 &sprint "%s%n%s%s" &mid $box-chars 3 1 2 &rig $box-chars 10 &mid $box-chars 4 1 " |  ### "
     ; +----+----+----+----+
     ; |   N|   E|   S|   W|
     ; || | ||-- ||-- || | |
@@ -906,19 +906,19 @@ define-macro Mahjongg
     set-variable :mjg-tile-r0 &cat :mjg-tile-r0 "   N   E   S   W"
     ; North
     set-variable :mjg-tile-r1 &sprint "%s%s%s%s " :mjg-tile-r1 &mid $box-chars 1 1 &mid $box-chars 2 1 &mid $box-chars 5 1
-    set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
+    set-variable :mjg-tile-r2 &sprint "%s%n "    :mjg-tile-r2 3 &lef $box-chars 1
     set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 9 1 &mid $box-chars 3 1 &mid $box-chars 4 1
     ; East
-    set-variable :mjg-tile-r1 &sprint "%s%s%2s "  :mjg-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10
+    set-variable :mjg-tile-r1 &sprint "%s%s%n "  :mjg-tile-r1 &mid $box-chars 1 1 2 &rig $box-chars 10
     set-variable :mjg-tile-r2 &sprint "%s%s%s  "  :mjg-tile-r2 &mid $box-chars 6 1 &rig $box-chars 10
-    set-variable :mjg-tile-r3 &sprint "%s%s%2s "  :mjg-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10
+    set-variable :mjg-tile-r3 &sprint "%s%s%n "  :mjg-tile-r3 &mid $box-chars 3 1 2 &rig $box-chars 10
     ; South
     set-variable :mjg-tile-r1 &sprint "%s%s%s%s " :mjg-tile-r1 &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
     set-variable :mjg-tile-r2 &sprint "%s%s%s%s " :mjg-tile-r2 &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 2 1
     set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &rig $box-chars 10  &mid $box-chars 4 1
     ; West
     set-variable :mjg-tile-r1 &sprint "%s%s %s "  :mjg-tile-r1 &lef $box-chars 1   &lef $box-chars 1
-    set-variable :mjg-tile-r2 &sprint "%s%3s "    :mjg-tile-r2 &lef $box-chars 1
+    set-variable :mjg-tile-r2 &sprint "%s%n "    :mjg-tile-r2 3 &lef $box-chars 1
     set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1
 
     set-variable $buffer-scheme .scheme.mjg1

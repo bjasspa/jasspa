@@ -352,9 +352,9 @@
   !endif
 ;  set-variable $debug 2
 !emacro
-set-variable .bragDrawCard.top &spr "%s%7s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
-set-variable .bragDrawCard.bot &spr "%s%7s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
-set-variable .bragDrawCard.clr &spr "%s%7s%s" &lef $box-chars 1 " " &lef $box-chars 1
+set-variable .bragDrawCard.top &spr "%s%n%s" &mid $box-chars 1 1 7 &rig $box-chars 10 &mid $box-chars 2 1
+set-variable .bragDrawCard.bot &spr "%s%n%s" &mid $box-chars 3 1 7 &rig $box-chars 10 &mid $box-chars 4 1
+set-variable .bragDrawCard.clr &spr "%s       %s" &lef $box-chars 1 &lef $box-chars 1
 set-variable .bragDrawCard.hl1 &spr "%s X   X %s" &lef $box-chars 1 &lef $box-chars 1
 set-variable .bragDrawCard.hl2 &spr "%s  X X  %s" &lef $box-chars 1 &lef $box-chars 1
 set-variable .bragDrawCard.hl3 &spr "%s   X   %s" &lef $box-chars 1 &lef $box-chars 1
@@ -773,11 +773,11 @@ set-variable .bragDrawCard.slb "                                Heart           
       !if &and &les .Brag.stt 5 &equ #l5 7
         67 screen-poke 30 55 .scheme.cardback "POO"
         67 screen-poke 30 91 .scheme.cardback "POO"
-        99 screen-poke 10 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 10 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 17 &rig $box-chars 10 &mid $box-chars 2 1
         99 screen-poke 11 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 12 4 .scheme.cardfore &spr "%s **  You Won  ** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 13 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 14 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        99 screen-poke 14 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 17 &rig $box-chars 10 &mid $box-chars 4 1
       !else
         67 screen-poke 30 55 .scheme.cardback "DOH"
         67 screen-poke 30 91 .scheme.cardback "DOH"
@@ -789,21 +789,21 @@ set-variable .bragDrawCard.slb "                                Heart           
       !if &and &les .Brag.stt 5 &equ #l5 1
         67 screen-poke 4 55 .scheme.cardback "POO"
         67 screen-poke 4 91 .scheme.cardback "POO"
-        99 screen-poke 10 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke 10 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 17 &rig $box-chars 10 &mid $box-chars 2 1
         99 screen-poke 11 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 12 4 .scheme.cardfore &spr "%s ** You Lost! ** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 13 4 .scheme.cardfore &spr "%s *************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 14 4 .scheme.cardfore &spr "%s%17s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        99 screen-poke 14 4 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 17 &rig $box-chars 10 &mid $box-chars 4 1
       !else
         67 screen-poke  4 55 .scheme.cardback "DOH"
         67 screen-poke  4 91 .scheme.cardback "DOH"
       !endif
     !endif
     67 screen-poke 50 5 .scheme.cardback &spr "Computer played: %s" &lget .Brag.h2d 19
-    67 screen-poke  9 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+    67 screen-poke  9 110 .scheme.cardback &spr "%s%n%s" &mid $box-chars 1 1 13 &rig $box-chars 10 &mid $box-chars 2 1
     67 screen-poke 10 110 .scheme.cardback &spr "%s   Details   %s" &lef $box-chars 1 &lef $box-chars 1
     99 screen-poke 10 114 .scheme.cardback "D"
-    67 screen-poke 11 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+    67 screen-poke 11 110 .scheme.cardback &spr "%s%n%s" &mid $box-chars 3 1 13 &rig $box-chars 10 &mid $box-chars 4 1
     !if &gre .Brag.stt 4
       67 screen-poke 17 5 .scheme.cardback "Showing hand sorted by computer."
     !elif &seq &lef .Brag.h1i 13 &lef .Brag.h1c 13
@@ -835,20 +835,20 @@ set-variable .bragDrawCard.slb "                                Heart           
       !endif
       set-variable #l3 &spr "Computer would have played differently (%s)%s" &lget .Brag.h1d 19 #l3
       67 screen-poke 17 5 .scheme.cardback #l3
-      67 screen-poke  1 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+      67 screen-poke  1 110 .scheme.cardback &spr "%s%n%s" &mid $box-chars 1 1 13 &rig $box-chars 10 &mid $box-chars 2 1
       67 screen-poke  2 110 .scheme.cardback &spr "%s   Show Me   %s" &lef $box-chars 1 &lef $box-chars 1
       99 screen-poke  2 119 .scheme.cardback "M"
-      67 screen-poke  3 110 .scheme.cardback &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+      67 screen-poke  3 110 .scheme.cardback &spr "%s%n%s" &mid $box-chars 3 1 13 &rig $box-chars 10 &mid $box-chars 4 1
       !iif &seq &lget .Brag.h1i 7 ""  bragHandInfoAddProbs .Brag.h1i
       set-variable #l3 &add &sub &lget .Brag.h1d 10 &lget .Brag.h1i 7 &sub &lget .Brag.h1d 14 &lget .Brag.h1i 8
       ;67 screen-poke  26 1 .scheme.cardback &spr "%s: %.4f" #l3 &fmul #l3 0.000000001
       !if &gre #l3 50000000
-        99 screen-poke  9 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+        99 screen-poke  9 88 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 1 1 18 &rig $box-chars 10 &mid $box-chars 2 1
         99 screen-poke 10 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 11 88 .scheme.cardfore &spr "%s ** You missed ** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 12 88 .scheme.cardfore &spr "%s **  a trick!  ** %s" &lef $box-chars 1 &lef $box-chars 1
         99 screen-poke 13 88 .scheme.cardfore &spr "%s **************** %s" &lef $box-chars 1 &lef $box-chars 1
-        99 screen-poke 14 88 .scheme.cardfore &spr "%s%18s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+        99 screen-poke 14 88 .scheme.cardfore &spr "%s%n%s" &mid $box-chars 3 1 18 &rig $box-chars 10 &mid $box-chars 4 1
       !endif
     !endif
   !else
@@ -1142,10 +1142,10 @@ set-variable .bragDrawCard.slb "                                Heart           
   ;ml-write &cat "brag-draw " @#
   set-variable .bragToast.len 0
   !iif @#  screen-update
-  67 screen-poke 13 110 .scheme.cardback &set #l0 &spr "%s%13s%s" &mid $box-chars 1 1 &rig $box-chars 10 &mid $box-chars 2 1
+  67 screen-poke 13 110 .scheme.cardback &set #l0 &spr "%s%n%s" &mid $box-chars 1 1 13 &rig $box-chars 10 &mid $box-chars 2 1
   67 screen-poke 14 110 .scheme.cardback &spr "%s  Continue   %s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke 14 113 .scheme.cardback "C"
-  67 screen-poke 15 110 .scheme.cardback &set #l1 &spr "%s%13s%s" &mid $box-chars 3 1 &rig $box-chars 10 &mid $box-chars 4 1
+  67 screen-poke 15 110 .scheme.cardback &set #l1 &spr "%s%n%s" &mid $box-chars 3 1 13 &rig $box-chars 10 &mid $box-chars 4 1
   67 screen-poke 21 110 .scheme.cardback #l0
   67 screen-poke 22 110 .scheme.cardback &spr "%s    Exit     %s" &lef $box-chars 1 &lef $box-chars 1
   99 screen-poke 22 116 .scheme.cardback "x"

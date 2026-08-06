@@ -3446,25 +3446,49 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 if(c == '%')                       /* Check for control */
                 {
                     p = s-1;
-                    count = 1;
+                    count = 0;
+                    c = *s++;
 get_flag:
-                    switch((c = *s++))
+                    switch(c)
                     {
                     case 'n':                   /* Replicate string */
-                        if (macarg (arg2) <= 0) 
+                        if(macarg(arg2) <= 0) 
                             return abortm;
-                        count *= meAtoi(arg2);
-                    case 's':                   /* String */
-                        if (macarg (arg2) <= 0)
+                        count = meAtoi(arg2);
+                        if(macarg(arg2) <= 0)
                             return abortm;
                         nn = (int) meStrlen(arg2);
                         while(--count >= 0)
                         {
-                            if(index+nn >= meBUF_SIZE_MAX)
-                                /* only copy amount we have space for */
-                                nn = meBUF_SIZE_MAX - 1 - index;
+                            /* only copy amount we have space for */
+                            if((nn > (meBUF_SIZE_MAX - 1 - index)) && 
+                               ((nn = meBUF_SIZE_MAX - 1 - index) <= 0))
+                                break;
                             memcpy(arg3+index,arg2,nn);
                             index += nn;
+                        }
+                        break;
+                    case 's':                   /* String */
+                        if(macarg(arg2) <= 0)
+                            return abortm;
+                        if((nn = (int) meStrlen(arg2)) > (meBUF_SIZE_MAX - 1 - index))
+                        {
+                            nn = meBUF_SIZE_MAX - 1 - index;
+                            memcpy(arg3+index,arg2,nn);
+                            index += nn;
+                        }
+                        else if(!count)
+                        {
+                            memcpy(arg3+index,arg2,nn);
+                            index += nn;
+                        }
+                        else
+                        {
+                            c = *s;
+                            *s = '\0';
+                            if((index += snprintf((char *)arg3+index,meBUF_SIZE_MAX-index,(char *)p,arg2)) > meBUF_SIZE_MAX-1)
+                                index = meBUF_SIZE_MAX-1;
+                            *s = c;
                         }
                         break;
                     case 'X':                   /* Hexadecimal */
@@ -3476,9 +3500,8 @@ get_flag:
                         nn = meAtoi(arg2);
                         c = *s;
                         *s = '\0';
-                        if(index < meBUF_SIZE_MAX-16)
-                            /* Only do it if we have enough space */
-                            index += sprintf((char *)arg3+index,(char *)p,nn);
+                        if((index += snprintf((char *)arg3+index,meBUF_SIZE_MAX-index,(char *)p,nn)) > meBUF_SIZE_MAX-1)
+                            index = meBUF_SIZE_MAX-1;
                         *s = c;
                         break;
                     case 'e':                   /* Float (double precision) */
@@ -3491,19 +3514,17 @@ get_flag:
                             dd = meAtof(arg2);
                             c = *s;
                             *s = '\0';
-                            if(index < meBUF_SIZE_MAX-16)
-                                /* Only do it if we have enough space */
-                                index += sprintf((char *)arg3+index,(char *)p,dd);
+                            if((index += snprintf((char *)arg3+index,meBUF_SIZE_MAX-index,(char *)p,dd)) > meBUF_SIZE_MAX-1)
+                                index = meBUF_SIZE_MAX-1;
                             *s = c;
                             break;
                         }
                     default:
-                        if(isDigit(c) || (c == '.'))
+                        if(isDigit(c) || (c == '-') || (c == '.') || (c == '+'))
                         {
-                            count = c - '0';
+                            count = 1;
                             while(((c = *s++) == '.') || isDigit(c)) 
-                                count = (count*10) + (c-'0');
-                            s--;
+                                ;
                             goto get_flag;
                         }
                         else if(index >= meBUF_SIZE_MAX)
