@@ -144,16 +144,16 @@
 
 0 define-macro tri-draw-col
   ; Get column cards
-  set-variable :tri-colup &ind &sprint "%:tri-col%dup" @1
-  set-variable :tri-coldn &ind &sprint "%:tri-col%ddn" @1
+  set-variable :tri-colup &ind &sprint ":tri-col%dup" @1
+  set-variable :tri-coldn &ind &sprint ":tri-col%ddn" @1
   ; Calculate column position
   set-variable :tri-col &add 1 &mul :tri-card-width &sub @1 1
   set-variable :tri-row :tri-rowdnmin
   ; Remember where we are on the row.
-  set-variable &ind &sprint "%:tri-col%dmin" @1 :tri-col
-  set-variable &ind &sprint "%:tri-col%dmax" @1 &add :tri-col 10
-  set-variable &ind &sprint "%:tri-row%dmin" @1 :tri-row
-  set-variable #g2 &sprint "%:tri-row%dmax" @1
+  set-variable &ind &sprint ":tri-col%dmin" @1 :tri-col
+  set-variable &ind &sprint ":tri-col%dmax" @1 &add :tri-col 10
+  set-variable &ind &sprint ":tri-row%dmin" @1 :tri-row
+  set-variable #g2 &sprint ":tri-row%dmax" @1
   set-variable &ind #g2 &add :tri-row :tri-card-hight
   ; Draw the downward facing cards
   set-variable #g0 :tri-coldn
@@ -216,7 +216,7 @@
   set-variable #g9 1
   !repeat
     ; Draw the cards
-    set-variable :tri-colup &ind &sprint "%:tri-hom%d" #g9
+    set-variable :tri-colup &ind &sprint ":tri-hom%d" #g9
     !if &gre &len :tri-colup 0
       set-variable :tri-char &lef :tri-colup 1
     !else
@@ -320,7 +320,7 @@
   !repeat
     ; Deal down facing cards
     set-variable #g0 &sub #g1 1
-    set-variable #g5 &sprint "%:tri-col%ddn" #g1
+    set-variable #g5 &sprint ":tri-col%ddn" #g1
     set-variable &ind #g5 &lef :tri-dealdn #g0
     set-variable :tri-dealdn &right :tri-dealdn #g0
     ; Deal up facing card
@@ -328,7 +328,7 @@
     !if &gre #g1 4
       set-variable #g0 &add #g1 1
     !endif
-    set-variable #g5 &sprint "%:tri-col%dup" #g1
+    set-variable #g5 &sprint ":tri-col%dup" #g1
     set-variable &ind #g5 &lef :tri-dealdn #g0
     set-variable :tri-dealdn &right :tri-dealdn #g0
     set-variable #g1 &add #g1 1
@@ -340,7 +340,7 @@
 0 define-macro tri-move-home
   set-variable :tri-char @1
   tri-decode-char :tri-char
-  set-variable #g1 &sprint "%:tri-hom%d" :tri-suit
+  set-variable #g1 &sprint ":tri-hom%d" :tri-suit
   !if &equ 0 &len &ind #g1                 ; Empty pile ??
     !if &equ 0 :tri-num                 ; Moving card an ace ??
       set-variable &ind #g1 :tri-char  ; Move card.
@@ -365,8 +365,8 @@
   tri-decode-char :tri-char
   ;
   ; Determine the destination column
-  set-variable #g0 &sprint "%:tri-col%ddn" :tri-pmc-col
-  set-variable #g1 &sprint "%:tri-col%dup" :tri-pmc-col
+  set-variable #g0 &sprint ":tri-col%ddn" :tri-pmc-col
+  set-variable #g1 &sprint ":tri-col%dup" :tri-pmc-col
   set-variable #g2 &ind #g1
   !if &equ :tri-num 12            ; King ??
     !if &and &equ &len &ind #g1 0 &equ &len &ind #g0 0
@@ -387,7 +387,7 @@
 !emacro
 
 0 define-macro tri-move-king
-  set-variable #g1 &sprint "%:tri-col%dup" :tri-inchr
+  set-variable #g1 &sprint ":tri-col%dup" :tri-inchr
   ; is there a king, if so if only one, do it
   set-variable #g2 &ind #g1
   set-variable #g0 0
@@ -410,7 +410,7 @@
       tri-decode-char :tri-char
       !if &equ :tri-num 12            ; King ??
         set-variable #g2 &rig #g2 1
-        set-variable &ind &sprint "%:tri-col%dup" :tri-outchr &lef &ind #g1 &sub &len &ind #g1 &len #g2
+        set-variable &ind &sprint ":tri-col%dup" :tri-outchr &lef &ind #g1 &sub &len &ind #g1 &len #g2
         set-variable &ind #g1 #g2
         tri-draw-col :tri-outchr
         tri-draw-col :tri-inchr
@@ -431,7 +431,7 @@
     tri-decode-char :tri-char
     !if &and &equ :tri-num 12 &equ :tri-suit #g4
       set-variable #g2 &rig #g2 1
-      set-variable &ind &sprint "%:tri-col%dup" :tri-outchr &lef &ind #g1 &sub &len &ind #g1 &len #g2
+      set-variable &ind &sprint ":tri-col%dup" :tri-outchr &lef &ind #g1 &sub &len &ind #g1 &len #g2
       set-variable &ind #g1 #g2
       tri-draw-col :tri-outchr
       tri-draw-col :tri-inchr
@@ -448,8 +448,8 @@
     ml-write &sprint "Move %s To %s" :tri-inchr :tri-outchr
     !if &sin :tri-inchr "1234567"
       ; Determine destination card
-      set-variable #g4 &sprint "%:tri-col%ddn" :tri-inchr
-      set-variable #g5 &sprint "%:tri-col%dup" :tri-inchr
+      set-variable #g4 &sprint ":tri-col%ddn" :tri-inchr
+      set-variable #g5 &sprint ":tri-col%dup" :tri-inchr
       set-variable #g6 &ind #g4
       set-variable #g7 &ind #g5
       ; No upward card
@@ -490,8 +490,8 @@
           !endif
         !else &sin :tri-outchr "1234567"
           ; Does kings separately
-          !if &seq "" &ind &sprint "%:tri-col%ddn" :tri-outchr
-            !if &seq "" &ind &sprint "%:tri-col%dup" :tri-outchr
+          !if &seq "" &ind &sprint ":tri-col%ddn" :tri-outchr
+            !if &seq "" &ind &sprint ":tri-col%dup" :tri-outchr
               tri-move-king
               set-variable :tri-inchr ""
               set-variable :tri-outchr ""

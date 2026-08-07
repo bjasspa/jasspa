@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil004.4,v 2.6 2026/08/06 23:29:07 jon Exp $
+.Id $Id: m4fil004.4,v 2.6 2026/08/07 20:54:40 jon Exp $
 .Im MicroEmacs macro;function;string
 .so me.tni
 .TH &sprintf 4
@@ -109,19 +109,13 @@ set-variable %result &sprintf "[%d] [%3d] [%x] [%3x]" 10 11 12 13
 .Me $ehf-scheme
 generates "\fC[10] [\ 11] [c] [\ \ d]\fR"
 .SH NOTES
-It is the  callers  responsibility  to  ensure  that  the  correct  number  of
-arguments is supplied to match the  requested  formatting  string. The results
-are undefined if an incorrect number of arguments are supplied.
+It is the callers responsibility to ensure that the correct number of arguments is supplied to match the requested
+formatting string. The results are undefined if an incorrect number of arguments are supplied.
 .PP
-A '\fB%\fR'  followed by a  character  that is not a  recognised  command is
-inserted  literally  and  consumes  no  argument, so a  mistyped  command is
-not reported as an error; every following  argument is then matched  against
-the wrong command, which can be difficult to spot. Use only the commands
-listed above.
+An error will be thrown if the \fB%\fR command is not one of the supported ones listed above.
 .SH COMPATIBILITY
-Prior to the 2026 release the \fBs\fR command treated \fIn\fR as a repeat count
-rather than a field width, so "\fC%13s\fR" inserted the string thirteen times.
-Macros written  against the older  behaviour  must be changed to use the
+Prior to August 2026 the \fBs\fR command treated \fIn\fR as a repeat count rather than a field width, so
+"\fC%13s\fR" inserted the string thirteen times. Macros written against the older behaviour must be changed to use the
 \fBn\fR command, which is unaffected:
 .Me $emf-scheme
 .CS

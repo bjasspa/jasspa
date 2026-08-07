@@ -7,7 +7,7 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Fri Jan 9 00:04:42 2004
 .\"
-.Id $Id: m2nar012.2,v 2.5 2026/08/06 21:57:27 jon Exp $
+.Id $Id: m2nar012.2,v 2.5 2026/08/07 21:51:23 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .TH macroOverview 4
@@ -233,21 +233,6 @@ define-macro Test
 !emacro
 .CE
 .Me $ehf-scheme
-.\" TODO: SP Remove once fixed
-Note that a call which passes on one of the macro's own arguments \fBand\fR names one of its own registers to be
-written to in the same call does not currently work; the value written does not reach the caller. Copy the argument
-into a register before passing it on:
-.Me $emf-scheme
-.CS
-; wrong - the result never reaches #l5
-suit-of @1 #l5
-; right
-set-variable #l0 @1
-suit-of #l0 #l5
-.CE
-.Me $ehf-scheme
-See \fCtest/emf/macroarg.emf\fR for the cases that do and do not work.
-.\" TODO: SP Remove end
 .SS "Directives"
 The
 .Hl "Macro Directives" MacroGlossary -

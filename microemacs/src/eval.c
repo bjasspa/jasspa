@@ -1690,7 +1690,7 @@ getUsrLclCmdVar(meUByte *vname, register meVariable *vp)
 static meUByte *
 getMacroArg(int index)
 {
-    meRegister *crp;
+    meRegister *crp, *svr;
     meUByte *oldestr, *ss;
     
     /* move the register pointer to the parent as any # reference
@@ -1703,6 +1703,7 @@ getMacroArg(int index)
     meRegCurr = crp->prev;
     if(alarmState & meALARM_VARIABLE)
         gmaLocalRegPtr = meRegCurr;
+    svr = gmaLocalRegPtr;
     if(index == 1)
     {
         execstr = token(ss,evalResult);
@@ -1720,6 +1721,7 @@ getMacroArg(int index)
         execstr = ss;
         do
         {
+            gmaLocalRegPtr = svr;
             execstr = token(execstr,evalResult);
             ss = getval(evalResult);
         } while(--index > 0);
@@ -3527,10 +3529,12 @@ get_flag:
                                 ;
                             goto get_flag;
                         }
-                        else if(index >= meBUF_SIZE_MAX)
+                        else if(c != '%')
+                            mlwrite(MWABORT|MWWAIT,(meUByte *) "[&spr error: unsupported format command %%%c]",c);
+                        else if(index >= meBUF_SIZE_MAX-1)
                             break;
                         else
-                            arg3[index++] = c;  /* Just a literal char - pass in */
+                            arg3[index++] = '%';
                     }
                 }
                 else if(index >= meBUF_SIZE_MAX-1)
