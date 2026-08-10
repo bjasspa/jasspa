@@ -613,6 +613,7 @@ typedef struct meAnchor {
 #define meANCHOR_EXEC_BUFFER   0x01000001
 #define meANCHOR_ABS_LINE      0x01000002
 #define meANCHOR_FILL_DOT      0x01000003
+#define meANCHOR_IPIPE_DOT     0x01000004
 #define meANCHOR_NARROW        0x02000000
 #define meANCHOR_POSITION_DOT  0x03000000
 #define meANCHOR_POSITION_MARK 0x04000000
@@ -1205,8 +1206,13 @@ typedef struct meFrame
 #define meIPIPE_NOAUTOWRAP  0x010       /* Auto-wrap disabled (\E[?7l)  */
 #define meIPIPE_HAVE_READ   0x020       /* Flags if not first read      */
 #define meIPIPE_RAW         0x040       /* No messing with pipe data !  */
+#define meIPIPE_LFISNL      0x080       /* LF/VT/FF imply a carriage return, see ONLCR */
 #define meIPIPE_NOUTF8      0x800       /* Suppress UTF-8 pipe decode   */
 #define meIPIPE_ANSICOLOR   0x1000      /* Translate ANSI SGR to semantic scheme tags */
+
+/* How long an unterminated OSC may be resumed across reads. Must be well above the 20ms
+ * readFromPipe timeout that caused the split; a stray ESC ] swallows at most this long. */
+#define meIPIPE_OSC_TIMEOUT 500
 
 /* ipipe ANSI colour encoding - the 24 bit rgb & 256 palette colours are reduced to one of the
  * 8 base colours plus a shade, this is all that is required to determine the meaning the colour
@@ -1257,6 +1263,7 @@ typedef struct meIPipe {
     meUByte            ansiFg;    /* current fg colour, see meIPIPE_COL_* */
     meUByte            ansiBg;    /* current bg colour, see meIPIPE_COL_* */
     meUByte            ansiSt;    /* current style, see meIPIPE_STY_* */
+    meTime             oscSplit;  /* when an OSC ran out of data, 0 if not mid-OSC */
 } meIPipe;
 
 #endif

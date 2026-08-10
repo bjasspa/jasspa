@@ -6,7 +6,7 @@
 ; copying information.
 ;
 ; Synopsis:    Hearts card game, user against 3 computer players
-; Authors:     Steve
+; Authors:     Steve Phillips
 ;
 ;  Card encoding (as per brag.emf):
 ;    code = 32 + (suit * 16) + rank,  suit 0=Hearts 1=Clubs 2=Diamonds 3=Spades
@@ -74,6 +74,11 @@
   set-variable #l1 @1
   set-variable #l2 ""
   set-variable #l3 &len #l1
+  ; nothing to do, and &mod would divide by zero on an empty string
+  !if &les #l3 2
+    set-variable @2 #l1
+    !return
+  !endif
   !repeat
     set-variable #l4 &mod $random #l3
     set-variable #l2 &cat #l2 &mid #l1 #l4 1
@@ -154,6 +159,43 @@
   set-variable @3 #l3
 !emacro
 
+; Estimate how many tricks hand @1 can win outright, result in @2.
+;
+; For each suit, count the unbroken run of top cards held - ace, then king if
+; also held, and so on.  Then, if the hand is longer in that suit than everyone
+; else put together, the whole suit runs once their cards are drawn out: with
+; no trumps a long solid suit simply cannot be stopped, and every other player
+; must discard onto it.  That is what makes a moon possible on a side suit and
+; not only on hearts.
+0 define-macro hvmSureTricks
+  set-variable #l1 @1
+  set-variable #l9 0
+  set-variable #l8 0
+  set-variable #l0 0
+  !repeat
+    set-variable #l2 &add 32 &mul #l0 16
+    hvmSuitLen #l1 #l2 #l3
+    !if #l3
+      set-variable #l4 0
+      set-variable #l5 12
+      !while &and &gre #l5 -1 &sin &itoa &add #l2 #l5 #l1
+        set-variable #l4 &add #l4 1
+        set-variable #l5 &sub #l5 1
+      !done
+      ; #l4 = run of top cards, #l3 = my length, #l6 = everyone else's.  The
+      ; top cards draw up to three of theirs each; only if that clears the suit
+      ; does the rest of my length run, otherwise I lose the lead and it is
+      ; stranded.
+      set-variable #l6 &sub 13 #l3
+      set-variable #l7 &con &gre &mul #l4 3 #l6 #l3 #l4
+      set-variable #l9 &add #l9 #l7
+      !iif &gre #l7 #l8  set-variable #l8 #l7
+    !endif
+  !until &gre &inc #l0 1 3
+  set-variable @2 #l9
+  set-variable @3 #l8
+!emacro
+
 ; Number of cards of suit @2 held in hand @1, result in @3
 0 define-macro hvmSuitLen
   set-variable #l1 @1
@@ -176,7 +218,175 @@
 ; single strongest passing heuristic and makes spade length the dominant
 ; consideration instead - holding the queen you want low spades to duck with,
 ; so the ace and king become the cards you most want rid of either way.
+; Is card @1 unable to win its suit - is a higher one of that suit still out
+; there, held by someone other than the owner of hand @2?  @3 <- 1 if so.
+0 define-macro hvmIsLoser
+  set-variable #l1 &atoi @1
+  set-variable #l2 &band #l1 112
+  set-variable #l3 &band #l1 15
+  set-variable #l4 @2
+  set-variable #l5 0
+  !while &les &inc #l3 1 13
+    set-variable #l6 &itoa &add #l2 #l3
+    !if &and &not &sin #l6 #l4 &not &sin #l6 .hvm.played
+      set-variable #l5 1
+      !break
+    !endif
+  !done
+  set-variable @3 #l5
+!emacro
+
+; The pass a player makes when it means to shoot, @1 = player, @2 <- cards.
+; It is the opposite of the normal pass: the aces and the length are exactly
+; what is wanted, so the low cards outside the longest suit go instead.  Note
+; this is loud - the player receiving three rags can read the intent.
+0 define-macro hvmShootPass
+  set-variable #l0 &ind &spr ".hvm.h%d" @1
+  set-variable #l8 -1
+  set-variable #l7 0
+  set-variable #l1 0
+  !repeat
+    hvmSuitLen #l0 &add 32 &mul #l1 16 #l2
+    !if &gre #l2 #l7
+      set-variable #l7 #l2
+      set-variable #l8 &add 32 &mul #l1 16
+    !endif
+  !until &gre &inc #l1 1 3
+  set-variable #l9 ""
+  set-variable #l6 .hvm.npass
+  !repeat
+    set-variable #l1 -99999
+    set-variable #l2 0
+    set-variable #l3 0
+    !while &len &set #l4 &mid #l0 &pinc #l3 1 1
+      set-variable #l5 &atoi #l4
+      set-variable #l5 &sub &sub 12 &band #l5 15 &con &equ &band #l5 112 #l8 8 0
+      !if &gre #l5 #l1
+        set-variable #l1 #l5
+        set-variable #l2 &sub #l3 1
+      !endif
+    !done
+    set-variable #l9 &cat #l9 &mid #l0 #l2 1
+    set-variable #l0 &cat &lef #l0 #l2 &rig #l0 &add #l2 1
+  !until &les &dec #l6 1 1
+  set-variable @2 #l9
+!emacro
+
+; Should player @1 go for the moon?  @2 = 0 to judge before the pass, 1 after.
+; @3 <- 1 to go for it.
+;
+; Before the pass the hand must be judged on what it will BECOME, not what it
+; is.  A shooter keeps its aces instead of passing them and still receives
+; three high cards from the right, so it ends up with six winners where a
+; normal player would have none; and a long suit tends to grow, because the
+; other players are short in it and want the void.  So the pre-pass test looks
+; at the ten cards that would be kept.  The second look, once the real hand is
+; there, is free - nothing has been played yet - so it can afford to be strict.
+0 define-macro hvmShootAssess
+  set-variable #l0 @1
+  !if &not .hvm.lsht
+    set-variable @3 0
+    !return
+  !endif
+  !if @2
+    hvmSureTricks &ind &spr ".hvm.h%d" #l0 #l2 #l7
+    set-variable @3 &con &and &and &gre #l2 &sub .hvm.shta 1 &gre #l7 &sub .hvm.shtc 1 &les &sub #l2 #l7 &add .hvm.shto 1 1 0
+  !else
+    hvmShootPass #l0 #l3
+    set-variable #l4 &ind &spr ".hvm.h%d" #l0
+    set-variable #l5 0
+    !while &len &set #l6 &mid #l3 &pinc #l5 1 1
+      set-variable #l4 &rep #l4 #l6 ""
+    !done
+    hvmSureTricks #l4 #l2 #l7
+    set-variable @3 &con &and &and &gre #l2 &sub .hvm.shtp 1 &gre #l7 &sub .hvm.shtc 1 &les &sub #l2 #l7 &add .hvm.shto 1 1 0
+  !endif
+!emacro
+
+; The moon needs every point, so the moment one goes elsewhere it is over.
+; Giving up costs far less than playing on - the hand simply reverts to normal
+; play - and it is that escape which makes an attempt worth making at all.
+0 define-macro hvmShootCheck
+  set-variable #l0 @1
+  set-variable #l1 0
+  !repeat
+    !iif &and &sub #l1 #l0 &gre &ind &spr ".hvm.m%d" #l1 0  set-variable &spr ".hvm.sh%d" #l0 0
+  !until &gre &inc #l1 1 3
+!emacro
+
+; Card choice while shooting, @1 = player, @2 <- card.  A different game: take
+; every trick that holds a point, and get the unavoidable losers out of the way
+; early, while hearts are unbroken and everyone is still holding the queen back.
+0 define-macro hvmShootPlay
+  set-variable #l0 @1
+  set-variable #l2 &ind &spr ".hvm.h%d" #l0
+  hvmLegal #l2 .hvm.tsuit #l1
+  !if &equ &len #l1 1
+    set-variable @2 #l1
+    !return
+  !endif
+  !if &and .hvm.shsh &and &les .hvm.tsuit 0 &and &les .hvm.tno 4 &not .hvm.brok
+    ; on lead and early - throw a card that can never win, now that it is cheap
+    set-variable #l9 ""
+    set-variable #l8 99
+    set-variable #l7 0
+    !while &len &set #l6 &mid #l1 &pinc #l7 1 1
+      hvmIsLoser #l6 #l2 #l5
+      !if #l5
+        set-variable #l4 &band &atoi #l6 15
+        !if &les #l4 #l8
+          set-variable #l8 #l4
+          set-variable #l9 #l6
+        !endif
+      !endif
+    !done
+    !if &len #l9
+      set-variable @2 #l9
+      !return
+    !endif
+  !endif
+  ; otherwise take the trick.  Winning cheaply is only safe when last to play -
+  ; anyone still to come can overtake a small winner and walk off with the
+  ; points, so otherwise the trick has to be taken with the highest card.
+  set-variable #l9 ""
+  set-variable #l8 -9999999
+  set-variable #l7 0
+  !while &len &set #l6 &mid #l1 &pinc #l7 1 1
+    set-variable #l3 &atoi #l6
+    set-variable #l4 &band #l3 15
+    !if &les .hvm.tsuit 0
+      ; Leading.  Take the queen of spades before laying the hearts down: while
+      ; everyone must still follow suit they cannot throw her away, but once
+      ; they are void she lands on whichever trick suits them.  So spades come
+      ; first while she is still out, then simply the biggest card left.
+      set-variable #l5 #l4
+      !iif &and .hvm.shsp &and &not &sin &itoa 90 .hvm.played &equ &band #l3 112 80  set-variable #l5 &add #l4 40
+    !elif &equ &band #l3 112 .hvm.tsuit
+      !if &gre #l4 .hvm.twrnk
+        set-variable #l5 &con &equ &len .hvm.trick 3 &sub 1000 #l4 &add 1000 #l4
+      !else
+        set-variable #l5 &sub 0 #l4
+      !endif
+    !else
+      set-variable #l5 &sub 0 #l4
+    !endif
+    !if &gre #l5 #l8
+      set-variable #l8 #l5
+      set-variable #l9 #l6
+    !endif
+  !done
+  set-variable @2 #l9
+!emacro
+
 0 define-macro hvmAiPass
+  set-variable #l0 @1
+  hvmShootAssess #l0 0 #l1
+  set-variable &spr ".hvm.sh%d" #l0 #l1
+  !if #l1
+    hvmShootPass #l0 #l1
+    set-variable @2 #l1
+    !return
+  !endif
   set-variable #l0 &ind &spr ".hvm.h%d" @1
   set-variable #l9 ""
   set-variable #l8 .hvm.npass
@@ -411,6 +621,8 @@
   set-variable &spr ".hvm.%str" #l9 .hvm.trick
   set-variable &spr ".hvm.%spl" #l9 .hvm.played
   set-variable &spr ".hvm.%sbk" #l9 .hvm.brok
+  set-variable &spr ".hvm.%sms" #l9 .hvm.msole
+  set-variable &spr ".hvm.%smt" #l9 .hvm.mtot
   set-variable &spr ".hvm.%sts" #l9 .hvm.tsuit
   set-variable &spr ".hvm.%stw" #l9 .hvm.twrnk
   set-variable &spr ".hvm.%stp" #l9 .hvm.tpts
@@ -435,6 +647,8 @@
   set-variable .hvm.trick &ind &spr ".hvm.%str" #l9
   set-variable .hvm.played &ind &spr ".hvm.%spl" #l9
   set-variable .hvm.brok &ind &spr ".hvm.%sbk" #l9
+  set-variable .hvm.msole &ind &spr ".hvm.%sms" #l9
+  set-variable .hvm.mtot &ind &spr ".hvm.%smt" #l9
   set-variable .hvm.tsuit &ind &spr ".hvm.%sts" #l9
   set-variable .hvm.twrnk &ind &spr ".hvm.%stw" #l9
   set-variable .hvm.tpts &ind &spr ".hvm.%stp" #l9
@@ -483,6 +697,23 @@
 0 define-macro hvmDeterminize
   set-variable #l0 @1
   hvmUnseen #l0 #l1
+  ; The cards this player passed went to a known opponent and, unless they have
+  ; been played since, are still in that opponent's hand.  That is certain
+  ; knowledge rather than a guess - the player's own memory of what it gave away
+  ; - so plant those cards instead of dealing them at random.  A card of the
+  ; pass that has already appeared is no longer held and is simply skipped.
+  set-variable .hvm.dkc ""
+  set-variable #l7 -1
+  !if .hvm.lpass
+    set-variable #l7 &band &add #l0 .hvm.pdir 3
+    set-variable #l5 0
+    !while &len &set #l4 &mid &ind &spr ".hvm.p%d" #l0 &pinc #l5 1 1
+      !if &sin #l4 #l1
+        set-variable .hvm.dkc &cat .hvm.dkc #l4
+        set-variable #l1 &rep #l1 #l4 ""
+      !endif
+    !done
+  !endif
   set-variable #l9 6
   !repeat
     hvmShuffle #l1 #l2
@@ -491,20 +722,26 @@
     !repeat
       set-variable #l4 &band &add #l0 #l3 3
       set-variable #l6 &ind &spr ".hvm.n%d" #l4
+      !iif &equ #l4 #l7  set-variable #l6 &sub #l6 &len .hvm.dkc
       hvmTake #l2 #l6 &con .hvm.lvoid &ind &spr ".hvm.vd%d" #l4 "0000" #l5 #l2
       !iif &les &len #l5 #l6  set-variable #l8 1
+      !iif &equ #l4 #l7  set-variable #l5 &cat .hvm.dkc #l5
       set-variable &spr ".hvm.h%d" #l4 #l5
     !until &gre &inc #l3 1 3
   !until &or &not #l8 &les &dec #l9 1 1
   !if #l8
-    ; the void constraints could not be satisfied - deal without them
+    ; the void constraints could not be satisfied - deal without them, but the
+    ; passed cards are known and are still placed
     hvmShuffle #l1 #l2
     set-variable #l3 1
     !repeat
       set-variable #l4 &band &add #l0 #l3 3
       set-variable #l6 &ind &spr ".hvm.n%d" #l4
-      set-variable &spr ".hvm.h%d" #l4 &lef #l2 #l6
+      !iif &equ #l4 #l7  set-variable #l6 &sub #l6 &len .hvm.dkc
+      set-variable #l5 &lef #l2 #l6
       set-variable #l2 &rig #l2 #l6
+      !iif &equ #l4 #l7  set-variable #l5 &cat .hvm.dkc #l5
+      set-variable &spr ".hvm.h%d" #l4 #l5
     !until &gre &inc #l3 1 3
   !endif
 !emacro
@@ -521,6 +758,17 @@
     set-variable @2 #l1
     !return
   !endif
+  ; Moon state for this player, taken from the running tally rather than by
+  ; calling hvmMoonMode - this is the inner loop and a macro call here would
+  ; cost more than the moon awareness is worth.
+  set-variable .hvm.fmm 0
+  !if &and .hvm.lrmn &and &gre .hvm.msole -1 &les .hvm.msole 4
+    !if &equ .hvm.msole #l0
+      !iif &gre &mul .hvm.mtot .hvm.mk2 .hvm.max  set-variable .hvm.fmm 2
+    !elif &gre &mul .hvm.mtot .hvm.mk1 .hvm.max
+      set-variable .hvm.fmm 1
+    !endif
+  !endif
   set-variable #l8 9999999
   set-variable #l9 ""
   set-variable #l7 0
@@ -531,11 +779,19 @@
     !if &les .hvm.tsuit 0
       set-variable #l5 &mul #l3 4
       !iif &gre #l4 0  set-variable #l5 &add #l5 &add 20 &mul #l4 3
+      !iif &equ .hvm.fmm 1  set-variable #l5 &sub #l5 &mul #l3 8
+      !iif &equ .hvm.fmm 2  set-variable #l5 &sub #l5 &mul #l3 10
     !elif &equ &band #l2 112 .hvm.tsuit
       !if &les #l3 .hvm.twrnk
         set-variable #l5 &sub -100 #l3
+        !iif &equ .hvm.fmm 2  set-variable #l5 900
       !else
         set-variable #l5 &add &add 100 &mul .hvm.tpts 10 #l3
+        !if &equ .hvm.fmm 2
+          set-variable #l5 &sub -200 #l3
+        !elif &and &equ .hvm.fmm 1 .hvm.tpts
+          set-variable #l5 &sub -150 #l3
+        !endif
       !endif
       !iif &and &equ #l2 90 &gre .hvm.twrnk 10  set-variable #l5 -500
     !elif &equ #l2 90
@@ -545,6 +801,8 @@
     !else
       set-variable #l5 &neg #l3
     !endif
+    ; shooting and void in the led suit - hang on to the high cards
+    !iif &and &equ .hvm.fmm 2 &and &gre .hvm.tsuit 0 &not &equ &band #l2 112 .hvm.tsuit  set-variable #l5 &add 500 &neg #l3
     !if &les #l5 #l8
       set-variable #l8 #l5
       set-variable #l9 #l6
@@ -681,6 +939,14 @@
 ; always fall back to the heuristic inside a playout so this cannot recurse.
 0 define-macro hvmAiPlay
   set-variable #l0 @1
+  !if &ind &spr ".hvm.sh%d" #l0
+    hvmShootCheck #l0
+  !endif
+  !if &ind &spr ".hvm.sh%d" #l0
+    hvmShootPlay #l0 #l1
+    set-variable @2 #l1
+    !return
+  !endif
   !if &and .hvm.lsamp &not .hvm.inpo
     hvmPimcPlay #l0 #l1
   !else
@@ -691,6 +957,9 @@
 
 ; Expand the difficulty level into the settings everything else reads
 0 define-macro hvmSetLevel
+  ; a level saved by an older release may be out of range now
+  !iif &les .hvm.olvl 1  set-variable .hvm.olvl 1
+  !iif &gre .hvm.olvl &llen .hvm.lvname  set-variable .hvm.olvl &llen .hvm.lvname
   set-variable .hvm.lsamp &lget .hvm.lvsamp .hvm.olvl
   set-variable .hvm.lvoid &lget .hvm.lvvoid .hvm.olvl
   set-variable .hvm.lmoon &lget .hvm.lvmoon .hvm.olvl
@@ -699,6 +968,9 @@
   set-variable .hvm.lpvd  &lget .hvm.lvpvd .hvm.olvl
   set-variable .hvm.lcand &lget .hvm.lvcand .hvm.olvl
   set-variable .hvm.lerr  &lget .hvm.lverr .hvm.olvl
+  set-variable .hvm.lpass &lget .hvm.lvpass .hvm.olvl
+  set-variable .hvm.lrmn  &lget .hvm.lvrmn .hvm.olvl
+  set-variable .hvm.lsht  &lget .hvm.lvsht .hvm.olvl
 !emacro
 
 ;-------------------------------------------------------------------------------
@@ -714,9 +986,12 @@
     set-variable &spr ".hvm.w%d" #l1 0
     set-variable &spr ".hvm.m%d" #l1 0
     set-variable &spr ".hvm.vd%d" #l1 "0000"
+    set-variable &spr ".hvm.sh%d" #l1 0
     set-variable &spr ".hvm.p%d" #l1 ""
   !until &gre &inc #l1 1 3
   set-variable .hvm.played ""
+  set-variable .hvm.msole -1
+  set-variable .hvm.mtot 0
   set-variable .hvm.brok 0
   set-variable .hvm.trick ""
   set-variable .hvm.tsuit -1
@@ -776,6 +1051,15 @@
     set-variable .hvm.lead #l0
     set-variable .hvm.turn #l0
   !endif
+  ; the second look, now the real thirteen are in - abandoning here costs
+  ; nothing because nothing has been played
+  set-variable #l0 0
+  !repeat
+    !if &ind &spr ".hvm.sh%d" #l0
+      hvmShootAssess #l0 1 #l1
+      set-variable &spr ".hvm.sh%d" #l0 #l1
+    !endif
+  !until &gre &inc #l0 1 3
   set-variable .hvm.cur 0
   set-variable .hvm.stt 2
 !emacro
@@ -819,6 +1103,18 @@
   set-variable #l0 .hvm.twin
   set-variable &spr ".hvm.w%d" #l0 &add &ind &spr ".hvm.w%d" #l0 .hvm.tpts
   set-variable &spr ".hvm.m%d" #l0 &add &ind &spr ".hvm.m%d" #l0 .hvm.tmpt
+  ; Running moon tally.  .hvm.msole is the one player holding every point so
+  ; far (-1 nobody has any yet, 99 more than one player has some) and
+  ; .hvm.mtot is the total taken.  Kept up to date here so the rollout policy
+  ; can read the moon state without calling a macro in its inner loop.
+  !if &gre .hvm.tmpt 0
+    set-variable .hvm.mtot &add .hvm.mtot .hvm.tmpt
+    !if &les .hvm.msole 0
+      set-variable .hvm.msole #l0
+    !elif &sub .hvm.msole #l0
+      set-variable .hvm.msole 99
+    !endif
+  !endif
   set-variable .hvm.lead #l0
   set-variable .hvm.turn #l0
   ; back to playing - the trick-complete pause state is over.  hvmEndHand
@@ -1416,8 +1712,36 @@ set-variable .hvm.lvqtr  "|0|0|0|0|0|"
 set-variable .hvm.lvpvd  "|0|0|0|0|0|"
 set-variable .hvm.lvcand "|0|0|0|5|6|"
 set-variable .hvm.lverr  "|80|50|0|0|0|"
+set-variable .hvm.lvpass "|0|0|0|1|1|"
+; Moon-aware rollouts measured 0.8 points a hand WORSE at Expert over 400
+; hands, so they are off.  The code is kept because the thresholds were tuned
+; for real play, not for rollouts, and a more cautious setting may yet pay.
+set-variable .hvm.lvrmn  "|0|0|0|0|0|"
+; Moon shooting is OFF everywhere.  The play engine works - it makes every hand
+; the rig proves is makeable - but no version of the hand detector beat ordinary
+; play on an adequate sample.  Five formulations were measured; each looked
+; promising on a few dozen attempts and regressed to worse than the 8.2 point
+; baseline on a few hundred.  See test/hearts/README.txt.
+set-variable .hvm.lvsht  "|0|0|0|0|0|"
 ; moon thresholds - defend when one player holds more than max/mk1, go for it
 ; when I hold more than max/mk2.  Both tuned by measurement, see the round-robin.
+; sure tricks needed to go for the moon - before the pass, judged on the ten
+; cards kept, and after it on the real hand.  Set by measurement.
+; Two refinements that measured WORSE and are off.  Shedding losers early costs
+; more than it saves - a hand strong enough to attempt does not need the extra
+; trick and the shed risks a point falling.  Leading spades to fetch the queen
+; ruins a long-suit hand, which hands the lead away for one low spade.  Simply
+; leading the biggest card matched the ceiling on every hand tested.
+set-variable .hvm.shsh 0
+set-variable .hvm.shsp 0
+; how many of the sure tricks must sit in one suit.  A hand whose winners are
+; all in a long suit costs nothing when the shoot fails - it simply never wins
+; a trick - whereas one built on scattered aces takes most of the pack.
+set-variable .hvm.shtc 8
+; winners allowed outside the long suit - the fewer, the cheaper a failure
+set-variable .hvm.shto 1
+set-variable .hvm.shtp 5
+set-variable .hvm.shta 7
 set-variable .hvm.mk1 2
 set-variable .hvm.mk2 3
 set-variable .hvm.rnks "23456789TJQKA"
@@ -1484,7 +1808,18 @@ set-variable .hvm.mmode 0
 set-variable .hvm.trick ""
 set-variable .hvm.played ""
 set-variable .hvm.brok 0
+set-variable .hvm.msole -1
+set-variable .hvm.mtot 0
+set-variable .hvm.fmm 0
+set-variable .hvm.lrmn 0
+set-variable .hvm.lsht 0
+set-variable .hvm.sh0 0
+set-variable .hvm.sh1 0
+set-variable .hvm.sh2 0
+set-variable .hvm.sh3 0
 set-variable .hvm.inpo 0
+set-variable .hvm.dkc ""
+set-variable .hvm.lpass 0
 set-variable .hvm.vd0 "0000"
 set-variable .hvm.vd1 "0000"
 set-variable .hvm.vd2 "0000"

@@ -762,7 +762,10 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
     {
         fwrite(buff,1,bRead,logFp);
 #if (IPIPE_DUMP == 2)
-        fwrite("ZZCZ",1,4,logFp);
+        fputc('Z',logFp);
+        fputc('Z',logFp);
+        fputc('C'+doSleep,logFp);
+        fputc('Z',logFp);
         fflush(logFp);
 #endif
     }
@@ -817,7 +820,10 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
     {
         fwrite(buff,1,ii,logFp);
 #if (IPIPE_DUMP == 2)
-        fwrite("ZZDZ",1,4,logFp);
+        fputc('Z',logFp);
+        fputc('Z',logFp);
+        fputc('C'+doSleep,logFp);
+        fputc('Z',logFp);
         fflush(logFp);
 #endif
     }
@@ -827,6 +833,77 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
 
 
 #endif
+
+#if (IPIPE_DUMP == 2)
+/* (lineCount-1 - dotLineNo) == (noRows-1 - curRow) must hold. When the left side is larger the
+ * buffer has gained rows nothing can reclaim - ipipeAddLine only inserts *before* lp_old.
+ * The counters are what is in doubt, so the list is walked and both results reported. */
+static void
+ipipeCheckInvariant(meIPipe *ipipe, const char *where)
+{
+    meBuffer *bp;
+    meLine   *lp;
+    int       count=0, dotNo=-1, below, want;
+
+    if((logFp == NULL) || (ipipe->noRows <= 0) || ((bp = ipipe->bp) == NULL))
+        return;
+    for(lp = meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp = meLineGetNext(lp))
+    {
+        if(lp == bp->dotLine)
+            dotNo = count;
+        count++;
+    }
+    if(dotNo < 0)
+    {
+        /* the cursor line is not in the buffer at all - the backward walk in move_cursor_pos
+         * has no baseLine guard, so an over-large curRow wraps it through the sentinel */
+        fprintf(logFp,":INVAR:%s:DOTLINE-LOST:curRow=%d noRows=%d dotLineNo=%d lineCount=%d walked=%d:",
+                where,(int)ipipe->curRow,(int)ipipe->noRows,(int)bp->dotLineNo,(int)bp->lineCount,count);
+        fflush(logFp);
+        return;
+    }
+    below = count - 1 - dotNo;
+    want = ipipe->noRows - 1 - ipipe->curRow;
+    /* below < want is benign, it just means the buffer has yet to fill the screen */
+    if((below > want) || (count != (int)bp->lineCount) || (dotNo != (int)bp->dotLineNo))
+        fprintf(logFp,":INVAR:%s:below=%d want=%d excess=%d curRow=%d noRows=%d dotLineNo=%d/%d lineCount=%d/%d:",
+                where,below,want,below-want,(int)ipipe->curRow,(int)ipipe->noRows,
+                dotNo,(int)bp->dotLineNo,count,(int)bp->lineCount);
+    else
+        return;
+    fflush(logFp);
+}
+#define ipipeCheckInvar(ipipe,where) ipipeCheckInvariant(ipipe,where)
+#define ipipeLogClamp(want,got)                                              \
+do {                                                                         \
+    if(logFp != NULL)                                                        \
+    {                                                                        \
+        fprintf(logFp,":WALK-CLAMP:want=%d got=%d:",(int)(want),(int)(got));  \
+        fflush(logFp);                                                       \
+    }                                                                        \
+} while(0)
+#define ipipeLogDrop(what)                                                   \
+do {                                                                         \
+    if(logFp != NULL)                                                        \
+    {                                                                        \
+        fprintf(logFp,":ESCDROP:%s:",what);                                  \
+        fflush(logFp);                                                       \
+    }                                                                        \
+} while(0)
+#else
+#define ipipeCheckInvar(ipipe,where)
+#define ipipeLogDrop(what)
+#define ipipeLogClamp(want,got)
+#endif
+
+static meTime
+ipipeTimeNow(void)
+{
+    struct meTimeval tp;
+
+    gettimeofday(&tp,NULL);
+    return ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
+}
 
 #define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,doSleep)            \
 ((curROff < curRRead) ?                                                      \
@@ -856,10 +933,7 @@ do {                                                                         \
         meFree(lp_old);                                                      \
     }                                                                        \
     else                                                                     \
-    {                                                                        \
         bp->dotLineNo--;                                                     \
-        ipipe->curRow--;                                                     \
-    }                                                                        \
     bp->dotLineNo += noLines;                                                \
     bp->lineCount += noLines;                                                \
     ipipe->curRow = curRow;                                                  \
@@ -1142,7 +1216,7 @@ ipipeRead(meIPipe *ipipe)
 {
     meBuffer *bp=ipipe->bp;
     meLine   *lp_old;
-    int     len, curOff, maxOff, curRow, ii;
+    int     len, maxOff, curRow, ii;
     meUInt  noLines;
     meUByte  *p1, cc, buff[meBUF_SIZE_MAX+1], cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
     int     curROff=0, curRRead=0;
@@ -1208,7 +1282,13 @@ ipipeRead(meIPipe *ipipe)
     len = ipipeDecodeLine(ipipe,lp_old->text,buff,cbuff,bp->dotOffset);
     p1 = buff+len;
     noLines = 0;
-    curOff = getcol(buff,len,bp->tabWidth);
+    if(ipipe->oscSplit != 0)
+    {
+        if((ipipeTimeNow() - ipipe->oscSplit) <= meIPIPE_OSC_TIMEOUT)
+            goto osc_consume;
+        ipipe->oscSplit = 0;
+        ipipeLogDrop("OSC-EXPIRED");
+    }
     for(;;)
     {
         if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,scrollWrapCUP))
@@ -1257,28 +1337,30 @@ ipipeRead(meIPipe *ipipe)
         {
         case 0: /* ignore */
             break;
-        case 7:
+        case 0x07:
             TTbell();
             break;
-        case 8:
+        case 0x08:
         case 0x7f: /* DEL - some shells/consoles echo this for erase, treat as backspace */
             if(p1 != buff)
             {
                 p1--;
                 len--;
-                curOff = getcol(buff,len,bp->tabWidth);
             }
             break;
-        case '\r':
-            p1 = buff;
-            len = curOff = 0;
-            break;
-        case meCHAR_NL:
+        case 0x09: /* HT - move the cursor right to the next terminal tab stop (8 based) */
+            prmL = 8 - (len & 0x07);
+            goto cursor_forward;
+        case 0x0a: /* LF */
+        case 0x0b: /* VT */
+        case 0x0c: /* FF */
+            /* LF, VT and FF are the same in moving down one line, the tty driver's ONLCR translation setting affects
+             * only LF and effectivrly adds a CR. With no PTY nothing supplies the CR so meIPIPE_LFISNL is forced on */
             if((ipipe->flag & meIPIPE_USEPTY) && !(ipipe->flag & meIPIPE_OVERWRITE) && (curRow+1 < ipipe->noRows))
             {
                 /* if in over-write mode and not at the bottom, move instead */
                 prmA = curRow + 1;
-                prmL = 0;
+                prmL = (ipipe->flag & meIPIPE_LFISNL) ? 0:len;
                 goto move_cursor_pos;
             }
             ii = ipipeAddLine(ipipe,lp_old,buff,cbuff,NULL);
@@ -1286,16 +1368,26 @@ ipipeRead(meIPipe *ipipe)
             if(curRow < ipipe->noRows-1)
                 curRow += ii;
             p1 = buff;
+            if(!(ipipe->flag & meIPIPE_LFISNL) && (len > 0))
+            {
+                memset(buff,' ',len);
+                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                    memset(cbuff,'A',len);
+                p1 = buff+len;
+            }
+            else
+                len = 0;
             *p1 = '\0';
-            len = curOff = 0;
 #ifdef _WIN32
             /* See scrollWrapCUP comment above */
             scrollWrapCUP = 1;
 #endif
             break;
-        case 15: /* ignore */
+        case 0x0d: /* CR */
+            p1 = buff;
+            len = 0;
             break;
-        case 27:
+        case 0x1b:
             if((ipipe->flag & meIPIPE_USEPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
             {
                 int gotQ=0, gotN=0, gotC=0, prmS[meIPIPE_PRM_MAX], prmC=0;
@@ -1339,15 +1431,22 @@ get_another:
                             goto get_another;
                         case '@':
                         {
+                            /* ICH - insert prmL blanks, shifting the rest of the line right. Check prmL to avoid overruns */
                             if(!gotN)
                                 prmL = 1;
-                            ii = meStrlen(p1);
+                            if(prmL > (maxOff - len))
+                                prmL = maxOff - len;
+                            if(prmL <= 0)
+                                break;
+                            if((ii = meStrlen(p1)) > (maxOff - len - prmL))
+                                ii = maxOff - len - prmL;
                             if(ipipe->flag & meIPIPE_ANSICOLOR)
                             {
                                 memmove(cbuff+len+prmL,cbuff+len,ii);
                                 memset(cbuff+len,(char)ipipe->ansiCc,prmL);
                             }
-                            memmove(p1+prmL,p1,ii+1);
+                            memmove(p1+prmL,p1,ii);
+                            p1[prmL+ii] = '\0';
                             memset(p1,' ',prmL);
                             p1 += prmL;
                             len += prmL;
@@ -1371,8 +1470,12 @@ get_another:
                         case 'C':
                             if(!gotN)
                                 prmL = 1;
+cursor_forward:
+                            /* CUF - move right, stopping at the right margin. Note the clamp must not go negative! */
                             if((prmL + len) >= maxOff)
                                 prmL = maxOff - len - 1;
+                            if(prmL <= 0)
+                                break;
                             ii = prmL - meStrlen(p1);
                             p1 += prmL;
                             len += prmL;
@@ -1383,17 +1486,18 @@ get_another:
                                     memset(cbuff+(p1-ii-buff),'A',ii);
                                 *p1 = '\0';
                             }
-                            curOff = getcol(buff,len,bp->tabWidth);
                             break;
 
                         case 'D':
+                            /* CUB - move left, stopping at column 0 */
                             if(!gotN)
                                 prmL = 1;
+                            else if(prmL <= 0)
+                                break;
                             if(len < prmL)
                                 prmL = len;
                             p1 -= prmL;
                             len -= prmL;
-                            curOff = getcol(buff,len,bp->tabWidth);
                             break;
 
                         case 'G':
@@ -1416,7 +1520,6 @@ get_another:
                                     memset(cbuff+(p1-ii-buff),'A',ii);
                                 *p1 = '\0';
                             }
-                            curOff = getcol(buff,len,bp->tabWidth);
                             break;
 
                         case 'H':
@@ -1466,10 +1569,17 @@ move_cursor_pos:
                             }
                             else
                             {
-                                while(curRow != prmA)
+                                /* the list is circular, without the baseLine test an over-large
+                                 * curRow walks through the sentinel to the end of the buffer */
+                                while((curRow != prmA) && (meLineGetPrev(lp_old) != bp->baseLine))
                                 {
                                     curRow--;
                                     lp_old = meLineGetPrev(lp_old);
+                                }
+                                if(curRow != prmA)
+                                {
+                                    bp->dotLineNo += curRow - prmA;
+                                    ipipeLogClamp(prmA,curRow);
                                 }
                             }
                             len = prmL;
@@ -1485,7 +1595,6 @@ move_cursor_pos:
                                     memset(cbuff+(p1-prmL-buff),'A',prmL);
                                 *p1 = '\0';
                             }
-                            curOff = getcol(buff,len,bp->tabWidth);
                             noLines = 0;
                             break;
 
@@ -1611,7 +1720,7 @@ move_cursor_pos:
                             break;
                         case 'n':
                             {
-                                char outb[20];
+                                char outb[32];
 
                                 if(prmL != 6)
 #ifndef NDEBUG
@@ -1619,7 +1728,7 @@ move_cursor_pos:
 #else
                                     break;
 #endif
-                                sprintf(outb,"\033[%d;%dR",curRow,len);
+                                sprintf(outb,"\033[%d;%dR",curRow+1,len+1);
 #ifdef _WIN32
                                 { DWORD wr; WriteFile(ipipe->outWfd,outb,(DWORD)strlen(outb),&wr,NULL); }
 #else
@@ -1630,8 +1739,33 @@ move_cursor_pos:
                         case 'J':
                             {
                                 meLine *lp;
+                                int jj;
 
                                 lp = lp_old;
+                                if(prmL == 1)
+                                {
+                                    ii = (*p1 == '\0') ? len:len+1;
+                                    memset(buff,' ',ii);
+                                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                        memset(cbuff,'A',ii);
+                                    for(jj=curRow ; jj>0 ; jj--)
+                                    {
+                                        if((lp = meLineGetPrev(lp)) == bp->baseLine)
+                                            break;
+                                        if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                            ipipeClearColorLine(lp);
+                                        else
+                                        {
+                                            memset(lp->text,' ',meLineGetLength(lp));
+                                            lp->flag |= meLINE_CHANGED;
+                                        }
+                                    }
+                                    break;
+                                }
+                                if(prmL == 3)
+                                    /* erase scrollback. ME's buffer is the session log, losing
+                                     * it would be worse than ignoring the request */
+                                    break;
                                 if(prmL == 2)
                                 {
                                     for(ii=curRow ; ii>0 ; ii--)
@@ -1667,11 +1801,22 @@ move_cursor_pos:
                                     }
                                     lp = meLineGetNext(lp);
                                 }
-                                curOff = len;
                                 break;
                             }
                         case 'K':
-                            *p1 = '\0';
+                            if(!gotN || (prmL == 0))
+                                *p1 = '\0';
+                            else if(prmL <= 2)
+                            {
+                                /* 1 erases up to and including the cursor, 2 the whole line;
+                                 * both blank rather than truncate so the cursor column survives */
+                                ii = (prmL == 1) ? ((*p1 == '\0') ? len:len+1):len;
+                                memset(buff,' ',ii);
+                                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                                    memset(cbuff,'A',ii);
+                                if(prmL == 2)
+                                    *p1 = '\0';
+                            }
                             break;
                         case 'P':
                             {
@@ -1679,6 +1824,8 @@ move_cursor_pos:
                                 int ll;
                                 if(!gotN)
                                     prmL = 1;
+                                else if(prmL <= 0)
+                                    break;
                                 if((ll = meStrlen(p1) - prmL) <= 0)
                                     *p1 = '\0';
                                 else
@@ -1695,6 +1842,8 @@ move_cursor_pos:
                                 int ll;
                                 if(!gotN)
                                     prmL = 1;
+                                else if(prmL <= 0)
+                                    break;
                                 if((ll = meStrlen(p1)) <= prmL)
                                     *p1 = '\0';
                                 else
@@ -1742,6 +1891,11 @@ cant_handle_this:
                             break;
                         }
                     }
+                    else
+                        /* the rest of the CSI never arrived inside readFromPipe's timeout, so the
+                         * sequence was split across ipipeRead calls and is dropped, parameters and
+                         * all - there is no parser state carried between calls to resume from */
+                        ipipeLogDrop("CSI");
                     break;
                 }
                 else if(cc == '7')
@@ -1758,14 +1912,36 @@ cant_handle_this:
                 }
                 else if(cc == ']')
                 {
-                    /* OSC: consume until BEL (0x07) or ST (ESC \) */
-                    do {
+osc_consume:
+                    /* OSC: consume until BEL (0x07) or ST (ESC \). The payload is unbounded
+                     * so this is the one sequence worth resuming across reads, see oscSplit. */
+                    for(;;)
+                    {
                         if(!ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
+                        {
+                            /* Only the first bail records the time; refreshing it here would let
+                             * a continuously writing child hold the resume open for ever. */
+                            if(ipipe->oscSplit == 0)
+                            {
+                                ipipe->oscSplit = ipipeTimeNow();
+                                ipipeLogDrop("OSC");
+                            }
                             break;
-                    } while((cc != 7) && (cc != 27));
-                    /* if terminated by ESC, consume the following \ */
-                    if(cc == 27)
-                        ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1);
+                        }
+                        if(cc == 7)
+                        {
+                            ipipe->oscSplit = 0;
+                            break;
+                        }
+                        if(cc == 27)
+                        {
+                            /* ST is ESC \ and the two are always written together, so if the
+                             * backslash is late it simply appears as text */
+                            ipipe->oscSplit = 0;
+                            ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1);
+                            break;
+                        }
+                    }
                     break;
                 }
                 else if(cc == '(' || cc == ')')
@@ -1777,6 +1953,13 @@ cant_handle_this:
             }
             /* fall through */
         default:
+            if(cc < 0x20)
+            {
+                /* ignore remaining C0 chars: 0x01-0x06, 0x0E-0x1A, 0x1C-0x1F. A lone ESC would drop here as well */
+                if(cc == 0x1b)
+                    ipipeLogDrop("ESC");
+                break;
+            }
 #if MEOPT_EXTENDED
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
             {
@@ -1811,14 +1994,13 @@ cant_handle_this:
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
 #endif
-            if(curOff >= maxOff)
+            if(len >= maxOff)
             {
                 if(ipipe->flag & meIPIPE_NOAUTOWRAP)
                 {
                     /* stay at right margin - back up and overwrite last column */
                     p1--;
                     len--;
-                    curOff = maxOff - 1;
                 }
 #ifdef _WIN32
                 else if((scrollWrapCUP == 2) && (meLineGetLength(meLineGetNext(lp_old)) == 0))
@@ -1830,7 +2012,7 @@ cant_handle_this:
                         curRow++;
                     p1 = buff;
                     *p1 = '\0';
-                    len = curOff = 0;
+                    len = 0;
                 }
 #endif
                 else
@@ -1872,7 +2054,7 @@ cant_handle_this:
                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                         memmove(cbuff,cbuff+splitIdx,meBUF_SIZE_MAX-splitIdx);
                     p1 = buff;
-                    len = curOff = 0;
+                    len = 0;
                 }
             }
 #ifdef _WIN32
@@ -1890,33 +2072,14 @@ cant_handle_this:
             }
             else if(*p1 == '\0')
                 p1[1] = '\0';
-            else if((cc == meCHAR_TAB) && (get_tab_pos(curOff,bp->tabWidth) == 0))
-            {
-                /* theres a strangeness with vt100 tab as it doesn't
-                 * seem to erase the next character and seems to be used
-                 * (at least by tcsh) to move the cursor one to the right.
-                 * So catch this special case of one character move.
-                 * NOTE the previous else if checked there is another char.
-                 */
-                p1++;
-                curOff++;
-                break;
-            }
             if(ipipe->flag & meIPIPE_ANSICOLOR)
                 cbuff[p1-buff] = ipipe->ansiCc;
             *p1++ = cc;
-            if(isDisplayable(cc))
-                curOff++;
-            else if(cc == meCHAR_TAB)
-                curOff += get_tab_pos(curOff, bp->tabWidth) + 1;
-            else if (cc  < 0x20)
-                curOff += 2;
-            else
-                curOff += 4;
             len++;
         }
     }
     ipipeStoreInputPos();
+    ipipeCheckInvar(ipipe,"read");
 #ifdef _UNIX
 #if MEOPT_CLIENTSERVER
     /* the unix client server trashed the rfd at the top of this function due
@@ -1929,7 +2092,7 @@ cant_handle_this:
     
     if((ii=ipipe->pid) < 0)
     {
-        curOff = ipipe->exitCode;
+        curRow = ipipe->exitCode;
         ipipeRemove(ipipe);
     }
 #ifdef _WIN32
@@ -1955,7 +2118,7 @@ cant_handle_this:
         if(ii < 0)
         {
             meStrcpy(rbuff,resultStr);
-            sprintf((char *)resultStr,"%d",curOff);
+            sprintf((char *)resultStr,"%d",curRow);
         }
         execBufferFunc(bp,bp->ipipeFunc,(meEBF_ARG_GIVEN|meEBF_USE_B_DOT|meEBF_HIDDEN),(ii >= 0));
         if(ii < 0)
@@ -2013,40 +2176,126 @@ ipipeWrite(int f, int n)
     return meTRUE;
 }
 
+/* DELETING OFF SCREEN CONTENT - discards buffer lines below the cursor when the window
+ * shrinks. The child has the new size and will never address those rows again, and leaving
+ * them strands them for good (ipipeAddLine only inserts *before* lp_old). If that loss ever
+ * matters, the alternative is to keep them and push ipipe->curRow down instead, at the cost
+ * of ME and the child disagreeing about which buffer line is which screen row. */
+#if (IPIPE_DUMP == 2)
+/* walk the list rather than trust bp->lineCount / bp->dotLineNo */
+static int
+ipipeWalk(meBuffer *bp, int *dotNo)
+{
+    meLine *lp;
+    int nn=0;
+
+    *dotNo = -1;
+    for(lp = meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp = meLineGetNext(lp))
+    {
+        if(lp == bp->dotLine)
+            *dotNo = nn;
+        nn++;
+    }
+    return nn;
+}
+#endif
+
+
+static void
+ipipeTrimTail(meIPipe *ipipe)
+{
+    meBuffer *bp=ipipe->bp;
+    meWindow *wp;
+    meLine   *lp, *lpp;
+    meInt     nn, last;
+
+    /* the rows the screen has below the cursor, against the lines the buffer has below it */
+    nn = (bp->lineCount - 1 - bp->dotLineNo) - (ipipe->noRows - 1 - ipipe->curRow);
+#if (IPIPE_DUMP == 2)
+    if(logFp != NULL)
+    {
+        int wDot, wCnt = ipipeWalk(bp,&wDot);
+        fprintf(logFp,":TRIM:nn=%d curRow=%d noRows=%d dot=%d/%d cnt=%d/%d want=%d below=%d:",
+                (int)nn,(int)ipipe->curRow,(int)ipipe->noRows,wDot,(int)bp->dotLineNo,
+                wCnt,(int)bp->lineCount,
+                (int)(ipipe->noRows-1-ipipe->curRow),(int)(bp->lineCount-1-bp->dotLineNo));
+        fflush(logFp);
+    }
+#endif
+    if(nn <= 0)
+        return;
+    /* bring any window sitting on a line that is about to go back to the cursor line */
+    last = bp->lineCount - 1 - nn;
+    meFrameLoopBegin();
+    wp = loopFrame->windowList;
+    while(wp != NULL)
+    {
+        if((wp->buffer == bp) && (wp->dotLineNo > last))
+        {
+            wp->dotLine = bp->dotLine;
+            wp->dotLineNo = bp->dotLineNo;
+            wp->dotOffset = 0;
+            wp->updateFlags |= WFMOVEL|WFMAIN;
+        }
+        wp = wp->next;
+    }
+    meFrameLoopBreak(0);
+    meFrameLoopEnd();
+
+    while(nn-- > 0)
+    {
+        lp = meLineGetPrev(bp->baseLine);
+        if((lp == bp->baseLine) || (lp == bp->dotLine))
+            break;
+        lpp = meLineGetPrev(lp);
+        lpp->next = lp->next;
+        lp->next->prev = lpp;
+        if(lp->flag & meLINE_ANCHOR)
+            meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,bp,lp,lpp,0,0);
+        meFree(lp);
+        bp->lineCount--;
+    }
+#if (IPIPE_DUMP == 2)
+    if(logFp != NULL)
+    {
+        int wDot, wCnt = ipipeWalk(bp,&wDot);
+        fprintf(logFp,":TRIMMED:dot=%d/%d cnt=%d/%d noRows=%d curRow=%d:",
+                wDot,(int)bp->dotLineNo,wCnt,(int)bp->lineCount,
+                (int)ipipe->noRows,(int)ipipe->curRow);
+        fflush(logFp);
+    }
+#endif
+}
+
+
 void
 ipipeSetSize(meWindow *wp, meBuffer *bp)
 {
     meIPipe *ipipe;
     meShort noRows, noCols;
-    int ii;
+    int ii, jj;
 
     ipipe = ipipes;
     while((ipipe != NULL) && (ipipe->bp != bp))
         ipipe = ipipe->next;
     if(ipipe == NULL)
         return;
+    /* Cannot assume bp's dot is at the terminal's cursor position, any terminal resize will lead
+     * the terminal process to restructure & draw relative to the current Terminal cursor position
+     * so we must go back to the right location to figure out the correct resize action.
+     * 
+     * This can lose content if the terminal size is reduced and lines goes below the bottom of the
+     * window, so care is needed to get the starting position and behaviour right, it must match a
+     * terminal, otherwise there will be debris in the buffer that could throw off future input.
+     */
+    meAnchorSet(bp,meANCHOR_IPIPE_DOT,bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
+    meAnchorGet(bp,'I');
+    /* Size to the given window alone. The callers only pass the current window or the sole
+     * window showing the buffer, so there is nobody to fight with. Taking the largest of all
+     * windows, as this used to, hands the child more rows than a smaller window can display and
+     * the excess sits below that window for good. */
     noRows = wp->textDepth;
     noCols = wp->textWidth;
-    if(bp->windowCount > 1)
-    {
-        /* buffer is displayed in more than one window, we need to be careful to avoid them fighting */
-        meWindow *ww;
-        meFrameLoopBegin();
-        ww = loopFrame->windowList;
-        while(ww != NULL)
-        {
-            /* If the window position matches the buffer then re-center */
-            if(ww->buffer == bp)
-            {
-                if(ww->textDepth > noRows)
-                    noRows = ww->textDepth;
-                if(ww->textWidth > noCols)
-                    noCols = ww->textWidth;
-            }
-            ww = ww->next;
-        }
-        meFrameLoopEnd();
-    }
     if(bp->ipipeFlags & meBUFFER_IPIPE_WRAP)
         noCols = noCols-1;
     else if((noCols = ipipe->noCols) == 0)
@@ -2058,7 +2307,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
 #if (IPIPE_DUMP == 2)
     if(logFp != NULL)
     {
-        fprintf(logFp,":IPIPE-SIZE:%d %d -> %d %d (%d %d):",ipipe->noRows,ipipe->noCols,noRows,noCols,meModeTest(bp->mode,MDWRAP),wp->textWidth);
+        fprintf(logFp,":IPIPE-SIZE:%s:%d %d -> %d %d (%d %d):",bp->name,ipipe->noRows,ipipe->noCols,noRows,noCols,meModeTest(bp->mode,MDWRAP),wp->textWidth);
         fflush(logFp);
     }
 #endif
@@ -2070,66 +2319,82 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         
         if(ipipe->pid > 0)
         {
-            if(ii > 0)
+            /* the screen model, the buffer trim and the child's winsize are all PTY only. With a
+             * plain pipe the buffer is an append-only log, not a screen, and there is no terminal
+             * to tell - only the vertScroll below still applies. */
+            if(ipipe->flag & meIPIPE_USEPTY)
             {
+                if(ii > 0)
+                {
 #ifdef _WIN32
-                /* ConPTY anchors the top of the viewport when the window grows, its post-resize
-                 * full-screen repaint redraws the same top line unchanged and simply adds blank
-                 * rows at the bottom, rather than reflowing/revealing more scrollback above the
-                 * cursor as a Unix terminal would. So curRow must be left as-is here; advancing it
-                 * makes the subsequent ESC[H home from the repaint walk too far back into
-                 * scrollback. */
+                    /* ConPTY anchors the top of the viewport when the window grows, its post-resize
+                     * full-screen repaint redraws the same top line unchanged and simply adds blank
+                     * rows at the bottom, rather than reflowing/revealing more scrollback above the
+                     * cursor as a Unix terminal would. So curRow must be left as-is here; advancing it
+                     * makes the subsequent ESC[H home from the repaint walk too far back into
+                     * scrollback. */
 #else
-                if((bp->lineCount > noRows) && ((ipipe->curRow += ii) > bp->lineCount))
-                    ipipe->curRow = (meShort) bp->lineCount;
+                    /* growing reveals scrollback above the cursor, but only as much as exists */
+                    if(ii > (jj = bp->dotLineNo - ipipe->curRow))
+                        ii = jj;
+                    if((ii > 0) && ((ipipe->curRow += ii) >= noRows))
+                        ipipe->curRow = noRows-1;
 #endif
+                }
+                else if(ipipe->curRow >= ipipe->noRows)
+                    ipipe->curRow = ipipe->noRows-1;
+                ipipeTrimTail(ipipe);
             }
-            else if(ipipe->curRow >= ipipe->noRows)
-                ipipe->curRow = ipipe->noRows-1;
             /* Check the window is displaying this buffer before messing with the window settings */
             if((wp->buffer == bp) && meModeTest(bp->mode,MDLOCK))
             {
-                if((bp->lineCount <= wp->textDepth) || (wp->dotLineNo < ipipe->curRow))
+                if((bp->lineCount <= wp->textDepth) || (bp->dotLineNo < ipipe->curRow))
                     wp->vertScroll = 0;
                 else
-                    wp->vertScroll = wp->dotLineNo-ipipe->curRow;
+                    wp->vertScroll = bp->dotLineNo-ipipe->curRow;
                 wp->updateFlags |= WFMOVEL;
             }
+            if(ipipe->flag & meIPIPE_USEPTY)
+            {
 #ifdef _UNIX
 #if ((defined TIOCSWINSZ) || (defined TIOCGWINSZ))
-            {
-                /* BSD-style.  */
-                struct winsize size;
-                
-                size.ws_col = ipipe->noCols;
-                size.ws_row = ipipe->noRows;
-                size.ws_xpixel = size.ws_ypixel = 0;
+                {
+                    /* BSD-style.  */
+                    struct winsize size;
+
+                    size.ws_col = ipipe->noCols;
+                    size.ws_row = ipipe->noRows;
+                    size.ws_xpixel = size.ws_ypixel = 0;
 #ifdef TIOCSWINSZ
-                ioctl(ipipe->outWfd,TIOCSWINSZ,&size);
+                    ioctl(ipipe->outWfd,TIOCSWINSZ,&size);
 #else
-                ioctl(ipipe->outWfd,TIOCGWINSZ,&size);
+                    ioctl(ipipe->outWfd,TIOCGWINSZ,&size);
 #endif
-                kill(ipipe->pid,SIGWINCH);
-            }
+                    kill(ipipe->pid,SIGWINCH);
+                }
 #else
 #ifdef TIOCGSIZE
-            {
-                /* SunOS - style.  */
-                struct ttysize size;
-                
-                size.ts_col = ipipe->noCols;
-                size.ts_lines = ipipe->noRows;
-                ioctl(ipipe->outWfd,TIOCSSIZE,&size);
-                kill(ipipe->pid,SIGWINCH);
-            }
+                {
+                    /* SunOS - style.  */
+                    struct ttysize size;
+
+                    size.ts_col = ipipe->noCols;
+                    size.ts_lines = ipipe->noRows;
+                    ioctl(ipipe->outWfd,TIOCSSIZE,&size);
+                    kill(ipipe->pid,SIGWINCH);
+                }
 #endif /* TIOCGSIZE */
 #endif /* TIOCSWINSZ/TIOCGWINSZ */
 #endif /* _UNIX */
 #ifdef _WIN32
-            meIPipeConPTYResize(ipipe,ipipe->noCols,ipipe->noRows);
+                meIPipeConPTYResize(ipipe,ipipe->noCols,ipipe->noRows);
 #endif /* _WIN32 */
+            }
         }
     }
+    /* put the editing position back where it was, see meANCHOR_IPIPE_DOT above. */
+    meAnchorGet(bp,meANCHOR_IPIPE_DOT);
+    meAnchorDelete(bp,meANCHOR_IPIPE_DOT);
 }
 
 #ifdef _UNIX
@@ -2343,6 +2608,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
             ipipeTermSys = (meUByte *) ((system("tput -T vt100-nam longname > /dev/null 2>&1")) ? "TERM=vt100":"TERM=vt100-nam");
         if(flags & LAUNCH_ANSICOLOR)
         {
+            /* Note: ansi has am without xenl, so a terminfo-aware child gives up its last row to avoid auto-wrap issues */
             if(ipipeTermCol == NULL)
                 ipipeTermCol = (system("tput -T ansi longname > /dev/null 2>&1")) ? ipipeTermSys:(meUByte *) "TERM=ansi";
             term = ipipeTermCol;
@@ -2654,6 +2920,12 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
 
     /* Set up the window dimensions - default to having auto wrap */
     ipipe->flag = (flags & (LAUNCH_RAW|LAUNCH_USEPTY|LAUNCH_ANSICOLOR));
+    /* On a tty the ONLCR output translation turns the child's LF into CR+LF, so the carriage return arrives
+     * separately and the LF must only index. If the child clears ONLCR it is a full-screen application and
+     * a bare LF means index as well, so a tty wants indexing either way.
+     * Without a tty there is no translation and nothing else supplies the CR so force meIPIPE_LFISNL on. */
+    if((flags & LAUNCH_USEPTY) == 0)
+        ipipe->flag |= meIPIPE_LFISNL;
 #if MEOPT_EXTENDED
 #ifdef _WIN32
     /* TODO Currently processes are launched with current codepage to avoid UTF8 encoding issues, but even this is not great as ME may be set to use a different codepage.
@@ -2667,6 +2939,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
     else
         bp->ipipeFlags |= meBUFFER_IPIPE_UTF8;
 #endif
+    ipipe->oscSplit = 0;
     ipipe->ansiCc = 'A';
     ipipe->ansiFg = 0;
     ipipe->ansiBg = 0;
