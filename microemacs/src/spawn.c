@@ -1341,7 +1341,6 @@ ipipeRead(meIPipe *ipipe)
             TTbell();
             break;
         case 0x08:
-        case 0x7f: /* DEL - some shells/consoles echo this for erase, treat as backspace */
             if(p1 != buff)
             {
                 p1--;
@@ -1386,6 +1385,9 @@ ipipeRead(meIPipe *ipipe)
         case 0x0d: /* CR */
             p1 = buff;
             len = 0;
+            break;
+        case 0x7f: /* DEL - some shells/consoles echo this for erase, treat as backspace */
+            ipipeLogDrop("DEL");
             break;
         case 0x1b:
             if((ipipe->flag & meIPIPE_USEPTY) && ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,1))
@@ -1448,8 +1450,6 @@ get_another:
                             memmove(p1+prmL,p1,ii);
                             p1[prmL+ii] = '\0';
                             memset(p1,' ',prmL);
-                            p1 += prmL;
-                            len += prmL;
                             break;
                         }
                         
