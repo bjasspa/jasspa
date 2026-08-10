@@ -69,6 +69,7 @@ extern	int	windowForwardParagraph(int f, int n);
 extern	int	windowSetMark(int f, int n);
 extern	int	windowSwapDotAndMark(int f, int n);
 extern	void	meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln);
+extern	void	meBufferLocationSwap(meLine *lp, meLine *nlp);
 extern	void	meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff);
 
 /* bind.c externals */
@@ -655,6 +656,7 @@ extern  meLine *meLineMalloc(int length, int editLine);
 #define meLINEANCHOR_COMPRESS   0x40
 extern  void	meLineResetAnchors(meInt flags, meBuffer *bp, meLine *lp,
                                    meLine *nlp, meUShort offset, meInt adjust);
+extern  void	meLineSwap(meBuffer *bp, meLine *lp, meLine *nlp);
 extern	int	bufferSetEdit(void);
 extern	void	lineSetChanged(int flag);
 extern  meUByte *lineMakeSpace(int n);
@@ -1041,6 +1043,9 @@ extern	int	ipipeWrite(int f, int n);
 extern  void    ipipeRead(meIPipe *ipipe);
 extern  void    ipipeSetSize(meWindow *wp, meBuffer *bp);
 extern	void    ipipeRemove(meIPipe *ipipe);
+#ifdef IPIPE_DUMP
+extern  void    meIPipeLog(const char *fmt, ...);
+#endif
 #ifdef _UNIX
 extern  void    ipipeCheck(void);
 #endif

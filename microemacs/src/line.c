@@ -191,6 +191,39 @@ meLineResetAnchors(meInt flags, meBuffer *bp, meLine *lp, meLine *nlp,
 }
 
 /*
+ * meLineSwap
+ * Move everything referencing lp on to nlp, which has taken its position and length. Use before
+ * freeing a line - a missed reference is a freed pointer that resurfaces as a window's dotLine.
+ * Offsets are untouched, so callers that insert or remove characters must reset the anchors and
+ * window offsets themselves. The buffer's own dot is left to the caller.
+ */
+void
+meLineSwap(meBuffer *bp, meLine *lp, meLine *nlp)
+{
+    meWindow *wp;
+
+    if(lp->flag & meLINE_ANCHOR)
+        meLineResetAnchors(meLINEANCHOR_ALWAYS|meLINEANCHOR_RETAIN,bp,lp,nlp,0,0);
+#if MEOPT_IPIPES || MEOPT_SOCKET
+    meBufferLocationSwap(lp,nlp);
+#endif
+    meFrameLoopBegin();
+    wp = loopFrame->windowList;
+    while(wp != NULL)
+    {
+        if(wp->buffer == bp)
+        {
+            if(wp->dotLine == lp)
+                wp->dotLine = nlp;
+            if(wp->markLine == lp)
+                wp->markLine = nlp;
+        }
+        wp = wp->next;
+    }
+    meFrameLoopEnd();
+}
+
+/*
  * This routine gets called when a character is changed in place in the current
  * buffer. It updates all of the required flags in the buffer and window
  * system. The flag used is passed as an argument; if the buffer is being

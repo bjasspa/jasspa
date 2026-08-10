@@ -1059,6 +1059,7 @@ meGetConsoleMessage(MSG *msg, int mode)
         meFrameChangeWidth(frameCur,size.X);
         meFrameChangeDepth(frameCur,size.Y);
         meFrameSetWindowSize(frameCur);
+        update(meFALSE);
     }
     else if(ir.EventType == FOCUS_EVENT)
     {
@@ -2159,9 +2160,18 @@ childActiveThread(LPVOID lpParam)
     /* Capture at thread start: flag won't change, unlike ipipe->hPCon which
      * meIPipeConPTYClose() may NULL mid-flight. */
     int useOverlapped = (ipipe->flag & meIPIPE_USEPTY);
+#ifdef IPIPE_DUMP
+    int loop=0;
+
+    meIPipeLog(":THRD-START:pid=%d ovlp=%d:",(int)ipipe->pid,useOverlapped);
+#endif
 
     do {
         /* wait for child process activity */
+#ifdef IPIPE_DUMP
+        bytesRead = 0xdeadbeef;
+        meIPipeLog(":THRD-WAIT:%d:",loop++);
+#endif
         if(useOverlapped)
         {
             /* ConPTY path: overlapped read races against the child process handle.
@@ -2179,9 +2189,20 @@ childActiveThread(LPVOID lpParam)
             waitHandles[1] = ipipe->process;
             
             if(ReadFile(ipipe->rfd,buff,1,NULL,&ov))
-                GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,FALSE);
+            {
+                if(!GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,FALSE))
+                    bytesRead = 0;
+#ifdef IPIPE_DUMP
+                meIPipeLog(":THRD-SYNC:n=%d:",(int)bytesRead);
+#endif
+            }
             else if(GetLastError() != ERROR_IO_PENDING)
+            {
+#ifdef IPIPE_DUMP
+                meIPipeLog(":THRD-RDERR:gle=%d:",(int)GetLastError());
+#endif
                 bytesRead = 0;
+            }
             else
             {
                 waitResult = WaitForMultipleObjects(2,waitHandles,FALSE,INFINITE);
@@ -2189,12 +2210,17 @@ childActiveThread(LPVOID lpParam)
                 {
                     /* Child exited: close ConPTY so write end is released */
                     meIPipeConPTYClose(ipipe);
-                    GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,TRUE);
+                    if(!GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,TRUE))
+                        bytesRead = 0;
                 }
-                else
-                    GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,FALSE);
-                CloseHandle(ov.hEvent);
+                else if(!GetOverlappedResult(ipipe->rfd,&ov,&bytesRead,FALSE))
+                    bytesRead = 0;
+#ifdef IPIPE_DUMP
+                meIPipeLog(":THRD-ASYNC:wr=%d n=%d:",(int)waitResult,(int)bytesRead);
+#endif
             }
+            /* the event is per-read, close it whichever way the read completed */
+            CloseHandle(ov.hEvent);
             if(bytesRead && fRead)
             {
                 /* If this is the very first write and it starts with an escape, sleep for 200th of a sec.
@@ -2212,6 +2238,9 @@ childActiveThread(LPVOID lpParam)
              * which causes ReadFile to return with EOF naturally. */
             if((ReadFile(ipipe->rfd,buff,1,&bytesRead,NULL) == 0) || (bytesRead == 0))
                 bytesRead = 0;
+#ifdef IPIPE_DUMP
+            meIPipeLog(":THRD-PIPE:n=%d:",(int)bytesRead);
+#endif
         }
 
         if(bytesRead > 0)
@@ -2221,19 +2250,27 @@ childActiveThread(LPVOID lpParam)
         }
         else
             ipipe->flag |= meIPIPE_CHILD_EXIT;
-        
+
         /* flag the child is active! */
         if(!SetEvent(ipipe->childActive))
+        {
+#ifdef IPIPE_DUMP
+            meIPipeLog(":THRD-SETEVT-FAIL:gle=%d:",(int)GetLastError());
+#endif
             break;
-        
+        }
+
         /* if there was a problem, the pipe is dead - exit */
         if(ipipe->flag & meIPIPE_CHILD_EXIT)
             break;
-        
+
         /* wait for the main thread to read all available output and
          * flag for us to start waiting again */
     } while((WaitForSingleObject(ipipe->threadContinue,INFINITE) == WAIT_OBJECT_0) &&
             !(ipipe->flag & meIPIPE_CHILD_EXIT));
+#ifdef IPIPE_DUMP
+    meIPipeLog(":THRD-EXIT:loop=%d flag=0x%x:",loop,(int)ipipe->flag);
+#endif
 #ifndef USE_BEGINTHREAD
     return 0;
 #endif
@@ -2270,6 +2307,9 @@ meConPTYLoad(void)
 void
 meIPipeConPTYClose(meIPipe *ipipe)
 {
+#ifdef IPIPE_DUMP
+    meIPipeLog(":PTY-CLOSE:hPCon=%p:",(void *)ipipe->hPCon);
+#endif
     if(ipipe->hPCon != NULL)
     {
         meConPTYCloseFunc(ipipe->hPCon);
@@ -2288,10 +2328,20 @@ meIPipeConPTYResize(meIPipe *ipipe, int cols, int rows)
     if(ipipe->hPCon != NULL)
     {
         COORD size;
+        HRESULT hr;
         size.X = (SHORT) cols;
         size.Y = (SHORT) rows;
-        meConPTYResizeFunc(ipipe->hPCon,size);
+        hr = meConPTYResizeFunc(ipipe->hPCon,size);
+#ifdef IPIPE_DUMP
+        meIPipeLog(":PTY-RESIZE:%dx%d hr=0x%lx:",cols,rows,(unsigned long)hr);
+#else
+        (void) hr;
+#endif
     }
+#ifdef IPIPE_DUMP
+    else
+        meIPipeLog(":PTY-RESIZE:%dx%d NO-HPCON:",cols,rows);
+#endif
 }
 #endif /* MEOPT_IPIPES */
 
@@ -2516,10 +2566,17 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             else if(flags & LAUNCH_IPIPE)
             {
                 ipipe->hPCon = NULL;
+#ifdef IPIPE_DUMP
+                meIPipeLog(":LAUNCH:flags=0x%x cmd=[%s]:",flags,(char *)cp);
+#endif
                 if(flags & LAUNCH_USEPTY)
                 {
                     /* Try ConPTY first (Windows 10 build 17763+) */
                     meConPTYLoad();
+#ifdef IPIPE_DUMP
+                    meIPipeLog(":PTY-LOAD:create=%p resize=%p close=%p:",
+                               (void *)meConPTYCreate,(void *)meConPTYResizeFunc,(void *)meConPTYCloseFunc);
+#endif
                     if(meConPTYCreate != NULL)
                     {
                         COORD consoleSize = {80, 25};
@@ -2545,10 +2602,21 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                                                   OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL)
                                     : INVALID_HANDLE_VALUE;
                             }
+#ifdef IPIPE_DUMP
+                            meIPipeLog(":PTY-PIPES:in=%p/%p out=%p/%p gle=%d:",
+                                       (void *)inHdlTmp,(void *)inHdl,(void *)outHdl,(void *)outHdlTmp,
+                                       (int)GetLastError());
+#endif
                             if(outHdlTmp != INVALID_HANDLE_VALUE)
                             {
                                 HANDLE hPCon;
-                                if(meConPTYCreate(consoleSize,inHdlTmp,outHdlTmp,0,&hPCon) == S_OK)
+                                HRESULT hr = meConPTYCreate(consoleSize,inHdlTmp,outHdlTmp,0,&hPCon);
+#ifdef IPIPE_DUMP
+                                meIPipeLog(":PTY-CREATE:%dx%d hr=0x%lx hPCon=%p:",
+                                           (int)consoleSize.X,(int)consoleSize.Y,(unsigned long)hr,
+                                           (void *)((hr == S_OK) ? hPCon:NULL));
+#endif
+                                if(hr == S_OK)
                                 {
                                     /* ConPTY owns the inner pipe ends */
                                     CloseHandle(inHdlTmp);
@@ -2764,6 +2832,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         /* Launch with ConPTY: use STARTUPINFOEX, no handle inheritance, no new console */
         SIZE_T attrListSize = 0;
         STARTUPINFOEX siEx;
+        HANDLE svStdIn, svStdOut, svStdErr;
 
         memset(&siEx,0,sizeof(siEx));
         siEx.StartupInfo.cb       = sizeof(STARTUPINFOEX);
@@ -2771,6 +2840,25 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         siEx.StartupInfo.wShowWindow = meSuInfo.wShowWindow;
         siEx.StartupInfo.lpTitle  = meSuInfo.lpTitle;
 
+        /* Without STARTF_USESTDHANDLES the child does not get "no handles" - CreateProcess copies
+         * OUR standard handles into it, and the console setup only replaces the ones that are
+         * console handles or null. A real kernel object survives, so if ME itself was started with
+         * its stdout redirected - launched as a plain-pipe ipipe from another ME, or run under a
+         * debugger - the child inherits that pipe and writes to it instead of the pseudoconsole.
+         * The shell's banner and prompt then go to whoever owns the far end and never reach us,
+         * while its ReadConsole still comes from the ConPTY, so it echoes but prints nothing.
+         * Clear them for the duration of the call so only the pseudoconsole is left to supply them. */
+        svStdIn  = GetStdHandle(STD_INPUT_HANDLE);
+        svStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        svStdErr = GetStdHandle(STD_ERROR_HANDLE);
+#ifdef IPIPE_DUMP
+        meIPipeLog(":PTY-STDH:in=%p out=%p err=%p:",(void *)svStdIn,(void *)svStdOut,(void *)svStdErr);
+#endif
+        SetStdHandle(STD_INPUT_HANDLE,NULL);
+        SetStdHandle(STD_OUTPUT_HANDLE,NULL);
+        SetStdHandle(STD_ERROR_HANDLE,NULL);
+
+        status = meFALSE;
         InitializeProcThreadAttributeList(NULL,1,0,&attrListSize);
         siEx.lpAttributeList = (LPPROC_THREAD_ATTRIBUTE_LIST) meMalloc(attrListSize);
         if(siEx.lpAttributeList != NULL)
@@ -2786,9 +2874,16 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 status = meTRUE;
                 CloseHandle(mePInfo.hThread);
             }
+#ifdef IPIPE_DUMP
+            meIPipeLog(":PTY-PROC:status=%d procId=%d gle=%d:",status,
+                       (status == meTRUE) ? (int)mePInfo.dwProcessId:0,(int)GetLastError());
+#endif
             DeleteProcThreadAttributeList(siEx.lpAttributeList);
             meFree(siEx.lpAttributeList);
         }
+        SetStdHandle(STD_INPUT_HANDLE,svStdIn);
+        SetStdHandle(STD_OUTPUT_HANDLE,svStdOut);
+        SetStdHandle(STD_ERROR_HANDLE,svStdErr);
         if(status != meTRUE)
         {
             meConPTYCloseFunc(ipipe->hPCon);
@@ -2903,6 +2998,11 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 ipipe->thread = CreateThread(NULL,0,childActiveThread,ipipe,0,&(ipipe->threadId));
             else
                 ipipe->thread = NULL;
+#endif
+#ifdef IPIPE_DUMP
+            meIPipeLog(":IPIPE-HDLS:rfd=%p wfd=%p proc=%p(%d) hPCon=%p thread=%p:",
+                       (void *)ipipe->rfd,(void *)ipipe->outWfd,(void *)ipipe->process,
+                       (int)ipipe->processId,(void *)ipipe->hPCon,(void *)ipipe->thread);
 #endif
         }
     }
@@ -4517,6 +4617,10 @@ meGetMessage(MSG *msg, int mode)
                     }
                     if((ipipe->pid < 0) || doRead)
                     {
+#ifdef IPIPE_DUMP
+                        meIPipeLog(":MAIN-READ:%s:pid=%d:",
+                                   (ipipe->bp != NULL) ? (char *)ipipe->bp->name:"?",(int)ipipe->pid);
+#endif
                         ipipeRead(ipipe);
                         jj = 1;
                     }
@@ -4572,7 +4676,22 @@ meGetMessage(MSG *msg, int mode)
             }
 #endif
             /* Wait for either user or process activity */
+#ifdef IPIPE_DUMP
+            {
+                /* every keystroke and mouse move comes through here, so only note a change in
+                 * the handle set - that is enough to show ME is parked waiting on the child */
+                static int lastNo=-1;
+                if(ii != lastNo)
+                    meIPipeLog(":MAIN-WAIT:n=%d ipipes=%d:",ii,noIpipes);
+                lastNo = ii;
+            }
+#endif
             jj = MsgWaitForMultipleObjects(ii,hTable,meFALSE,INFINITE,QS_ALLINPUT) - WAIT_OBJECT_0;
+#ifdef IPIPE_DUMP
+            if((jj >= 0) && (jj < ii))
+                /* an object, not a window message - ie a child has something for us */
+                meIPipeLog(":MAIN-WOKE:%d:",jj);
+#endif
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
             if(meSystemCfg & meSYSTEM_CONSOLE)

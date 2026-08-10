@@ -204,6 +204,8 @@ utf8ToMeChar(meUInt uc)
      * U+2026: … 
      * U+2194: <->
      * U+2264, U+2265: <= & >=
+     * U+2260: !=
+     * U+221A, U+2713: SqrRoot & tick 
      */
     switch(uc)
     {

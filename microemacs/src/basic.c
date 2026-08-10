@@ -701,6 +701,17 @@ meBufferStoreLocation(meLine *lp, meUShort lo, meInt ln)
         orgLpp = NULL;
 }
 
+/* The location is held as the lines either side of it so that the line itself may be replaced,
+ * the cost is that retiring a neighbour must be declared or the recovery walks a freed line. */
+void
+meBufferLocationSwap(meLine *lp, meLine *nlp)
+{
+    if(orgLpp == lp)
+        orgLpp = nlp;
+    if(orgLnp == lp)
+        orgLnp = nlp;
+}
+
 void
 meBufferUpdateLocation(meBuffer *bp, meUInt noLines, meUShort newOff)
 {
