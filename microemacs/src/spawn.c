@@ -31,7 +31,7 @@
 
 #include "emain.h"
 
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
 #ifdef _STDARG
 #include <stdarg.h>
 #else
@@ -433,7 +433,7 @@ ipipeKillProcessTree(DWORD ppid)
 #endif
 #endif
 
-#ifdef IPIPE_DUMP
+#if (IPIPE_DEBUG >= 3)
 /* ipipeLogWrite; record what goes *to* the child. On Windows this is the only channel by which
  * ME can affect the ConPTY, so a stray or badly timed write is visible nowhere else. Control
  * characters are escaped so the marker stays on one line. */
@@ -469,12 +469,12 @@ ipipeWriteString(meIPipe *ipipe, int n, meUByte *str)
     {
 #ifdef _WIN32
         DWORD written ;
-#ifdef IPIPE_DUMP
+#if (IPIPE_DEBUG >= 3)
         ipipeLogWrite("STR",str,(int) meStrlen(str));
 #endif
         WriteFile(ipipe->outWfd,str,(DWORD) meStrlen(str),&written,NULL) ;
 #else
-#ifdef IPIPE_DUMP
+#if (IPIPE_DEBUG >= 3)
         ipipeLogWrite("STR",str,(int) meStrlen(str));
 #endif
         write(ipipe->outWfd,str,meStrlen(str)) ;
@@ -677,8 +677,8 @@ ipipeRemove(meIPipe *ipipe)
     free(ipipe);
 }
 
-/* IPIPE_DUMP is set in estruct.h so winterm.c can log the launch as well */
-#ifdef IPIPE_DUMP
+/* IPIPE_DEBUG is set in estruct.h so winterm.c can log the launch as well */
+#ifdef IPIPE_DEBUG
 static FILE *logFp=NULL;
 
 static meTime ipipeTimeNow(void);
@@ -722,11 +722,11 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
             nbytes = ttServerToRead;
         if(ReadFile(ipipe->rfd,buff,nbytes,&bRead,NULL) == 0)
             return -1;
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
         if((bRead > 0) && (logFp != NULL))
         {
             fwrite(buff,1,bRead,logFp);
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
             fwrite("ZZAZ",1,4,logFp);
             fflush(logFp);
 #endif
@@ -760,11 +760,11 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
             Sleep(2);
         if(!doSleep || (PeekNamedPipe(ipipe->rfd,(LPVOID) NULL,(DWORD) 0,(LPDWORD) NULL,&bAvail,(LPDWORD) NULL) == 0) || (bAvail <= 0))
         {
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
             if((bRead > 0) && (logFp != NULL))
             {
                 fwrite(buff,1,bRead,logFp);
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
                 fwrite("ZZBZ",1,4,logFp);
                 fflush(logFp);
 #endif
@@ -805,11 +805,11 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
                     ;
                 if((cc == 0x1b) && (buff[ii++] == '[') && (buff[ii++] == 'H'))
                 {
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
                     if(logFp != NULL)
                     {
-                        fwrite(":SKIP-INIT:",1,10,logFp);
-#if (IPIPE_DUMP == 2)
+                        fwrite(":SKIP-INIT:",1,11,logFp);
+#if (IPIPE_DEBUG >= 3)
                         fwrite(buff,1,ii,logFp);
                         fwrite(":END:",1,5,logFp);
 #endif
@@ -821,11 +821,11 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
             }
         }
     }
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
     if((bRead > 0) && (logFp != NULL))
     {
         fwrite(buff,1,bRead,logFp);
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
         fputc('Z',logFp);
         fputc('Z',logFp);
         fputc('C'+doSleep,logFp);
@@ -879,11 +879,11 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
         }
         ii = read(ipipe->rfd,buff,nbytes);
     }
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
     if((ii > 0) && (logFp != NULL))
     {
         fwrite(buff,1,ii,logFp);
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
         fputc('Z',logFp);
         fputc('Z',logFp);
         fputc('C'+doSleep,logFp);
@@ -898,7 +898,7 @@ readFromPipe(meIPipe *ipipe, int nbytes, meUByte *buff, int doSleep)
 
 #endif
 
-#if (IPIPE_DUMP == 2)
+#ifdef IPIPE_DEBUG
 /* (lineCount-1 - dotLineNo) == (noRows-1 - curRow) must hold. When the left side is larger the
  * buffer has gained rows nothing can reclaim - ipipeAddLine only inserts *before* lp_old.
  * The counters are what is in doubt, so the list is walked and both results reported. */
@@ -958,46 +958,21 @@ static int ipipeCheckWindows(meBuffer *bp, const char *where);
 /* A cursor position the child asked for that is off ME's screen, so ME has to fake it. */
 #define ipipeLogClampPos(what,want,got)                                      \
     meIPipeLog(":CUP-CLAMP:%s:%d->%d:",(what),(int)(want),(int)(got))
-/* Checked once per character so the sequence that breaks the dot bookkeeping can be named - the
- * cursor-move markers only report at moves, which is far too coarse. Two things must hold between
- * moves: bp->dotLine is the line being built (lp_old), and every line added since the last store
- * went in above it, so its position is bp->dotLineNo + noLines. Reports the first break only, cc
- * being the character just processed. */
+/* Checked once per character, so the cheap pointer test comes first and the list is only walked
+ * to fill in the report. bp->dotLine must be the line being built and every line added since the
+ * last commit went in above it, putting it at bp->dotLineNo + noLines. First break only, cc being
+ * the character just processed. */
 #define ipipeCheckBreak()                                                    \
 do {                                                                         \
-    if(!cupBroke)                                                            \
+    if(!cupBroke && (lp_old != bp->dotLine))                                 \
     {                                                                        \
         int wDot, wCnt = ipipeWalk(bp,&wDot);                                \
-        if((lp_old != bp->dotLine) ||                                        \
-           (wDot != (int)(bp->dotLineNo + (meInt) noLines)))                 \
-        {                                                                    \
-            cupBroke = 1;                                                    \
-            meIPipeLog(":BREAK:after=0x%02x row=%d dotNo=%d/%d lpNo=%d cnt=%d/%d nl=%u:", \
-                       (int)cc,curRow,wDot,(int)bp->dotLineNo,               \
-                       ipipeLineNo(bp,lp_old),wCnt,(int)bp->lineCount,       \
-                       (unsigned int)noLines);                               \
-        }                                                                    \
-        else if(ipipeCheckWindows(bp,"read"))                                \
-            /* a window is holding a line the buffer no longer has - report  \
-             * the character that did it and stop, it only gets worse */     \
-            cupBroke = 1;                                                    \
-    }                                                                        \
-} while(0)
-/* Report a cursor move whose walk and counter disagree. move_cursor_pos adjusts bp->dotLineNo up
- * front and then walks, so any path where the walk does not travel the assumed distance leaves the
- * two out of step - logging only the mismatches points straight at the offending move. */
-#define ipipeSetCupFrom(row) cupFrom = (row)
-/* chkLp says whether lp_old is expected to still be the dot - it is not straight after
- * ipipeStoreInputPos, which retires lp_old and leaves it dangling until the caller reloads it. */
-#define ipipeLogCup(where,to,col,from,chkLp)                                 \
-do {                                                                         \
-    int wDot, wCnt = ipipeWalk(bp,&wDot);                                    \
-    if((wDot != (int) bp->dotLineNo) || ((chkLp) && (lp_old != bp->dotLine))) \
-        meIPipeLog(":CUP-%s:to=%d,%d from=%d dotNo=%d/%d lpNo=%d cnt=%d/%d eob=%d nl=%u:", \
-                   (where),(int)(to),(int)(col),(int)(from),wDot,            \
-                   (int)bp->dotLineNo,ipipeLineNo(bp,lp_old),wCnt,           \
-                   (int)bp->lineCount,(lp_old == bp->baseLine),              \
+        cupBroke = 1;                                                        \
+        meIPipeLog(":BREAK:after=0x%02x row=%d dotNo=%d/%d lpNo=%d cnt=%d/%d nl=%u:", \
+                   (int)cc,curRow,wDot,(int)bp->dotLineNo,                   \
+                   ipipeLineNo(bp,lp_old),wCnt,(int)bp->lineCount,           \
                    (unsigned int)noLines);                                   \
+    }                                                                        \
 } while(0)
 #define ipipeLogClamp(want,got)                                              \
 do {                                                                         \
@@ -1020,8 +995,6 @@ do {                                                                         \
 #define ipipeCheckWins(where)
 #define ipipeLogDrop(what)
 #define ipipeLogClamp(want,got)
-#define ipipeLogCup(where,to,col,from,chkLp)
-#define ipipeSetCupFrom(row)
 #define ipipeLogFix(what,was,now)
 #define ipipeLogSize(prmC,prmS,prmL)
 #define ipipeLogClampPos(what,want,got)
@@ -1351,8 +1324,7 @@ ipipeRead(meIPipe *ipipe)
     meUByte  *p1, cc=0, buff[meBUF_SIZE_MAX+1], cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
     int     curROff=0, curRRead=0;
     int     prmA, prmL;
-#if (IPIPE_DUMP == 2)
-    int     cupFrom=0;                  /* the row a cursor move started from, see ipipeLogCup */
+#ifdef IPIPE_DEBUG
     int     cupBroke=0;                 /* the dot bookkeeping has already been reported broken */
 #endif
 #ifdef _WIN32
@@ -1703,10 +1675,7 @@ move_cursor_pos:
                                 ipipeLogClampPos("col",prmL,maxOff-1);
                                 prmL = maxOff - 1;
                             }
-                            ipipeSetCupFrom(curRow);
-                            ipipeLogCup("pre",prmA,prmL,cupFrom,1);
                             ipipeStoreInputPos();
-                            ipipeLogCup("store",prmA,prmL,cupFrom,0);
                             /* The dot's line number is tracked a line at a time by the walks below
                              * rather than adjusted by (prmA - curRow) up front. Neither walk is
                              * guaranteed to travel that far - the buffer runs out going down, and
@@ -1753,7 +1722,6 @@ move_cursor_pos:
                             }
                             len = prmL;
                             bp->dotLine = lp_old;
-                            ipipeLogCup("done",prmA,prmL,cupFrom,1);
                             ipipeDecodeLine(ipipe,lp_old->text,buff,cbuff,0);
                             meBufferStoreLocation(lp_old,(meUShort)len,bp->dotLineNo);
                             prmL -= meStrlen(buff);
@@ -1899,7 +1867,7 @@ move_cursor_pos:
                                     break;
 #endif
                                 sprintf(outb,"\033[%d;%dR",curRow+1,len+1);
-#ifdef IPIPE_DUMP
+#if (IPIPE_DEBUG >= 3)
                                 ipipeLogWrite("DSR",(meUByte *)outb,(int)strlen(outb));
 #endif
 #ifdef _WIN32
@@ -2049,7 +2017,7 @@ move_cursor_pos:
                                 if((prmC ? prmS[0]:prmL) != 18)
                                     break;
                                 sprintf(outb,"\033[8;%d;%dt",ipipe->noRows,ipipe->noCols);
-#ifdef IPIPE_DUMP
+#if (IPIPE_DEBUG >= 3)
                                 ipipeLogWrite("XTWINOPS",(meUByte *)outb,(int)strlen(outb));
 #endif
 #ifdef _WIN32
@@ -2143,7 +2111,7 @@ osc_consume:
 #if MEOPT_EXTENDED
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
             {
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 2)
                 meUByte c1=cc;
 #endif
                 meUByte c2, c3;
@@ -2163,7 +2131,7 @@ osc_consume:
                 else
                     /* 4-byte: ME supports only up to U+FFFF - consume */
                     cc = meCHAR_UNDEF;
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 2)
                 if((cc == meCHAR_UNDEF) && (logFp != NULL))
                 {
                     /* Put an easy to spot marker into the log with U+FFFF code */
@@ -2376,7 +2344,7 @@ ipipeWrite(int f, int n)
  * them strands them for good (ipipeAddLine only inserts *before* lp_old). If that loss ever
  * matters, the alternative is to keep them and push ipipe->curRow down instead, at the cost
  * of ME and the child disagreeing about which buffer line is which screen row. */
-#if (IPIPE_DUMP == 2)
+#ifdef IPIPE_DEBUG
 /* The position of any line in the buffer. The baseLine is the cursor's "one past the last line"
  * position and reports as lineCount, so -1 means the line is in no buffer at all - ie stale. */
 static int
@@ -2459,7 +2427,7 @@ ipipeTrimTail(meIPipe *ipipe)
 
     /* the rows the screen has below the cursor, against the lines the buffer has below it */
     nn = (bp->lineCount - 1 - bp->dotLineNo) - (ipipe->noRows - 1 - ipipe->curRow);
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
     if(logFp != NULL)
     {
         int wDot, wCnt = ipipeWalk(bp,&wDot);
@@ -2504,7 +2472,7 @@ ipipeTrimTail(meIPipe *ipipe)
         meFree(lp);
         bp->lineCount--;
     }
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
     if(logFp != NULL)
     {
         int wDot, wCnt = ipipeWalk(bp,&wDot);
@@ -2553,7 +2521,7 @@ ipipeSetSize(meWindow *wp, meBuffer *bp)
         if(((ss=getUsrVar((meUByte *)"ipipe-width")) == NULL) || ((noCols=((meShort) meAtoi(ss))) <= 0) || (noCols > meBUF_SIZE_MAX - 2))
             noCols = meBUF_SIZE_MAX - 2;
     }
-#if (IPIPE_DUMP == 2)
+#if (IPIPE_DEBUG >= 3)
     if(logFp != NULL)
     {
         fprintf(logFp,":IPIPE-SIZE:%s:%d %d -> %d %d (%d %d):",bp->name,ipipe->noRows,ipipe->noCols,noRows,noCols,meModeTest(bp->mode,MDWRAP),wp->textWidth);
@@ -3143,7 +3111,7 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         ipipeRemove(ipipe);
         return mlwrite(MWABORT,(meUByte *)"[Failed to create %s buffer]",bufName);
     }
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
     if(logFp == NULL)
         logFp = fopen("./ipipe.log","wb+");
 #endif

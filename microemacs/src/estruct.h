@@ -1214,11 +1214,12 @@ typedef struct meFrame
  * readFromPipe timeout that caused the split; a stray ESC ] swallows at most this long. */
 #define meIPIPE_OSC_TIMEOUT 500
 
-/* Define to dump the ipipe traffic to ./ipipe.log, 1 for the raw child output alone, 2 to also
- * annotate it with the read, launch, resize and buffer state markers. Defined here rather than
- * in spawn.c as the launch and child-activity code lives in the platform terminal file.
- * NOTE: currently enabled for debugging, comment out again before committing. */
-/*#define IPIPE_DUMP 2*/
+/* Define to dump the ipipe traffic to ./ipipe.log. Defined here rather than in spawn.c as the
+ * launch and child activity code lives in the platform terminal file.
+ *   1 - the child's output, plus the state checks which only report a fault
+ *   2 - list unmapped Unicode characters with :ZZUZ: tag
+ *   3 - include read, write, launch, resize and buffer size markers, which are noisy */
+/*#define IPIPE_DEBUG 2*/
 
 /* ipipe ANSI colour encoding - the 24 bit rgb & 256 palette colours are reduced to one of the
  * 8 base colours plus a shade, this is all that is required to determine the meaning the colour

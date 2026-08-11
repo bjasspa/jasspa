@@ -1043,7 +1043,7 @@ extern	int	ipipeWrite(int f, int n);
 extern  void    ipipeRead(meIPipe *ipipe);
 extern  void    ipipeSetSize(meWindow *wp, meBuffer *bp);
 extern	void    ipipeRemove(meIPipe *ipipe);
-#ifdef IPIPE_DUMP
+#ifdef IPIPE_DEBUG
 extern  void    meIPipeLog(const char *fmt, ...);
 #endif
 #ifdef _UNIX
