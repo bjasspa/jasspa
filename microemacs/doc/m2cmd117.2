@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd117.2,v 2.8 2026/02/17 19:31:40 jon Exp $
+.Id $Id: m2cmd117.2,v 2.8 2026/08/12 09:29:47 jon Exp $
 .Im MicroEmacs command|scuts
 .so me.tni
 .TH global-abbrev-file 2
@@ -18,43 +18,41 @@ global-abbrev-file, buffer-abbrev-file \- Set abbreviation file(s).
 .Me "|global-abbrev-file"
 .I n
 .B global-abbrev-file
-"\fIabbrev-file\fR"
+[ "\fIabbrev-file\fR" ]
 .br
 .Me "|buffer-abbrev-file"
 .I n
 .B buffer-abbrev-file
-"\fIabbrev-file\fR"
+[ "\fIabbrev-file\fR" ]
 .ad
 .SH DESCRIPTION
-The abbreviation  files allow the user to define a set of short-cut  expansion
-text, whereby a short sequence of  chararacters  are associated  with a longer
-text  segment.  When the  short  sequence  is  entered,  the user may elect to
-maually  expand the sequnce with the associated  replacement  text.  Provision
-for cursor positioning may be made in the replacement text.
+The abbreviation files allow the user to define a set of short-cut expansion text, whereby a short sequence of
+chararacters are associated with a longer text segment. When the short sequence is entered, the user may elect to
+maually expand the sequnce with the associated replacement text. Provision for cursor positioning may be made in the
+replacement text.
 .PP
 .B buffer-abbrev-file
-sets the current buffer's  abbreviation  file (limit of one abbreviation  file
-per  buffer).  \fBbuffer-abbrev-file\fR  does the  minimal  amount  of work to
-increase speed at load-up. The first use of
+sets the current buffer's abbreviation file (limit of one abbreviation file per buffer). \fBbuffer-abbrev-file\fR does
+the minimal amount of work to increase speed at load-up. The first use of
 .Ht expand-abbrev 2
 attempts to load the abbreviation file at which point errors may be reported.
 .PP
-An  argument  \fIn\fR  of zero,  forces  the  buffer  abbreviation  file to be
-uncached, such that the next abbreviation that is expanded forces a re-load of
-the abbreviation  file. This is typically only used when an abbreviation  file
-is being constructed and tested.
+An argument \fIn\fR of zero, forces the buffer abbreviation file to be uncached, such that the next abbreviation that
+is expanded forces a re-load of the abbreviation file. This is typically only used when an abbreviation file is being
+constructed and tested.
+.PP
+If argument \fIn\fR of 2 is given the command returns the current abbrev file name in
+.Ht $result 5 .
 .PP
 .B global-abbrev-file
-assigns a global set of abbreviations  accross  \s-1ALL\s0  buffers, such that
-the  abbreviation  is  available  regardless  of the current  buffer type. The
-global    abbreviation    file    has   a   lower    presidence    than    the
-\fBbuffer-abbrev-file\fR,       hence       the       currently       assigned
-\fBbuffer-abbrev-file\fR is searched before the \fBglobal-abbrev-file\fR. 
+assigns a global set of abbreviations accross \s-1ALL\s0 buffers, such that the abbreviation is available regardless
+of the current buffer type. The global abbreviation file has a lower presidence than the \fBbuffer-abbrev-file\fR,
+hence the currently assigned \fBbuffer-abbrev-file\fR is searched before the \fBglobal-abbrev-file\fR. 
 .PP
-Similarly for  \fBglobal-abbrev-file\fR, an argument of zero forces the global
-abbreviation file to be uncached and re-loaded on the next use.
+Similarly for \fBglobal-abbrev-file\fR, an argument of zero forces the global abbreviation file to be uncached and
+re-loaded on the next use.
 .PP
-An abbreviation  is a  string which  is  expanded to  an alternate  form, e.g.
+An abbreviation is a string which is expanded to an alternate form, e.g.
 .IP
 \fBe.g.\fR -> \fBfor example\fR
 .LP
@@ -62,17 +60,14 @@ or
 .IP
 \fBPI\fR -> \fB3.1415926536\fR
 .LP
-An  abbreviation  file is an  ordinary  text file with a strict  format, it is
-loaded only once at the first call to
+An abbreviation file is an ordinary text file with a strict format, it is loaded only once at the first call to
 .Ht expand-abbrev 2 ,
-from then on it reminds buffered. An abbreviation file has an abbreviation per
-line,  they  cannot  use  multiple  lines.  This  is  not a draw  back  as the
-expansion string is executed using
+from then on it reminds buffered. An abbreviation file has an abbreviation per line, they cannot use multiple lines.
+This is not a draw back as the expansion string is executed using
 .Ht execute-string 2
 so any \*(mS command may also be called.
 .PP
-For   example   the   following    expansion   string   inserts   the   string
-"\fC!continue\fR"  and a  newline:
+For example the following expansion string inserts the string "\fC!continue\fR" and a newline:
 .IP
 "\fC!abort\\r\fR"
 .LP
@@ -89,9 +84,8 @@ See help on
 .Ht execute-string 2
 for more useful abbreviations.
 .SH EXAMPLE
-The  abbreviation  must be on the left hand side followed by at least 1 space,
-the expansion string must then be on the same line in quotes. So for the given
-examples, the abbreviation file would be:
+The abbreviation must be on the left hand side followed by at least 1 space, the expansion string must then be on the
+same line in quotes. So for the given examples, the abbreviation file would be:
 .CS
 |
 |e.g. "for example"
@@ -132,9 +126,21 @@ the resultant macro. See notes on commands
 and
 .Ht insert-macro 2 .
 .PP
-Try to avoid using named key, such as "\fCup\fR"  and  "\fCreturn\fR",  as the
-keyboard  macro  equivalent  is not readable and is likely to change in future
-releases.
+Try to avoid using named key, such as "\fCup\fR" and "\fCreturn\fR", as the keyboard macro equivalent is not readable
+and is likely to change in future releases.
+.PP
+When using argument \fC2\fR to obtain the current abbrev file name, note that this will be the same value as passed
+initially to the \fBglobal-abbrev-file\fR or \fBbuffer-abbrev-file\fR command so it may only be a base name. If a full 
+file name is required, the following macro code can be used:
+.Me $emf-scheme
+.CS
+2 buffer-abbrev-file
+!if &len &set #g0 $result
+  set-variable #g1 &find #g0 ".eaf" 
+  ...
+!endif
+.CE 0
+.Me $ehf-scheme
 .SH FILES
 .B c.eaf
 \- C-Mode abbreviation file.
@@ -148,6 +154,7 @@ releases.
 .Ht iso-accents-mode 3 ,
 .Ht name-kbd-macro 2 , 
 .Ht start-kbd-macro 2 ,
+.Ht $result 5 ,
 .Ht eaf 8 .
 .ad
 .FH

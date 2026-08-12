@@ -482,6 +482,7 @@ meWindowMakeCurrent(meWindow *nwp)
     /* Do the swap */
     frameCur->windowCur = nwp;
 #if MEOPT_EXTENDED
+    windowPid = owp->id;
     if(isWordMask != nwp->buffer->isWordMask)
     {
         isWordMask = nwp->buffer->isWordMask;

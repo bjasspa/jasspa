@@ -98,23 +98,16 @@ define-macro eaf-list-execute
     !if #l8
       goto-position "\x82"
     !else
-      set-variable #l5 -1
-      !if &len &set #l3 &rig :eaf-list 10
-        set-variable #l4 $window-id
-        !repeat
-          3 next-window
-          !iif &equ #l4 $window-id  !break
-          !iif &or &seq :chook #l3 &seq $buffer-major-mode #l3  set-variable #l5 &con &equ #l5 -1 $window-id -2
-        !done
-      !endif
-      !if &les #l5 0
-        -8 ml-write &cat "Abbrev Error: " &con &equ #l5 -1 "Failed to find suitable window to insert into" "More than 1 suitable window to insert into"
-      !else
-        6 next-window
-        !while &sub #l5 $window-id
-          2 next-window
-        !done
-      !endif
+      set-variable #l3 $window-id
+      set-variable #l4 $window-pid
+      !repeat
+        3 next-window
+        !iif &equ #l3 $window-id  -8 ml-write &cat "Abbrev Error: " "Failed to find window to insert into"
+      !until &equ #l4 $window-id
+      6 next-window
+      !while &sub #l4 $window-id
+        2 next-window
+      !done
     !endif
     !iif &band #l5 1  !force show-region
     !iif &not &and #l8 #l2  execute-line &spr "execute-string \"%s\"" #l0
@@ -137,8 +130,9 @@ define-macro eaf-list-goto
   set-position "\x86"
   !if &exi :chook
     set-variable #l9 :chook
-  !elif &seq &set #l9 $buffer-major-mode ""
-    set-variable #l9 "default"
+  !else
+    2 buffer-abbrev-file
+    !iif &seq &set #l9 $result ""  set-variable #l9 &con &seq $buffer-major-mode "" "default" $buffer-major-mode
   !endif
   set-variable #l0 &cat "*eaf-list*" &cat @3 #l9
   find-buffer @1
@@ -148,18 +142,20 @@ define-macro eaf-list-goto
   set-mark
   end-of-buffer
   -1 kill-region
-  !if &band @# 0x003
-    ; If this is a tool create or toolbar refresh then force a complete update
-    !force 0 delete-buffer #l0
-  !endif
+  ; If this is a tool create or toolbar refresh then force a complete update
+  !iif &band @# 0x003  !force 0 delete-buffer #l0
   !force 0 find-buffer #l0
   !if &not $status
     find-buffer #l0
     1 buffer-mode "hide"
     1 buffer-mode "magic"
     -1 buffer-mode "undo"
-    0 major-mode #l9
-    insert-string &spr "%s %s\n" &lget $result 5 @2
+    !force 0 major-mode #l9
+    !if $status
+      insert-string &spr "%s %s\n" &lget $result 5 @2
+    !else
+      insert-string &spr "%s %s\n" &sup #l9 @2
+    !endif
     !force 0 delete-buffer &set #l1 "*eaf-list-tmp*"
     find-buffer #l1
     !force insert-file &find &cat @3 #l9 ".eaf"
