@@ -122,7 +122,7 @@ set-variable .fhook-svn-status.refresh "svn-status-refresh"
 
 ; * = Console, ! = wait, $ = no file select
 set-variable .svn.cnames  "|Add|Blame|Checkout|Commit|Copy|Delete|Diff|Log File|Move|Status|Update|Server Copy|Server Move|Resolve|Ignore|Info|XDiff|Log Commit|Cat File|Revert|GDiff|"
-set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRL*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRMS*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|JRrS*!|vSs|"
+set-variable .svn.cflags  "|RIS*!|Vhpvs|UR$|CRL*!|NPrS*!|KrS*!|ZRxWwpvS|ZVpf|NPrS*!|ZRAIuwS|ZRML*|nCPs*!|nCPs*!|ZRaS*|iD!|sD^!|ZtS|pv$|vs!|JRrS*!|vSs|"
 ; 1 Add - flags: RIS*!
 set-variable .svn.cdefs1  "|1|0|"
 ; 2 Blame - flags: Vhpvs
@@ -143,7 +143,7 @@ set-variable .svn.cdefs8  "|0|1|1|"
 set-variable .svn.cdefs9  "||1|0|"
 ; 16 Status - flags: ZRAIuwS
 set-variable .svn.cdefs10 "|1|1|0|0|1|0|"
-; 17 Update - flags: ZRMS*
+; 17 Update - flags: ZRML*
 set-variable .svn.cdefs11 "|1|1|0|"
 ; 19 Server Copy - flags: nCPs*!
 set-variable .svn.cdefs12 "|||1|"

@@ -52,7 +52,7 @@ set-variable .fhook-cvs-status.refresh "cvs-status-refresh"
 
 set-variable .cvs.names   "|Add|Checkout|Commit|Diff|Graphical Diff|Log File|Remove|Status|File Status|Tag|Update|Annotate|Resolve Conflicts|Cat File|"
 set-variable .cvs.cmds    "|add|checkout|commit|diff|gdiff|log|remove|-nq update|status|tag|update|annotate|res-conf|cat-file|"
-set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRL*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZSRdPCo*|vZR|Ss|vs|"
+set-variable .cvs.flags   "|kAS*|fDvRPo*|mZRL*|OZRScw|OSs|ZR|*|ZSR|ZR|tZRbrF*|ZRdPCoL*|vZR|Ss|vs|"
 set-variable .cvs.schemes "|0|0|0|0|0|0|0|0|0|0|0|0|0|0|"
 set-variable .cvs.options "mfDtvOZkRdAPCcwbrFo"
 set-variable .cvs.values  "  0 111010000110000"

@@ -126,7 +126,7 @@ set-variable .git.cflags &lins .git.cflags -1 "Bs*!$"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||"
 ; Command 2 - Pull
 set-variable .git.cnames &lins .git.cnames -1 "Pull"
-set-variable .git.cflags &lins .git.cflags -1 "BToEs*!$"
+set-variable .git.cflags &lins .git.cflags -1 "BToEL*!$"
 set-variable .git.cdefs  &lins .git.cdefs  -1 "||0|1|1|"
 ; Command 3 - Push
 set-variable .git.cnames &lins .git.cnames -1 "Push"

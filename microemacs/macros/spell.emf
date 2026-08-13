@@ -726,14 +726,12 @@ define-macro spell-buffer
   osd .osd.spell-check 0  "batcHC" 9 3 .scheme.osd-title "Spelling Checker" spell-check-control
   osd .osd.spell-chkr 87 "BcSfH" .scheme.osd-dbtt " Undo Last   "
   0 spell-set-language
-  -1 show-cursor
   ; work out a window-line to recenter on for good visibility
   set-variable #l0 &sub $window-mode-line &div $window-depth 2
   set-variable #l0 &mul $window-depth &cond &gre #l0 &div $frame-depth 2 1 2
   set-variable .spell.recenter &sub $window-depth &div #l0 3
   !force !force .osd.spell-check osd
   !force -1 show-region
-  1 show-cursor
   ml-write &spr "[%d Manual and %d Auto corrections made%s]" .spell.rcnt .spell.acnt &cond .spell.dcnt &spr " & %d double deletions" .spell.dcnt ""
   !if &and &not #l1 &not &add &add .spell.rcnt .spell.acnt .spell.dcnt
     -1 buffer-mode "edit"
