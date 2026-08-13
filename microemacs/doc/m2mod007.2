@@ -1,0 +1,51 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m2mod007.2,v 2.8 2026/08/13 20:59:31 jon Exp $
+.Im MicroEmacs modes
+.so me.tni
+.TH cursor 2m
+.XI cursor - "Buffer's cursor visibility"
+.SH NAME
+cursor \- Buffer's cursor visibility
+.SH SYNOPSIS
+.B "cursor Mode"
+.sp
+\fBC\fR \- mode line letter.
+.SH DESCRIPTION
+When  enabled  the text  cursor  is drawn  while the  buffer is current,  when
+disabled  the cursor  is hidden.  \fBcursor\fR  is enabled by default.  As the
+mode is a property of the buffer,  the cursor  re-appears  as soon as  another
+buffer  is made  current;  there is no need to restore the mode on leaving the
+buffer.
+.PP
+The mode is  typically  disabled by macros  which draw their own  display, see
+.Ht Metris 3
+and
+.Ht Patience 3 ,
+where a flashing text cursor is a distraction.
+.PP
+The cursor  is always  drawn when  \*(mS  is  prompting  for input on the
+message line,  regardless of the current buffer's  \fBcursor\fR  mode, so that
+the user can see what they are typing.
+.PP
+In a buffer created by
+.Ht ipipe-shell-command 2
+the mode is set and cleared by the child process using the terminal  sequences
+\fBESC [ ? 25 h\fR and \fBESC [ ? 25 l\fR  respectively.  A child which  exits
+while the cursor is hidden leaves the mode disabled,  exactly as it would leave
+a real terminal.
+.SH NOTES
+Cursor hiding is not supported on all platforms and does nothing in \*(nE.
+.SH "SEE ALSO"
+.na
+.Hl "Operating Modes" Modes - ,
+.Ht buffer-mode 2 ,
+.Ht global-mode 2 ,
+.Ht ipipe-shell-command 2 ,
+.Ht $cursor-blink 5 .
+.ad
+.FH

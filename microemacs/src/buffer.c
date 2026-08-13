@@ -663,6 +663,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
 #endif
         }
 #endif
+        meCursorUpdate();
     }
     if((bp->windowCount++ == 0) || reload)
     {
@@ -2021,7 +2022,9 @@ invalid_global:
         meModeCopy(bp->mode,mode) ;
         /* update  mode line in all buffer windows */
         meBufferAddModeToWindows(bp,WFMODE) ;
-    }    
+        if((nn == MDCURSOR) && (bp == frameCur->windowCur->buffer))
+            meCursorUpdate() ;
+    }
     return meTRUE ;
 }
 

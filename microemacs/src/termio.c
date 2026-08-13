@@ -518,7 +518,8 @@ handleTimerExpired(void)
         frameCur = frameFocus;
         frameFocus = NULL;
         pokeScreen(0x01,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
-        if(cursorState >= 0)
+        meCursorUpdate();
+        if(cursorVisible)
         {
             if(cursorBlink)
                 TThandleBlink(2);
@@ -617,7 +618,7 @@ meUShort TTdepthDefault=0;        /* Default no. of rows per frame*/
 void
 TThandleBlink(int initFlag)
 {
-    if((cursorState < 0) || (frameCur->flags & meFRAME_NOT_FOCUS))
+    if(!cursorVisible || (frameCur->flags & meFRAME_NOT_FOCUS))
         timerClearExpired(CURSOR_TIMER_ID);
     else
     {
@@ -658,12 +659,12 @@ TTmove(int row, int col)
 {
     if ((row != frameCur->cursorRow) || (col != frameCur->cursorColumn))
     {
-        if((cursorState >= 0) && blinkState)
+        if(cursorVisible && blinkState)
             TThideCur() ;
         frameCur->cursorRow = row ;
         frameCur->cursorColumn = col ;
     }
-    if((cursorState >= 0) && blinkState)
+    if(cursorVisible && blinkState)
         TTshowCur();
 }
 
@@ -1228,7 +1229,7 @@ addKeyToBuffer(meUShort cc)
 #endif
     
     /* If cursor is blinking, ensure the cursor is visible */
-    if((cursorState >= 0) && cursorBlink)
+    if(cursorVisible && cursorBlink)
         TThandleBlink(1);
 	
     /* Add the key to the buffer */

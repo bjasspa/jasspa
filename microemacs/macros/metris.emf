@@ -13,9 +13,8 @@ set-variable %met-hiscore "2379 by jk the invincible"
 set-variable %met-level   6
 
 0 define-macro bhook-metris
-  ; Turn off the cursor, menu, scroll bars and toolbar.
+  ; Turn off the menu, scroll bars and toolbar.
   !force set-variable :scroll-bar $scroll-bar
-  !force -1 show-cursor
   !force osd -1 0
   set-variable $scroll-bar 0
   !if .Metris.toolbar
@@ -31,9 +30,8 @@ set-variable %met-level   6
 !emacro
 
 0 define-macro ehook-metris
-  ; Turn on the cursor & restore menu, scroll bars and toolbar
+  ; Restore menu, scroll bars and toolbar
   !force set-variable $scroll-bar :scroll-bar
-  !force 1 show-cursor
   !force osd -1 1
   !if .Metris.toolbar
     ; note - we cannot open/close the toolbar directly as this changes the window layout which must not be done in an ehook
@@ -422,10 +420,11 @@ define-macro Metris
     set-variable :met-nextw   4
     set-variable :met-nextd   18
     set-variable :met-time    900
+    -1 buffer-mode "cursor"
     -1 buffer-mode "edit"
     1 buffer-mode "view"
-    -1 show-cursor
-    !force osd -1 0                         ; Turn off the menu.
+    ; Turn off the menu.
+    !force osd -1 0
     set-variable :met-menu $status
   !endif
   beginning-of-buffer

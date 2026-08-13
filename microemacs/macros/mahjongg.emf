@@ -787,8 +787,7 @@
 ; Buffer hook - entry into the *mahjongg* buffer.
 ;
 0 define-macro bhook-mahjongg
-  ; Turn off the cursor, menu, scroll bars and toolbar.
-  -1 show-cursor
+  ; Turn off the menu, scroll bars and toolbar.
   !force osd -1 0
   set-variable :scroll-bar $scroll-bar
   set-variable $scroll-bar 0
@@ -803,8 +802,7 @@
 ; Exit Mah Jongg buffer.
 ;
 0 define-macro ehook-mahjongg
-  ; Turn on the cursor & restore menu, scroll bars and toolbar
-  1 show-cursor
+  ; Restore menu, scroll bars and toolbar
   set-variable $scroll-bar :scroll-bar
   !force osd -1 1
   !if .Mahjongg.toolbar
@@ -922,6 +920,7 @@ define-macro Mahjongg
     set-variable :mjg-tile-r3 &sprint "%s%s%s%s " :mjg-tile-r3 &mid $box-chars 3 1 &mid $box-chars 9 1 &mid $box-chars 4 1
 
     set-variable $buffer-scheme .scheme.mjg1
+    -1 buffer-mode "cursor"
     ; Set up the bindings
     buffer-bind-key mjg-draw    "redraw"
     1 buffer-bind-key mjg-draw    "C-l"
@@ -939,7 +938,6 @@ define-macro Mahjongg
     buffer-bind-key void        "mouse-drop-3"
     set-variable $buffer-bhook bhook-mahjongg
     set-variable $buffer-ehook ehook-mahjongg
-    ; Set it so we get a new random seed
     bhook-mahjongg
   !endif
   mjg-deal

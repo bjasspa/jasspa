@@ -961,8 +961,7 @@
 ; Bind the idle key to initiate a re-draw.
 ;
 0 define-macro bhook-match-it
-  ; Turn off the cursor, menu, scroll bars and toolbar.
-  -1 show-cursor
+  ; Turn off the menu, scroll bars and toolbar.
   !force osd -1 0
   set-variable :scroll-bar $scroll-bar
   set-variable $scroll-bar 0
@@ -978,8 +977,7 @@
 ; Exit Mah Jongg buffer.
 ;
 0 define-macro ehook-match-it
-  ; Turn on the cursor & restore menu, scroll bars and toolbar
-  1 show-cursor
+  ; Restore menu, scroll bars and toolbar
   set-variable $scroll-bar :scroll-bar
   !force osd -1 1
   !if .Match-It.toolbar
@@ -1076,6 +1074,7 @@ define-macro Match-It
     buffer-bind-key mi-drmouse "mouse-drop-3"
     set-variable $buffer-bhook bhook-match-it
     set-variable $buffer-ehook ehook-match-it
+    -1 buffer-mode "cursor"
     bhook-match-it
   !endif
   ; Set the screen size

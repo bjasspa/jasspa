@@ -667,10 +667,8 @@
 !emacro
 
 0 define-macro bhook-triangle
-  ; Turn off the cursor & menu
-  -1 show-cursor
+  ; Disable the menu, scroll bars and toolbar.
   !force osd -1 0
-  ; Disable the scroll bars and toolbar.
   set-variable :scroll-bar $scroll-bar
   set-variable $scroll-bar 0
   !if .Triangle.toolbar
@@ -683,8 +681,7 @@
 !emacro
 
 0 define-macro ehook-triangle
-  ; Turn on the cursor & restore menu, scroll bars and toolbar
-  1 show-cursor
+  ; Restore menu, scroll bars and toolbar
   set-variable $scroll-bar :scroll-bar
   !force osd -1 1
   !if .Triangle.toolbar
@@ -791,7 +788,7 @@ define-macro Triangle
     5 buffer-bind-key tri-tip "t"
     6 buffer-bind-key tri-tip "y"
     7 buffer-bind-key tri-tip "u"
-
+    -1 buffer-mode "cursor"
     1 buffer-bind-key tri-draw "C-l"  ; Redraw the screen
     buffer-bind-key tri-draw "redraw"
     set-variable $buffer-bhook bhook-triangle

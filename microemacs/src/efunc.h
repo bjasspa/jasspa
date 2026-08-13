@@ -245,7 +245,7 @@ NULL,                     NULL,                     &__cmdArray[CK_BAKWND],   NU
 &__cmdArray[CK_FNDTAG],   NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_SWPMRK],   NULL,                     
 NULL,                     &__cmdArray[CK_HELPCOM],  NULL,                     NULL,                     &__cmdArray[CK_DELWND],   NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_LCLUNBD],  
 NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     &__cmdArray[CK_DELTAB],   NULL,                     NULL,                     NULL,                     NULL,                     
-NULL,                     NULL,                     &__cmdArray[CK_DELBAK],   &__cmdArray[CK_DELFRAME], &__cmdArray[CK_SHOWCUR],  NULL,                     NULL,                     &__cmdArray[CK_PRTSCHM],  &__cmdArray[CK_STCHRMK],  NULL,                     
+NULL,                     NULL,                     &__cmdArray[CK_DELBAK],   &__cmdArray[CK_DELFRAME], NULL,                     NULL,                     NULL,                     &__cmdArray[CK_PRTSCHM],  &__cmdArray[CK_STCHRMK],  NULL,                     
 NULL,                     NULL,                     &__cmdArray[CK_UBNDKEY],  NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     NULL,                     
 &__cmdArray[CK_PKSCRN],   NULL,                     NULL,                     NULL,
 } ;

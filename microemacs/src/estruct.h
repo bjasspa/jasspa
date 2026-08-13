@@ -1173,12 +1173,7 @@ typedef struct meFrame
     meUByte            pokeFlag;                /* Boolean meTRUE/meFALSE flag. meTRUE
                                                  * when a poke operation has been
                                                  * performed. */
-    meUByte            mlStatus;                /* ml status
-                                                 * 0=not using it,
-                                                 * 1=using it.
-                                                 * 2=using it & its been broken so
-                                                 * next time mlerease is used, it will
-                                                 * restore */
+    meUShort           mlStatus;                /* ml status, see MLSTATUS_* */
 } meFrame;
 
 #if MEOPT_OSD

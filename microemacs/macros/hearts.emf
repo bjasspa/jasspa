@@ -1632,14 +1632,12 @@ set-variable .hvm.bpas .hvm.opas
 !emacro
 
 0 define-macro bhook-hearts
-  -1 show-cursor
   !force osd -1 0
   set-variable :scroll-bar $scroll-bar
   set-variable $scroll-bar 0
 !emacro
 
 0 define-macro ehook-hearts
-  1 show-cursor
   set-variable $scroll-bar :scroll-bar
   !force osd -1 1
   !force -1 create-callback hvmStep
@@ -1680,6 +1678,7 @@ define-macro Hearts
     49 buffer-bind-key hearts-command "9"
     51 buffer-bind-key hearts-command "s"
     1 buffer-bind-key hvmDraw "C-l"
+    -1 buffer-mode "cursor"
     buffer-bind-key hvmDraw "redraw"
     set-variable $buffer-bhook bhook-hearts
     set-variable $buffer-ehook ehook-hearts

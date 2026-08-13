@@ -358,7 +358,6 @@ DEFFUNC ("shell",                       0x42, 0x085bc558, meShell,              
 DEFFUNC ("shell-command",               0x00, 0x584e04c4, meShellCommand,       CK_SYSTEM, &__cmdArray[CK_SYSTEM+1], &__cmdArray[CK_ABTCMD])
 #endif
 #if MEOPT_CMDHASH || MEOPT_EXTENDED
-DEFFUNC ("show-cursor",                 0x42, 0x58f067ec, showCursor,           CK_SHOWCUR, &__cmdArray[CK_SHOWCUR+1], 0)
 DEFFUNC ("show-region",                 0x00, 0x7ac60e92, showRegion,           CK_SHOWSEL, &__cmdArray[CK_SHOWSEL+1], 0)
 #endif
 DEFFUNC ("sort-lines",                  0x04, 0xda3e74d0, sortLines,            CK_SORTLNS, &__cmdArray[CK_SORTLNS+1], &__cmdArray[CK_EXEMAC])

@@ -36,6 +36,7 @@ DEFMODE(MDBINARY, "binary", 'b')       /* File loaded in binary mode   */
 DEFMODE(MDCR,     "cr",     'c')       /* Save \r's on end of line     */
 DEFMODE(MDCRYPT,  "crypt",  'Y')       /* encrytion mode active        */
 DEFMODE(MDCTRLZ,  "ctrlz",  'z')       /* Save \CZ at end of file      */
+DEFMODE(MDCURSOR, "cursor", 'C')       /* Cursor is visible in buffer  */
 DEFMODE(MDEDIT,   "edit",   'e')       /* Changed since last write     */
 DEFMODE(MDEXACT,  "exact",  'E')       /* Exact matching for searches  */
 DEFMODE(MDFENCE,  "fence",  'f')       /* Auto display matching fence  */

@@ -92,6 +92,7 @@ meMode globMode = {
     meModeMask(MDCR)     |
     meModeMask(MDCTRLZ)  |
 #endif /* _DOS */
+    meModeMask(MDCURSOR) |
     meModeMask(MDFENCE)  |
     meModeMask(MDMAGIC)  |
     meModeMask(MDTAB)    |

@@ -2064,10 +2064,6 @@
 			<param name="Local" value="me/m2cmd110.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="show-cursor(2)">
-			<param name="Local" value="me/m2cmd067.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="shut-down(3)">
 			<param name="Local" value="me/m3mac024.htm">
 			</OBJECT>
@@ -2374,6 +2370,10 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="ctrlz(2m)">
 			<param name="Local" value="me/m2mod030.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="cursor(2m)">
+			<param name="Local" value="me/m2mod007.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="del(2m)">
@@ -5484,10 +5484,6 @@
 			<param name="Local" value="me/m2cmd131.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="show-cursor(2)">
-			<param name="Local" value="me/m2cmd067.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="show-region(2)">
 			<param name="Local" value="me/m2cmd132.htm">
 			</OBJECT>
@@ -6464,10 +6460,6 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="shell-command(2)">
 			<param name="Local" value="me/m2cmd131.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="show-cursor(2)">
-			<param name="Local" value="me/m2cmd067.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="show-region(2)">
@@ -10148,6 +10140,10 @@
 			<param name="Local" value="me/m2mod030.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="cursor(2m)">
+			<param name="Local" value="me/m2mod007.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="cvs(3)">
 			<param name="Local" value="me/m3mac057.htm">
 			</OBJECT>
@@ -11734,10 +11730,6 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="shell-command(2)">
 			<param name="Local" value="me/m2cmd131.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="show-cursor(2)">
-			<param name="Local" value="me/m2cmd067.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="show-region(2)">

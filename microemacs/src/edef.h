@@ -47,7 +47,7 @@ extern  meAbbrev  *globalAbbrevFile;    /* Global Abreviation file      */
 extern  mePosition *position;           /* Position stack head          */
 #endif
 extern  meUShort   hilBlockS;           /* Hilight - HilBlock array siz */
-extern  meInt      cursorState ;        /* Current state of cursor      */
+extern  meUByte    cursorVisible ;      /* Current visibility of cursor */
 extern  meUByte   *meProgName ;         /* the program name (argv[0])   */
 extern  meUByte  **ModeLineStr ;        /* modeline line format         */
 extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
@@ -473,6 +473,10 @@ extern int        osdRow;               /* The osd current row */
 #define MLSTATUS_CLEAR   0x10
 #define MLSTATUS_NINPUT  0x20
 #define MLSTATUS_OSDPOS  0x40
+/* Cursor overrides, if neither set the current buffer's MDCURSOR mode is used */
+#define MLSTATUS_CURSHOW 0x0100
+#define MLSTATUS_CURHIDE 0x0200
+#define MLSTATUS_CURMASK 0x0300
 
 #ifdef _DRAGNDROP
 extern struct s_DragAndDrop *dadHead;   /* Drag and drop list */
@@ -517,7 +521,7 @@ mePosition *position=NULL;              /* Position stack head          */
 meColor   noColors=0;                   /* No defined colours           */
 meInt     styleTableSize=2;             /* Size of the style table      */
 meSchemeSet *hilBlock;                  /* Hilighting style change      */
-meInt     cursorState=0;                /* Current state of cursor      */
+meUByte   cursorVisible=1;              /* Current visibility of cursor */
 meUByte  *meProgName=NULL;              /* the program name (argv[0])   */
 #if MEOPT_EXTENDED
 meUByte   orgModeLineStr[]="%s%r%u%K %b %l of %n - %Y%-%m%-%d %H:%M (%O) - (%f) ";

@@ -1727,7 +1727,7 @@ meFrameGainFocus(meFrame *frame)
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XSetICFocus(meFrameGetXIC(frame));
-        if(cursorState >= 0)
+        if(cursorVisible)
         {
 #if MEOPT_MWFRAME
             if(frameCur != frame)
@@ -1773,7 +1773,7 @@ meFrameKillFocus(meFrame *frame)
 #endif
         if(meFrameGetXIC(frame) != NULL)
             XUnsetICFocus(meFrameGetXIC(frame));
-        if(cursorState >= 0)
+        if(cursorVisible)
         {
             /* because the cursor is a part of the solid cursor we must
              * remove the old one first and then redraw
@@ -1992,7 +1992,7 @@ meXEventHandler(void)
                     sscol = -1;         /* Reset the history to none */
                 }
             }
-            if((cursorState >= 0) && blinkState)
+            if(cursorVisible && blinkState)
                 meFrameXTermShowCursor(frame);
             XFlush(mecm.xdisplay);
         }

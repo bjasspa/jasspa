@@ -502,6 +502,8 @@ meWindowMakeCurrent(meWindow *nwp)
     if(meModeTest(nwp->buffer->mode,MDPIPE))
         ipipeSetSize(nwp,nwp->buffer);
 #endif
+    /* after the bhook as that may have changed the new buffer's cursor mode */
+    meCursorUpdate();
 }
 
 /*

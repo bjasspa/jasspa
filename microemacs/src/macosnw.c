@@ -1013,7 +1013,7 @@ TTwaitForChar(void)
 #ifdef _CLIPBRD
                         TTcheckClipboard();
 #endif
-                        if(cursorState >= 0)
+                        if(cursorVisible)
                         {
 #if MEOPT_MWFRAME
                             if(frameCur != ff)
@@ -1053,7 +1053,7 @@ TTwaitForChar(void)
 #ifdef _CLIPBRD
                     TTflushClipboard();
 #endif
-                    if(cursorState >= 0)
+                    if(cursorVisible)
                     {
                         /* because the cursor is a part of the solid cursor we must
                          * remove the old one first and then redraw */

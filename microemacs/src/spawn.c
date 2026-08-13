@@ -1741,11 +1741,17 @@ move_cursor_pos:
                             {
                                 if(prmL == 7)
                                     ipipe->flag &= ~meIPIPE_NOAUTOWRAP;
+                                else if(prmL == 25)
+                                {
+                                    meModeSet(bp->mode,MDCURSOR);
+                                    if(bp == frameCur->windowCur->buffer)
+                                        meCursorUpdate();
+                                }
 #ifndef NDEBUG
-                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), show/hide cursor (25), focus in/out (1004)
+                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), focus in/out (1004)
                                  * synchronized output (2026), unknown private mode (2031), win32-input-mode (9001 - set by ConPTY to request
                                  * key events are sent as '\E[<vk>;<sc>;<uc>;<kd>;<cs>;<rc>_' records, ME does not so it falls back to plain VT) */
-                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
+                                else if((prmL != 1) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
                                     goto cant_handle_this;
 #endif
                             }
@@ -1761,10 +1767,16 @@ move_cursor_pos:
                             {
                                 if(prmL == 7)
                                     ipipe->flag |= meIPIPE_NOAUTOWRAP;
+                                else if(prmL == 25)
+                                {
+                                    meModeClear(bp->mode,MDCURSOR);
+                                    if(bp == frameCur->windowCur->buffer)
+                                        meCursorUpdate();
+                                }
 #ifndef NDEBUG
-                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), show/hide cursor (25), focus in/out (1004)
+                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), focus in/out (1004)
                                  * synchronized output (2026), unknown private mode (2031), win32-input-mode (9001 - see the 'h' handler above) */
-                                else if((prmL != 1) && (prmL != 25) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
+                                else if((prmL != 1) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
                                     goto cant_handle_this;
 #endif
                             }

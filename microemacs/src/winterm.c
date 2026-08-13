@@ -775,8 +775,10 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
             uc = ttSpeUChars[cc];
         else if((cc & 0x80) == 0)
             uc = cc;
+#if MEOPT_EXTENDED
         else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
             uc = ttSpeUChars[meCHAR_UNDEF];
+#endif
         if(uc != pCI->Char.UnicodeChar)
         {
             pCI->Char.UnicodeChar = uc;
@@ -1070,13 +1072,13 @@ meGetConsoleMessage(MSG *msg, int mode)
             
             /* Kick of the blinker - as default value for cursorBlink
              * is 0 this will not happen until after the window is created */
-            if((cursorState >= 0) && cursorBlink)
+            if(cursorVisible && cursorBlink)
                 TThandleBlink(2);
         }
         else
         {
             frameCur->flags |= meFRAME_NOT_FOCUS;
-            if(cursorState >= 0)
+            if(cursorVisible)
             {
                 /* because the cursor is a part of the solid cursor we must
                  * remove the old one first and then redraw
@@ -1492,10 +1494,15 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
 	/* Finished !! */
 	return;
     }
+#if MEOPT_EXTENDED
     else if((cc & 0x80) == 0)
         uc = cc;
     else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
         uc = 0xFFFD;
+#else
+    else
+        uc = cc;
+#endif
     
     /* Set up the font */
     SetTextColor(hdc, eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel);
@@ -1657,7 +1664,11 @@ meFrameDraw(meFrame *frame)
         ecol = frame->width;
     
     /* Redraw the cursor if we have zapped it */
-    if((cursorState >= 0) && blinkState && ((frame != frameFocus) || (frame == frameCur)))
+    if(cursorVisible && blinkState
+#if MEOPT_MWFRAME
+       && ((frame != frameFocus) || (frame == frameCur))
+#endif
+       )
         drawCursor = ((srow <= frame->cursorRow) && (erow >= frame->cursorRow) &&
                       (scol <= frame->cursorColumn) && (ecol > frame->cursorColumn));
     else
@@ -1764,10 +1775,15 @@ meFrameDraw(meFrame *frame)
                     spFlag++;
                     uc = ' ';
                 }
+#if MEOPT_EXTENDED
                 else if((cc & 0x80) == 0)
                     uc = cc;
                 else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
                     uc = 0xFFFD;
+#else
+                else
+                    uc = cc;
+#endif
                 tbp[col] = uc;
             } while((--col >= scol) && (*--fschm == schm));
             
@@ -6165,7 +6181,7 @@ meFrameKillFocus(meFrame *frame)
         }
 #endif
         
-        if(cursorState >= 0)
+        if(cursorVisible)
         {
             /* because the cursor is a part of the solid cursor we must
              * remove the old one first and then redraw

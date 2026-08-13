@@ -605,7 +605,7 @@ meFrameMakeCur(meFrame *frame, int quiet)
         sgarbf = meTRUE;                      /* Garbage the screen */
         if(frameOld->mlStatus & (MLSTATUS_RESTORE|MLSTATUS_KEEP))
         {
-            meUByte mlStatus;
+            meUShort mlStatus;
             meUByte *mlStr;
             
             /* move the current mlstatus over to the new frame, this should
@@ -631,6 +631,7 @@ meFrameMakeCur(meFrame *frame, int quiet)
             frame->mlStatus = mlStatus;
         }
         frameOld->mlStatus = 0;
+        meCursorUpdate();
         if(frameOld->mlLine->length > 0)
         {
             /* erase the ml line of old current frame */

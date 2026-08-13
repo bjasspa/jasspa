@@ -61,18 +61,18 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                 
                 if(frameCur->mlStatus & MLSTATUS_POSOSD)
                 {
-                    frameCur->mlStatus = MLSTATUS_POSOSD;
+                    frameCur->mlStatus = (frameCur->mlStatus & MLSTATUS_CURMASK)|MLSTATUS_POSOSD;
                     mlResetCursor();
                 }
                 else
                 {
                     /* switch off the status cause we are replacing it */
-                    frameCur->mlStatus = 0;
+                    frameCur->mlStatus &= MLSTATUS_CURMASK;
                     mlwrite(((mask & mlCR_CURSOR_IN_MAIN) ? 0:MWCURSOR)|MWSPEC,pp);
                     lp = pp;
                     pp = prompt;
                     /* switch on the status so we save it */
-                    frameCur->mlStatus = (mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML);
+                    frameCur->mlStatus = (frameCur->mlStatus & MLSTATUS_CURMASK)|((mask & mlCR_CURSOR_IN_MAIN) ? MLSTATUS_KEEP:(MLSTATUS_KEEP|MLSTATUS_POSML));
                     inpType = 2;
                 }
             }
@@ -505,7 +505,7 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
         len += (int) strlen(expbuf+len);
     }
     /* switch off the status cause we are replacing it */
-    frameCur->mlStatus = 0;
+    frameCur->mlStatus &= MLSTATUS_CURMASK;
     maxCol = frameCur->width;
     promsiz = (int) meStrlen(prompt);
     col += promsiz;
@@ -548,7 +548,7 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
         mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf);
     
     /* switch on the status so we save it */
-    frameCur->mlStatus = MLSTATUS_KEEP|MLSTATUS_POSML;
+    frameCur->mlStatus = (frameCur->mlStatus & MLSTATUS_CURMASK)|MLSTATUS_KEEP|MLSTATUS_POSML;
 }
 
 
@@ -898,7 +898,6 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     meBuffer *mlgsOldWBp=NULL;
     meInt    mlgsSingWind=0;
 #if MEOPT_EXTENDED
-    int     oldCursorState=0;
     int     curPos;
 #endif
     int     cc;
@@ -1012,10 +1011,9 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     oldUseMlBinds = useMlBinds;
     useMlBinds = 1;
 #endif
-#if MEOPT_EXTENDED
-    if((oldCursorState=cursorState) < 0)
-        showCursor(meFALSE,1);
-#endif
+    /* the user must be able to see what they are typing */
+    frameCur->mlStatus |= MLSTATUS_CURSHOW;
+    meCursorUpdate();
     for(cont_flag=0 ; cont_flag == 0 ;)
     {
         meUInt arg;
@@ -1924,10 +1922,9 @@ input_addexpand:
         }
         zotbuf(cbp,1);
     }
-#if MEOPT_EXTENDED
-    if(oldCursorState < 0)
-        showCursor(meTRUE,oldCursorState);
-#endif
+    /* MLSTATUS_CLEAR above dropped MLSTATUS_CURSHOW, update once the current
+     * window and buffer have been restored */
+    meCursorUpdate();
     
     if(cont_flag & 0x04)
         return ctrlg(meFALSE,1);

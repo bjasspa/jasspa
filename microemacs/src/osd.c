@@ -636,7 +636,7 @@ menuExecute(osdITEM *mp, int flags, int n)
 {
     meUByte *p, *q;                        /* Local character pointers */
     int   cc, f, mpflags ;              /* Immediate character */
-    meUByte mlStatusStore ;
+    meUShort mlStatusStore ;
     meUByte oldAllKeys, oldForce ;
     meUByte oldUseMlBinds ;
     
@@ -748,8 +748,11 @@ menuExecute(osdITEM *mp, int flags, int n)
     if (mpflags & MF_ENTRY)
     {
         if(oldUseMlBinds & 0x10)
+        {
             /* Restore the previous frameCur->mlStatus value */
             frameCur->mlStatus = mlStatusStore ;
+            meCursorUpdate() ;
+        }
         useMlBinds = (oldUseMlBinds & 0x0f);
     }
     TTallKeys = oldAllKeys ;
@@ -878,7 +881,7 @@ menuRenderArea(int x, int y, int len, int dep)
         }
         TCAPschemeReset();
         /* restore cursor position */
-        if((cursorState >= 0) && blinkState)
+        if(cursorVisible && blinkState)
             TTshowCur();
         else
             TThideCur();
@@ -3769,12 +3772,13 @@ osdDisplayMouseMove(osdDISPLAY *md)
 {
     meUByte oldAllKeys=TTallKeys;
     meShort mmx, mmy;
-    int cc, osdCursorState;
-    
-    osdCursorState = cursorState;
-    if(cursorState >= 0)
-        showCursor(meTRUE,-1-cursorState);
-    
+    meUShort osdMlStatus;
+    int cc;
+
+    osdMlStatus = frameCur->mlStatus;
+    frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_CURSHOW) | MLSTATUS_CURHIDE;
+    meCursorUpdate();
+
     /* Enable all mouse movements - important if we've come from meGetStringFromUser */
     TTallKeys = 1;
     mmx = mouse_X;
@@ -3793,8 +3797,8 @@ osdDisplayMouseMove(osdDISPLAY *md)
         }
     }
     /* Restore state */
-    if(osdCursorState != cursorState)
-        showCursor(meTRUE,osdCursorState-cursorState);
+    frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_CURMASK) | (osdMlStatus & MLSTATUS_CURMASK);
+    meCursorUpdate();
     TTallKeys = oldAllKeys;
 }
 
@@ -4725,19 +4729,22 @@ osdDisplayRedraw(void)
 static osdITEM *
 menuInteraction (int *retState)
 {
-    int osdCursorState ;
+    meUShort osdMlStatus ;
     int cc, nit, ii, n, f ;
     meUInt arg ;
     int state ;
     osdITEM *mp ;
-    
+
     *retState = meFALSE ;
-    
+
     /* Hide the cursor */
-    osdCursorState = cursorState ;
+    osdMlStatus = frameCur->mlStatus ;
     if(!(meSystemCfg & meSYSTEM_OSDCURSOR))
-        showCursor(meTRUE,-1-cursorState) ;
-    
+    {
+        frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_CURSHOW) | MLSTATUS_CURHIDE ;
+        meCursorUpdate() ;
+    }
+
     for(;;)
     {
         if(meSystemCfg & meSYSTEM_OSDCURSOR)
@@ -4792,8 +4799,11 @@ menuInteraction (int *retState)
             }
             else
                 ii = -1 ;
-            if(ii != cursorState)
-                showCursor(meTRUE,ii-cursorState) ;
+            if(ii)
+                frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_CURSHOW) | MLSTATUS_CURHIDE ;
+            else
+                frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_CURHIDE) | MLSTATUS_CURSHOW ;
+            meCursorUpdate() ;
         }
         TTflush() ;
         osdCol = -1 ;
@@ -5304,8 +5314,8 @@ execute_item:
     }
     
     /* Restore the context */
-    if(osdCursorState != cursorState)
-        showCursor(meTRUE,osdCursorState-cursorState) ;
+    frameCur->mlStatus = (frameCur->mlStatus & ~MLSTATUS_CURMASK) | (osdMlStatus & MLSTATUS_CURMASK) ;
+    meCursorUpdate() ;
     TTflush() ;
     if (state & meOSD_EXECUTE_MENU)
         return mp ;

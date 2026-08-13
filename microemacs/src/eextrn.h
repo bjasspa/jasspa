@@ -213,10 +213,11 @@ extern	int	update(int force);
 extern	void	updone(meWindow *wp);
 extern	void	updall(meWindow *wp);
 #if MEOPT_EXTENDED
-extern	int     showCursor(int f, int n);
+extern	void    meCursorUpdate(void);
 extern	int     showRegion(int f, int n);
 #else
-#define showCursor notAvailable
+/* cursor hiding is not supported, the 'cursor' mode can be set but does nothing */
+#define meCursorUpdate()
 #define showRegion notAvailable
 #endif
 

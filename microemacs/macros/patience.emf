@@ -674,8 +674,7 @@
 ; Buffer hook - entry into the *patience* buffer.
 ;
 0 define-macro bhook-patience
-  ; Turn off the cursor, menu, scroll bars and toolbar.
-  -1 show-cursor
+  ; Turn off the menu, scroll bars and toolbar.
   !force osd -1 0
   set-variable :pat-scroll $scroll-bar
   set-variable $scroll-bar 0
@@ -690,8 +689,7 @@
 ; Exit patience buffer.
 ;
 0 define-macro ehook-patience
-  ; Turn on the cursor & restore menu, scroll bars and toolbar
-  1 show-cursor
+  ; Restore menu, scroll bars and toolbar
   set-variable $scroll-bar :pat-scroll
   !force osd -1 1
   !if .Patience.toolbar
@@ -786,6 +784,7 @@ define-macro Patience
     buffer-bind-key pat-key-tab "tab"        ; Deal next card.
     buffer-bind-key pat-quit "q"             ; quit game
     buffer-bind-key pat-draw "redraw"        ; Redraw screen
+    -1 buffer-mode "cursor"
     1 buffer-bind-key pat-draw "C-l"         ; Redraw screen
     set-variable $buffer-bhook bhook-patience
     set-variable $buffer-ehook ehook-patience

@@ -1256,7 +1256,7 @@ loop_round:
                     goto loop_round2 ;
                 case 'v':
                     {
-                        meUByte mlStatusStore ;
+                        meUShort mlStatusStore ;
                         mlStatusStore = frameCur->mlStatus ;
                         frameCur->mlStatus = 0 ;
                         clexec = meFALSE ;

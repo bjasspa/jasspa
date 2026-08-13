@@ -479,16 +479,13 @@ set-variable .bragDrawCard.slb "                                Heart           
   !endif
 !emacro
 0 define-macro bhook-brag
-  ; Turn off the cursor & menu
-  -1 show-cursor
+  ; Disable the menu, scroll bars and toolbar.
   !force osd -1 0
-  ; Disable the scroll bars and toolbar.
   set-variable :scroll-bar $scroll-bar
   set-variable $scroll-bar 0
 !emacro
 0 define-macro ehook-brag
-  ; Turn on the cursor & restore menu, scroll bars and toolbar
-  1 show-cursor
+  ; Restore menu, scroll bars and toolbar
   set-variable $scroll-bar :scroll-bar
   !force osd -1 1
 !emacro
@@ -1240,6 +1237,7 @@ define-macro Brag
     25 buffer-bind-key brag-command "i"
     26 buffer-bind-key brag-command "x"
     1 buffer-bind-key brag-draw "C-l"
+    -1 buffer-mode "cursor"
     buffer-bind-key brag-draw "redraw"
     set-variable $buffer-bhook bhook-brag
     set-variable $buffer-ehook ehook-brag

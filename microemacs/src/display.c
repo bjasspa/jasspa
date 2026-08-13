@@ -214,27 +214,27 @@ remove_hilight:
 }
 
 #if MEOPT_EXTENDED
-int
-showCursor(int f, int n)
+void
+meCursorUpdate(void)
 {
-    int ii;
+    meUByte vis;
 
-    ii = cursorState;
-    if(f)
-        cursorState += n;
+    if(frameCur->mlStatus & MLSTATUS_CURSHOW)
+        vis = 1;
+    else if(frameCur->mlStatus & MLSTATUS_CURHIDE)
+        vis = 0;
     else
-        cursorState = 0 ;
-    if((cursorState >= 0) && (ii < 0))
-    {
-        if(cursorBlink)
-            /* kick off the timer */
-            TThandleBlink(1);
-        else
-            TTshowCur();
-    }
-    else if((cursorState < 0) && (ii >= 0))
+        vis = meModeTest(frameCur->windowCur->buffer->mode,MDCURSOR) ? 1:0;
+    if(vis == cursorVisible)
+        return;
+    cursorVisible = vis;
+    if(!vis)
         TThideCur();
-    return meTRUE;
+    else if(cursorBlink)
+        /* kick off the timer */
+        TThandleBlink(1);
+    else
+        TTshowCur();
 }
 
 int
@@ -2507,7 +2507,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
 
 #ifdef _ME_POKE_REDRAW_CURSOR
     /* Must redraw the cursor if we have zapped it */
-    drawCursor = ((cursorState >= 0) && blinkState &&
+    drawCursor = (cursorVisible && blinkState &&
                   _ME_POKE_REDRAW_CURSOR
                   (row == frameCur->cursorRow) &&
                   (col <= frameCur->cursorColumn) && ((col+len) > frameCur->cursorColumn)) ;
@@ -2714,7 +2714,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
             }
             TCAPschemeReset();
             /* restore cursor position */
-            if((cursorState >= 0) && blinkState)
+            if(cursorVisible && blinkState)
                 TTshowCur();
             else
                 TThideCur();
@@ -3136,7 +3136,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
         /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string for the length of the sleep
          */
-        meUByte oldMlStatus = frameCur->mlStatus;
+        meUShort oldMlStatus = frameCur->mlStatus;
         frameCur->mlStatus = MLSTATUS_KEEP;
         TTsleep(pauseTime,1,NULL);
         frameCur->mlStatus = oldMlStatus;
@@ -3146,7 +3146,8 @@ mlwrite(int flags, meUByte *fmt, int arg)
         /* Change the value of frameCur->mlStatus to MLSTATUS_KEEP cos we want to keep
          * the string till we get a key
          */
-        meUByte scheme=(globScheme/meSCHEME_STYLES), oldMlStatus=frameCur->mlStatus, oldkbdmode=kbdmode;
+        meUByte scheme=(globScheme/meSCHEME_STYLES), oldkbdmode=kbdmode;
+        meUShort oldMlStatus=frameCur->mlStatus;
         pokeScreen(POKE_NOMARK+0x10,frameCur->depth,frameCur->width-9,&scheme,(meUByte *) "<ANY KEY>");
         vp1->endp = frameCur->width;
         frameCur->mlStatus = MLSTATUS_KEEP;

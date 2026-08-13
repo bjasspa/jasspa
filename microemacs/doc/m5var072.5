@@ -58,12 +58,13 @@ define-macro screen-saver
                 2 screen-poke @# 0 $global-scheme &spr "%n" $frame-width " "
             !done
             0 screen-poke 0 0 $global-scheme &spr "%n" $frame-width " "
-            -1 show-cursor
+            set-variable #l0 &bmo "cursor"
+            -1 buffer-mode "cursor"
             ; must set this to stop recursion when waiting for a key!
             set-variable %screen-saver 0
             set-variable @# @cg
             set-variable %screen-saver 1
-            1 show-cursor
+            &cond #l0 1 -1 buffer-mode "cursor"
             screen-update
             0 ml-write
         !endif
