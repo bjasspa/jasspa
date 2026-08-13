@@ -61,34 +61,42 @@ setAbbrev(int f, int n, meAbbrev **abrevPtr)
         }
         return meTRUE ;
     }
-        
-    if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,meBUF_SIZE_MAX)) <= 0)
-        return status ;
-    
-    if(buf[0] == '\0')
-        abrev = NULL ;
-    else
+    if(n & 1)
     {
-        abrev = aheadp ;
-        while(abrev != NULL)
+        if((status=meGetString((meUByte *)"Abbrev file",MLFILECASE,0,buf,meBUF_SIZE_MAX)) <= 0)
+            return status;
+        
+        if(buf[0] == '\0')
+            abrev = NULL;
+        else
         {
-            if(!fnamecmp(buf,abrev->fname))
-                break ;
-            abrev = abrev->next ;
+            abrev = aheadp ;
+            while(abrev != NULL)
+            {
+                if(!fnamecmp(buf,abrev->fname))
+                    break;
+                abrev = abrev->next;
+            }
+            if((abrev == NULL) &&
+               ((abrev = meMalloc(sizeof(meAbbrev)+meStrlen((char *) buf))) != NULL))
+            {
+                meStrcpy(abrev->fname,buf);
+                abrev->loaded = 0;
+                abrev->next = aheadp;
+                aheadp = abrev ;
+                abrev->hlp.next = &(abrev->hlp) ;
+                abrev->hlp.prev = &(abrev->hlp) ;
+            }
         }
-        if((abrev == NULL) &&
-           ((abrev = meMalloc(sizeof(meAbbrev)+meStrlen((char *) buf))) != NULL))
-        {
-            meStrcpy(abrev->fname,buf) ;
-            abrev->loaded = 0 ;
-            abrev->next = aheadp ;
-            aheadp = abrev ;
-            abrev->hlp.next = &(abrev->hlp) ;
-            abrev->hlp.prev = &(abrev->hlp) ;
-        }
+        *abrevPtr = abrev;
     }
-    *abrevPtr = abrev ;
-    
+    if(n & 2)
+    {
+        if((abrev=*abrevPtr) != NULL)
+            meStrcpy(resultStr,abrev->fname);
+        else
+            resultStr[0] = '\0';
+    }
     return meTRUE ;
 }
 

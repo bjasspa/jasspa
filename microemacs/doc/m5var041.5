@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var041.5,v 2.9 2026/02/21 23:14:40 jon Exp $
+.Id $Id: m5var041.5,v 2.9 2026/08/12 10:00:42 jon Exp $
 .Im MicroEmacs variable|shell|macrodevelop
 .so me.tni
 .TH $result 5
@@ -18,6 +18,9 @@ $result \- Various command return values
 .SH DESCRIPTION
 .B $result
 is used to return the results of several commands:
+.TP
+.Ht buffer-abbrev-file 2 
+\fB$result\fR is set to the name of the current abbreviation file name.
 .TP
 .Ht buffer-info 2 
 \fB$result\fR is set to the same output string as printed to the message-line by this command.
@@ -53,6 +56,9 @@ failed.
 .TP
 .Ht generate-password 3
 \fB$result\fR is set to the generated password.
+.TP
+.Ht global-abbrev-file 2 
+\fB$result\fR is set to the name of the current abbreviation file name.
 .TP
 .Ht goto-alpha-mark 2
 \fB$result\fR is set to the list of all alpha marks in the current buffer when an argument of \fC0\fR is given.
@@ -142,6 +148,7 @@ can cause the execution of a macro to interrupt another which is waiting for use
 should be copied before getting user input.
 .SH "SEE ALSO"
 .na
+.Ht buffer-abbrev-file 2 ,
 .Ht buffer-info 2 ,
 .Ht change-font 2 ,
 .Ht copy-file 3 ,
@@ -152,6 +159,7 @@ should be copied before getting user input.
 .Ht file-op 2 ,
 .Ht find-registry 2 ,
 .Ht generate-hash 2 ,
+.Ht global-abbrev-file 2 ,
 .Ht goto-alpha-mark 2 ,
 .Ht indent 2 ,
 .Ht ipipe-shell-command 2 ,

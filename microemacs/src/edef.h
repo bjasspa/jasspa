@@ -369,6 +369,7 @@ extern meCryptContext cryCtx;
 extern meVariable *usrVarList;          /* user variables list          */
 extern meUByte   *fileIgnore;
 extern meUByte   *frameTitle;           /* String used in frame title   */
+extern meInt      windowPid;            /* Previous $window-id          */
 #endif
 
 extern meUByte   *meUserName;
@@ -830,6 +831,7 @@ meCryptContext cryCtx;
 meVariable *usrVarList=NULL;            /* user variables list          */
 meUByte  *fileIgnore=NULL;
 meUByte  *frameTitle=NULL;              /* String used in frame title   */
+meInt     windowPid=0;                  /* Previous $window-id          */
 #endif
 
 meUByte  *meUserName=NULL;

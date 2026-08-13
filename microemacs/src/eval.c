@@ -746,6 +746,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVWID:
             frameCur->windowCur->id = meAtoi(vvalue);
             break;
+        case EVWPID:
+            windowPid = meAtoi(vvalue);
+            break;
         case EVWXSCROLL:
             if((status=meAtoi(vvalue)) < 0)
                 status = 0;
@@ -1480,6 +1483,7 @@ handle_namesvar:
     case EVWSBAR:       return meItoa(frameCur->windowCur->frameColumn+frameCur->windowCur->textWidth);
     case EVWFLAGS:      return meItoa(frameCur->windowCur->flags);
     case EVWID:         return meItoa(frameCur->windowCur->id);
+    case EVWPID:        return meItoa(windowPid);
     case EVWDEPTH:      return meItoa(frameCur->windowCur->textDepth);
     case EVWWIDTH:      return meItoa(frameCur->windowCur->textWidth);
 #endif
