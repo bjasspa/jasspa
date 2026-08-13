@@ -62,7 +62,7 @@ add-color-scheme .scheme.bold 6 0 6 0 6 4 6 4 1 9 1 9 1 9 1 9
 add-color-scheme .scheme.italic 2 0 2 0 2 4 2 4 16 24 17 25 16 24 17 25
 add-color-scheme .scheme.under 6 0 6 0 6 4 6 4 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.bold-italic 2 0 2 0 2 0 2 0 1 9 1 9 1 9 1 9
-add-color-scheme .scheme.bold-under 1 22 1 21 1 23 1 23 17 25 17 25 17 25 17 25
+add-color-scheme .scheme.bold-under 2 0 2 0 2 0 2 0 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.italic-under 2 0 2 0 2 4 2 4 16 24 17 25 16 24 17 25
 add-color-scheme .scheme.bold-italic-under 6 0 6 0 6 4 6 4 17 25 17 25 17 25 17 25
 add-color-scheme .scheme.code 2 0 2 0 4 7 4 7 0 8 1 9 8 0 9 1

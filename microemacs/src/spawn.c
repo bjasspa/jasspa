@@ -1747,11 +1747,13 @@ move_cursor_pos:
                                     if(bp == frameCur->windowCur->buffer)
                                         meCursorUpdate();
                                 }
+                                /* \E[?1049h/l Alternate screen: this could be implemented by narrowing current buffer out leaving one line and on exiting
+                                 * remove all but one line and remove the narrow. Would also need to store the current terminal cursor position */
 #ifndef NDEBUG
-                                /* safe to ignore: cursor key mode (prmL = 1) & bracketed paste (2004), focus in/out (1004)
+                                /* safe to ignore: cursor key mode (prmL = 1), cursor blink (12), focus in/out (1004), bracketed paste (2004),
                                  * synchronized output (2026), unknown private mode (2031), win32-input-mode (9001 - set by ConPTY to request
                                  * key events are sent as '\E[<vk>;<sc>;<uc>;<kd>;<cs>;<rc>_' records, ME does not so it falls back to plain VT) */
-                                else if((prmL != 1) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
+                                else if((prmL != 1) && (prmL != 12) && (prmL < 1000 || prmL > 1006) && (prmL != 2004) && (prmL != 2026) && (prmL != 2031) && (prmL != 9001))
                                     goto cant_handle_this;
 #endif
                             }

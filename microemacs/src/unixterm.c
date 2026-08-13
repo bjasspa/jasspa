@@ -1704,7 +1704,9 @@ meXEventGetFrame(XEvent *event)
 static void
 meFrameGainFocus(meFrame *frame)
 {
+#if MEOPT_MWFRAME
     extern int commandDepth;
+#endif
     /* have we not got the focus? */
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
@@ -1752,7 +1754,9 @@ meFrameGainFocus(meFrame *frame)
 static void
 meFrameKillFocus(meFrame *frame)
 {
+#if MEOPT_MWFRAME
     extern int commandDepth;
+#endif
     /* have we got the focus to loose it? */
     if(!(frame->flags & meFRAME_NOT_FOCUS))
     {
