@@ -1263,7 +1263,7 @@ define-macro dirlst-search
   set-variable .dirlst-tag-list-delete-file.result "|0|0|0|0|"
   set-variable #l0 0
   !while &les &pinc #l0 1 .find-file.file-count
-    ml-write &spr "Delete %n" &mod #l0 40 "."
+    !iif &not &band 31 #l0  ml-write &spr "Delete %n" &band &div #l0 32 31 "."
     set-variable #l3 &ind &cat ".find-file.file" #l0
     &band @# 3 dirlst-tag-list-delete-file #l1 #l3
   !done
@@ -1274,7 +1274,7 @@ define-macro dirlst-search
       set-variable #l7 &ind &cat ".find-file.dir" &inc #l8 1
       set-variable $file-names &cat &cat #l1 #l7 ".*"
       !while &not &seq &set #l3 $file-names ""
-        ml-write &spr "Delete %n" &mod &inc #l0 1 40 "."
+        !iif &not &band 31 &inc #l0 1  ml-write &spr "Delete %n" &band &div #l0 32 31 "."
         set-variable #l3 &cat #l7 #l3
         !force !force &band @# 3 dirlst-tag-list-delete-file #l1 #l3
         !if &not $status
@@ -1600,7 +1600,7 @@ define-macro delete-file-delayed
   set-variable .result 0
   set-variable #l2 0
   !repeat
-    ml-write &spr "%s %n" #l9 &mod &inc #l2 1 40 "."
+    !iif &not &band 31 &inc #l2 1  ml-write &spr "%s %n" #l9 &band &div #l2 32 31 "."
     set-variable #l4 &ind &cat ".find-file.file" #l2
     !if #p9
     !elif &not &sin "/" &lef #l4 -1
@@ -1635,9 +1635,9 @@ define-macro delete-file-delayed
 *dir_retry
       !force 0x100 file-op &lef #l6 -1
       !if &seq &lget &stat "i" #l6 2 "D"
-        set-variable $file-names &cat &cat #l1 #l7 ".*"
+        set-variable $file-names &cat &cat #l1 #l7 &con &band 0x100 @# .mask ".*"
         !while &not &seq &set #l3 $file-names ""
-          ml-write &spr "%s %n" #l9 &mod &inc #l2 1 40 "."
+          !iif &not &band 31 &inc #l2 1  ml-write &spr "%s %n" #l9 &band &div #l2 32 31 "."
           set-variable #l4 &cat #l7 #l3
           set-variable #l5 &cat #l6 #l3
           !force !force dirlst-tag-list-copy-file #l1 #l4 #l5
@@ -1722,6 +1722,7 @@ define-macro copy-file
   !force set-variable #l1 @1
   !iif &not $status  set-variable #l1 @ml04 #l0
   !if &band @# 0x40
+    !iif &band @# 0x100  set-variable .dirlst-tag-list-copy.mask #l1
     set-variable $file-names #l1
     set-variable #l1 $result
     !if &len &set #l4 $file-names
