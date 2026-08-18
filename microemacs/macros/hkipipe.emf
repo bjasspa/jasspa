@@ -481,7 +481,7 @@ define-macro ishell
     set-variable #l0 &spr "\b%s\b" $SHELL
   !endif
   !iif &exi %ishell  set-variable #l0 &lins %ishell 0
-  !if &equ 1 &len #l0
+  !if &equ 1 &llen #l0
     set-variable #l1 &lget #l0 1
   !elif &seq "" &set #l1 &lget #l0 @#
     set-variable #l1 @ml09 "Select shell" #l0

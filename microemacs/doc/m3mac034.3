@@ -7,31 +7,32 @@
 .\"  Created By    : Jon Green
 .\"  Created       : Mon Aug 31 21:02:32 1998
 .\"
-.Id $Id: m3mac034.3,v 2.8 2026/03/07 14:03:20 jon Exp $
+.Id $Id: m3mac034.3,v 2.8 2026/08/18 23:42:28 jon Exp $
 .Im MicroEmacs shell
 .so me.tni
 .TH ishell 3
-.XI ishell - "Open a Cygwin BASH window" shell|command
-.XI $ME_ISHELL 5 "Windows ishell command.com" variable
+.XI ishell - "Open an interactive shell window" shell|command
+.XI %ishell 5 "User defined ishell shell" shell|variable
 .SH NAME
 .Me "|ishell"
 ishell \- Open a interactive shell window
 .br
-.Me "|$ME_ISHELL"
-$ME_ISHELL \- Windows ishell command comspec
+.Me "|%ishell"
+%ishell \- User defined ishell shell
 .Me $a
 .SH PLATFORM
 Windows '95/'98/NT/2K/XP/Vista/7/10/11 - windows
 .br
+Cygwin - cygwin
+.br
 Unix - All variants.
 .SH SYNOPSIS
 .na
-\fBishell\fR
+.I n
+.B ishell
 .sp 1
-.I "[Windows Only]"
-.br
-.B $ME_ISHELL
-.I "= <comspec>"
+.B %ishell
+.I "= <shell>"
 .ad
 .SH DESCRIPTION
 \fBishell\fR  creates an  interactive  shell  window  within the a  MicroEmacs
@@ -39,56 +40,82 @@ buffer window, providing access to the native operating systems command shell.
 Within the window commands may be entered and  executed, the results are
 shown  in the  window.
 .PP
-On running  \fBishell\fR a new buffer is created  called  \fC*shell*\fR  which
-contains the shell.  Executing  the command  again  creates a new shell window
-called \fC*shell1*\fR, and so on. If a \fC*shell*\fR window is killed off then
-the available window is used next time the command is run.
+On running \fBishell\fR a new buffer is created called \fC*shell*\fR which contains the shell. Executing the command
+again while that shell is still running simply pops up the existing \fC*shell*\fR window, a new shell is started in
+the same buffer once the current shell has been exited.
+.SS "Numeric Argument"
+The numeric argument \fIn\fR is a bit based flag where:
+.IP \fB0x0f\fR
+Selects the shell to be executed from the shell list, see "Selecting the Shell" below. When no argument is given a
+value of \fC1\fR is used, selecting the first shell in the list.
+.IP \fB0x10\fR
+Disables the interpretation of \s-1ANSI\s0 color escape sequences, see bit \fB0x1000\fR of
+.Ht ipipe-shell-command 2 .
+Color is enabled by default, so \fC17 ishell\fR runs the first shell in the list without color.
 .PP
-Additional  controls  are  available  within the shell  window to control  the
-editors interaction with the window. The operating mode is shown as a digit on
-the buffer mode line (2/3/4) which is defined in the  following  sections. The
+If a -ve argument is given then an existing \fC*shell*\fR window is popped up as usual, but no new shell is created
+if one is not already running.
+.SS "Selecting the Shell"
+The shell that is executed is selected from a platform dependent list of shells using the numeric argument, the list
+being as follows
+.IP "\fBUnix\fR"
+\fC$SHELL\fR
+.IP "\fBWindows\fR"
+\fC$COMSPEC\fR (typically \fCcmd.exe\fR), \fCpowershell\fR
+.IP "\fBCygwin\fR"
+\fC$COMSPEC\fR (converted to a cygwin path), \fCpowershell\fR, \fC$SHELL\fR
+.PP
+When the list contains only one shell that shell is always used and the numeric argument is ignored. Otherwise, if
+the argument does not select a valid entry in the list (e.g. \fC0 ishell\fR) then the user is prompted to "Select
+shell" from the list, a shell which is not in the list may also be entered.
+.PP
+An alternative shell may be added to the list by setting the user variable \fB%ishell\fR to the command used to
+launch it. The shell is inserted at the head of the list and therefore becomes the default, the standard platform
+shells remain available via the numeric argument. \fB%ishell\fR is typically set in the user or company setup macro
+file, see
+.Ht user-setup 3 ,
+for example:
+.Me $emf-scheme
+.CS
+set-variable %ishell "C:/Program Files/Git/bin/bash.exe"
+.CE
+.Me $ehf-scheme
+Additional controls are available within the shell window to control the editors interaction with the window. The
+operating mode is shown as a digit on the buffer mode line (2/3/4) which is defined in the following sections. The
 operational mode is changed with the \fBF3\fR function key.
 .IP "\fBMode 2 - Browse Mode\fR"
-Locks the  window  and allows  local  editing to be  performed.  All  commands
-entered  into the window are  interpreted  by the editor. Mode 2 is  typically
-entered to cut and paste from the window, search for text strings etc. In mode
-2, a \fB2\fR is shown on the mode line.
+Locks the window and allows local editing to be performed. All commands entered into the window are interpreted by the
+editor. Mode 2 is typically entered to cut and paste from the window, search for text strings etc. In mode 2, a
+\fB2\fR is shown on the mode line.
 .IP "\fBMode 3 - Semi-immersion\fR"
-The  normal  operating  mode, text typed into the window is  presented  to the
-shell window. Translation of MicroEmacs commands (i.e.  beginning-of-word) are
-translated  and passed to the shell. For  interactive  use this is the default
+The normal operating mode, text typed into the window is presented to the shell window. Translation of MicroEmacs
+commands (i.e. beginning-of-word) are translated and passed to the shell. For interactive use this is the default
 mode. In mode 3, a \fB3\fR is shown on the mode line.
 .IP "\fBMode 4 - Full Immersion\fR"
-All input is passed to the shell, no MicroEmacs  commands are  interpreted and
-keys are passed  straight to the shell window. This mode is used where none of
-the keys to be entered are to be interpreted by MicroEmacs. Note that you have
-to un-toggle mode 4 before you can swap buffers as this effectively  locks the
-editor into the window.
+All input is passed to the shell, no MicroEmacs commands are interpreted and keys are passed straight to the shell
+window. This mode is used where none of the keys to be entered are to be interpreted by MicroEmacs. Note that you have
+to un-toggle mode 4 before you can swap buffers as this effectively locks the editor into the window.
 .\".IP \fBF5\fR
 .\"Clears  the  buffer  contents.  This  simply  erases  all  of  the  historical
 .\"information in the buffer. The operation of the shell is unaffected.
 .LP
-To exit the shell then end the shell  session  using the normal  exit  command
-i.e.  "\fCexit\fR" or "\fCC-d\fR" as normal and then close the buffer. A short
-cut  "\fCC-c C-k\fR" is  available  to kill off the pipe.  However, it is not
-recommended that this method is used as it effectively performs a hard kill of
-the buffer and attached process.
+To exit the shell then end the shell session using the normal exit command i.e. "\fCexit\fR" or "\fCC-d\fR" as normal
+and then close the buffer. A short cut "\fCC-c C-k\fR" is available to kill off the pipe. However, it is not
+recommended that this method is used as it effectively performs a hard kill of the buffer and attached process.
 .SH UNIX
-The UNIX  environment  uses the  native  \fBpty\fR  support  of the  operating
-system.  The  shell  that  is  opened  is   determined  by  the   conventional
-\fC$SHELL\fR environment variable.
+The UNIX environment uses the native \fBpty\fR support of the operating system. The shell that is opened is determined
+by the conventional \fC$SHELL\fR environment variable, see "Selecting the Shell" above.
 .PP
-The shell window assumes that the user is running some sort of Emacs emulation
-on the command line (i.e. \fCVISUAL=emacs\fR for
+The shell window assumes that the user is running some sort of Emacs emulation on the command line (i.e.
+\fCVISUAL=emacs\fR for
 .Hr ksh 1 ,
 .Hr zsh 1 ,
 .Hr bash 1 ,
 .Hr tsch 1 )
 and passes Emacs controls for command line editing.
 .PP
-The  shell  window  understands  re-size  operations  and  provides  a limited
-decoding of the  \fItermio\fR  characters  for a VT100 screen. From within the
-shell window it is possible to run the likes of
+The shell window understands re-size operations and provides a limited decoding of the \fItermio\fR characters for a
+VT100 screen. From within the shell window it is possible to run the likes of
 .Hr top 1
 correctly.  It is even possible to run another MicroEmacs terminal session !!
 .SH WINDOWS
@@ -96,33 +123,31 @@ The Windows environment provides a very poor command shell facility, this is mor
 operating system than anything else. Unfortunately NT/2K/XP/7/10/11 are no better than Windows '95/'98, stemming from
 the fact that Microsoft Windows is actually a huge Window Manager (hindered by legacy issues of MS-DOS).
 .PP
-For those familiar with the UNIX command shell then it is strongly recommended
-that the
+For those familiar with the UNIX command shell then it is strongly recommended that the
 .Ht cygwin 3
-\s-1BASH\s0  shell is used as an  alternative.  This is a far more  responsive
-shell window and provides the familiar Emacs editing of the command line.
+\s-1BASH\s0 shell is used as an alternative. This is a far more responsive shell window and provides the familiar
+Emacs editing of the command line.
 .PP
-The command shell under Microsoft Windows is slow and very  unresponsive, this
-would appear to be a problem with the  \fIcommand.com\fR  as the same problems
-are not apparent with the
+The command shell under Microsoft Windows is slow and very unresponsive, this would appear to be a problem with the
+\fIcommand.com\fR as the same problems are not apparent with the
 .Hl cygwin cygwin 3
-environment.  However, the shell  window is good for kicking off command  line
-utilities  (such as \fImake\fR) or any command line  processes  that generates
-output on  \fIstdout\fR  as all of the output is captured in the buffer window
-which can be scrolled  backwards for post analysis. For this very reason it is
-more preferable to a standard MS-DOS box.
+environment. However, the shell window is good for kicking off command line utilities (such as \fImake\fR) or any
+command line processes that generates output on \fIstdout\fR as all of the output is captured in the buffer window
+which can be scrolled backwards for post analysis. For this very reason it is more preferable to a standard MS-DOS
+box.
 .PP
-It is not  possible to run any  utilities  that use  embedded  screen  control
-characters as these are not interpreted by the editor.
+Where a \s-1ConPTY\s0 pseudo terminal can be created, see bit \fB0x08\fR of
+.Ht ipipe-shell-command 2 ,
+utilities  which use  embedded  screen  control  characters  may be run as the  editor  interprets  them. If a pseudo
+terminal cannot be created a warning is issued as such utilities will not then work.
 .SS "Changing the Shell"
-The default shell that is executed is defined by the environment variable
-.BR $COMSPEC .
-Where the user is using a different  command shell (i.e. 4-DOS), then problems
-may  arise if this is an old  16-bit  executable.  The shell  that  MicroEmacs
-executes may be overridden by setting the environment variable
-.BR $ME_ISHELL .
-This is typically set in the user or company setup macro file, see
-.Ht user-setup 3 .
+The shells offered are the command processor defined by the environment variable \fC$COMSPEC\fR (typically
+\fCcmd.exe\fR) and \fCpowershell\fR, selected by the numeric argument as described in "Selecting the Shell" above.
+Where the user is using a different command shell (i.e. 4-DOS), then problems may arise if this is an old 16-bit
+executable, an alternative shell may be made the default by setting \fB%ishell\fR.
+.PP
+Note that \fB%ishell\fR replaces the \fB$ME_ISHELL\fR environment variable used by earlier versions of \*(mS, a
+\fB$ME_ISHELL\fR setting is no longer used and must be converted to \fB%ishell\fR.
 .SS "Bugs"
 .IP "\fBWinOldAp\fR"
 .B Winoldap

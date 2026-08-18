@@ -71,10 +71,15 @@
   hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git [^ ]+ completed successfully" .scheme.no1
   hilight .hilight.git-log 0x102 "\\[\\*\\*\\*\\* Git" .scheme.error
   0 hilight .hilight.git-logl 0 $global-scheme
+  hilight .hilight.git-logl 0x80 "A  .*" 0 .scheme.add
   hilight .hilight.git-logl 0x80 "A\t.*" 0 .scheme.add
+  hilight .hilight.git-logl 0x80 "C\\d\\d\\d  .*" 0 .scheme.add
   hilight .hilight.git-logl 0x80 "C\\d\\d\\d\t.*" 0 .scheme.add
+  hilight .hilight.git-logl 0x80 "D  .*" 0 .scheme.rmv
   hilight .hilight.git-logl 0x80 "D\t.*" 0 .scheme.rmv
+  hilight .hilight.git-logl 0x80 "M  .*" 0 .scheme.chg
   hilight .hilight.git-logl 0x80 "M\t.*" 0 .scheme.chg
+  hilight .hilight.git-logl 0x80 "R\\d\\d\\d  .*" 0 .scheme.chg
   hilight .hilight.git-logl 0x80 "R\\d\\d\\d\t.*" 0 .scheme.chg
   
   ; fix the *files* buffer hilighting for git additions
@@ -1193,7 +1198,7 @@ define-macro git-info
       -8 ml-write "[ERROR: Unexpected log button]"
     !elif &and &gre $window-col 5 &les $window-col 10
     !else
-      set-variable #l2 &rig @wl 10
+      set-variable #l2 &trl &rig @wl 10
       set-position "\x82"
       search-buffer "meb" "^ *commit \\(\\h+\\)[ \n]"
       set-variable #l3 @s1
@@ -1201,7 +1206,7 @@ define-macro git-info
       !if &les $window-col 8
         git-diff-file #l2 &spr "%s~..%s" #l3 #l3
       !else
-        git-cat-file &spr "%s:%s" #l3 &rig @wl 10
+        git-cat-file &spr "%s:%s" #l3 #l2
       !endif
     !endif
   !elif &xseq @wl "^ *commit \\(\\h+\\) +\\(\\[Diff]  \\[View]\\|\\[Prev]\\)?$"
