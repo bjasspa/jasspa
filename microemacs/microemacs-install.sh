@@ -191,6 +191,11 @@ MSYS_NT*)
   MEPLATPKG=msyswin_intel
   MEPLATMSK=msyswin*-intel64
   ;;
+MINGW64*)
+  PLATFORM=MSYS
+  MEPLATPKG=msyswin_intel
+  MEPLATMSK=msyswin*-intel64
+  ;;
 esac
 if [ -z "$MEPLATPKG" ] ; then
   echo "Error: Platform '${PLATFORM}' is not currently supported - please request suport."
