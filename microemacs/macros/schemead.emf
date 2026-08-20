@@ -1,6 +1,6 @@
 ; -!- emf -!-
 ;
-; Copyright (C) 1999-2025 JASSPA (www.jasspa.com)
+; Copyright (C) 1999-2026 JASSPA (www.jasspa.com)
 ;
 ; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 ; copying information.
@@ -30,16 +30,16 @@ add-color 16 255 255 255
 add-color 17 10 14 20
 add-color 18 179 177 173
 add-color 19 255 204 102
-add-color 20 51 65 94
+add-color 20 51 65 74
 add-color 21 203 204 198
-add-color 22 160 0 160
+add-color 22 160 50 160
 add-color 23 130 130 0
 add-color 24 55 215 255
 add-color 25 200 130 200
 add-color 26 120 50 130
 add-color 27 80 80 80
 ; Set the required cursor-color
-set-variable $cursor-color 19
+set-variable $cursor-color 4883
 ; Create the color schemes
 ; Standard
 add-color-scheme $global-scheme 18 17 16 1 0 9 16 9 0 8 0 8 0 8 0 8
