@@ -123,7 +123,7 @@ define-macro compile
     -8 ml-write "[Cannot compile - compile command has not been set]"
   !endif
   !force macro-history-add %compile-com
-  &band @# 1 save-some-buffers @mna
+  &bor 2 &band @# 1 save-some-buffers @mna
   !if &not &exi ":*compile*:"
   !elif &nbmo "*compile*" "pipe"
     set-variable #l3 @mc5 &spr "Compile already running, kill (?/y/n/g) ? " "gGnNyY"  "(Y)es, (N)o, (G)oto, (C-g)Abort ? "
@@ -344,9 +344,7 @@ define-macro execute-tool
       save-buffer @mna
     !endif
   !endif
-  !if &band #l0 0x04
-    &cond &band #l0 0x08 1 0 save-some-buffers @mna
-  !endif
+  !iif &band #l0 0x04  &cond &band #l0 0x08 1 2 save-some-buffers @mna
   !if &seq "" &set #l2 &reg &spr "/history/%s/tool/%s/bname" $platform #l9 ""
     set-variable #l3 1
   !else

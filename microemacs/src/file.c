@@ -2947,13 +2947,13 @@ int
 saveSomeBuffers(int f, int n)
 {
     register meBuffer *bp;    /* scanning pointer to buffers */
-    register int status=meTRUE ;
-    meUByte prompt[meBUF_SIZE_MAX] ;
+    register int status=meTRUE;
+    meUByte prompt[meBUF_SIZE_MAX];
 
     bp = bheadp;
     while (bp != NULL)
     {
-        if(bufferNeedSaving(bp))
+        if((((n & 2) == 0) || (bp->fileName != NULL)) && bufferNeedSaving(bp))
         {
             if(n & 1)
             {

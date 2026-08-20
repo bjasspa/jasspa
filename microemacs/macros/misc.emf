@@ -12,9 +12,9 @@
 !endif
 ; save-all - saves any changes to any buffer, registry or dictionary
 define-macro save-all
-  @# save-some-buffers @mna
-  &bor 2 @# save-registry @mna
-  &bor 2 @# save-dictionary @mna
+  &set #l1 &band @# 1 save-some-buffers @mna
+  &bor 2 #l1 save-registry @mna
+  &bor 2 #l1 save-dictionary @mna
   !if @?
   !elif &not &seq "tfs://" &lef $user-path 6
     set-variable #l0 @mc5 "Save session (?/y/n) ? " "nNyY" "(Y)es, (N)o, (C-g)Abort ? "

@@ -449,7 +449,7 @@ set-variable .git-revision-op.lbl18 "|Head \Hto Master|\HMaster to Local|Head to
     !force 0x404 pipe-shell-command &cat .git.com " rev-parse --abbrev-ref HEAD" #l0
     !iif $status  set-variable .git.brc &rep &rep #l0 "\r" "" "\n" ""
   !endif
-  !iif &sin "L" #l9  save-some-buffers @mna
+  !iif &sin "L" #l9  3 save-some-buffers @mna
   !iif &sin "^" #l9  !return
   -1 osd .osd.git-osd
   osd .osd.git-osd 0 ""

@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m2cmd150.2,v 2.8 2026/06/19 13:52:45 jon Exp $
+.Id $Id: m2cmd150.2,v 2.8 2026/08/20 22:11:35 jon Exp $
 .Im MicroEmacs command|file|buffer
 .so me.tni
 .TH save-some-buffers 2
@@ -39,6 +39,8 @@ based flag where:
 .IP \fB0x01\fR
 Enables the user prompt before the buffer is saved (default). If this flag is not supplied then all modified visible
 buffers will be written.
+.IP \fB0x02\fR
+If set then all modified buffers which are not linked to a file are skipped.
 .SH "SEE ALSO"
 .na
 .Ht save-buffer 2 ,

@@ -1035,7 +1035,7 @@ set-variable .cvs-osd-version.values "|HEAD|Revision/Tag|Date|"
     !endif
     !goto no-gui
   !endif
-  !iif &sin "L" &lget .cvs.flags @#  save-some-buffers @mna
+  !iif &sin "L" &lget .cvs.flags @#  3 save-some-buffers @mna
   -1 osd .osd.cvs-osd
   osd .osd.cvs-osd 0 ""
   set-variable #l0 0

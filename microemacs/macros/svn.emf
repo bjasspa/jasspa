@@ -532,7 +532,7 @@ set-variable .svn-revision-op.lbl "|Base \Hto Head|\HHead|\HBase|\HCommitted|\HP
       !abort
     !endif
   !endif
-  !iif &sin "L" #l9  save-some-buffers @mna
+  !iif &sin "L" #l9  3 save-some-buffers @mna
   !iif &sin "^" #l9  !return
   -1 osd .osd.svn-osd
   osd .osd.svn-osd 0 ""

@@ -228,7 +228,7 @@ define-macro file-exec
     !until &seq "X" &stat "t" &set #l4 &cat $temp-name #l5
     4 append-buffer #l4
   !else
-    &band @# 1 save-some-buffers @mna
+    &con &band @# 1 1 2 save-some-buffers @mna
     set-variable #l4 $buffer-fname
   !endif
   !if &len #l2

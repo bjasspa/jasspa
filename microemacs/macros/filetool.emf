@@ -239,7 +239,7 @@
       save-buffer @mna
     !endif
   !endif
-  !iif &band #l9 0x04  &cond &band #l9 0x08 1 0 save-some-buffers @mna
+  !iif &band #l9 0x04  &cond &band #l9 0x08 1 2 save-some-buffers @mna
   !iif &len &set #l3 &reg &spr "/history/%s/file-tool/%d/bname" $platform @# ""  set-variable #l9 &bor #l9 0x4000
   !if #l1
     !force set-variable #l2 @1

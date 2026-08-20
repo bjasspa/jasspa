@@ -940,7 +940,7 @@ define-macro replace-string-in-files
   !elif &and &band @# 0x20 &sin "&" &lget #l9 1
     -8 ml-write "[Option -& not supported by query-replace-string-in-files]"
   !elif &not &sin "l" &lget #l9 1
-    &band @# 1 save-some-buffers @mna
+    &bor 2 &band @# 1 save-some-buffers @mna
   !endif
   !if &sin "&" &lget #l9 1
     !if &not &band @# 6
