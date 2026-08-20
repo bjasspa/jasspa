@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Ckeck install mec (console)
         run: |
-             echo -e "n\nu\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+             echo -e "s\nu\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
              source ~/.bashrc ## for the current session update the PATH settings
              ~/.local/bin/mec -V
   windows-msys:
@@ -78,6 +78,7 @@ jobs:
       - name: Check install mec (console)
         shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
         run: |
+             mkdir -p /home/runneradmin/.local/share
              echo -e "u\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
              source ~/.bashrc ## for the current session update the PATH settings
              ~/.local/bin/mec -V
