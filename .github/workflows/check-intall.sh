@@ -1,0 +1,84 @@
+name: Testing MicroEmacs Installs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ devel ]
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    name: Test on Linux
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+      - name: Ckeck install mec (console)
+        run: |
+             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+             source ~/.bashrc ## for the current session update the PATH settings
+             ~/.local/bin/mec -V
+
+  macos:
+    runs-on: macos-latest
+    name: Test on macOS
+    steps:
+      - uses: actions/checkout@v6
+      - name: Ckeck install mec (console)
+        run: |
+             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+             source ~/.bashrc ## for the current session update the PATH settings
+             ~/.local/bin/mec -V
+  windows-msys:
+    runs-on: windows-latest
+    name: Test on Windows (MinGW64)
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw64
+          install: make unzip zip
+      - name: Ckeck install mec (console)
+        shell: msys2 {0}
+        run: |
+             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+             source ~/.bashrc ## for the current session update the PATH settings
+             ~/.local/bin/mec -V
+  windows-pwsh:
+    runs-on: windows-latest
+    name: Test on Windows (Powershell)
+    steps:
+      - uses: actions/checkout@v6
+      - name: Ckeck install mec (console)
+        shell: pwsh
+        run: |
+           Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+           Invoke-RestMethod -Uri https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install.ps1 > microemacs-install.ps1
+           @"
+           y
+           y
+           y
+           "@ | powershell.exe .\microemacs-install.ps1
+           dir
+           & mec -V
+  cygwin-x64:
+    runs-on: windows-latest
+    name: Test on Cygwin (x86_64)
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Cygwin
+        uses: cygwin/cygwin-install-action@v6
+        with:
+          packages: |
+            make
+          install-dir: C:\cygwin
+          platform: x86_64
+      - name: Check install mec (console)
+        shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
+        run: |
+             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
+             source ~/.bashrc ## for the current session update the PATH settings
+             ~/.local/bin/mec -V
+
