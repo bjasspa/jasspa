@@ -32,6 +32,12 @@ add-color 18 108 124 128
 add-color 19 255 204 102
 add-color 20 203 204 198
 add-color 21 51 65 94
+;add-color 22 239 240 225
+;add-color 23 191 192 177
+;add-color 24 100 100 100
+;add-color 25 240 210 210
+;add-color 26 240 180 180
+;add-color 27 252 131 155
 ; Set the required cursor-color
 set-variable $cursor-color 19
 ; Create the color schemes
