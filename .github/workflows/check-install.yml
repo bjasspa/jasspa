@@ -85,6 +85,10 @@ jobs:
              #chmod 755 /home/runneradmin/.local/share/jasspa
              pwd
              ls -l ~/
-             echo -e "a\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
-             /usr/local/bin/mec -V
+             ls -l /cygdrive/d/a
+             ls -l /cygdrive/d/a/jasspa
+             cd /cygdrive/d/a/jasspa
+             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)" --prefix=./inst
+             ls -l /cygdrive/d/a/jasspa/inst
+             ./inst/bin/mec -V
 
