@@ -71,7 +71,7 @@ jobs:
         uses: cygwin/cygwin-install-action@v6
         with:
           packages: |
-            make
+            unzip
           install-dir: C:\cygwin
           platform: x86_64
       - name: Check install mec (console)
@@ -85,9 +85,7 @@ jobs:
              #chmod 755 /home/runneradmin/.local/share/jasspa
              pwd
              which unzip
-             which bsdtar
              unzip
-             bsdtar
              ls -l ~/
              ls -l /cygdrive/d/a
              echo Dir: /cygdrive/d/a/jasspa
