@@ -86,9 +86,12 @@ jobs:
              pwd
              ls -l ~/
              ls -l /cygdrive/d/a
+             echo Dir: /cygdrive/d/a/jasspa
              ls -l /cygdrive/d/a/jasspa
-             cd /cygdrive/d/a/jasspa
-             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)" --prefix=./inst
-             ls -l /cygdrive/d/a/jasspa/inst
+             echo Dir: /cygdrive/d/a/jasspa/jasspa
+             ls -l /cygdrive/d/a/jasspa/jasspa
+             cd /cygdrive/d/a/jasspa/jasspa
+             echo -e "y\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install) --prefix=./inst"
+             ls -l /cygdrive/d/a/jasspa/jasspa/inst
              ./inst/bin/mec -V
 
