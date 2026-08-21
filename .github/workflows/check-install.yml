@@ -77,25 +77,12 @@ jobs:
       - name: Check install mec (console)
         shell: C:\cygwin\bin\bash.exe --login --norc -eo pipefail -o igncr '{0}'
         run: |
-             # not sure why we can't create these folders via the install script ...
-             #mkdir -p /home/runneradmin/.local/bin
-             #chmod 755 /home/runneradmin/.local/bin
-             #mkdir -p /home/runneradmin/.local/share/jasspa/bin
-             #mkdir -p /home/runneradmin/.local/share/jasspa/macros             
-             #chmod 755 /home/runneradmin/.local/share/jasspa
-             pwd
              which unzip
              unzip
+             pwd
              ls -l ~/
-             ls -l /cygdrive/d/a
-             echo Dir: /cygdrive/d/a/jasspa
-             ls -l /cygdrive/d/a/jasspa
-             echo Dir: /cygdrive/d/a/jasspa/jasspa
-             ls -l /cygdrive/d/a/jasspa/jasspa
-             cd /cygdrive/d/a/jasspa/jasspa
              curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install > microemacs-install
              chmod 755 ./microemacs-install
-             echo -e "y\ny\ny\n" | ./microemacs-install --prefix=./inst
-             ls -l /cygdrive/d/a/jasspa/jasspa/inst
-             ./inst/bin/mec -V
+             echo -e "u\ny\ny\n" | ./microemacs-install --prefix=./inst
+             ~/.local/bin/mec -V
 
