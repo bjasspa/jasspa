@@ -382,6 +382,7 @@ if($package -eq "") {
     Move-Item -Path "${instpath}\meinfo.upd" -Destination "${instpath}\meinfo" -Force
     try {
       Invoke-WebRequest -Uri "$mebaseurl/releases/latest/download/microemacs-install.ps1" -OutFile "${instpath}\bin\microemacs-update.ps1"
+      (Get-Content "${instpath}\bin\microemacs-update.ps1") -replace 'File microemacs-install\.ps1', 'File microemacs-update.ps1' | Set-Content "${instpath}\bin\microemacs-update.ps1"
     }
     catch {
       Write-Host "Error: Failed to download latest update script `"$mebaseurl/releases/latest/download/microemacs-install.ps1`":`n    $($_.Exception.Message)"
@@ -406,6 +407,7 @@ if($package -eq "") {
     install_package "" "help_ehf" "${instpath}"
     try {
       Invoke-WebRequest -Uri "$mebaseurl/releases/latest/download/microemacs-install.ps1" -OutFile "${instpath}\bin\microemacs-update.ps1"
+      (Get-Content "${instpath}\bin\microemacs-update.ps1") -replace 'File microemacs-install\.ps1', 'File microemacs-update.ps1' | Set-Content "${instpath}\bin\microemacs-update.ps1"
     }
     catch {
       Write-Host "Error: Failed to download latest update script `"$mebaseurl/releases/latest/download/microemacs-install.ps1`":`n    $($_.Exception.Message)"

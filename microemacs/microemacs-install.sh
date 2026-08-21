@@ -186,12 +186,7 @@ CYGWIN_NT*)
   MEPLATPKG=cygwin_intel
   MEPLATMSK=cygwin*-intel64
   ;;
-MSYS_NT*)
-  PLATFORM=MSYS
-  MEPLATPKG=msyswin_intel
-  MEPLATMSK=msyswin*-intel64
-  ;;
-MINGW64*)
+MSYS_NT*|MINGW64_NT*)
   PLATFORM=MSYS
   MEPLATPKG=msyswin_intel
   MEPLATMSK=msyswin*-intel64
@@ -503,6 +498,9 @@ if [ -z "${INSTPKG}" ] ; then
     fi
     install_package "" macros
     install_package "" help_ehf
+    if [ $PLATFORM = "CYGWIN" ] ; then
+      chmod 755 ${INSTPATH}${INSTBPTH}/*.exe
+    fi
     curl -fsSL -o microemacs-update $MEBASEURL/releases/latest/download/microemacs-install
     if [ $? -ne 0 ]; then
       echo "Error: Failed to download latest update script \"$MEBASEURL/releases/latest/download/microemacs-install\"."

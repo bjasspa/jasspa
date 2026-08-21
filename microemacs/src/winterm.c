@@ -560,6 +560,7 @@ TTopenClientServer(void)
         ipipe->thread = NULL;
         ipipe->childActive = NULL;
         ipipe->threadContinue = NULL;
+        ipipe->hPCon = NULL;
         ipipes = ipipe;
         noIpipes++;
         ipipe->bp = bp;

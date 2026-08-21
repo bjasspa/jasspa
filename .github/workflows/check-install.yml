@@ -84,6 +84,9 @@ jobs:
              #mkdir -p /home/runneradmin/.local/share/jasspa/bin
              #mkdir -p /home/runneradmin/.local/share/jasspa/macros             
              #chmod 755 /home/runneradmin/.local/share/jasspa
+             pwd
+             ls -l ~/
+             ls -l ~/.local
              echo -e "a\ny\ny\n" | /bin/sh -c "$(curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install)"
              source ~/.bashrc ## for the current session update the PATH settings
              mec -V
