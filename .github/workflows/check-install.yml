@@ -83,6 +83,6 @@ jobs:
              ls -l ~/
              curl -fsSL https://github.com/bjasspa/jasspa/releases/latest/download/microemacs-install > microemacs-install
              chmod 755 ./microemacs-install
-             echo -e "u\ny\ny\n" | ./microemacs-install --prefix=./inst
+             echo -e "u\ny\ny\n" | ./microemacs-install
              ~/.local/bin/mec -V
 
