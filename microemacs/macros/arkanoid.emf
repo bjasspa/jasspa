@@ -1,0 +1,1126 @@
+; Arkanoid
+; Keys:
+;   left right    move the bat (or just use the mouse)
+;   space         launch, release a held ball, fire the laser
+;   button 1      the same as space
+;   p             pause
+;   ?  or  h      key help
+;   >             skip the level, for those who want to see the end
+;   q  or  C-g    quit
+;
+; Capsules:
+;   E expand the bat     C catch the ball      L laser bat
+;   S slow the ball      D three balls         P extra life
+;   B break out of the level
+;
+0 define-macro ark-scheme
+  !iif &seq .Ark.sch "ERROR"  set-variable .Ark.sch $global-scheme
+!emacro
+0 define-macro ark-cursor-hide
+  !iif &sin "C" $mode-chars  -1 buffer-mode "cursor"
+!emacro
+0 define-macro ark-cursor-show
+  !iif &sin "C" $mode-chars  1 buffer-mode "cursor"
+!emacro
+0 define-macro ark-setup
+  set-variable .Ark.ms        16
+  set-variable .Ark.scale    100
+  set-variable .Ark.fldw      58
+  set-variable .Ark.fldh      24
+  set-variable .Ark.bw0        4
+  set-variable .Ark.speed0    28
+  set-variable .Ark.speedlvl   2
+  set-variable .Ark.speedmax  62
+  set-variable .Ark.speedup  900
+  set-variable .Ark.padhw0     4
+  set-variable .Ark.padtol    80
+  set-variable .Ark.padhwe     7
+  set-variable .Ark.padkv    140
+  set-variable .Ark.padkeyn    8
+  set-variable .Ark.capv      24
+  set-variable .Ark.capodds    6
+  set-variable .Ark.lasv     150
+  set-variable .Ark.lascd     10
+  set-variable .Ark.stickt   180
+  set-variable .Ark.lives0     3
+  set-variable .Ark.maxb       3
+  set-variable .Ark.maxc       4
+  set-variable .Ark.maxl       4
+  set-variable .Ark.blank " "
+  set-variable .Ark.solid "#"
+  set-variable .Ark.bar   "="
+  set-variable .Ark.stars "*"
+  !while &les &len .Ark.blank 512
+    set-variable .Ark.blank &cat .Ark.blank .Ark.blank
+    set-variable .Ark.solid &cat .Ark.solid .Ark.solid
+    set-variable .Ark.bar   &cat .Ark.bar .Ark.bar
+  !done
+  !while &les &len .Ark.stars 16
+    set-variable .Ark.stars &cat .Ark.stars .Ark.stars
+  !done
+  set-variable .Ark.chars "123456AaX"
+  set-variable .Ark.brsch ""
+  set-variable #l1 "|hlred|hlgreen|hlblue|hlmagenta|hlcyan|hlyellow|hlwhite|hlblack|hlyellow|"
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add &llen #l1 1
+    set-variable .Ark.sch &ind &cat ".scheme." &lget #l1 #l0
+    ark-scheme
+    set-variable .Ark.brsch &cat &cat .Ark.brsch "|" .Ark.sch
+  !done
+  set-variable .Ark.brsch &cat .Ark.brsch "|"
+  set-variable .Ark.capk "ECLSDPB"
+  set-variable .Ark.capsch ""
+  set-variable #l1 "|hlred|hlgreen|hlmagenta|hlblue|hlcyan|hlwhite|hlyellow|"
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add &llen #l1 1
+    set-variable .Ark.sch &ind &cat ".scheme." &lget #l1 #l0
+    ark-scheme
+    set-variable .Ark.capsch &cat &cat .Ark.capsch "|" .Ark.sch
+  !done
+  set-variable .Ark.capsch &cat .Ark.capsch "|"
+  set-variable .Ark.capname "|expand|catch|laser|slow|split|life|break|"
+  set-variable .Ark.capbag "EECCLLSSDDPB"
+  set-variable .Ark.sch .scheme.hlwhite
+  ark-scheme
+  set-variable .Ark.ballsch .Ark.sch
+  set-variable .Ark.sch .scheme.hlcyan
+  ark-scheme
+  set-variable .Ark.padsch .Ark.sch
+  set-variable .Ark.sch .scheme.hlred
+  ark-scheme
+  set-variable .Ark.lassch .Ark.sch
+  set-variable .Ark.bgsch   $global-scheme
+  set-variable .Ark.wallsch $mode-line-scheme
+  set-variable .Ark.hudsch  $mode-line-scheme
+  set-variable .Ark.bansch  $mode-line-scheme
+  set-variable .Ark.dvy "|60|80|95|100|95|80|60|"
+  set-variable .Ark.dvx "|-190|-130|-70|0|70|130|190|"
+  set-variable .Ark.nlvl 8
+  set-variable .Ark.lname1 "OPENING"
+  set-variable .Ark.lvl1 "|1111111111111|2222222222222|3333333333333|4444444444444|"
+  set-variable .Ark.lname2 "PYRAMID"
+  set-variable .Ark.lvl2 "|      1      |     222     |    33333    |   4444444   |  555555555  | 66666666666 |"
+  set-variable .Ark.lname3 "FORTRESS"
+  set-variable .Ark.lvl3 "|  AAAAAAAAA  |  A1111111A  |  A1222221A  |  A1233321A  |  A1111111A  |  AAAAAAAAA  |"
+  set-variable .Ark.lname4 "COLUMNS"
+  set-variable .Ark.lvl4 "|1 2 3 4 5 6 1|1 2 3 4 5 6 1|1 2 3 4 5 6 1|X 2 3 4 5 6 X|1 2 3 4 5 6 1|1 2 3 4 5 6 1|"
+  set-variable .Ark.lname5 "DIAMOND"
+  set-variable .Ark.lvl5 "|      6      |     565     |    45654    |   3456543   |    45654    |     565     |      6      |"
+  set-variable .Ark.lname6 "STAIRS"
+  set-variable .Ark.lvl6 "|11           |2211         |332211       |44332211     |5544332211   |665544332211 |"
+  set-variable .Ark.lname7 "SHIELD"
+  set-variable .Ark.lvl7 "|XX AAAAAAA XX|X  1111111  X|   2222222   |   3333333   |    44444    |     555     |"
+  set-variable .Ark.lname8 "FINALE"
+  set-variable .Ark.lvl8 "|A1A2A3A4A5A6A|1A2A3A4A5A6A1|XXXXX X XXXXX|  666666666  |   5555555   |    33333    |"
+  !iif &seq .Ark.hiscore "ERROR"  set-variable .Ark.hiscore 0
+  set-variable .Ark.nb      0
+  set-variable .Ark.nc      0
+  set-variable .Ark.nl      0
+  set-variable .Ark.rows    0
+  set-variable .Ark.cols    0
+  set-variable .Ark.bw      .Ark.bw0
+  set-variable .Ark.wc      1
+  set-variable .Ark.top     2
+  set-variable .Ark.bot     0
+  set-variable .Ark.lft     1
+  set-variable .Ark.rgt     0
+  set-variable .Ark.wr      3
+  set-variable .Ark.fill    "     |"
+  set-variable .Ark.fillx   "######"
+  set-variable .Ark.bnon    0
+  set-variable .Ark.bndrawn 0
+  set-variable .Ark.bnr     0
+  set-variable .Ark.bnc     0
+  set-variable .Ark.bnw     0
+  set-variable .Ark.bnn     0
+  set-variable .Ark.padhw   .Ark.padhw0
+  set-variable .Ark.padmode "key"
+  set-variable .Ark.padkey  0
+  set-variable .Ark.padkeyt 0
+  set-variable .Ark.padc0   0
+  set-variable .Ark.padc1   0
+  set-variable .Ark.pdrawn  0
+  set-variable .Ark.lasct   0
+  set-variable .Ark.speed   .Ark.speed0
+  set-variable .Ark.speedwas .Ark.speed0
+  set-variable .Ark.playt   0
+  set-variable .Ark.left    0
+  set-variable .Ark.catch   0
+  set-variable .Ark.laser   0
+!emacro
+0 define-macro ark-layout
+  set-variable #l0 .Ark.top
+  set-variable #l1 .Ark.lft
+  set-variable #l2 .Ark.bot
+  set-variable #l3 .Ark.rgt
+  set-variable #l4 .Ark.bw
+  set-variable #l5 &sub $frame-width 2
+  set-variable #l6 &sub $frame-depth 5
+  !iif &gre #l5 .Ark.fldw  set-variable #l5 .Ark.fldw
+  !iif &gre #l6 .Ark.fldh  set-variable #l6 .Ark.fldh
+  !iif &les #l5 1  set-variable #l5 1
+  !iif &les #l6 1  set-variable #l6 1
+  set-variable .Ark.lft &div &sub $frame-width #l5 2
+  set-variable .Ark.rgt &sub &add .Ark.lft #l5 1
+  set-variable .Ark.top &add 2 &div &sub &sub $frame-depth 5 #l6 2
+  set-variable .Ark.bot &sub &add .Ark.top #l6 1
+  !iif &les .Ark.top 2  set-variable .Ark.top 2
+  !iif &gre .Ark.bot &sub $frame-depth 3  set-variable .Ark.bot &sub $frame-depth 3
+  set-variable .Ark.padr &sub .Ark.bot 1
+  set-variable .Ark.wr  &add .Ark.top 1
+  !if &gre .Ark.cols 0
+    set-variable .Ark.bw .Ark.bw0
+    !if &gre &mul .Ark.cols .Ark.bw #l5
+      set-variable .Ark.bw &div #l5 .Ark.cols
+      !iif &les .Ark.bw 2  set-variable .Ark.bw 2
+    !endif
+    set-variable .Ark.wc &add .Ark.lft &div &sub #l5 &mul .Ark.cols .Ark.bw 2
+    !iif &les .Ark.wc .Ark.lft  set-variable .Ark.wc .Ark.lft
+    set-variable .Ark.fill  &cat &lef .Ark.blank &sub .Ark.bw 1 "|"
+    set-variable .Ark.fillx &lef .Ark.solid .Ark.bw
+  !endif
+  set-variable .Ark.topF &mul .Ark.top .Ark.scale
+  set-variable .Ark.lftF &mul .Ark.lft .Ark.scale
+  set-variable .Ark.rgtF &mul .Ark.rgt .Ark.scale
+  set-variable .Ark.botF &mul .Ark.bot .Ark.scale
+  set-variable .Ark.padF &mul &sub .Ark.padr 1 .Ark.scale
+  set-variable .Ark.dtop &sub .Ark.top #l0
+  set-variable .Ark.dlft &sub .Ark.lft #l1
+  set-variable .Ark.resized &or &or &or &or &not &equ #l0 .Ark.top &not &equ #l1 .Ark.lft &not &equ #l2 .Ark.bot &not &equ #l3 .Ark.rgt &not &equ #l4 .Ark.bw
+!emacro
+0 define-macro ark-field-clear
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &sub $frame-depth 2
+    3 screen-poke #l0 0 .Ark.wallsch &lef .Ark.blank $frame-width
+  !done
+  set-variable #l1 &add &sub .Ark.rgt .Ark.lft 1
+  set-variable #l0 &sub .Ark.top 1
+  !while &les &set #l0 &add #l0 1 &add .Ark.bot 1
+    3 screen-poke #l0 .Ark.lft .Ark.bgsch &lef .Ark.blank #l1
+  !done
+  set-variable .Ark.pdrawn 0
+  set-variable .Ark.bnon 0
+  set-variable .Ark.bndrawn 0
+!emacro
+0 define-macro ark-brick-get
+  set-variable .Ark.qv " "
+  !iif &les .Ark.qr 1  !return
+  !iif &gre .Ark.qr .Ark.rows  !return
+  !iif &les .Ark.qc 1  !return
+  !iif &gre .Ark.qc .Ark.cols  !return
+  set-variable .Ark.qv &mid &ind &cat ".Ark.g" .Ark.qr &sub .Ark.qc 1 1
+!emacro
+0 define-macro ark-brick-set
+  set-variable #l0 &cat ".Ark.g" .Ark.qr
+  set-variable &ind #l0 &cat &cat &lef &ind #l0 &sub .Ark.qc 1 .Ark.qv &rig &ind #l0 .Ark.qc
+!emacro
+0 define-macro ark-brick-draw
+  set-variable #l0 &sub &add .Ark.wr .Ark.qr 1
+  set-variable #l1 &add .Ark.wc &mul &sub .Ark.qc 1 .Ark.bw
+  !if &seq .Ark.qv " "
+    3 screen-poke #l0 #l1 .Ark.bgsch &lef .Ark.blank .Ark.bw
+  !else
+    3 screen-poke #l0 #l1 &lget .Ark.brsch &sin .Ark.qv .Ark.chars &con &seq .Ark.qv "X" .Ark.fillx .Ark.fill
+  !endif
+!emacro
+0 define-macro ark-wall-draw
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.rows 1
+    set-variable #l1 0
+    !while &les &set #l1 &add #l1 1 &add .Ark.cols 1
+      set-variable .Ark.qr #l0
+      set-variable .Ark.qc #l1
+      ark-brick-get
+      !iif &not &seq .Ark.qv " "  ark-brick-draw
+    !done
+  !done
+!emacro
+0 define-macro ark-brick-hit
+  ark-brick-get
+  set-variable #l0 .Ark.qv
+  !iif &seq #l0 " "  !return
+  !iif &seq #l0 "X"  !return
+  set-variable .Ark.hudchg 1
+  !if &seq #l0 "A"
+    set-variable .Ark.qv "a"
+    ark-brick-set
+    ark-brick-draw
+    set-variable .Ark.score &add .Ark.score 50
+    !return
+  !endif
+  set-variable #l1 .Ark.qr
+  set-variable #l2 .Ark.qc
+  set-variable .Ark.qv " "
+  ark-brick-set
+  ark-brick-draw
+  set-variable .Ark.left &sub .Ark.left 1
+  !if &seq #l0 "a"
+    set-variable .Ark.score &add .Ark.score 100
+  !else
+    set-variable .Ark.score &add .Ark.score &add 50 &mul 10 &sub &ato #l0 48
+  !endif
+  !if &and &les .Ark.nc .Ark.maxc &equ &mod $random .Ark.capodds 0
+    set-variable .Ark.newy &sub &add .Ark.wr #l1 1
+    set-variable .Ark.newx &add .Ark.wc &add &mul &sub #l2 1 .Ark.bw &div &sub .Ark.bw 3 2
+    ark-cap-add
+  !endif
+!emacro
+0 define-macro ark-level-load
+  set-variable #l0 &add &mod &sub .Ark.level 1 .Ark.nlvl 1
+  set-variable #l1 &ind &cat ".Ark.lvl" #l0
+  set-variable .Ark.lvlname &ind &cat ".Ark.lname" #l0
+  set-variable .Ark.rows &llen #l1
+  set-variable .Ark.cols &len &lget #l1 1
+  set-variable .Ark.left 0
+  set-variable #l2 0
+  !while &les &set #l2 &add #l2 1 &add .Ark.rows 1
+    set-variable #l3 &lget #l1 #l2
+    set-variable &ind &cat ".Ark.g" #l2 #l3
+    set-variable #l4 0
+    !while &les &set #l4 &add #l4 1 &add &len #l3 1
+      !iif &sin &mid #l3 &sub #l4 1 1 "123456A"  set-variable .Ark.left &add .Ark.left 1
+    !done
+  !done
+  ark-layout
+!emacro
+0 define-macro ark-restore
+  !iif &les .Ark.rr .Ark.top  !return
+  !iif &gre .Ark.rr .Ark.bot  !return
+  set-variable #l7 &sub &add .Ark.rr 1 .Ark.wr
+  set-variable #l0 &sub .Ark.rc 1
+  set-variable #l8 &add .Ark.rc .Ark.rn
+  !while &les &set #l0 &add #l0 1 #l8
+    !if &and &gre #l0 -1 &les #l0 $frame-width
+      set-variable #l5 .Ark.bgsch
+      set-variable #l6 " "
+      !if &or &les #l0 .Ark.lft &gre #l0 .Ark.rgt
+        set-variable #l5 .Ark.wallsch
+      !elif &and &gre #l7 0 &les #l7 &add .Ark.rows 1
+        set-variable #l2 &sub #l0 .Ark.wc
+        !if &and &gre #l2 -1 &les #l2 &mul .Ark.cols .Ark.bw
+          set-variable #l3 &mid &ind &cat ".Ark.g" #l7 &div #l2 .Ark.bw 1
+          !if &not &seq #l3 " "
+            set-variable #l5 &lget .Ark.brsch &sin #l3 .Ark.chars
+            set-variable #l6 &mid &con &seq #l3 "X" .Ark.fillx .Ark.fill &mod #l2 .Ark.bw 1
+          !endif
+        !endif
+      !endif
+      3 screen-poke .Ark.rr #l0 #l5 #l6
+    !endif
+  !done
+!emacro
+0 define-macro ark-ball-add
+  !iif &gre &add .Ark.nb 1 .Ark.maxb  !return
+  set-variable .Ark.nb &add .Ark.nb 1
+  set-variable #l0 .Ark.nb
+  set-variable &ind &cat ".Ark.by"  #l0 &mul .Ark.newy .Ark.scale
+  set-variable &ind &cat ".Ark.bx"  #l0 &mul .Ark.newx .Ark.scale
+  set-variable &ind &cat ".Ark.bvy" #l0 .Ark.newvy
+  set-variable &ind &cat ".Ark.bvx" #l0 .Ark.newvx
+  set-variable &ind &cat ".Ark.bst" #l0 0
+  set-variable &ind &cat ".Ark.bso" #l0 0
+  set-variable &ind &cat ".Ark.bdy" #l0 -1
+  set-variable &ind &cat ".Ark.bdx" #l0 -1
+!emacro
+0 define-macro ark-ball-drop
+  set-variable #l0 .Ark.bi
+  set-variable #l1 &ind &cat ".Ark.bdy" #l0
+  !if &gre #l1 -1
+    set-variable .Ark.rr #l1
+    set-variable .Ark.rc &ind &cat ".Ark.bdx" #l0
+    set-variable .Ark.rn 1
+    ark-restore
+  !endif
+  !while &les #l0 .Ark.nb
+    set-variable #l1 &add #l0 1
+    set-variable &ind &cat ".Ark.by"  #l0 &ind &cat ".Ark.by"  #l1
+    set-variable &ind &cat ".Ark.bx"  #l0 &ind &cat ".Ark.bx"  #l1
+    set-variable &ind &cat ".Ark.bvy" #l0 &ind &cat ".Ark.bvy" #l1
+    set-variable &ind &cat ".Ark.bvx" #l0 &ind &cat ".Ark.bvx" #l1
+    set-variable &ind &cat ".Ark.bst" #l0 &ind &cat ".Ark.bst" #l1
+    set-variable &ind &cat ".Ark.bso" #l0 &ind &cat ".Ark.bso" #l1
+    set-variable &ind &cat ".Ark.bdy" #l0 &ind &cat ".Ark.bdy" #l1
+    set-variable &ind &cat ".Ark.bdx" #l0 &ind &cat ".Ark.bdx" #l1
+    set-variable #l0 #l1
+  !done
+  set-variable .Ark.nb &sub .Ark.nb 1
+!emacro
+0 define-macro ark-ball-dir
+  set-variable #l0 .Ark.bi
+  set-variable &ind &cat ".Ark.bvy" #l0 &neg &div &mul &lget .Ark.dvy .Ark.zone .Ark.speed 100
+  set-variable #l1 &div &mul &lget .Ark.dvx .Ark.zone .Ark.speed 100
+  !if &equ #l1 0
+    set-variable #l1 &div &mul 60 .Ark.speed 100
+    !iif &les &ind &cat ".Ark.bvx" #l0 0  set-variable #l1 &neg #l1
+  !endif
+  set-variable &ind &cat ".Ark.bvx" #l0 #l1
+!emacro
+0 define-macro ark-ball-bricks
+  set-variable #l0 &sub &add &div .Ark.y .Ark.scale 1 .Ark.wr
+  set-variable #l1 &sub &div .Ark.x .Ark.scale .Ark.wc
+  !iif &les #l1 0  !return
+  set-variable #l2 &add &div #l1 .Ark.bw 1
+  set-variable .Ark.qr #l0
+  set-variable .Ark.qc #l2
+  ark-brick-get
+  !iif &seq .Ark.qv " "  !return
+  set-variable #l3 &sub &add &div .Ark.oy .Ark.scale 1 .Ark.wr
+  set-variable #l1 &sub &div .Ark.ox .Ark.scale .Ark.wc
+  set-variable #l4 &con &les #l1 0 0 &add &div #l1 .Ark.bw 1
+  set-variable .Ark.qr #l3
+  set-variable .Ark.qc #l2
+  ark-brick-get
+  set-variable #l5 &not &seq .Ark.qv " "
+  set-variable .Ark.qr #l0
+  set-variable .Ark.qc #l4
+  ark-brick-get
+  set-variable #l6 &not &seq .Ark.qv " "
+  !if &and #l5 &not #l6
+    set-variable .Ark.vx &neg .Ark.vx
+  !elif &and #l6 &not #l5
+    set-variable .Ark.vy &neg .Ark.vy
+  !else
+    set-variable .Ark.vy &neg .Ark.vy
+    set-variable .Ark.vx &neg .Ark.vx
+  !endif
+  set-variable .Ark.y .Ark.oy
+  set-variable .Ark.x .Ark.ox
+  set-variable .Ark.qr #l0
+  set-variable .Ark.qc #l2
+  ark-brick-hit
+  set-variable .Ark.struck 1
+!emacro
+0 define-macro ark-ball-step
+  !if &les .Ark.y .Ark.topF
+    set-variable .Ark.y .Ark.topF
+    set-variable .Ark.vy &abs .Ark.vy
+  !endif
+  !if &les .Ark.x .Ark.lftF
+    set-variable .Ark.x .Ark.lftF
+    set-variable .Ark.vx &abs .Ark.vx
+  !elif &gre .Ark.x .Ark.rgtF
+    set-variable .Ark.x .Ark.rgtF
+    set-variable .Ark.vx &neg &abs .Ark.vx
+  !endif
+  !if &and &not &gre .Ark.oy .Ark.padF &not &les .Ark.y .Ark.padF
+    set-variable #l1 &sub .Ark.y .Ark.oy
+    !if &gre #l1 0
+      set-variable #l2 &add .Ark.ox &div &mul &sub .Ark.x .Ark.ox &sub .Ark.padF .Ark.oy #l1
+    !else
+      set-variable #l2 .Ark.x
+    !endif
+    !if &and &not &les #l2 &sub &mul .Ark.padc0 .Ark.scale .Ark.padtol &les #l2 &add &mul &add .Ark.padc1 1 .Ark.scale .Ark.padtol
+      set-variable .Ark.y .Ark.padF
+      set-variable .Ark.x #l2
+      !if .Ark.catch
+        set-variable &ind &cat ".Ark.bst" .Ark.bi .Ark.stickt
+        set-variable &ind &cat ".Ark.bso" .Ark.bi &sub .Ark.x .Ark.padcF
+        set-variable .Ark.vy 0
+        set-variable .Ark.vx 0
+      !else
+        set-variable .Ark.zx .Ark.x
+        ark-zone
+        set-variable &ind &cat ".Ark.bvx" .Ark.bi .Ark.vx
+        ark-ball-dir
+        set-variable .Ark.vy &ind &cat ".Ark.bvy" .Ark.bi
+        set-variable .Ark.vx &ind &cat ".Ark.bvx" .Ark.bi
+      !endif
+      !return
+    !endif
+  !endif
+  ark-ball-bricks
+!emacro
+0 define-macro ark-zone
+  set-variable #l0 &mul &add &sub .Ark.padc1 .Ark.padc0 1 .Ark.scale
+  set-variable #l1 &sub .Ark.zx &mul .Ark.padc0 .Ark.scale
+  !iif &les #l1 0  set-variable #l1 0
+  !iif &gre #l1 &sub #l0 1  set-variable #l1 &sub #l0 1
+  set-variable .Ark.zone &add &div &mul #l1 7 #l0 1
+!emacro
+0 define-macro ark-ball-release
+  set-variable #l0 .Ark.bi
+  !iif &not &ind &cat ".Ark.bst" #l0  !return
+  set-variable &ind &cat ".Ark.bst" #l0 0
+  set-variable .Ark.zx &add .Ark.padcF &ind &cat ".Ark.bso" #l0
+  ark-zone
+  ark-ball-dir
+!emacro
+0 define-macro ark-ball-move
+  set-variable #l0 .Ark.bi
+  !if &ind &cat ".Ark.bst" #l0
+    set-variable &ind &cat ".Ark.by" #l0 .Ark.padF
+    set-variable &ind &cat ".Ark.bx" #l0 &add .Ark.padcF &ind &cat ".Ark.bso" #l0
+    !if &seq .Ark.state "play"
+      set-variable &ind &cat ".Ark.bst" #l0 &sub &ind &cat ".Ark.bst" #l0 1
+      !iif &not &ind &cat ".Ark.bst" #l0  ark-ball-release
+    !endif
+    !return
+  !endif
+  set-variable .Ark.y  &ind &cat ".Ark.by"  #l0
+  set-variable .Ark.x  &ind &cat ".Ark.bx"  #l0
+  set-variable .Ark.vy &ind &cat ".Ark.bvy" #l0
+  set-variable .Ark.vx &ind &cat ".Ark.bvx" #l0
+  set-variable #l1 &abs .Ark.vy
+  !iif &gre &abs .Ark.vx #l1  set-variable #l1 &abs .Ark.vx
+  set-variable #l1 &add &div &mul #l1 2 .Ark.scale 1
+  set-variable #l2 0
+  !while &les &set #l2 &add #l2 1 &add #l1 1
+    set-variable .Ark.oy .Ark.y
+    set-variable .Ark.ox .Ark.x
+    set-variable .Ark.y &add .Ark.y &div .Ark.vy #l1
+    set-variable .Ark.x &add .Ark.x &div .Ark.vx #l1
+    set-variable .Ark.struck 0
+    ark-ball-step
+    !iif .Ark.struck  set-variable #l2 #l1
+  !done
+  set-variable &ind &cat ".Ark.by"  #l0 .Ark.y
+  set-variable &ind &cat ".Ark.bx"  #l0 .Ark.x
+  set-variable &ind &cat ".Ark.bvy" #l0 .Ark.vy
+  set-variable &ind &cat ".Ark.bvx" #l0 .Ark.vx
+!emacro
+0 define-macro ark-balls-move
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+    set-variable .Ark.bi #l0
+    ark-ball-move
+  !done
+  set-variable #l0 &add .Ark.nb 1
+  !while &gre &set #l0 &sub #l0 1 0
+    !if &gre &div &ind &cat ".Ark.by" #l0 .Ark.scale .Ark.bot
+      set-variable .Ark.bi #l0
+      ark-ball-drop
+    !endif
+  !done
+!emacro
+0 define-macro ark-balls-respeed
+  !iif &les .Ark.speedwas 1  !return
+  !iif &equ .Ark.speedwas .Ark.speed  !return
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+    set-variable &ind &cat ".Ark.bvy" #l0 &div &mul &ind &cat ".Ark.bvy" #l0 .Ark.speed .Ark.speedwas
+    set-variable &ind &cat ".Ark.bvx" #l0 &div &mul &ind &cat ".Ark.bvx" #l0 .Ark.speed .Ark.speedwas
+  !done
+  set-variable .Ark.speedwas .Ark.speed
+!emacro
+0 define-macro ark-balls-split
+  !iif &les .Ark.nb 1  !return
+  set-variable #l1 3
+  !while &les .Ark.nb .Ark.maxb
+    set-variable .Ark.newy &div &ind ".Ark.by1" .Ark.scale
+    set-variable .Ark.newx &div &ind ".Ark.bx1" .Ark.scale
+    set-variable .Ark.newvy &neg &div &mul &lget .Ark.dvy #l1 .Ark.speed 100
+    set-variable .Ark.newvx &div &mul &lget .Ark.dvx #l1 .Ark.speed 100
+    ark-ball-add
+    set-variable #l1 &add #l1 2
+    !iif &gre #l1 7  set-variable #l1 1
+  !done
+!emacro
+0 define-macro ark-cap-add
+  !iif &gre &add .Ark.nc 1 .Ark.maxc  !return
+  set-variable .Ark.nc &add .Ark.nc 1
+  set-variable #l0 .Ark.nc
+  set-variable &ind &cat ".Ark.cy" #l0 &mul .Ark.newy .Ark.scale
+  set-variable &ind &cat ".Ark.cx" #l0 &mul .Ark.newx .Ark.scale
+  set-variable &ind &cat ".Ark.ck" #l0 &mid .Ark.capbag &mod $random &len .Ark.capbag 1
+  set-variable &ind &cat ".Ark.cdy" #l0 -1
+  set-variable &ind &cat ".Ark.cdx" #l0 -1
+!emacro
+0 define-macro ark-cap-drop
+  set-variable #l0 .Ark.ci
+  set-variable #l1 &ind &cat ".Ark.cdy" #l0
+  !if &gre #l1 -1
+    set-variable .Ark.rr #l1
+    set-variable .Ark.rc &ind &cat ".Ark.cdx" #l0
+    set-variable .Ark.rn 3
+    ark-restore
+  !endif
+  !while &les #l0 .Ark.nc
+    set-variable #l1 &add #l0 1
+    set-variable &ind &cat ".Ark.cy"  #l0 &ind &cat ".Ark.cy"  #l1
+    set-variable &ind &cat ".Ark.cx"  #l0 &ind &cat ".Ark.cx"  #l1
+    set-variable &ind &cat ".Ark.ck"  #l0 &ind &cat ".Ark.ck"  #l1
+    set-variable &ind &cat ".Ark.cdy" #l0 &ind &cat ".Ark.cdy" #l1
+    set-variable &ind &cat ".Ark.cdx" #l0 &ind &cat ".Ark.cdx" #l1
+    set-variable #l0 #l1
+  !done
+  set-variable .Ark.nc &sub .Ark.nc 1
+!emacro
+0 define-macro ark-power-apply
+  set-variable #l0 .Ark.padhw
+  set-variable .Ark.padhw .Ark.padhw0
+  set-variable .Ark.catch 0
+  set-variable .Ark.laser 0
+  !if &seq .Ark.power "E"
+    set-variable .Ark.padhw .Ark.padhwe
+  !elif &seq .Ark.power "C"
+    set-variable .Ark.catch 1
+  !elif &seq .Ark.power "L"
+    set-variable .Ark.laser 1
+  !endif
+  !iif &not &equ #l0 .Ark.padhw  set-variable .Ark.padmoved 1
+  set-variable .Ark.hudchg 1
+!emacro
+0 define-macro ark-power
+  set-variable .Ark.hudchg 1
+  set-variable .Ark.score &add .Ark.score 200
+  !if &seq .Ark.pk "P"
+    set-variable .Ark.lives &add .Ark.lives 1
+  !elif &seq .Ark.pk "B"
+    set-variable .Ark.left 0
+  !elif &seq .Ark.pk "D"
+    ark-balls-split
+  !elif &seq .Ark.pk "S"
+    set-variable .Ark.speed &div &mul .Ark.speed 75 100
+    !iif &les .Ark.speed .Ark.speed0  set-variable .Ark.speed .Ark.speed0
+    ark-balls-respeed
+  !else
+    set-variable .Ark.power .Ark.pk
+    ark-power-apply
+  !endif
+!emacro
+0 define-macro ark-caps-move
+  set-variable #l0 &add .Ark.nc 1
+  !while &gre &set #l0 &sub #l0 1 0
+    set-variable &ind &cat ".Ark.cy" #l0 &add &ind &cat ".Ark.cy" #l0 .Ark.capv
+    set-variable #l1 &div &ind &cat ".Ark.cy" #l0 .Ark.scale
+    set-variable #l2 &div &ind &cat ".Ark.cx" #l0 .Ark.scale
+    !if &gre #l1 .Ark.bot
+      set-variable .Ark.ci #l0
+      ark-cap-drop
+    !elif &and &not &les #l1 .Ark.padr &and &not &gre #l2 .Ark.padc1 &not &les &add #l2 2 .Ark.padc0
+      set-variable .Ark.pk &ind &cat ".Ark.ck" #l0
+      set-variable .Ark.ci #l0
+      ark-cap-drop
+      ark-power
+    !endif
+  !done
+!emacro
+0 define-macro ark-laser-fire
+  !iif &not .Ark.laser  !return
+  !iif &gre .Ark.lasct 0  !return
+  !iif &gre &add .Ark.nl 2 .Ark.maxl  !return
+  set-variable .Ark.lasct .Ark.lascd
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 3
+    set-variable .Ark.nl &add .Ark.nl 1
+    set-variable &ind &cat ".Ark.ly"  .Ark.nl &mul &sub .Ark.padr 1 .Ark.scale
+    set-variable &ind &cat ".Ark.lx"  .Ark.nl &mul &con &equ #l0 1 .Ark.padc0 .Ark.padc1 .Ark.scale
+    set-variable &ind &cat ".Ark.ldy" .Ark.nl -1
+    set-variable &ind &cat ".Ark.ldx" .Ark.nl -1
+  !done
+!emacro
+0 define-macro ark-laser-drop
+  set-variable #l0 .Ark.li
+  set-variable #l1 &ind &cat ".Ark.ldy" #l0
+  !if &gre #l1 -1
+    set-variable .Ark.rr #l1
+    set-variable .Ark.rc &ind &cat ".Ark.ldx" #l0
+    set-variable .Ark.rn 1
+    ark-restore
+  !endif
+  !while &les #l0 .Ark.nl
+    set-variable #l1 &add #l0 1
+    set-variable &ind &cat ".Ark.ly"  #l0 &ind &cat ".Ark.ly"  #l1
+    set-variable &ind &cat ".Ark.lx"  #l0 &ind &cat ".Ark.lx"  #l1
+    set-variable &ind &cat ".Ark.ldy" #l0 &ind &cat ".Ark.ldy" #l1
+    set-variable &ind &cat ".Ark.ldx" #l0 &ind &cat ".Ark.ldx" #l1
+    set-variable #l0 #l1
+  !done
+  set-variable .Ark.nl &sub .Ark.nl 1
+!emacro
+0 define-macro ark-lasers-move
+  !iif &gre .Ark.lasct 0  set-variable .Ark.lasct &sub .Ark.lasct 1
+  set-variable #l0 &add .Ark.nl 1
+  !while &gre &set #l0 &sub #l0 1 0
+    set-variable &ind &cat ".Ark.ly" #l0 &sub &ind &cat ".Ark.ly" #l0 .Ark.lasv
+    set-variable #l1 &div &ind &cat ".Ark.ly" #l0 .Ark.scale
+    set-variable #l2 &div &ind &cat ".Ark.lx" #l0 .Ark.scale
+    set-variable #l3 0
+    !if &les #l1 .Ark.top
+      set-variable #l3 1
+    !else
+      set-variable .Ark.qr &sub &add #l1 1 .Ark.wr
+      set-variable #l4 &sub #l2 .Ark.wc
+      set-variable .Ark.qc &con &les #l4 0 0 &add &div #l4 .Ark.bw 1
+      ark-brick-get
+      !if &not &seq .Ark.qv " "
+        ark-brick-hit
+        set-variable #l3 1
+      !endif
+    !endif
+    !if #l3
+      set-variable .Ark.li #l0
+      ark-laser-drop
+    !endif
+  !done
+!emacro
+0 define-macro ark-paddle
+  set-variable #l0 .Ark.padcF
+  !if &or &not &equ $mouse-x .Ark.lastmx &not &equ $mouse-y .Ark.lastmy
+    set-variable .Ark.lastmx $mouse-x
+    set-variable .Ark.lastmy $mouse-y
+    set-variable .Ark.padmode "mouse"
+  !endif
+  !if &seq .Ark.padmode "mouse"
+    set-variable .Ark.padcF &mul $mouse-x .Ark.scale
+  !elif &gre .Ark.padkeyt 0
+    set-variable .Ark.padkeyt &sub .Ark.padkeyt 1
+    set-variable .Ark.padcF &add .Ark.padcF &mul .Ark.padkey .Ark.padkv
+  !endif
+  set-variable #l1 &mul &add .Ark.lft .Ark.padhw .Ark.scale
+  set-variable #l2 &mul &sub .Ark.rgt .Ark.padhw .Ark.scale
+  !iif &les .Ark.padcF #l1  set-variable .Ark.padcF #l1
+  !iif &gre .Ark.padcF #l2  set-variable .Ark.padcF #l2
+  set-variable .Ark.padc  &div .Ark.padcF .Ark.scale
+  set-variable .Ark.padc0 &sub .Ark.padc .Ark.padhw
+  set-variable .Ark.padc1 &add .Ark.padc .Ark.padhw
+  !iif &not &equ #l0 .Ark.padcF  set-variable .Ark.padmoved 1
+!emacro
+0 define-macro ark-render
+  !if .Ark.bnon
+    !if &not .Ark.bndrawn
+      ark-banner-draw
+      set-variable .Ark.bndrawn 1
+      1 screen-poke 0 0 .Ark.hudsch " "
+    !endif
+    !return
+  !endif
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+    !if &gre &ind &cat ".Ark.bdy" #l0 -1
+      set-variable .Ark.rr &ind &cat ".Ark.bdy" #l0
+      set-variable .Ark.rc &ind &cat ".Ark.bdx" #l0
+      set-variable .Ark.rn 1
+      ark-restore
+    !endif
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nc 1
+    !if &gre &ind &cat ".Ark.cdy" #l0 -1
+      set-variable .Ark.rr &ind &cat ".Ark.cdy" #l0
+      set-variable .Ark.rc &ind &cat ".Ark.cdx" #l0
+      set-variable .Ark.rn 3
+      ark-restore
+    !endif
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nl 1
+    !if &gre &ind &cat ".Ark.ldy" #l0 -1
+      set-variable .Ark.rr &ind &cat ".Ark.ldy" #l0
+      set-variable .Ark.rc &ind &cat ".Ark.ldx" #l0
+      set-variable .Ark.rn 1
+      ark-restore
+    !endif
+  !done
+  !if .Ark.pdrawn
+    set-variable .Ark.rr .Ark.padr
+    set-variable .Ark.rc .Ark.pdc0
+    set-variable .Ark.rn &add &sub .Ark.pdc1 .Ark.pdc0 1
+    ark-restore
+  !endif
+  3 screen-poke .Ark.padr .Ark.padc0 &con .Ark.laser .Ark.lassch .Ark.padsch &lef &con .Ark.laser .Ark.solid .Ark.bar &add &sub .Ark.padc1 .Ark.padc0 1
+  set-variable .Ark.pdc0 .Ark.padc0
+  set-variable .Ark.pdc1 .Ark.padc1
+  set-variable .Ark.pdrawn 1
+  set-variable .Ark.padmoved 0
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nl 1
+    set-variable #l1 &div &ind &cat ".Ark.ly" #l0 .Ark.scale
+    set-variable #l2 &div &ind &cat ".Ark.lx" #l0 .Ark.scale
+    3 screen-poke #l1 #l2 .Ark.lassch "^"
+    set-variable &ind &cat ".Ark.ldy" #l0 #l1
+    set-variable &ind &cat ".Ark.ldx" #l0 #l2
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nc 1
+    set-variable #l1 &div &ind &cat ".Ark.cy" #l0 .Ark.scale
+    set-variable #l2 &div &ind &cat ".Ark.cx" #l0 .Ark.scale
+    set-variable #l3 &ind &cat ".Ark.ck" #l0
+    3 screen-poke #l1 #l2 &lget .Ark.capsch &sin #l3 .Ark.capk &spr "[%s]" #l3
+    set-variable &ind &cat ".Ark.cdy" #l0 #l1
+    set-variable &ind &cat ".Ark.cdx" #l0 #l2
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+    set-variable #l1 &div &ind &cat ".Ark.by" #l0 .Ark.scale
+    set-variable #l2 &div &ind &cat ".Ark.bx" #l0 .Ark.scale
+    3 screen-poke #l1 #l2 .Ark.ballsch "O"
+    set-variable &ind &cat ".Ark.bdy" #l0 #l1
+    set-variable &ind &cat ".Ark.bdx" #l0 #l2
+  !done
+  1 screen-poke 0 0 .Ark.hudsch " "
+!emacro
+0 define-macro ark-hud
+  set-variable #l0 &spr " SCORE %06d   HI %06d   LEVEL %d %s   BALLS %s" .Ark.score .Ark.hiscore .Ark.level .Ark.lvlname &lef .Ark.stars .Ark.lives
+  !iif &not &seq .Ark.power " "  set-variable #l0 &spr "%s   [%s] %s" #l0 .Ark.power &lget .Ark.capname &sin .Ark.power .Ark.capk
+  1 screen-poke 0 0 .Ark.hudsch &lef &cat #l0 .Ark.blank $frame-width
+  set-variable .Ark.hudchg 0
+!emacro
+0 define-macro ark-banner-draw
+  set-variable #l0 &llen .Ark.bantxt
+  set-variable #l1 0
+  set-variable #l2 0
+  !while &les &set #l2 &add #l2 1 &add #l0 1
+    !iif &gre &len &lget .Ark.bantxt #l2 #l1  set-variable #l1 &len &lget .Ark.bantxt #l2
+  !done
+  set-variable #l5 &add &sub .Ark.rgt .Ark.lft 1
+  set-variable #l6 &add &sub .Ark.bot .Ark.top 1
+  set-variable .Ark.bnw &add #l1 8
+  !iif &gre .Ark.bnw #l5  set-variable .Ark.bnw #l5
+  set-variable .Ark.bnn &add #l0 2
+  !iif &gre .Ark.bnn #l6  set-variable .Ark.bnn #l6
+  set-variable .Ark.bnc &add .Ark.lft &div &sub #l5 .Ark.bnw 2
+  set-variable .Ark.bnr &div &sub &add &add .Ark.top .Ark.bot 1 .Ark.bnn 2
+  !iif &les .Ark.bnr .Ark.top  set-variable .Ark.bnr .Ark.top
+  set-variable #l2 0
+  !while &les &set #l2 &add #l2 1 &add .Ark.bnn 1
+    !if &or &equ #l2 1 &equ #l2 .Ark.bnn
+      3 screen-poke &sub &add .Ark.bnr #l2 1 .Ark.bnc .Ark.bansch &lef .Ark.blank .Ark.bnw
+    !else
+      set-variable #l3 &lget .Ark.bantxt &sub #l2 1
+      !iif &seq #l3 "-"  set-variable #l3 ""
+      set-variable #l4 &div &sub .Ark.bnw &len #l3 2
+      3 screen-poke &sub &add .Ark.bnr #l2 1 .Ark.bnc .Ark.bansch &lef &cat &cat &lef .Ark.blank #l4 #l3 .Ark.blank .Ark.bnw
+    !endif
+  !done
+!emacro
+0 define-macro ark-banner-clear
+  !iif &not .Ark.bnon  !return
+  set-variable .Ark.bnon 0
+  set-variable .Ark.bndrawn 0
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.bnn 1
+    set-variable .Ark.rr &sub &add .Ark.bnr #l0 1
+    set-variable .Ark.rc .Ark.bnc
+    set-variable .Ark.rn .Ark.bnw
+    ark-restore
+  !done
+!emacro
+0 define-macro ark-say
+  ark-banner-clear
+  set-variable .Ark.bnon 1
+  set-variable .Ark.bndrawn 0
+!emacro
+0 define-macro ark-title
+  set-variable .Ark.state "title"
+  set-variable .Ark.bantxt "|A R K A N O I D|-|space to start,  ? for the keys|"
+  set-variable .Ark.timer -1
+  set-variable .Ark.after "newgame"
+  ark-say
+!emacro
+0 define-macro ark-clear-play
+  !while &gre .Ark.nb 0
+    set-variable .Ark.bi .Ark.nb
+    ark-ball-drop
+  !done
+  !while &gre .Ark.nc 0
+    set-variable .Ark.ci .Ark.nc
+    ark-cap-drop
+  !done
+  !while &gre .Ark.nl 0
+    set-variable .Ark.li .Ark.nl
+    ark-laser-drop
+  !done
+  set-variable .Ark.lasct 0
+!emacro
+0 define-macro ark-forget
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+    set-variable &ind &cat ".Ark.bdy" #l0 -1
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nc 1
+    set-variable &ind &cat ".Ark.cdy" #l0 -1
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nl 1
+    set-variable &ind &cat ".Ark.ldy" #l0 -1
+  !done
+  set-variable .Ark.pdrawn 0
+!emacro
+0 define-macro ark-shift
+  set-variable #l1 &mul .Ark.dtop .Ark.scale
+  set-variable #l2 &mul .Ark.dlft .Ark.scale
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+    set-variable .Ark.qi &cat ".Ark.by" #l0
+    set-variable &ind .Ark.qi &add &ind .Ark.qi #l1
+    !iif &les &ind .Ark.qi .Ark.topF  set-variable &ind .Ark.qi .Ark.topF
+    !iif &gre &ind .Ark.qi .Ark.botF  set-variable &ind .Ark.qi .Ark.botF
+    set-variable .Ark.qi &cat ".Ark.bx" #l0
+    set-variable &ind .Ark.qi &add &ind .Ark.qi #l2
+    !iif &les &ind .Ark.qi .Ark.lftF  set-variable &ind .Ark.qi .Ark.lftF
+    !iif &gre &ind .Ark.qi .Ark.rgtF  set-variable &ind .Ark.qi .Ark.rgtF
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nc 1
+    set-variable .Ark.qi &cat ".Ark.cy" #l0
+    set-variable &ind .Ark.qi &add &ind .Ark.qi #l1
+    set-variable .Ark.qi &cat ".Ark.cx" #l0
+    set-variable &ind .Ark.qi &add &ind .Ark.qi #l2
+    !iif &les &ind .Ark.qi .Ark.lftF  set-variable &ind .Ark.qi .Ark.lftF
+    !iif &gre &ind .Ark.qi .Ark.rgtF  set-variable &ind .Ark.qi &sub .Ark.rgtF &mul 2 .Ark.scale
+  !done
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .Ark.nl 1
+    set-variable .Ark.qi &cat ".Ark.ly" #l0
+    set-variable &ind .Ark.qi &add &ind .Ark.qi #l1
+    set-variable .Ark.qi &cat ".Ark.lx" #l0
+    set-variable &ind .Ark.qi &add &ind .Ark.qi #l2
+    !iif &les &ind .Ark.qi .Ark.lftF  set-variable &ind .Ark.qi .Ark.lftF
+    !iif &gre &ind .Ark.qi .Ark.rgtF  set-variable &ind .Ark.qi .Ark.rgtF
+  !done
+  set-variable .Ark.padcF &add .Ark.padcF #l2
+!emacro
+0 define-macro ark-new-game
+  set-variable .Ark.score 0
+  set-variable .Ark.lives .Ark.lives0
+  set-variable .Ark.level 1
+  set-variable .Ark.power " "
+  ark-level-start
+!emacro
+0 define-macro ark-level-start
+  ark-clear-play
+  ark-level-load
+  set-variable .Ark.speed &add .Ark.speed0 &mul &sub .Ark.level 1 .Ark.speedlvl
+  !iif &gre .Ark.speed .Ark.speedmax  set-variable .Ark.speed .Ark.speedmax
+  set-variable .Ark.speedwas .Ark.speed
+  set-variable .Ark.power " "
+  ark-power-apply
+  ark-field-clear
+  ark-wall-draw
+  ark-forget
+  ark-hud
+  set-variable .Ark.playt 0
+  set-variable .Ark.bantxt &spr "|LEVEL %d|%s|" .Ark.level .Ark.lvlname
+  set-variable .Ark.timer 100
+  set-variable .Ark.after "serve"
+  set-variable .Ark.state "wait"
+  ark-say
+!emacro
+0 define-macro ark-serve
+  ark-clear-play
+  ark-power-apply
+  ark-paddle
+  set-variable .Ark.newy &sub .Ark.padr 1
+  set-variable .Ark.newx .Ark.padc
+  set-variable .Ark.newvy 0
+  set-variable .Ark.newvx 0
+  ark-ball-add
+  set-variable &ind ".Ark.bst1" 1
+  set-variable &ind ".Ark.bso1" 0
+  set-variable .Ark.state "serve"
+!emacro
+0 define-macro ark-launch
+  set-variable .Ark.bi 1
+  set-variable &ind ".Ark.bst1" 0
+  set-variable .Ark.zone &con &mod $random 2 3 5
+  ark-ball-dir
+  set-variable .Ark.state "play"
+!emacro
+0 define-macro ark-life-lost
+  set-variable .Ark.lives &sub .Ark.lives 1
+  set-variable .Ark.power " "
+  set-variable .Ark.hudchg 1
+  ark-clear-play
+  !if &les .Ark.lives 1
+    ark-game-over
+  !else
+    set-variable .Ark.bantxt "|BALL LOST|"
+    set-variable .Ark.timer 70
+    set-variable .Ark.after "serve"
+    set-variable .Ark.state "wait"
+    ark-say
+  !endif
+!emacro
+0 define-macro ark-level-done
+  ark-clear-play
+  set-variable .Ark.score &add .Ark.score &mul 500 .Ark.level
+  set-variable .Ark.hudchg 1
+  set-variable .Ark.level &add .Ark.level 1
+  set-variable .Ark.bantxt "|WALL CLEARED|"
+  set-variable .Ark.timer 90
+  set-variable .Ark.after "level"
+  set-variable .Ark.state "wait"
+  ark-say
+!emacro
+0 define-macro ark-game-over
+  !iif &gre .Ark.score .Ark.hiscore  set-variable .Ark.hiscore .Ark.score
+  set-variable .Ark.hudchg 1
+  set-variable .Ark.bantxt &spr "|GAME OVER|-|you scored %d|space to play again|" .Ark.score
+  set-variable .Ark.timer -1
+  set-variable .Ark.after "newgame"
+  set-variable .Ark.state "wait"
+  ark-say
+!emacro
+0 define-macro ark-after
+  ark-banner-clear
+  !if &seq .Ark.after "serve"
+    ark-serve
+  !elif &seq .Ark.after "level"
+    ark-level-start
+  !elif &seq .Ark.after "newgame"
+    ark-new-game
+  !elif &seq .Ark.after "play"
+    set-variable .Ark.state "play"
+  !else
+    set-variable .Ark.state .Ark.after
+  !endif
+!emacro
+0 define-macro ark-tick
+  !iif &not .Ark.running  !return
+  set-variable #l0 $unix-time
+  ark-layout
+  !if .Ark.resized
+    ark-shift
+    ark-field-clear
+    ark-wall-draw
+    ark-forget
+    ark-hud
+    set-variable .Ark.bndrawn 0
+    set-variable .Ark.bnon &or &seq .Ark.state "wait" &seq .Ark.state "title"
+  !endif
+  !if &seq .Ark.state "play"
+    ark-paddle
+    ark-balls-move
+    ark-caps-move
+    ark-lasers-move
+    set-variable .Ark.playt &add .Ark.playt 1
+    !if &and &gre .Ark.playt .Ark.speedup &les .Ark.speed .Ark.speedmax
+      set-variable .Ark.playt 0
+      set-variable .Ark.speed &add .Ark.speed 1
+      ark-balls-respeed
+    !endif
+    !if &les .Ark.left 1
+      ark-level-done
+    !elif &les .Ark.nb 1
+      ark-life-lost
+    !endif
+  !elif &seq .Ark.state "serve"
+    ark-paddle
+    set-variable .Ark.bi 1
+    ark-ball-move
+  !elif &gre .Ark.timer 0
+    set-variable .Ark.timer &sub .Ark.timer 1
+    !iif &not .Ark.timer  ark-after
+  !endif
+  ark-render
+  !iif .Ark.hudchg  ark-hud
+  set-variable #l1 &sub .Ark.ms &spr "%.0f" &fmul 1000 &fsub $unix-time #l0
+  !iif &les #l1 1  set-variable #l1 1
+  !iif .Ark.running  #l1 create-callback ark-tick
+!emacro
+0 define-macro ark-fire
+  !if &seq .Ark.state "title"
+    ark-after
+  !elif &seq .Ark.state "wait"
+    !iif &les .Ark.timer 0  ark-after
+  !elif &seq .Ark.state "serve"
+    ark-launch
+  !elif &seq .Ark.state "play"
+    set-variable #l0 0
+    set-variable #l1 0
+    !while &les &set #l0 &add #l0 1 &add .Ark.nb 1
+      !if &ind &cat ".Ark.bst" #l0
+        set-variable .Ark.bi #l0
+        ark-ball-release
+        set-variable #l1 1
+      !endif
+    !done
+    !iif &not #l1  ark-laser-fire
+  !endif
+!emacro
+0 define-macro ark-resume-state
+  set-variable .Ark.after &con &seq .Ark.state "serve" "serve" &con &seq .Ark.state "title" "title" "play"
+!emacro
+0 define-macro ark-help
+  !iif &seq .Ark.state "wait"  !return
+  ark-resume-state
+  set-variable .Ark.bantxt "|K E Y S|-|left right   move the bat|space        launch / release / fire|button 1     the same|p            pause|>            skip the level|q            quit|-|E expand   C catch    L laser|S slow     D split    P life|B break out of the level|-|space to carry on|"
+  set-variable .Ark.timer -1
+  set-variable .Ark.state "wait"
+  ark-say
+!emacro
+0 define-macro ark-pause
+  !if &seq .Ark.state "wait"
+    !iif &les .Ark.timer 0  ark-after
+    !return
+  !endif
+  ark-resume-state
+  set-variable .Ark.bantxt "|P A U S E D|-|space to carry on|"
+  set-variable .Ark.timer -1
+  set-variable .Ark.state "wait"
+  ark-say
+!emacro
+0 define-macro ark-input
+  !if &seq @cck "callback"
+    !force execute-named-command @cc
+    !return
+  !endif
+  !if &seq @cc "abort-command"
+    ark-quit
+    !abort
+  !endif
+  set-variable #l9 @cck
+  !if &or &seq #l9 "space" &seq #l9 "mouse-pick-1"
+    ark-fire
+  !elif &or &seq #l9 "left" &seq #l9 "kp-left"
+    set-variable .Ark.padmode "key"
+    set-variable .Ark.padkey -1
+    set-variable .Ark.padkeyt .Ark.padkeyn
+  !elif &or &seq #l9 "right" &seq #l9 "kp-right"
+    set-variable .Ark.padmode "key"
+    set-variable .Ark.padkey 1
+    set-variable .Ark.padkeyt .Ark.padkeyn
+  !elif &or &seq #l9 "q" &seq #l9 "esc"
+    ark-quit
+  !elif &or &seq #l9 "?" &seq #l9 "h"
+    ark-help
+  !elif &seq #l9 "p"
+    ark-pause
+  !elif &seq #l9 ">"
+    !iif &or &seq .Ark.state "play" &seq .Ark.state "serve"  ark-level-done
+  !endif
+!emacro
+0 define-macro ark-quit
+  !iif &not .Ark.running  !return
+  set-variable .Ark.running 0
+  -1 create-callback ark-tick
+  set-variable $buffer-input .Ark.previnput
+  ark-cursor-show
+  1 screen-update
+  ml-write &spr "[arkanoid: %d points, best so far %d]" .Ark.score .Ark.hiscore
+!emacro
+define-macro Arkanoid
+  !iif &equ .Ark.running 1  ark-quit
+  ark-setup
+  ark-layout
+  !if &or &les &sub .Ark.bot .Ark.top 8 &les &sub .Ark.rgt .Ark.lft 26
+    ml-write "[arkanoid: this window is too small to play in]"
+    !return
+  !endif
+  set-variable .Ark.score 0
+  set-variable .Ark.level 1
+  set-variable .Ark.lives .Ark.lives0
+  set-variable .Ark.power " "
+  set-variable .Ark.lvlname ""
+  set-variable .Ark.padcF &mul &div &add .Ark.lft .Ark.rgt 2 .Ark.scale
+  set-variable .Ark.lastmx $mouse-x
+  set-variable .Ark.lastmy $mouse-y
+  set-variable .Ark.hudchg 0
+  set-variable .Ark.padmoved 1
+  ark-power-apply
+  ark-paddle
+  ark-field-clear
+  ark-forget
+  ark-hud
+  set-variable .Ark.previnput $buffer-input
+  set-variable $buffer-input ark-input
+  ark-cursor-hide
+  set-variable .Ark.running 1
+  ark-title
+  .Ark.ms create-callback ark-tick
+!emacro
+define-macro Ark
+  Arkanoid
+!emacro

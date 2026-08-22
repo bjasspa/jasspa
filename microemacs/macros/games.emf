@@ -52,3 +52,11 @@ define-macro Typing
   execute-file typing
   Typing
 !emacro
+define-macro Ball
+  execute-file ball
+  Ball
+!emacro
+define-macro Arkanoid
+  execute-file arkanoid
+  Arkanoid
+!emacro
