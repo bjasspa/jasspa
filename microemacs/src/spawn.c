@@ -1552,7 +1552,7 @@ get_another:
                         case '@':
                         {
                             /* ICH - insert prmL blanks, shifting the rest of the line right. Check prmL to avoid overruns */
-                            if(!gotN)
+                            if(prmL <= 0)
                                 prmL = 1;
                             if(prmL > (maxOff - len))
                                 prmL = maxOff - len;
@@ -1572,24 +1572,28 @@ get_another:
                         }
                         
                         case 'A':
-                            if(!gotN)
+                            /* CUU - move up, the column is unchanged */
+                            if(prmL <= 0)
                                 prmL = 1;
                             prmA = curRow - prmL;
                             prmL = len;
                             goto move_cursor_pos;
 
                         case 'B':
-                            if(!gotN)
+                        case 'e':
+                            /* CUD/VPR - move down, the column is unchanged by both */
+                            if(prmL <= 0)
                                 prmL = 1;
                             prmA = curRow + prmL;
                             prmL = len;
                             goto move_cursor_pos;
                         
                         case 'C':
-                            if(!gotN)
+                        case 'a':
+                            /* CUF/HPR - move right, stopping at the right margin. Note the clamp must not go negative! */
+                            if(prmL <= 0)
                                 prmL = 1;
 cursor_forward:
-                            /* CUF - move right, stopping at the right margin. Note the clamp must not go negative! */
                             if((prmL + len) >= maxOff)
                                 prmL = maxOff - len - 1;
                             if(prmL <= 0)
@@ -1608,15 +1612,21 @@ cursor_forward:
 
                         case 'D':
                             /* CUB - move left, stopping at column 0 */
-                            if(!gotN)
+                            if(prmL <= 0)
                                 prmL = 1;
-                            else if(prmL <= 0)
-                                break;
                             if(len < prmL)
                                 prmL = len;
                             p1 -= prmL;
                             len -= prmL;
                             break;
+
+                        case 'd':
+                            /* VPA - cursor vertical absolute, 1-based, the column is unchanged */
+                            if(prmL <= 0)
+                                prmL = 1;
+                            prmA = prmL - 1;
+                            prmL = len;
+                            goto move_cursor_pos;
 
                         case 'G':
                         case '`':
@@ -1977,10 +1987,8 @@ move_cursor_pos:
                             {
                                 /* DCH - delete prmL chars and shifts the remainder left. */
                                 int ll;
-                                if(!gotN)
+                                if(prmL <= 0)
                                     prmL = 1;
-                                else if(prmL <= 0)
-                                    break;
                                 if((ll = meStrlen(p1) - prmL) <= 0)
                                     *p1 = '\0';
                                 else
@@ -1995,10 +2003,8 @@ move_cursor_pos:
                             {
                                 /* ECH - erase prmL chars with no shift. */
                                 int ll;
-                                if(!gotN)
+                                if(prmL <= 0)
                                     prmL = 1;
-                                else if(prmL <= 0)
-                                    break;
                                 if((ll = meStrlen(p1)) <= prmL)
                                     *p1 = '\0';
                                 else
