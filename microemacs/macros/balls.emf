@@ -1,0 +1,809 @@
+; balls
+;
+; Keys:
+;   ?  or  h   show/hide the key help
+;   space      cycle the bat: off -> across -> upright -> off
+;   n / x      add a ball / remove a ball
+;   s          change the size of the next ball added
+;   r          reset
+;   p          pause
+;   .          run a single frame, for watching a collision resolve
+;w   a          the pointer as a lump of gravity: off -> pull -> push -> off
+;   - / = or + weaken / strengthen that pull
+;   g          cycle gravity: normal -> moon -> none -> upside down
+;   wheel      trim gravity, one unit a click
+;   [ / ]      less / more bounce
+;   c          ball to ball collisions on/off
+;   button 1   drag a ball to pick it up, let go to throw it
+;   button 3   drop a new ball under the pointer
+;   q, esc or C-g   quit
+0 define-macro ball-scheme
+  !iif &seq .bls.sch "ERROR"  set-variable .bls.sch $mode-line-scheme
+!emacro
+0 define-macro ball-setup
+  set-variable .bls.ms       5 ; target frame time in ms (16 == 60fps)
+  set-variable .bls.scale   100 ; fixed point units per character cell
+  set-variable .bls.half     50 ; half of that, ie the middle of a cell
+  set-variable .bls.aspect    2 ; how many times taller a cell is than wide
+  set-variable .bls.gravity  22 ; downward acceleration
+  set-variable .bls.damp     76 ; wall bounce, percentage of speed kept
+  set-variable .bls.pdamp    88 ; bat bounce, percentage of speed kept
+  set-variable .bls.bdamp    90 ; ball to ball bounce, percentage kept
+  set-variable .bls.fric     14 ; how quickly a rolling ball is slowed
+  set-variable .bls.stopv    28 ; below this a resting ball is pinned still
+  set-variable .bls.maxv    900 ; speed limit, stops balls tunnelling
+  set-variable .bls.spin     18 ; % of the off-centre bat hit added sideways
+  set-variable .bls.punch    70 ; % of the bat's own speed added on impact
+  set-variable .bls.ride     35 ; % of the bat's speed a resting ball takes
+  set-variable .bls.throw   160 ; % of hand speed given to a thrown ball
+  set-variable .bls.padlen    5 ; bat half length in cells
+  set-variable .bls.padmaxv 400 ; the fastest the bat is allowed to swing
+  set-variable .bls.maxn     100 ; most balls allowed at once
+  set-variable .bls.start     1 ; balls to begin with
+  set-variable .bls.wellg0   45 ; pull of the pointer well, per frame per frame
+  set-variable .bls.wellstp   5 ; how much - and = shift the pull by
+  set-variable .bls.wellmax 250 ; the strongest the pointer well may be wound
+  set-variable .bls.gmax    200 ; how far the wheel may wind gravity either way
+  set-variable .bls.gstep     1 ; how much one click of the wheel is worth
+  set-variable .bls.hys      40 ; how far past the line between two cells a
+  set-variable .bls.shp0  "|1|"
+  set-variable .bls.shp1  "|1|2|1|"
+  set-variable .bls.shp2  "|1|2|3|2|1|"
+  set-variable .bls.shp3  "|2|3|4|5|4|3|2|"
+  set-variable .bls.shpr  "|0|1|2|3|"
+  set-variable .bls.shpc  "|1|2|3|5|"
+  set-variable .bls.rmax  &mul &mul 2 &lget .bls.shpc 4 .bls.scale
+  set-variable .bls.blank " "
+  !while &les &len .bls.blank 512
+    set-variable .bls.blank &cat .bls.blank .bls.blank
+  !done
+  set-variable #l0 -1
+  !while &les &set #l0 &add #l0 1 4
+    set-variable #l1 &ind &cat ".bls.shp" #l0
+    set-variable #l2 "|"
+    set-variable #l3 0
+    !while &les &set #l3 &add #l3 1 &add &llen #l1 1
+      set-variable #l2 &lins #l2 -1 &lef .bls.blank &add &mul &lget #l1 #l3 2 1
+    !done
+    set-variable &ind &cat ".bls.sst" #l0 #l2
+  !done
+  set-variable .bls.cols ""
+  set-variable #l1 "|hlred|hlgreen|hlyellow|hlblue|hlmagenta|"
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add &llen #l1 1
+    set-variable .bls.sch &ind &cat ".scheme." &lget #l1 #l0
+    ball-scheme
+    set-variable .bls.cols &cat &cat .bls.cols "|" .bls.sch
+  !done
+  set-variable .bls.cols &cat .bls.cols "|"
+  set-variable .bls.sch .scheme.hlcyan
+  ball-scheme
+  set-variable .bls.padsch .bls.sch
+  set-variable .bls.sch .scheme.hlwhite
+  ball-scheme
+  set-variable .bls.hlpsch .bls.sch
+  set-variable .bls.bgsch  $global-scheme
+  set-variable .bls.hudsch $mode-line-scheme
+  set-variable .bls.help "|                                          | balls - a bouncing ball playground       |                                          |  space    bat off / across / upright     |  button 1 pick a ball up and throw it    |  button 3 drop a new ball                |  a        well off / pull / push         |  -  =     weaker / stronger well         |  n  x     add / remove a ball            |  s        size of the next ball          |  g        gravity down/moon/none/up      |  wheel    trim gravity by one            |  [  ]     less / more bounce             |  c        ball to ball collisions        |  p  .     pause / step one frame         |  r        reset                          |  ?  h     hide this help                 |  q  esc   quit                           |                                          |"
+  set-variable .bls.n        0
+  set-variable .bls.ly      "|"
+  set-variable .bls.lx      "|"
+  set-variable .bls.lvy     "|"
+  set-variable .bls.lvx     "|"
+  set-variable .bls.lsz     "|"
+  set-variable .bls.lr      "|"
+  set-variable .bls.lsc     "|"
+  set-variable .bls.ldy     "|"
+  set-variable .bls.ldx     "|"
+  set-variable .bls.lds     "|"
+  set-variable .bls.lmv     "|"
+  set-variable .bls.bnd     "|"
+  set-variable .bls.grab     0
+  set-variable .bls.padmode  0
+  set-variable .bls.paused   0
+  set-variable .bls.helpon   0
+  set-variable .bls.collide  1
+  set-variable .bls.newsz   -1
+  set-variable .bls.gmode    0
+  set-variable .bls.well     0
+  set-variable .bls.wellg    .bls.wellg0
+  set-variable .bls.dirty    1
+  set-variable .bls.step     0
+  set-variable .bls.prow    -1
+  set-variable .bls.pcol    -1
+  set-variable .bls.pdrawn   0
+  set-variable .bls.pvy      0
+  set-variable .bls.pvx      0
+!emacro
+0 define-macro ball-bounds
+  set-variable #l1 "|"
+  set-variable #l0 -1
+  !while &les &set #l0 &add #l0 1 4
+    set-variable #l2 &lget .bls.shpr &add #l0 1
+    set-variable #l3 &lget .bls.shpc &add #l0 1
+    set-variable #l1 &lins #l1 -1 &mul &add .bls.top #l2 .bls.scale
+    set-variable #l1 &lins #l1 -1 &mul &sub .bls.bot #l2 .bls.scale
+    set-variable #l1 &lins #l1 -1 &mul &add .bls.lft #l3 .bls.scale
+    set-variable #l1 &lins #l1 -1 &mul &sub .bls.rgt #l3 .bls.scale
+  !done
+  set-variable .bls.bnd #l1
+  set-variable .bls.fd  $frame-depth
+!emacro
+0 define-macro ball-add
+  !iif &gre &add .bls.n 1 .bls.maxn  !return
+  set-variable #l1 .bls.newsz
+  !iif &les #l1 0  set-variable #l1 &mod $random 4
+  set-variable #l2 &lget .bls.shpr &add #l1 1
+  set-variable #l3 &lget .bls.shpc &add #l1 1
+  set-variable #l4 .bls.newy
+  set-variable #l5 .bls.newx
+  !iif &les #l4 &add .bls.top #l2  set-variable #l4 &add .bls.top #l2
+  !iif &gre #l4 &sub .bls.bot #l2  set-variable #l4 &sub .bls.bot #l2
+  !iif &les #l5 &add .bls.lft #l3  set-variable #l5 &add .bls.lft #l3
+  !iif &gre #l5 &sub .bls.rgt #l3  set-variable #l5 &sub .bls.rgt #l3
+  set-variable .bls.n   &add .bls.n 1
+  set-variable .bls.ly  &lins .bls.ly  -1 &mul #l4 .bls.scale
+  set-variable .bls.lx  &lins .bls.lx  -1 &mul #l5 .bls.scale
+  set-variable .bls.lvy &lins .bls.lvy -1 &sub &mod $random 120 60
+  set-variable .bls.lvx &lins .bls.lvx -1 &sub &mod $random 240 120
+  set-variable .bls.lsz &lins .bls.lsz -1 #l1
+  set-variable .bls.lr  &lins &lins &lins .bls.lr -1 #l2 -1 #l3 -1 &mul #l3 .bls.scale
+  set-variable .bls.lsc &lins .bls.lsc -1 &lget .bls.cols &add &mod $random &llen .bls.cols 1
+  set-variable .bls.ldy &lins .bls.ldy -1 -1
+  set-variable .bls.ldx &lins .bls.ldx -1 -1
+  set-variable .bls.lds &lins .bls.lds -1 #l1
+  set-variable .bls.lmv &lins .bls.lmv -1 1
+  set-variable .bls.dirty 1
+!emacro
+0 define-macro ball-remove
+  !iif &les .bls.n 1  !return
+  !iif &equ .bls.grab .bls.n  set-variable .bls.grab 0
+  set-variable #l1 &lget .bls.ldy .bls.n
+  !if &gre #l1 -1
+    set-variable #l2 &lget .bls.ldx .bls.n
+    set-variable #l3 &lget .bls.lds .bls.n
+    set-variable #l4 .bls.bgsch
+    ball-blit
+  !endif
+  set-variable .bls.ly  &lde .bls.ly  .bls.n
+  set-variable .bls.lx  &lde .bls.lx  .bls.n
+  set-variable .bls.lvy &lde .bls.lvy .bls.n
+  set-variable .bls.lvx &lde .bls.lvx .bls.n
+  set-variable .bls.lsz &lde .bls.lsz .bls.n
+  set-variable .bls.lsc &lde .bls.lsc .bls.n
+  set-variable .bls.ldy &lde .bls.ldy .bls.n
+  set-variable .bls.ldx &lde .bls.ldx .bls.n
+  set-variable .bls.lds &lde .bls.lds .bls.n
+  set-variable .bls.lmv &lde .bls.lmv .bls.n
+  set-variable #l0 &mul .bls.n 3
+  set-variable .bls.lr &lde &lde &lde .bls.lr #l0 &sub #l0 1 &sub #l0 2
+  set-variable .bls.n &sub .bls.n 1
+  set-variable .bls.redraw 1
+  set-variable .bls.dirty 1
+!emacro
+0 define-macro ball-reset
+  !while &gre .bls.n 0
+    ball-remove
+  !done
+  set-variable .bls.grab 0
+  set-variable #l1 &sub .bls.rgt 11
+  !iif &les #l1 1  set-variable #l1 1
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .bls.start 1
+    set-variable .bls.newy &add .bls.top &mod $random 3
+    set-variable .bls.newx &add 6 &mod $random #l1
+    ball-add
+  !done
+  set-variable .bls.redraw 1
+!emacro
+0 define-macro ball-blit
+  set-variable #l1 &ind &cat ".bls.shp" #p3
+  set-variable #l2 &ind &cat ".bls.sst" #p3
+  set-variable #l3 &sub #p1 &lget .bls.shpr &add #p3 1
+  set-variable #l4 &add &llen #l1 1
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 #l4
+    !if &and &gre #l3 -1 &les #l3 .bls.fd
+      3 screen-poke #l3 &sub #p2 &lget #l1 #l0 #p4 &lget #l2 #l0
+    !endif
+    set-variable #l3 &add #l3 1
+  !done
+!emacro
+0 define-macro ball-padblit
+  set-variable #l1 &add &sub .bls.pc1 .bls.pc0 1
+  set-variable #l0 &sub .bls.pr0 1
+  !while &les &set #l0 &add #l0 1 &add .bls.pr1 1
+    !if &and &gre #l0 -1 &les #l0 .bls.fd
+      3 screen-poke #l0 .bls.pc0 .bls.pbsch &lef .bls.blank #l1
+    !endif
+  !done
+!emacro
+0 define-macro ball-render
+  set-variable #g0 .bls.ly
+  set-variable #g1 .bls.lx
+  set-variable #g2 .bls.ldy
+  set-variable #g3 .bls.ldx
+  set-variable #g4 .bls.lds
+  set-variable #g5 .bls.lsz
+  set-variable #g6 .bls.lsc
+  set-variable #g8 .bls.n
+  set-variable #g7 "|"
+  set-variable #l5 .bls.scale
+  set-variable #l6 .bls.half
+  set-variable #l7 .bls.hys
+  set-variable #l8 .bls.redraw
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add #g8 1
+    set-variable #l1 &lget #g0 #l0
+    set-variable #l2 &div &add #l1 #l6 #l5
+    set-variable #l3 &lget #g2 #l0
+    !if &gre #l3 -1
+      !if &equ &abs &sub #l2 #l3 1
+        set-variable #l4 &sub &mul &con &gre #l2 #l3 #l2 #l3 #l5 #l6
+        !iif &les &abs &sub #l1 #l4 #l7  set-variable #l2 #l3
+      !endif
+      !iif &not &equ #l2 #l3  set-variable #l8 1
+    !else
+      set-variable #l8 1
+    !endif
+    set-variable #g7 &lins #g7 -1 #l2
+    set-variable #l1 &lget #g1 #l0
+    set-variable #l2 &div &add #l1 #l6 #l5
+    !if &gre #l3 -1
+      set-variable #l4 &lget #g3 #l0
+      !if &equ &abs &sub #l2 #l4 1
+        set-variable #l9 &sub &mul &con &gre #l2 #l4 #l2 #l4 #l5 #l6
+        !iif &les &abs &sub #l1 #l9 #l7  set-variable #l2 #l4
+      !endif
+      !iif &not &equ #l2 #l4  set-variable #l8 1
+    !endif
+    set-variable #g7 &lins #g7 -1 #l2
+  !done
+  !iif &and &not #l8 &not .bls.padmoved  !return
+  !if .bls.pdrawn
+    set-variable .bls.pr0 .bls.pdr0
+    set-variable .bls.pr1 .bls.pdr1
+    set-variable .bls.pc0 .bls.pdc0
+    set-variable .bls.pc1 .bls.pdc1
+    set-variable .bls.pbsch .bls.bgsch
+    ball-padblit
+    set-variable .bls.pdrawn 0
+  !endif
+  set-variable #l4 .bls.bgsch
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add #g8 1
+    set-variable #l1 &lget #g2 #l0
+    !if &gre #l1 -1
+      set-variable #l2 &lget #g3 #l0
+      set-variable #l3 &lget #g4 #l0
+      ball-blit
+    !endif
+  !done
+  !if .bls.padmode
+    set-variable .bls.pr0 .bls.padr0
+    set-variable .bls.pr1 .bls.padr1
+    set-variable .bls.pc0 .bls.padc0
+    set-variable .bls.pc1 .bls.padc1
+    set-variable .bls.pbsch .bls.padsch
+    ball-padblit
+    set-variable .bls.pdr0 .bls.pr0
+    set-variable .bls.pdr1 .bls.pr1
+    set-variable .bls.pdc0 .bls.pc0
+    set-variable .bls.pdc1 .bls.pc1
+    set-variable .bls.pdrawn 1
+  !endif
+  set-variable #l5 0
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add #g8 1
+    set-variable #l1 &lget #g7 &set #l5 &add #l5 1
+    set-variable #l2 &lget #g7 &set #l5 &add #l5 1
+    set-variable #l3 &lget #g5 #l0
+    set-variable #l4 &lget #g6 #l0
+    ball-blit
+    set-variable #g2 &lset #g2 #l0 #l1
+    set-variable #g3 &lset #g3 #l0 #l2
+    set-variable #g4 &lset #g4 #l0 #l3
+  !done
+  set-variable .bls.ldy #g2
+  set-variable .bls.ldx #g3
+  set-variable .bls.lds #g4
+  !iif .bls.helpon  ball-help
+  set-variable .bls.redraw 0
+  set-variable .bls.padmoved 0
+  1 screen-poke 0 0 .bls.hudsch " "
+!emacro
+0 define-macro ball-hud
+  set-variable #l0 &spr " n:%d/%d  g:%d  bnc:%d%%  bat:%s  hit:%s  well:%s/%d  fps:%s%s  [?] keys" .bls.n .bls.maxn .bls.gravity .bls.damp &lget "|off|across|upright|" &add .bls.padmode 1 &cond .bls.collide "on" "off" &lget "|push|off|pull|" &add .bls.well 2 .bls.wellg .bls.fps &cond .bls.paused "  PAUSED" ""
+  1 screen-poke 0 0 .bls.hudsch &lef &cat #l0 .bls.blank $frame-width
+!emacro
+0 define-macro ball-help
+  set-variable #l0 &llen .bls.help
+  set-variable #l1 &div &sub $frame-depth #l0 2
+  set-variable #l2 &div &sub $frame-width 42 2
+  !iif &les #l1 0  set-variable #l1 0
+  !iif &les #l2 0  set-variable #l2 0
+  set-variable #l3 0
+  !while &les &set #l3 &add #l3 1 &add #l0 1
+    !if &les &add #l1 #l3 &sub $frame-depth 2
+      3 screen-poke &add #l1 #l3 #l2 .bls.hlpsch &lef &cat &lget .bls.help #l3 .bls.blank 42
+    !endif
+  !done
+!emacro
+0 define-macro ball-settle
+  !iif &les &abs #p3 .bls.stopv  set-variable #p3 0
+  !if &gre #p4 &set #l0 .bls.fric
+    set-variable #p4 &sub #p4 #l0
+  !elif &les #p4 &neg #l0
+    set-variable #p4 &add #p4 #l0
+  !else
+    set-variable #p4 0
+  !endif
+!emacro
+0 define-macro ball-well
+  set-variable #l0 &mul &sub &mul $mouse-y .bls.scale #p1 .bls.aspect
+  set-variable #l1 &sub &mul $mouse-x .bls.scale #p2
+  set-variable #l2 &add &mul #l0 #l0 &mul #l1 #l1
+  !iif &not &gre #l2 &mul .bls.scale .bls.scale  !return
+  set-variable #l3 &div #l2 2
+  set-variable #l4 &mul &mul .bls.well .bls.wellg .bls.scale
+  set-variable #l1 &mul #l4 #l1
+  set-variable #p4 &add #p4 &div &con &les #l1 0 &sub #l1 #l3 &add #l1 #l3 #l2
+  set-variable #l0 &div &mul #l4 #l0 .bls.aspect
+  set-variable #p3 &add #p3 &div &con &les #l0 0 &sub #l0 #l3 &add #l0 #l3 #l2
+!emacro
+0 define-macro ball-collide-pad
+  set-variable #l9 &mul #p0 3
+  set-variable #l6 &lget #g5 &sub #l9 2
+  set-variable #l7 &lget #g5 &sub #l9 1
+  set-variable #l0 &mul &sub &sub .bls.padr0 #l6 1 .bls.scale
+  set-variable #l1 &mul &add &add .bls.padr1 #l6 1 .bls.scale
+  set-variable #l2 &mul &sub &sub .bls.padc0 #l7 1 .bls.scale
+  set-variable #l3 &mul &add &add .bls.padc1 #l7 1 .bls.scale
+  !if &and &gre #p2 #l2 &les #p2 #l3
+    set-variable #l4 0
+    !if &and &not &gre #p5 #l0 &not &les #p1 #l0
+      set-variable #p1 #l0
+      set-variable #l4 1
+    !elif &and &not &les #p5 #l1 &not &gre #p1 #l1
+      set-variable #p1 #l1
+      set-variable #l4 1
+    !endif
+    !if #l4
+      set-variable #p3 &add &div &mul &neg #p3 .bls.pdamp 100 &div &mul .bls.pvy .bls.punch 100
+      !if &les &abs #p3 .bls.stopv
+        set-variable #p3 0
+        set-variable #p4 &add #p4 &div &mul &sub .bls.pvx #p4 .bls.ride 100
+      !else
+        set-variable #l5 &div &mul &add .bls.padc0 .bls.padc1 .bls.scale 2
+        set-variable #p4 &add #p4 &div &mul &sub #p2 #l5 .bls.spin 100
+        set-variable #p4 &add #p4 &div &mul .bls.pvx .bls.punch 200
+      !endif
+      !return
+    !endif
+  !endif
+  !if &and &gre #p1 #l0 &les #p1 #l1
+    set-variable #l4 0
+    !if &and &not &gre #p6 #l2 &not &les #p2 #l2
+      set-variable #p2 #l2
+      set-variable #l4 1
+    !elif &and &not &les #p6 #l3 &not &gre #p2 #l3
+      set-variable #p2 #l3
+      set-variable #l4 1
+    !endif
+    !if #l4
+      set-variable #p4 &add &div &mul &neg #p4 .bls.pdamp 100 &div &mul .bls.pvx .bls.punch 100
+      set-variable #l5 &div &mul &add .bls.padr0 .bls.padr1 .bls.scale 2
+      set-variable #p3 &add #p3 &div &mul &sub #p1 #l5 .bls.spin 100
+      set-variable #p3 &add #p3 &div &mul .bls.pvy .bls.punch 200
+    !endif
+  !endif
+!emacro
+0 define-macro ball-collide-pair
+  set-variable #l0 &mul &sub &lget #g0 #p0 &lget #g0 #p1 #p7
+  set-variable #l1 #p9
+  set-variable #l2 #p8
+  set-variable #l3 &add &mul #l0 #l0 &mul #l1 #l1
+  !iif &gre #l3 &mul #l2 #l2  !return
+  !iif &les #l3 1  !return
+  set-variable #l3 &spr "%.0f" &fsq #l3
+  !if &equ #p0 .bls.grab
+    set-variable .bls.pfa 0
+    set-variable .bls.pfb 2
+  !elif &equ #p1 .bls.grab
+    set-variable .bls.pfa 2
+    set-variable .bls.pfb 0
+  !else
+    set-variable .bls.pfa 1
+    set-variable .bls.pfb 1
+  !endif
+  set-variable #l4 &div &mul #l0 1000 #l3
+  set-variable #l5 &div &mul #l1 1000 #l3
+  set-variable #l6 &div &sub #l2 #l3 2
+  set-variable #l7 &div &div &mul #l6 #l4 1000 .bls.aspect
+  set-variable #l8 &div &mul #l6 #l5 1000
+  set-variable #g0 &lset #g0 #p0 &add &lget #g0 #p0 &mul #l7 .bls.pfa
+  set-variable #g1 &lset #g1 #p0 &add &lget #g1 #p0 &mul #l8 .bls.pfa
+  set-variable #g0 &lset #g0 #p1 &sub &lget #g0 #p1 &mul #l7 .bls.pfb
+  set-variable #g1 &lset #g1 #p1 &sub &lget #g1 #p1 &mul #l8 .bls.pfb
+  set-variable #g6 &lset &lset #g6 #p0 1 #p1 1
+  set-variable #g9 1
+  set-variable #l6 &mul &sub &lget #g2 #p0 &lget #g2 #p1 .bls.aspect
+  set-variable #l7 &sub &lget #g3 #p0 &lget #g3 #p1
+  set-variable #l9 &div &add &mul #l6 #l4 &mul #l7 #l5 1000
+  !iif &gre #l9 -1  !return
+  set-variable #l9 &div &mul &neg #l9 &add 100 .bls.bdamp 200
+  set-variable #l6 &div &div &mul #l9 #l4 1000 .bls.aspect
+  set-variable #l7 &div &mul #l9 #l5 1000
+  set-variable #g2 &lset #g2 #p0 &add &lget #g2 #p0 &mul #l6 .bls.pfa
+  set-variable #g3 &lset #g3 #p0 &add &lget #g3 #p0 &mul #l7 .bls.pfa
+  set-variable #g2 &lset #g2 #p1 &sub &lget #g2 #p1 &mul #l6 .bls.pfb
+  set-variable #g3 &lset #g3 #p1 &sub &lget #g3 #p1 &mul #l7 .bls.pfb
+!emacro
+0 define-macro ball-physics
+  set-variable #g0 .bls.ly
+  set-variable #g1 .bls.lx
+  set-variable #g2 .bls.lvy
+  set-variable #g3 .bls.lvx
+  set-variable #g4 .bls.lsz
+  set-variable #g5 .bls.lr
+  set-variable #g6 .bls.lmv
+  set-variable #g7 .bls.bnd
+  set-variable #g8 .bls.n
+  set-variable #l9 0
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add #g8 1
+    set-variable #l1 &lget #g0 #l0
+    set-variable #l2 &lget #g1 #l0
+    set-variable #l3 &lget #g2 #l0
+    set-variable #l4 &lget #g3 #l0
+    set-variable #l5 #l1
+    set-variable #l6 #l2
+    set-variable #l7 &mul &lget #g4 #l0 4
+    !if &equ #l0 .bls.grab
+      set-variable #l1 &mul $mouse-y .bls.scale
+      set-variable #l2 &mul $mouse-x .bls.scale
+      !iif &les #l1 &set #l8 &lget #g7 &add #l7 1  set-variable #l1 #l8
+      !iif &gre #l1 &set #l8 &lget #g7 &add #l7 2  set-variable #l1 #l8
+      !iif &les #l2 &set #l8 &lget #g7 &add #l7 3  set-variable #l2 #l8
+      !iif &gre #l2 &set #l8 &lget #g7 &add #l7 4  set-variable #l2 #l8
+      set-variable #l3 &div &add &mul 2 #l3 &sub #l1 #l5 3
+      set-variable #l4 &div &add &mul 2 #l4 &sub #l2 #l6 3
+    !else
+      set-variable #l3 &add #l3 .bls.gravity
+      !iif &and .bls.well .bls.wellg  ball-well
+      !iif &gre #l3 &set #l8 .bls.maxv  set-variable #l3 #l8
+      !iif &les #l3 &neg #l8  set-variable #l3 &neg #l8
+      !iif &gre #l4 #l8  set-variable #l4 #l8
+      !iif &les #l4 &neg #l8  set-variable #l4 &neg #l8
+      set-variable #l1 &add #l1 #l3
+      set-variable #l2 &add #l2 #l4
+      !iif .bls.padmode  ball-collide-pad
+      !if &les #l1 &set #l8 &lget #g7 &add #l7 1
+        set-variable #l1 #l8
+        set-variable #l3 &div &mul &neg #l3 .bls.damp 100
+        !iif &les .bls.gravity 0  ball-settle
+      !elif &gre #l1 &set #l8 &lget #g7 &add #l7 2
+        set-variable #l1 #l8
+        set-variable #l3 &div &mul &neg #l3 .bls.damp 100
+        !iif &gre .bls.gravity 0  ball-settle
+      !endif
+      !if &les #l2 &set #l8 &lget #g7 &add #l7 3
+        set-variable #l2 #l8
+        set-variable #l4 &div &mul &neg #l4 .bls.damp 100
+      !elif &gre #l2 &set #l8 &lget #g7 &add #l7 4
+        set-variable #l2 #l8
+        set-variable #l4 &div &mul &neg #l4 .bls.damp 100
+      !endif
+    !endif
+    set-variable #g0 &lset #g0 #l0 #l1
+    set-variable #g1 &lset #g1 #l0 #l2
+    set-variable #g2 &lset #g2 #l0 #l3
+    set-variable #g3 &lset #g3 #l0 #l4
+    !if &or &not &equ #l1 #l5 &not &equ #l2 #l6
+      set-variable #g6 &lset #g6 #l0 1
+      set-variable #l9 1
+    !else
+      set-variable #g6 &lset #g6 #l0 0
+    !endif
+  !done
+  !if &and &and .bls.collide &gre #g8 1 &or #l9 .bls.dirty
+    set-variable #g9 0
+    set-variable #l6 .bls.rmax
+    set-variable #l7 .bls.aspect
+    set-variable #l0 0
+    !while &les &set #l0 &add #l0 1 #g8
+      set-variable #l2 &lget #g0 #l0
+      set-variable #l3 &lget #g1 #l0
+      set-variable #l4 &lget #g5 &mul #l0 3
+      set-variable #l5 &or .bls.dirty &lget #g6 #l0
+      set-variable #l1 #l0
+      !while &les &set #l1 &add #l1 1 &add #g8 1
+        !if &or #l5 &lget #g6 #l1
+          set-variable #l9 &sub #l3 &lget #g1 #l1
+          !if &not &gre &abs #l9 #l6
+            set-variable #l8 &add #l4 &lget #g5 &mul #l1 3
+            !if &not &gre &abs #l9 #l8
+              !if &not &gre &abs &mul &sub #l2 &lget #g0 #l1 #l7 #l8
+                ball-collide-pair
+                set-variable #l2 &lget #g0 #l0
+                set-variable #l3 &lget #g1 #l0
+              !endif
+            !endif
+          !endif
+        !endif
+      !done
+    !done
+    !if #g9
+      set-variable #l0 0
+      !while &les &set #l0 &add #l0 1 &add #g8 1
+        set-variable #l7 &mul &lget #g4 #l0 4
+        set-variable #l1 &lget #g0 #l0
+        !iif &les #l1 &set #l8 &lget #g7 &add #l7 1  set-variable #l1 #l8
+        !iif &gre #l1 &set #l8 &lget #g7 &add #l7 2  set-variable #l1 #l8
+        set-variable #g0 &lset #g0 #l0 #l1
+        set-variable #l2 &lget #g1 #l0
+        !iif &les #l2 &set #l8 &lget #g7 &add #l7 3  set-variable #l2 #l8
+        !iif &gre #l2 &set #l8 &lget #g7 &add #l7 4  set-variable #l2 #l8
+        set-variable #g1 &lset #g1 #l0 #l2
+      !done
+    !endif
+    set-variable .bls.dirty #g9
+  !endif
+  set-variable .bls.ly  #g0
+  set-variable .bls.lx  #g1
+  set-variable .bls.lvy #g2
+  set-variable .bls.lvx #g3
+  set-variable .bls.lmv #g6
+!emacro
+0 define-macro ball-paddle
+  !iif &not .bls.padmode  !return
+  !if .bls.grab
+    set-variable .bls.pvy 0
+    set-variable .bls.pvx 0
+    !return
+  !endif
+  !if &equ .bls.padmode 1
+    set-variable #l2 0
+    set-variable #l3 .bls.padlen
+  !else
+    set-variable #l2 .bls.padlen
+    set-variable #l3 0
+  !endif
+  set-variable #l0 $mouse-y
+  set-variable #l1 $mouse-x
+  !iif &les #l0 &add .bls.top #l2  set-variable #l0 &add .bls.top #l2
+  !iif &gre #l0 &sub .bls.bot #l2  set-variable #l0 &sub .bls.bot #l2
+  !iif &les #l1 &add .bls.lft #l3  set-variable #l1 &add .bls.lft #l3
+  !iif &gre #l1 &sub .bls.rgt #l3  set-variable #l1 &sub .bls.rgt #l3
+  !if &or &not &equ #l0 .bls.prow &not &equ #l1 .bls.pcol
+    set-variable .bls.padmoved 1
+  !endif
+  !if &les .bls.prow 0
+    set-variable .bls.pvy 0
+    set-variable .bls.pvx 0
+  !else
+    set-variable .bls.pvy &mul &sub #l0 .bls.prow .bls.scale
+    set-variable .bls.pvx &mul &sub #l1 .bls.pcol .bls.scale
+    !iif &gre .bls.pvy .bls.padmaxv  set-variable .bls.pvy .bls.padmaxv
+    !iif &les .bls.pvy &neg .bls.padmaxv  set-variable .bls.pvy &neg .bls.padmaxv
+    !iif &gre .bls.pvx .bls.padmaxv  set-variable .bls.pvx .bls.padmaxv
+    !iif &les .bls.pvx &neg .bls.padmaxv  set-variable .bls.pvx &neg .bls.padmaxv
+  !endif
+  set-variable .bls.prow #l0
+  set-variable .bls.pcol #l1
+  set-variable .bls.padr0 &sub #l0 #l2
+  set-variable .bls.padr1 &add #l0 #l2
+  set-variable .bls.padc0 &sub #l1 #l3
+  set-variable .bls.padc1 &add #l1 #l3
+!emacro
+0 define-macro ball-tick
+  !iif &not .bls.running  !return
+  set-variable #l0 $unix-time
+  set-variable #l1 &sub $frame-depth 3
+  set-variable #l2 &sub $frame-width 1
+  !if &or &not &equ #l1 .bls.bot &not &equ #l2 .bls.rgt
+    set-variable .bls.bot #l1
+    set-variable .bls.rgt #l2
+    ball-bounds
+    set-variable .bls.redraw 1
+  !endif
+  !if &or &not .bls.paused .bls.step
+    set-variable .bls.step 0
+    ball-paddle
+    ball-physics
+  !endif
+  ball-render
+  set-variable .bls.frame &add .bls.frame 1
+  !if &gre .bls.frame 14
+    set-variable .bls.fps &spr "%.0f" &fdiv .bls.frame &fsub $unix-time .bls.fpst
+    set-variable .bls.fpst $unix-time
+    set-variable .bls.frame 0
+    ball-hud
+  !endif
+  set-variable #l1 &sub .bls.ms &spr "%.0f" &fmul 1000 &fsub $unix-time #l0
+  !iif &les #l1 1  set-variable #l1 1
+  !iif .bls.running  #l1 create-callback ball-tick
+!emacro
+0 define-macro ball-clamp-well
+  !iif &les .bls.wellg 0  set-variable .bls.wellg 0
+  !iif &gre .bls.wellg .bls.wellmax  set-variable .bls.wellg .bls.wellmax
+  ball-hud
+!emacro
+0 define-macro ball-clamp-gravity
+  !iif &gre .bls.gravity .bls.gmax  set-variable .bls.gravity .bls.gmax
+  !iif &les .bls.gravity &neg .bls.gmax  set-variable .bls.gravity &neg .bls.gmax
+  ball-hud
+!emacro
+0 define-macro ball-cursor-hide
+  !iif &sin "C" $mode-chars  -1 buffer-mode "cursor"
+!emacro
+0 define-macro ball-cursor-show
+  !iif &sin "C" $mode-chars  1 buffer-mode "cursor"
+!emacro
+0 define-macro ball-set-bounce
+  set-variable .bls.pdamp &add .bls.damp 12
+  !iif &gre .bls.pdamp 120  set-variable .bls.pdamp 120
+  ball-hud
+!emacro
+0 define-macro ball-forget
+  set-variable #l1 .bls.ldy
+  set-variable #l0 0
+  !while &les &set #l0 &add #l0 1 &add .bls.n 1
+    set-variable #l1 &lset #l1 #l0 -1
+  !done
+  set-variable .bls.ldy #l1
+  set-variable .bls.pdrawn 0
+  set-variable .bls.redraw 1
+!emacro
+0 define-macro ball-toggle-help
+  set-variable .bls.helpon &not .bls.helpon
+  set-variable .bls.paused .bls.helpon
+  1 screen-update
+  ball-forget
+  ball-hud
+!emacro
+0 define-macro ball-quit
+  !iif &not .bls.running  !return
+  set-variable .bls.running 0
+  -1 create-callback ball-tick
+  set-variable $buffer-input .bls.previnput
+  ball-cursor-show
+  1 screen-update
+  ml-write "[balls: that's your lot]"
+!emacro
+0 define-macro ball-input
+  !if &seq @cck "callback"
+    !force execute-named-command @cc
+    !return
+  !endif
+  !if &seq @cc "abort-command"
+    ball-quit
+    !abort
+  !endif
+  set-variable #l9 @cck
+  !if &seq #l9 "mouse-pick-1"
+    set-variable #l4 .bls.ly
+    set-variable #l5 .bls.lx
+    set-variable #l6 .bls.lr
+    set-variable #l7 .bls.scale
+    set-variable #l8 .bls.half
+    set-variable #l0 0
+    !while &les &set #l0 &add #l0 1 &add .bls.n 1
+      set-variable #l3 &mul #l0 3
+      !if &not &gre &abs &sub $mouse-y &div &add &lget #l4 #l0 #l8 #l7 &add &lget #l6 &sub #l3 2 1
+        !if &not &gre &abs &sub $mouse-x &div &add &lget #l5 #l0 #l8 #l7 &add &lget #l6 &sub #l3 1 1
+          set-variable .bls.grab #l0
+          set-variable #l0 .bls.n
+        !endif
+      !endif
+    !done
+    !return
+  !elif &seq #l9 "mouse-drop-1"
+    !if .bls.grab
+      set-variable #l0 .bls.grab
+      set-variable .bls.lvy &lset .bls.lvy #l0 &div &mul &lget .bls.lvy #l0 .bls.throw 100
+      set-variable .bls.lvx &lset .bls.lvx #l0 &div &mul &lget .bls.lvx #l0 .bls.throw 100
+      set-variable .bls.grab 0
+    !endif
+    !return
+  !elif &seq #l9 "mouse-pick-3"
+    set-variable .bls.newy $mouse-y
+    set-variable .bls.newx $mouse-x
+    ball-add
+    ball-hud
+    !return
+  !elif &seq #l9 "mouse-wup"
+    set-variable .bls.gravity &add .bls.gravity .bls.gstep
+    ball-clamp-gravity
+    !return
+  !elif &seq #l9 "mouse-wdown"
+    set-variable .bls.gravity &sub .bls.gravity .bls.gstep
+    ball-clamp-gravity
+    !return
+  !endif
+  !if &or &seq #l9 "?" &seq #l9 "h"
+    ball-toggle-help
+  !elif &or &seq #l9 "q" &seq #l9 "esc"
+    ball-quit
+  !elif &seq #l9 "space"
+    set-variable .bls.padmode &mod &add .bls.padmode 1 3
+    set-variable .bls.prow -1
+    set-variable .bls.pcol -1
+    set-variable .bls.padmoved 1
+    ball-hud
+  !elif &seq #l9 "n"
+    set-variable #l0 &sub .bls.rgt 11
+    !iif &les #l0 1  set-variable #l0 1
+    set-variable .bls.newy &add .bls.top &mod $random 3
+    set-variable .bls.newx &add 6 &mod $random #l0
+    ball-add
+    ball-hud
+  !elif &seq #l9 "x"
+    ball-remove
+    ball-hud
+  !elif &seq #l9 "s"
+    set-variable .bls.newsz &con &gre .bls.newsz 2 -1 &add .bls.newsz 1
+    ml-write &spr "[balls: new balls are %s]" &cond &les .bls.newsz 0 "any size" &lget "|tiny|small|medium|large|" &add .bls.newsz 1
+  !elif &seq #l9 "r"
+    ball-reset
+    ball-hud
+  !elif &seq #l9 "p"
+    set-variable .bls.paused &not .bls.paused
+    ball-hud
+  !elif &seq #l9 "a"
+    set-variable .bls.well &con &gre .bls.well 0 -1 &con &les .bls.well 0 0 1
+    ball-hud
+  !elif &seq #l9 "-"
+    set-variable .bls.wellg &sub .bls.wellg .bls.wellstp
+    ball-clamp-well
+  !elif &or &seq #l9 "=" &seq #l9 "+"
+    set-variable .bls.wellg &add .bls.wellg .bls.wellstp
+    ball-clamp-well
+  !elif &seq #l9 "."
+    set-variable .bls.paused 1
+    set-variable .bls.step 1
+    ball-hud
+  !elif &seq #l9 "g"
+    set-variable .bls.gmode &mod &add .bls.gmode 1 4
+    set-variable .bls.gravity &lget "|22|5|0|-22|" &add .bls.gmode 1
+    ball-hud
+  !elif &seq #l9 "["
+    !iif &gre .bls.damp 5  set-variable .bls.damp &sub .bls.damp 5
+    ball-set-bounce
+  !elif &seq #l9 "]"
+    !iif &les .bls.damp 120  set-variable .bls.damp &add .bls.damp 5
+    ball-set-bounce
+  !elif &seq #l9 "c"
+    set-variable .bls.collide &not .bls.collide
+    ball-hud
+  !endif
+!emacro
+0 define-macro bls
+  !iif &equ .bls.running 1  ball-quit
+  ball-setup
+  set-variable .bls.top 1
+  set-variable .bls.lft 0
+  set-variable .bls.bot &sub $frame-depth 3
+  set-variable .bls.rgt &sub $frame-width 1
+  !if &or &les &sub .bls.bot .bls.top 7 &les .bls.rgt 13
+    ml-write "[balls: this window is too small to play in]"
+    !return
+  !endif
+  ball-bounds
+  set-variable .bls.padmoved 0
+  set-variable .bls.fps 0
+  set-variable .bls.frame 0
+  set-variable .bls.fpst $unix-time
+  ball-reset
+  set-variable .bls.previnput $buffer-input
+  set-variable $buffer-input ball-input
+  ball-cursor-hide
+  set-variable .bls.running 1
+  set-variable .bls.redraw 1
+  ball-hud
+  .bls.ms create-callback ball-tick
+  ml-write "[balls: ? for help, q to quit]"
+!emacro
+define-macro Balls
+  bls
+!emacro
