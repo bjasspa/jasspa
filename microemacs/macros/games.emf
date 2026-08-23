@@ -8,6 +8,14 @@
 ; Synopsis:    Games wrapper file to keep me.emf small
 ; Authors:     Steven Phillips
 ;
+define-macro Arkanoid
+  execute-file arkanoid
+  Arkanoid
+!emacro
+define-macro Balls
+  execute-file balls
+  Balls
+!emacro
 define-macro Brag
   execute-file brag
   Brag
@@ -51,12 +59,4 @@ define-macro Triangle
 define-macro Typing
   execute-file typing
   Typing
-!emacro
-define-macro Balls
-  execute-file balls
-  Balls
-!emacro
-define-macro Arkanoid
-  execute-file arkanoid
-  Arkanoid
 !emacro
