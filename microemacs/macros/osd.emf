@@ -527,7 +527,7 @@ osd 21 60   ""  "M\Hetris"     f Metris
 osd 21 70   ""  "\HPatience"   f Patience
 osd 21 80   ""  "\HTriangle"   f Triangle
 osd 21 90   ""  "T\Hyping"     f Typing
-osd 21 100  ""  "Ba\Hll"     f Ball
+osd 21 100  ""  "Ba\Hlls"      f Balls
 osd 21 110  ""  "\HArkanoid"   f Arkanoid
 ;
 ; n osd-xdialog "title" "prompt" default [x-pos y-pos] "But1" "but2" ...
