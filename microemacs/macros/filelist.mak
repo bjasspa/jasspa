@@ -48,7 +48,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkjava.emf	hkjs.emf	hkjson.emf	hkjsp.emf	\
 	hkjst.emf	hkjulia.emf	hkkotlin.emf	\
 	hklatex.emf	hklhtml.emf	hklisp.emf	hklists.emf	\
-	hklua.emf	\
+	hklua.emf	hkmdview.emf	\
 	hkm4.emf	hkmake.emf	hkman.emf	hkmd.emf	\
 	hkmereg.emf	hkmeta.emf	hkmhg.emf	hkmod2.emf	\
 	hknim.emf	hknroff.emf	hkoctave.emf	\
@@ -73,6 +73,7 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	luatags.emf	\
 	macos.emf	mahjongg.emf	mail.emf	mailmerg.emf	\
 	majormod.emf	matchit.emf	matrix.emf	mdtools.emf	\
+	mdview.emf	\
 	me.emf		mecua.emf	meemacs.emf	melogo.emf	\
 	meme3_8.emf	menedit.emf	mepinst.emf	meserver.emf	\
 	meth.emf	metris.emf	misc.emf	mouse.emf	\
