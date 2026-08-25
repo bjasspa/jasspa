@@ -387,7 +387,9 @@ int sgrMouseButton = 0;                     /* Parsed button number */
 int sgrMouseCol = 0;                        /* Parsed column (1-based) */
 int sgrMouseRow = 0;                        /* Parsed row (1-based) */
 
+#ifdef _ME_CONSOLE
 static int TTtermHasSGRMouse(void);
+#endif
 
 #endif
 
@@ -3635,6 +3637,7 @@ TCAPmove(int row, int col)
 #endif /* _ME_CONSOLE */
 
 #if MEOPT_MOUSE
+#ifdef _ME_CONSOLE
 
 /*
  * TTtermHasSGRMouse - Check if the current terminal supports SGR mouse mode.
@@ -3686,6 +3689,7 @@ TTtermHasSGRMouse(void)
 
     return 0;
 }
+#endif /* _ME_CONSOLE */
 
 /*
  * TTinitMouse
