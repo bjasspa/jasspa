@@ -373,6 +373,22 @@ static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
      (mouseState & MOUSE_STATE_LEFT)   ? 1 : (mouseState & MOUSE_STATE_RIGHT) ? 3 : \
      (mouseState & MOUSE_STATE_MIDDLE) ? 2 : (mouseState & MOUSE_STATE_BUT4)  ? 4 : 5)
 
+/* SGR mouse state machine for terminal mouse support */
+#define SGR_MOUSE_STATE_IDLE       0  /* Waiting for ESC */
+#define SGR_MOUSE_STATE_ESC        1  /* Got ESC, waiting for [ */
+#define SGR_MOUSE_STATE_CSI        2  /* Got [, waiting for < */
+#define SGR_MOUSE_STATE_SGR        3  /* Got <, reading button */
+#define SGR_MOUSE_STATE_BUTTON     4  /* Reading button number */
+#define SGR_MOUSE_STATE_COL        5  /* Reading column number */
+#define SGR_MOUSE_STATE_ROW        6  /* Reading row number */
+
+int sgrMouseState = SGR_MOUSE_STATE_IDLE;  /* SGR mouse parser state */
+int sgrMouseButton = 0;                     /* Parsed button number */
+int sgrMouseCol = 0;                        /* Parsed column (1-based) */
+int sgrMouseRow = 0;                        /* Parsed row (1-based) */
+
+static int TTtermHasSGRMouse(void);
+
 #endif
 
 /** 
@@ -3221,6 +3237,15 @@ TCAPopen(void)
     if(tcaptab[TCAPbpe].code.str != NULL)
         putpad(tcaptab[TCAPbpe].code.str);
 #endif
+#if MEOPT_MOUSE
+    /* Enable SGR mouse mode for terminal mouse support
+     * only if the terminal is known to support it */
+    if((meMouseCfg & meMOUSE_ENBLE) && TTtermHasSGRMouse())
+    {
+        fputs("\033[?1006h\033[?1000h", stdout);
+        fflush(stdout);
+    }
+#endif
 
     /* If automatic margins are enabled then try to disable them */
     if ((tcaptab[TCAPam].code.value > 0) && (tcaptab[TCAPrmam].code.str != NULL) &&
@@ -3269,6 +3294,11 @@ TCAPclose(void)
     /* if have all 4 bracketed paste strings enable bracketed paste */
     if(tcaptab[TCAPbpd].code.str != NULL)
         putpad(tcaptab[TCAPbpd].code.str);
+#endif
+#if MEOPT_MOUSE
+    /* Disable SGR mouse mode */
+    fputs("\033[?1006l\033[?1000l", stdout);
+    fflush(stdout);
 #endif
     if(tcaptab[TCAPasbe].code.str != NULL)
         putpad(tcaptab[TCAPasbd].code.str);
@@ -3605,6 +3635,58 @@ TCAPmove(int row, int col)
 #endif /* _ME_CONSOLE */
 
 #if MEOPT_MOUSE
+
+/*
+ * TTtermHasSGRMouse - Check if the current terminal supports SGR mouse mode.
+ * Checks $TERM_PROGRAM and $TERM environment variables for known terminals.
+ * Returns 1 if SGR mouse is supported, 0 otherwise.
+ */
+static int
+TTtermHasSGRMouse(void)
+{
+    char *term;
+    char *termProgram;
+
+    /* Check $TERM_PROGRAM first - most reliable */
+    termProgram = meGetenv("TERM_PROGRAM");
+    if(termProgram != NULL)
+    {
+        if(strcmp(termProgram, "xterm") == 0 ||
+           strcmp(termProgram, "rxvt") == 0 ||
+           strcmp(termProgram, "rxvt-unicode") == 0 ||
+           strcmp(termProgram, "Alacritty") == 0 ||
+           strcmp(termProgram, "kitty") == 0 ||
+           strcmp(termProgram, "iTerm.app") == 0 ||
+           strcmp(termProgram, "WezTerm") == 0 ||
+           strcmp(termProgram, "mintty") == 0 ||
+           strcmp(termProgram, "screen") == 0 ||
+           strcmp(termProgram, "tmux") == 0)
+            return 1;
+        if(strncmp(termProgram, "VTE", 3) == 0)
+            return 0;
+    }
+
+    /* Fall back to $TERM checks */
+    term = meGetenv("TERM");
+    if(term == NULL)
+        return 0;
+
+    if(strncmp(term, "xterm", 5) == 0 ||
+       strncmp(term, "rxvt", 4) == 0 ||
+       strncmp(term, "alacritty", 9) == 0 ||
+       strncmp(term, "kitty", 5) == 0 ||
+       strncmp(term, "screen", 6) == 0 ||
+       strncmp(term, "tmux", 4) == 0 ||
+       strncmp(term, "linux", 5) == 0 ||
+       strncmp(term, "cygwin", 6) == 0 ||
+       strncmp(term, "putty", 5) == 0 ||
+       strncmp(term, "st-", 3) == 0 ||
+       strcmp(term, "st") == 0)
+        return 1;
+
+    return 0;
+}
+
 /*
  * TTinitMouse
  * Sort out what to do with the mouse buttons.
@@ -3619,11 +3701,26 @@ TTinitMouse(meInt nCfg)
 #endif /* _ME_WINDOW */
     {
 #ifdef _USE_NCURSES
-        if(tcaptab[TCAPxm].code.str == NULL)
-            return;
-        
-        if(cCfg & meMOUSE_ENBLE)
-            putpad(meTCAPParm(tcaptab[TCAPxm].code.str,((nCfg & meMOUSE_ENBLE) ? 1:0)));
+        if(tcaptab[TCAPxm].code.str != NULL)
+        {
+            if(cCfg & meMOUSE_ENBLE)
+                putpad(meTCAPParm(tcaptab[TCAPxm].code.str,((nCfg & meMOUSE_ENBLE) ? 1:0)));
+        }
+        else
+#endif
+        {
+            /* Fallback: use hardcoded SGR mouse sequences when XM termcap is not available */
+            if((nCfg & meMOUSE_ENBLE) && TTtermHasSGRMouse())
+            {
+                if(cCfg & meMOUSE_ENBLE)
+                    fputs("\033[?1006h\033[?1000h", stdout);
+            }
+            else
+            {
+                if(cCfg & meMOUSE_ENBLE)
+                    fputs("\033[?1006l\033[?1000l", stdout);
+            }
+        }
         if(cCfg & meMOUSE_FORCEALL)
         {
             /* ideally a well configured terminal will include the following in the XM code, but they often
@@ -3637,9 +3734,7 @@ TTinitMouse(meInt nCfg)
             else
                 nCfg ^= meMOUSE_FORCEALL;
         }
-#else
-        return;
-#endif
+        fflush(stdout);
     }
 #ifdef _ME_WINDOW
     else
@@ -5149,6 +5244,140 @@ TTahead(void)
             /* There is some data present. Read it */
             if(read(meStdin,&cc,1) > 0)
             {
+#if MEOPT_MOUSE
+                /* SGR mouse sequence parser - only active when mouse is enabled */
+                if((sgrMouseState != SGR_MOUSE_STATE_IDLE) &&
+                   (meMouseCfg & meMOUSE_ENBLE))
+                {
+                    /* Continue parsing SGR mouse sequence */
+                    if(cc >= '0' && cc <= '9')
+                    {
+                        /* Accumulate digit */
+                        if(sgrMouseState == SGR_MOUSE_STATE_BUTTON)
+                            sgrMouseButton = sgrMouseButton * 10 + (cc - '0');
+                        else if(sgrMouseState == SGR_MOUSE_STATE_COL)
+                            sgrMouseCol = sgrMouseCol * 10 + (cc - '0');
+                        else if(sgrMouseState == SGR_MOUSE_STATE_ROW)
+                            sgrMouseRow = sgrMouseRow * 10 + (cc - '0');
+                    }
+                    else if(cc == ';' && (sgrMouseState == SGR_MOUSE_STATE_BUTTON ||
+                                          sgrMouseState == SGR_MOUSE_STATE_COL))
+                    {
+                        /* Separator - advance to next field */
+                        if(sgrMouseState == SGR_MOUSE_STATE_BUTTON)
+                            sgrMouseState = SGR_MOUSE_STATE_COL;
+                        else if(sgrMouseState == SGR_MOUSE_STATE_COL)
+                            sgrMouseState = SGR_MOUSE_STATE_ROW;
+                    }
+                    else if(cc == 'M' || cc == 'm')
+                    {
+                        /* End of SGR mouse sequence - process the event */
+                        meUShort ss;
+                        int meButton;
+                        int isRelease = (cc == 'm');
+                        int isMotion = 0;
+
+                        /* Check for motion (button + 32) */
+                        if(sgrMouseButton >= 32)
+                        {
+                            sgrMouseButton -= 32;
+                            isMotion = 1;
+                        }
+
+                        /* Convert SGR button to ME button */
+                        /* SGR: 0=left, 1=middle, 2=right, 64=wheel up, 65=wheel down */
+                        if(sgrMouseButton == 0)
+                            meButton = 1;  /* Left */
+                        else if(sgrMouseButton == 1)
+                            meButton = 2;  /* Middle */
+                        else if(sgrMouseButton == 2)
+                            meButton = 3;  /* Right */
+                        else if(sgrMouseButton == 64)
+                            meButton = 4;  /* Wheel up */
+                        else if(sgrMouseButton == 65)
+                            meButton = 5;  /* Wheel down */
+                        else
+                            meButton = 0;  /* Unknown button */
+
+                        /* Set mouse position (convert from 1-based to 0-based) */
+                        mouse_X = sgrMouseCol - 1;
+                        mouse_Y = sgrMouseRow - 1;
+                        mouse_dX = 0;
+                        mouse_dY = 0;
+
+                        if(meButton != 0)
+                        {
+                            if(isMotion)
+                            {
+                                /* Mouse motion - generate mouse-move event */
+                                ss = (ME_SPECIAL | (SKEY_mouse_move + mouseKeys[meButton] - 1) | mouseKeyState);
+                                addKeyToBuffer(ss);
+                            }
+                            else if(isRelease)
+                            {
+                                /* Button release */
+                                mouseButtonDrop(meButton);
+                                ss = (ME_SPECIAL | (SKEY_mouse_drop_1 + mouseKeys[meButton] - 1) | mouseKeyState);
+                                addKeyToBuffer(ss);
+                            }
+                            else
+                            {
+                                /* Button press */
+                                mouseButtonPick(meButton);
+                                /* Clear modifier state for terminal - no modifier info available */
+                                mouseKeyState = 0;
+                                ss = (ME_SPECIAL | (SKEY_mouse_pick_1 + mouseKeys[meButton] - 1) | mouseKeyState);
+                                addKeyToBuffer(ss);
+                            }
+                        }
+
+                        /* Reset parser state */
+                        sgrMouseState = SGR_MOUSE_STATE_IDLE;
+                    }
+                    else if(cc == '[' && sgrMouseState == SGR_MOUSE_STATE_ESC)
+                    {
+                        /* Got CSI - wait for < */
+                        sgrMouseState = SGR_MOUSE_STATE_CSI;
+                    }
+                    else if(cc == '<' && sgrMouseState == SGR_MOUSE_STATE_CSI)
+                    {
+                        /* Got SGR mouse prefix - start reading button */
+                        sgrMouseState = SGR_MOUSE_STATE_BUTTON;
+                    }
+                    else
+                    {
+                        /* Invalid sequence - push back consumed characters and reset.
+                         * The ESC and any intermediate chars (e.g. '[') were consumed
+                         * during parsing but the sequence turned out to be invalid.
+                         * We must re-inject them so normal key handling gets them. */
+                        if(sgrMouseState == SGR_MOUSE_STATE_CSI)
+                        {
+                            /* Had ESC + [, push both back */
+                            addKeyToBuffer('\033');
+                            addKeyToBuffer('[');
+                        }
+                        else if(sgrMouseState == SGR_MOUSE_STATE_ESC)
+                        {
+                            /* Had ESC only, push it back */
+                            addKeyToBuffer('\033');
+                        }
+                        sgrMouseState = SGR_MOUSE_STATE_IDLE;
+                        /* Now fall through to add current char normally */
+                        goto sgr_add_char;
+                    }
+                }
+                else if((cc == '\033') && (meMouseCfg & meMOUSE_ENBLE))
+                {
+                    /* Start of potential SGR mouse sequence */
+                    sgrMouseState = SGR_MOUSE_STATE_ESC;
+                    sgrMouseButton = 0;
+                    sgrMouseCol = 0;
+                    sgrMouseRow = 0;
+                }
+                else
+                sgr_add_char:
+#endif /* MEOPT_MOUSE */
+                {
                 /* C-Space is returned as "\x00" (or ^@) or nul. This is a
                  * horrible character to translate so we do it here before we
                  * enter the system. There is not an easy way to add this
@@ -5206,6 +5435,7 @@ TTahead(void)
                 }
                 else
                     addKeyToBuffer(cc);
+                }
             }
         }
         
