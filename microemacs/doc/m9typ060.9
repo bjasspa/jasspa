@@ -7,7 +7,7 @@
 .\"  Created By    : Detlef Groth
 .\"  Created       : Tue Jul 29 21:00:00 2025
 .\"
-.Id $Id: m9typ060.9,v 1.2 2026/08/26 08:37:07 jon Exp $
+.Id $Id: m9typ060.9,v 1.2 2026/08/26 08:46:21 jon Exp $
 .Im MicroEmacs filetype
 .so me.tni
 .TH markdown 9
@@ -24,6 +24,9 @@ md \- Markdown Markup File.
 .na
 .B hkmd.emf
 \- Markdown file hook definition
+.br
+.B hkmdview.emf
+\- Markdown browser hook definition
 .br
 .B md.eaf
 \- Markdown abbreviation file
@@ -45,7 +48,9 @@ md \- Markdown Markup File.
 The \fBMarkdown\fR file hook provides a editing  environment for Markdown
 files. The file hook  provides  highlighting,  folding  of  section,  document
 outline using  item-list and  abbreviations.  Fenced code blocks within triple
-backticks can be highlighted using the declared code block language.
+backticks can be highlighted  using the declared code block language.  Further
+the \fBmdview\fR  macros allows to browse a set of related Markdown files in an
+interactive way.
 .PP
 File  recognition  is performed  using the standard file  extension  \fB.md\fR,
 \fB.tmd\fR,  \fB.rmd\fR or \fB.qd\fR. The \fB.qd\fR file extension is reserved
@@ -110,15 +115,15 @@ name of a Makrdown file to display:
 .IP
 \fCOpen file:\fR
 .IP
-The command the loads the Markdown file and calls the  \fBmdview\fR macro,
-entering browse mode for the file.
+The command the loads the Markdown file and calls the  
+.Ht mdview 3f
+macro, entering browse mode for the file.
 .IP
 Another Markdown file may be selected in the  generated browse page by
 either moving the cursor to the link and pressing return or double clicking on
 it with the left mouse button. \*(mS will then attempt to load and display the
 selected  Markdown  file. If the file does not yet exists the user is asked to
 create a new file.
-
 .SH "SEE ALSO"
 .na
 .Ht abbrev-list 3 ,
@@ -127,6 +132,7 @@ create a new file.
 .Ht collapse-current 3 ,
 .Ht expand-abbrev-handle 3 ,
 .Ht item-list 3 ,
+.Ht mdview 3f ,
 .Ht typst 9 ,
 .Ht wiki 9 .
 .sp 1
