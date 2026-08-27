@@ -1,0 +1,111 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2023 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac110.3,v 2.1 2026/08/25 20:55:38 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Arkanoid 3
+.XI Arkanoid - "\*(mS version of the bat and ball wall game"
+.SH NAME
+Arkanoid \- \*(mS version of the bat and ball wall game
+.Me $a
+.SH SYNOPSIS
+.na
+\fBArkanoid\fR
+.ad
+.SH DESCRIPTION
+Knock  down  the wall of bricks with the ball,  keeping  the ball in play with
+the bat  along  the  bottom  of the  screen.  Clear  every  brick  and the next
+wall is  loaded.  Let the last ball fall past the bat and a life is lost; lose
+them all and the game is over.
+.PP
+The  bat is  steered  with the  cursor  keys or with  the  mouse,  whichever
+was used last.  Where the ball  strikes  the bat  decides  where it goes \- a
+hit out  towards  either  end sends the ball away at a shallow  angle,  a hit
+near the  middle  sends it back  steeply.  The  speed is the same  whichever
+part of the bat is used.
+.PP
+There are eight walls,  which  repeat once all eight have been  cleared.  The
+ball  starts a little  faster on each new level and  creeps  faster  still the
+longer a single  wall  takes,  so the later  levels  are  considerably  quicker
+than the early ones.  The  current  speed is shown on the status line.
+.PP
+Bricks  drawn as solid  blocks  cannot be  destroyed  and are not  counted;
+they  simply  deflect  the ball.  White  bricks  take two hits,  darkening
+after the first.  Every other brick takes one hit.
+.PP
+A brick  scores  between 60 and 110  points  depending  on its  colour;  a
+white  brick  scores 50 for the first hit and 100 for the  second.  A good
+capsule  is worth 200 and a bad one 25.  Clearing  the wall scores 500 times
+the level number.
+.SH CAPSULES
+Destroying a brick sometimes  releases a capsule which drifts down the screen.
+Catch it with the bat to collect it.  Capsules  \fBstack\fR:  a second  \fBD\fR
+splits  every ball again, a second  \fBE\fR  widens the bat  further,  a second
+\fBM\fR or \fBG\fR adds to the time  remaining,  and  \fBE\fR and  \fBR\fR wind
+the bat back and forth  against  each other.  Everything  collected  lasts until
+the ball is lost or the wall is cleared.
+.PP
+The good capsules are:
+.IP \fBE\fR
+Expand the bat.
+.IP \fBC\fR
+Catch \- the ball sticks to the bat until \fBspace\fR is pressed.
+.IP \fBL\fR
+Laser bat \- \fBspace\fR fires.
+.IP \fBS\fR
+Slow the ball down.
+.IP \fBD\fR
+Split every ball in play into three.
+.IP \fBP\fR
+An extra life.
+.IP \fBM\fR
+Mega ball \- smashes straight through the wall without bouncing.
+.IP \fBG\fR
+A guard along the floor, for a while.
+.IP \fBT\fR
+Twin bat \- two shorter bats with a gap down the middle.
+.IP \fBB\fR
+Break out of the level immediately.  Rare.
+.PP
+The bad capsules are all drawn in red:
+.IP \fBR\fR
+Reduce the bat.
+.IP \fBF\fR
+Speed the ball up.
+.IP \fBV\fR
+Reverse the bat controls, for a while.
+.SH KEYS
+The keys used to control \fBArkanoid\fR are:
+.IP "\fBleft\fR or \fBright\fR"
+Move the bat.
+.IP \fBmouse\fR
+The bat will follow your column position of the mouse.
+.IP \fBspace\fR
+Launch the ball, release a held ball, or fire the laser.
+.IP "\fBbutton 1\fR"
+The same as \fBspace\fR.
+.IP \fBp\fR
+Pause the game.
+.IP "\fB?\fR or \fBh\fR"
+Show the key help.
+.IP \fB>\fR
+Skip the level, for those who want to see the end.
+.IP "\fBq\fR or \fBC-g\fR"
+Quit the game.
+.SH NOTES
+\fBArkanoid\fR is a macro defined in \fCarkanoid.emf\fR.
+.PP
+The game uses  whatever  room the window  gives it and adjusts if the window
+is resized  while  playing.  If the window is too small to lay out a wall the
+game  declines to start and says so on the message line.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Balls 3 ,
+.Ht Metris 3 .
+.ad
+.FH

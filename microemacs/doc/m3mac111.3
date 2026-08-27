@@ -1,0 +1,82 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1998-2023 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac111.3,v 2.1 2026/08/25 00:00:00 jon Exp $
+.Im MicroEmacs command|games
+.so me.tni
+.TH Balls 3
+.XI Balls - "\*(mS bouncing ball playground"
+.SH NAME
+Balls \- \*(mS bouncing ball playground
+.Me $a
+.SH SYNOPSIS
+.na
+\fBBalls\fR
+.ad
+.SH DESCRIPTION
+A  playground  rather  than a game \- there is  nothing  to win.  Balls  fall,
+bounce off the walls and floor,  roll,  come to rest,  and  optionally  bounce
+off  each  other.  Up to 100 balls  may be in the air at once.
+.PP
+Almost  everything  about the  simulation  can be changed  while it is running:
+the  strength  and  direction  of  gravity,  how much  speed a ball  keeps when
+it  bounces,  whether  balls  collide  with one  another,  and  whether  there
+is a bat to knock them about with.  The  current  settings  are  shown  along
+the status line, together with the frame rate.
+.PP
+Balls  may be picked up and thrown by hand.  Hold  \fBbutton 1\fR  over a ball
+to  grab  it,  move  the  pointer,  and  let  go \- the ball  leaves  with the
+speed of the throw.  \fBButton 3\fR  drops a new ball  wherever  the  pointer
+is.
+.PP
+The  pointer  may  also be  turned  into a lump of  gravity  of its own with
+\fBa\fR,  either  pulling  the balls  towards  it or  pushing  them  away.
+.SH KEYS
+The keys used to control \fBBalls\fR are:
+.IP "\fB?\fR or \fBh\fR"
+Show or hide the key help.
+.IP \fBspace\fR
+Cycle the bat: off, across, upright, off.
+.IP "\fBn\fR or \fBx\fR"
+Add or remove a ball.
+.IP \fBs\fR
+Change the size of the next ball added: any size, tiny, small, medium, large.
+.IP \fBr\fR
+Reset, back to the starting set of balls.
+.IP \fBp\fR
+Pause.
+.IP \fB.\fR
+Run a single frame, for watching a collision resolve.
+.IP \fBa\fR
+The pointer as a lump of gravity: off, pull, push, off.
+.IP "\fB\-\fR or \fB=\fR"
+Weaken or strengthen that pull.  \fB+\fR does the same as \fB=\fR.
+.IP \fBg\fR
+Cycle gravity: normal, moon, none, upside down.
+.IP \fBwheel\fR
+Trim gravity, one unit a click.
+.IP "\fB[\fR or \fB]\fR"
+Less or more bounce.
+.IP \fBc\fR
+Ball to ball collisions on or off.
+.IP "\fBbutton 1\fR"
+Drag a ball to pick it up, let go to throw it.
+.IP "\fBbutton 3\fR"
+Drop a new ball under the pointer.
+.IP "\fBq\fR, \fBesc\fR or \fBC-g\fR"
+Quit.
+.SH NOTES
+\fBBalls\fR is a macro defined in \fCballs.emf\fR.
+.PP
+The  simulation  runs in  whatever  room  the  window  gives  it and  adjusts
+if the window is resized.  Adding a great many balls with  collisions  turned
+on will lower the frame rate.
+.SH "SEE ALSO"
+.na
+.Hl Games Games - ,
+.Ht Arkanoid 3 .
+.ad
+.FH
