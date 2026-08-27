@@ -3107,6 +3107,20 @@ TCAPstart(void)
     /* if we failed to get any of the 4 bracket paste strings then make sure we don't use it */ 
     if((tcaptab[TCAPbpd].code.str == NULL) || (tcapSpecKeyStrs[SKEY_bps] == NULL) || (tcapSpecKeyStrs[SKEY_bpe] == NULL))
         tcaptab[TCAPbpe].code.str = NULL;
+#if MEOPT_MOUSE
+    /* For mouse support we need a valid kmous entry, if the XM entry is missing then use a default IIF the last char of kmous is M or < */
+    if(tcapSpecKeyStrs[SKEY_mouse_move] == NULL)
+        tcaptab[TCAPxm].code.str = NULL;
+    else if((tcaptab[TCAPxm].code.str == NULL) && ((ss=meTCAPgetstr(tcapSpecKeyStrs[SKEY_mouse_move],&p)) != NULL) &&
+            (ss != (char *)-1) && ((ii=strlen(ss)) > 1))
+    {
+        char cc;
+        if((cc=ss[ii-1]) == 'M')
+           tcaptab[TCAPxm].code.str = "\033[?1000%?%p1%{1}%=%th%el%;";
+        else if(cc == '<')
+            tcaptab[TCAPxm].code.str = "\033[?1006;1000%?%p1%{1}%=%th%el%;";
+    }
+#endif
 #endif
     /* Switch off the vertical window scroll bar */
     gsbarmode &= ~WMVBAR;
