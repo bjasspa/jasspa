@@ -209,6 +209,7 @@ define-macro comment-line
   !endif
   beginning-of-line
   !while &gre &pdec @# 1 0
+    !iif &seq @wc ""  !return
     insert-string #l1
     !if &not &seq #l2 ""
       end-of-line
