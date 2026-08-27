@@ -997,7 +997,12 @@ TTwaitForChar(void)
                         /* Record the fact we have focus */
                         ff->flags &= ~meFRAME_NOT_FOCUS;
 #if MEOPT_MWFRAME
-                        if(frameCur != ff)
+                        /* Internal sibling frames share a single window/view, so an OS focus event
+                         * on that view means the window regained focus - it says nothing about
+                         * which internal frame is current, which is ME's own frameCur. Only treat
+                         * ff as the newly-focused frame when it lives in a genuinely different
+                         * window from frameCur */
+                        if(frameCur->termData != ff->termData)
                         {
                             frameFocus = ff;
                             if(commandDepth > 0)
@@ -1016,20 +1021,27 @@ TTwaitForChar(void)
                         if(cursorVisible)
                         {
 #if MEOPT_MWFRAME
-                            if(frameCur != ff)
+                            if(frameCur->termData != ff->termData)
                             {
-                                /* another frame has input, we need to hide this frame's cursor and ensure
-                                 * frameCur's cursor is shown so the input location is visible */
+                                /* ff is a separate window that took OS focus while another frame
+                                 * remains current: keep the current frame's cursor visible so the
+                                 * input location is shown. */
                                 meFrameHideCursor(ff);
                                 meFrameShowCursor(frameCur);
                                 blinkState = 1;
                             }
-                            else
+                            else if(frameCur == ff)
+                            {
 #endif
                                 if(cursorBlink)
-                                TThandleBlink(2);
-                            else
-                                meFrameShowCursor(ff);
+                                    TThandleBlink(2);
+                                else
+                                    meFrameShowCursor(ff);
+#if MEOPT_MWFRAME
+                            }
+                            /* else: ff is a non-current sibling sharing frameCur's window;
+                             * the visible cursor belongs to frameCur, so leave it alone. */
+#endif
                         }
                     }
                 }
@@ -1053,7 +1065,14 @@ TTwaitForChar(void)
 #ifdef _CLIPBRD
                     TTflushClipboard();
 #endif
-                    if(cursorVisible)
+                    if(cursorVisible
+#if MEOPT_MWFRAME
+                       /* Only redraw ff's own cursor when it owns its window or is the
+                        * current frame; a non-current sibling shares frameCur's view and
+                        * must not paint its (invisible, wrong-position) cursor there. */
+                       && ((frameCur == ff) || (frameCur->termData != ff->termData))
+#endif
+                       )
                     {
                         /* because the cursor is a part of the solid cursor we must
                          * remove the old one first and then redraw */
