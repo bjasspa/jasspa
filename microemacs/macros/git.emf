@@ -528,7 +528,7 @@ set-variable .git-revision-op.lbl18 "|Head \Hto Master|\HMaster to Local|Head to
         osd .osd.git-osd &inc #l2 1 "fh" "    "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HStash local changes first" #l0 git-osd-cbc
       !elif &seq #l1 "t"
-        osd .osd.git-osd &inc #l2 1 "fh" "    "
+        osd .osd.git-osd &inc #l2 1 "fh" "       "
         osd .osd.git-osd &inc #l2 1 "Cptfx" &cat .osd.checkbox-chars "\} \HTrack the branch" #l0 git-osd-cbc
       !elif &seq #l1 "u"
         osd .osd.git-osd &inc #l2 1 "fh" "    "
@@ -1673,7 +1673,7 @@ define-macro git-switch
     find-buffer #l0
   !endif
   !iif &sin " " #l2 set-variable #l2 &spr "\"%s\"" #l2
-  set-variable #l2 &spr "%s switch %s%s%s" .git.com &con &lget #l9 2 "-c " "" #l2 &con &lget #l9 3 " --track" ""
+  set-variable #l2 &spr "%s switch %s%s%s" .git.com &con &lget #l9 2 "-c " "" #l2 &con &and &lget #l9 2 &lget #l9 3 " --track" ""
   7 git-get-file-list 1 0 #l2
   12 git-exec 3 $buffer-fname
   !if &not &lget #l9 6

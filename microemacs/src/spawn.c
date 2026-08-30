@@ -1504,7 +1504,9 @@ ipipeRead(meIPipe *ipipe)
             p1 = buff;
             len = 0;
             break;
-        case 0x7f: /* DEL - some shells/consoles echo this for erase, treat as backspace */
+        case 0x7f:
+            /* DEL - ECMA-48 makes this a fill character which may be added to or removed from a
+             * stream without changing its meaning, so like a real terminal it is simply ignored. */
             ipipeLogDrop("DEL");
             break;
         case 0x1b:
@@ -2121,12 +2123,23 @@ osc_consume:
             }
             /* fall through */
         default:
-            if(cc < 0x20)
+            if((cc < 0x20) && !(ipipe->flag & meIPIPE_RAW))
             {
-                /* ignore remaining C0 chars: 0x01-0x06, 0x0E-0x1A, 0x1C-0x1F. A lone ESC would drop here as well */
                 if(cc == 0x1b)
+                {
+                    /* a lone ESC, or one whose sequence never arrived */
                     ipipeLogDrop("ESC");
-                break;
+                    break;
+                }
+                if((cc == 0x0e) || (cc == 0x0f) || (cc == 0x11) || (cc == 0x13) || (cc == 0x18))
+                    /* The only remaining C0 codes with a terminal action, all deliberately not
+                     * implemented: SO/SI select the G1/G0 character set (so DEC line drawing
+                     * arrives as its ASCII fallback), XON/XOFF are flow control owned by the tty
+                     * driver and CAN aborts a control sequence, which is already consumed inline
+                     * by ipipeGetNextChar and so can never be pending here. */
+                    break;
+                /* Everything else has no terminal meaning, it is data and is stored verbatim, e.g.
+                 * gdb's -f option marks the current position line with two SUBs (0x1a) store them */
             }
 #if MEOPT_EXTENDED
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))

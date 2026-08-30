@@ -2690,8 +2690,20 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                 dFlags &= ~meRWFLAG_DELETE;
                 dfname = NULL;
             }
+#ifdef _UNIX
+            else if(!S_ISREG(fileMode))
+#else
+#ifdef _WIN32
+            else if((fileMode & (0xf0000000|FILE_ATTRIBUTE_DIRECTORY)) == FILE_ATTRIBUTE_DIRECTORY)
+#else
+#ifdef _DOS
+            else if((fileMode & 0xf0000010) == 0x010)
+#else
             else
-                rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename file]");
+#endif
+#endif
+#endif
+                return mlwrite(MWABORT,(meUByte *)"[Failed to rename file]");
         }
 #if MEOPT_SOCKET
         else if(ffUrlTypeIsFtp(meior.type) && (meior.type == meiow.type))

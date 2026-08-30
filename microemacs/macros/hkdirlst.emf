@@ -1465,6 +1465,14 @@ define-macro delete-file-delayed
         set-variable .result &lset .result 1 &add 1 &lget .result 1
         !return
       !endif
+      !if &not &band .state 0x80
+        set-variable #l4 @mc5 "Cannot trivially move: M to copy & delete, C to copy (?/m/c) ? " "cCmM" "M - Copy and delete, C - copy only, C-g - Abort ? "
+        !if &iseq #l4 "c"
+          set-variable .mode &bxor .mode 0xc0
+          set-variable #p9 "Copy"
+        !endif
+        set-variable .state &bor .state 0x80
+      !endif
     !endif
     set-variable &cat ".find-file.dir" &inc .find-file.dir-count 1 #l1
   !else
@@ -1717,6 +1725,7 @@ define-macro delete-file-delayed
 ; 0x20 Create intermediate directories
 ; 0x40 <from> file is a regex, <to> must be a dir
 ; 0x80 Don't throw error if <from> does not exist
+; 0x100 Use <from> regex mask for all sub-dirs
 define-macro copy-file
   set-variable #l0 &cond &band @# 1 "Copy" "Move"
   !force set-variable #l1 @1
