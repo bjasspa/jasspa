@@ -86,6 +86,8 @@
   set-variable .bls.hudsch $mode-line-scheme
   set-variable .bls.help "|                                          | balls - a bouncing ball playground       |                                          |  space    bat off / across / upright     |  button 1 pick a ball up and throw it    |  button 3 drop a new ball                |  a        well off / pull / push         |  -  =     weaker / stronger well         |  n  x     add / remove a ball            |  s        size of the next ball          |  g        gravity down/moon/none/up      |  wheel    trim gravity by one            |  [  ]     less / more bounce             |  c        ball to ball collisions        |  p  .     pause / step one frame         |  r        reset                          |  ?  h     hide this help                 |  q  esc   quit                           |                                          |"
   set-variable .bls.n        0
+  set-variable .bls.mssafe 120 ; watchdog: re-arms the tick if one is aborted
+  set-variable .bls.inick    0 ; set while a tick is part way through
   set-variable .bls.ly      "|"
   set-variable .bls.lx      "|"
   set-variable .bls.lvy     "|"
@@ -597,7 +599,13 @@
   set-variable .bls.padc1 &add #l1 #l3
 !emacro
 0 define-macro ball-tick
+  !iif .bls.running  .bls.mssafe create-callback ball-tick
   !iif &not .bls.running  !return
+  !if .bls.inick
+    ball-quit
+    !return
+  !endif
+  set-variable .bls.inick 1
   set-variable #l0 $unix-time
   set-variable #l1 &sub $frame-depth 3
   set-variable #l2 &sub $frame-width 1
@@ -622,6 +630,7 @@
   !endif
   set-variable #l1 &sub .bls.ms &spr "%.0f" &fmul 1000 &fsub $unix-time #l0
   !iif &les #l1 1  set-variable #l1 1
+  set-variable .bls.inick 0
   !iif .bls.running  #l1 create-callback ball-tick
 !emacro
 0 define-macro ball-clamp-well
@@ -665,7 +674,8 @@
 0 define-macro ball-quit
   !iif &not .bls.running  !return
   set-variable .bls.running 0
-  -1 create-callback ball-tick
+  set-variable .bls.inick 0
+  !force -1 create-callback ball-tick
   set-variable $buffer-input .bls.previnput
   ball-cursor-show
   1 screen-update
