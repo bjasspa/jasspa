@@ -72,6 +72,8 @@ define-macro md-to-latex
 !emacro
 
 define-macro md-process
+  ; must set hilight scheme for $window-acol to work correctly
+  set-variable $buffer-hilight .hilight.meth
   beginning-of-buffer
   set-variable #l0 0
   !repeat
@@ -207,8 +209,12 @@ define-macro md-process
       beginning-of-line
       -1 kill-region
       !if &not &seq @wc "\n"
-        insert-string "\CCE"
-        end-of-line
+        insert-string "\CCB"
+        !if &set #l2 &sin "![](" @wl
+          set-variable $window-col &sub #l2 1
+        !else
+          end-of-line
+        !endif
         insert-string &cat "\CC" &mid .cl #l0 1
       !endif
     !elif &seq "=" &lef #l1 1
@@ -217,7 +223,7 @@ define-macro md-process
       -1 kill-region
       backward-line
       !if &not &seq @wc "\n"
-        insert-string "\CCE"
+        insert-string "\CCB"
         end-of-line
         insert-string &cat "\CC" &mid .cl #l0 1
       !else
@@ -338,4 +344,4 @@ define-macro md-process
   !endif
   beginning-of-buffer
 !emacro
-set-variable .md-process.cl "ACDJC_J_DJ__J___"
+set-variable .md-process.cl "AEDFE_F_DF__F___"

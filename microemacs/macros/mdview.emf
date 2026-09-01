@@ -13,11 +13,11 @@ execute-file "hkmdview"
   delete-other-windows
   !if &not &seq &set #l0 $buffer-fname ""
     !force 0 delete-buffer $buffer-bname
-    mdview #l0
+    md-view #l0
     delete-other-windows
   !else
     ; no topic seems to be given on the command line, load default info page
-    mdview
+    md-view
     delete-other-windows
   !endif
 !emacro
