@@ -1,0 +1,366 @@
+; -!- emf -!-
+; This is part of the JASSPA MicroEmacs macro files
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+; See the file me.emf for copying and conditions.
+;
+; Synopsis:   Markdown viewer - read-only rendered Markdown browser
+; Authors:    Detlef Groth & Steven Phillips
+;
+; mdview - Markdown viewer and browser
+;
+define-macro fhook-mdview
+  set-variable $buffer-mask "luh12"
+  @# buffer-init
+  set-variable :mouse-word-select mdview-process-link
+  buffer-init-hooks
+!emacro
+set-variable .fhook-mdview.name "Markdown Viewer"
+set-variable .fhook-mdview.setup &reg "/history/fhook/mdview" "ghijmopwx"
+set-variable .fhook-mdview.setup-mask "aeghijkopstuwx1"
+set-variable .fhook-mdview.command-flag  "|thbio|thbio|thbio|thbio|thbio|th|th|bio|"
+set-variable .fhook-mdview.command-name  "|mdview-process-link|mdview-backward-link|mdview-forward-link|scroll-down|mdview-quit|mdview-history-back|mdview-history-forward|beginning-of-buffer|"
+set-variable .fhook-mdview.command-nbind "|0|||||||"
+set-variable .fhook-mdview.command-kbind "|return|S-tab|tab|space|q|||b|"
+set-variable .fhook-mdview.command-desc  "|\HGoto Link|Move to \HPrevious Link|Move to \HNext Link|Page Down|Quit Viewer|\HBack in History|\HForward in History||"
+
+!if &and &sin "h" .fhook-mdview.setup &band .hilight.flags 0x01
+  !iif &not &exi meth-add-format  execute-file "meth"
+  !iif &not &exi .hilight.mdview  set-variable .hilight.mdview .hilight.meth
+!endif
+
+define-macro md-view
+  ; Check if invoked with argument first
+  !force set-variable #l0 @1
+  !if &and $status &len #l0
+    !iif &not &seq "*" &lef #l0 1  set-variable #l0 &stat a #l0
+  !elif &seq $buffer-major-mode "md"
+    set-variable #l0 &cat "*" $buffer-bname
+  !else
+    set-variable #l0 @ml01 "View markdown file"
+  !endif
+  !if &seq &lef #l0 1 "*"
+    set-variable #l1 $buffer-bname
+    !force 0 find-buffer &rig #l0 1
+    !iif &not $status  -8 ml-write &spr "Error: Buffer \"%s\" no longer exists." &rig #l0 1
+    set-variable #l2 $buffer-fname
+    set-position "\xb1"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    copy-region
+    goto-position "\xb1"
+    find-buffer #l1
+  !elif &not &seq "R" &stat t #l0
+    -8 ml-write &spr "Error: \"%s\" is not a regular file." #l0
+  !endif
+  ; Create or reuse *md-view* buffer FIRST (all .md-view.* ops must be in this buffer)
+  set-variable #l1 "*md-view*"
+  !force 0 find-buffer #l1
+  !if $status
+    popup-window #l1
+  !else
+    find-buffer #l1
+    ; Initialize history in *md-view* buffer on first creation
+    set-variable .history "|"
+    set-variable .history-pos 0
+    set-variable .history-nav 0
+  !endif
+  ; Clear buffer content (must disable view mode to allow modifications)
+  -1 buffer-mode "view"
+  -1 buffer-mode "undo"
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  !if &seq &lef #l0 1 "*"
+    yank
+    -1 yank
+    set-variable $buffer-fname &lef #l2 &rsin "/" #l2
+  !else
+    !force insert-file #l0
+    !iif &not $status  -8 ml-write &spr "Error: Cannot open file '%s'" #l0
+    set-variable $buffer-fname &lef #l0 &rsin "/" #l0
+  !endif
+  ; Add to history unless navigating via history-back/forward
+  !if &not .history-nav
+    set-variable .history &linsert .history -1 #l0
+    set-variable .history-pos &llen .history
+  !endif
+  set-variable .history-nav 0
+  beginning-of-buffer
+  ; Insert navigation bar first (before rendering)
+  mdview-insert-navbar-start
+  !if &gre .history-pos 1
+    insert-string " | [< Prev]("
+    insert-string &lget .history &sub .history-pos 1
+    insert-string ")"
+  !endif
+  ; Next = next file in history (only if there IS a next entry)
+  !if &less .history-pos &llen .history
+    insert-string " | [Next >]("
+    insert-string &lget .history &add .history-pos 1
+    insert-string ")"
+  !endif
+  ; Show current filename at the end
+  insert-string " | _File:"
+  insert-string &cat &rig #l0 &rsin "/" #l0 "_"
+  insert-newline
+  !iif &len &trr @wl  insert-newline
+  ; Transform Markdown -> ME formatting markers
+  md-process
+  ; Set view mode
+  -1 buffer-mode "edit"
+  1 buffer-mode "view"
+  3 goto-line
+  major-mode "mdview"
+  ml-write &spr "Markdown viewer: %s" &lef #l0 &rsin "/" #l0
+  !iif &band $system 0x01  screen-update
+!emacro
+
+; Navigation bar
+
+0 define-macro mdview-insert-navbar-start
+  set-variable #l3 0  ; flag: have we inserted anything yet?
+  ; Check for index.md and home.md in source directory
+  !if &seq "R" &stat t &set #l0 &cat $buffer-fname "index.md"
+    insert-string "[Index]("
+    insert-string #l0
+    insert-string ")"
+    set-variable #l3 1
+  !endif
+  !if &seq "R" &stat t &set #l0 &cat $buffer-fname "home.md"
+    !iif #l3  insert-string " | "
+    insert-string "[Home]("
+    insert-string #l0
+    insert-string ")"
+    set-variable #l3 1
+  !endif
+  ; Show Start link (first entry in history) and History
+  !if &gre &llen .md-view.history 0
+    !iif #l3  insert-string " | "
+    insert-string "[Start]("
+    insert-string &lget .md-view.history 1
+    insert-string ")"
+    insert-string " | [History](macro:mdview-history)"
+    insert-string " | [Help](macro:mdview-help)"
+    set-variable #l3 1
+  !endif
+!emacro
+
+; History listing
+
+0 define-macro mdview-history
+  find-buffer "*md-view*"
+  -1 buffer-mode "view"
+  1 buffer-mode "edit"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  ; Insert navigation bar (same as regular view but with *History* filename)
+  mdview-insert-navbar-start  
+  !if &gre .md-view.history-pos 0
+    insert-string " | [< Back]("
+    insert-string &lget .md-view.history .md-view.history-pos
+    insert-string ")"
+  !endif
+  insert-string " | _File:*History*\n\n"
+  insert-string "__# Visited Files__\n\n"
+  ; List each history entry as a clickable link, 1-based indexing
+  set-variable #l2 0
+  !while &les &pinc #l2 1 &llen .md-view.history
+    set-variable #l0 &lget .md-view.history #l2
+    ; Highlight current entry
+    insert-string &con &equ #l2 .md-view.history-pos "**> " "    "
+    insert-string "["
+    insert-string #l0
+    insert-string "]("
+    insert-string #l0
+    insert-string ")"
+    insert-newline
+  !done
+  md-process
+  beginning-of-buffer
+  1 buffer-mode "view"
+!emacro
+
+; Link navigation
+
+0 define-macro mdview-help
+  find-buffer "*md-view*"
+  -1 buffer-mode "view"
+  1 buffer-mode "edit"
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  -1 kill-region
+  mdview-insert-navbar-start    
+  !if &gre .md-view.history-pos 0
+    insert-string " | [< Back]("
+    insert-string &lget .md-view.history .md-view.history-pos
+    insert-string ")"
+  !endif
+  insert-string " | _File:Help_\n\n"
+  ; Help content
+  insert-string "# MicroEmacs Markdown Viewer Help\n\n"
+  insert-string "## Navigation\n\n"
+  insert-string "- **Click** or **Return** - Follow link (open file or execute macro)\n"
+  insert-string "- **Tab** - Jump to next link\n"
+  insert-string "- **Shift-Tab** - Jump to previous link\n\n"
+  insert-string "## Viewing\n\n"
+  insert-string "- **Space** - Page down\n"
+  insert-string "- **b** - Jump to beginning of file\n\n"
+  insert-string "## Editing\n\n"
+  insert-string "- **q** - Quit viewer, open file in editor\n\n"
+  insert-string "## Navigation Bar\n\n"
+  insert-string "- **Start** - First file in session history\n"
+  insert-string "- **History** - Show all visited files\n"
+  insert-string "- **Index** - Open index.md (if exists)\n"
+  insert-string "- **Home** - Open home.md (if exists)\n\n"
+  insert-string "## Links\n\n"
+  insert-string "- Links for existing files open in the viewer\n"
+  insert-string "- Missing files can be created (prompted)\n\n"
+  md-process
+  beginning-of-buffer
+  1 buffer-mode "view"
+!emacro
+
+0 define-macro mdview-process-link
+  set-variable #l0 $window-col
+  set-variable #l1 $window-line
+  ; Try \CEs ... \CEe link markers first
+  !force -5 search-forward "\CEe"
+  !if $status
+    !force -5 search-backward "\CEs"
+    !if &and $status &or &les $window-line #l1 &and &equ $window-line #l1 &not &gre $window-col #l0
+      2 forward-char
+      set-mark
+      -1 search-forward "\CEm"
+      2 backward-char
+      copy-region
+      set-variable #l2 @y
+      -1 yank
+      !if &seq #l2 ""
+        2 forward-char
+        set-mark
+        -1 search-forward "\CEe"
+        2 backward-char
+        copy-region
+        set-variable #l2 @y
+        -1 yank
+      !endif
+      mdview-follow-link #l2
+      !return
+    !endif
+  !endif
+  ; Try markdown [[link]] syntax
+  !force -1 search-forward "]]"
+  !if $status
+    2 backward-char
+    set-mark
+    -1 search-backward "\\[\\["
+    !if $status
+      2 forward-char
+      copy-region
+      set-variable #l0 @y
+      -1 yank
+      mdview-follow-link #l0
+      !return
+    !endif
+  !endif
+  -8 ml-write "Not on a link!"
+!emacro
+
+0 define-macro mdview-follow-link
+  !iif &seq "" &set #l0 @1  -8 ml-write "Error: Link URL is empty."
+  ; Handle macro: links & *bname links to buffers
+  !if &seq &lef #l0 6 "macro:"
+    !force execute-named-command &rig #l0 6
+    !return
+  !elif &seq &lef #l0 1 "*" 
+    !if &set #l1 &lfind .md-view.history #l0
+      set-variable .md-view.history-pos #l1
+      set-variable .md-view.history-nav 1
+    !endif
+    md-view #l0
+    !return
+  !endif
+  ; Handle http/https links - open in browser
+  !iif &lfind "|http:/|https:|" &lef #l0 6  -8 ml-write &spr "External link (not supported): %s" #l0
+  ; Resolve relative path
+  !iif &not &seq &lef #l0 1 "/"  set-variable #l0 &cat $buffer-fname #l0
+  ; Check if file exists
+  !if &seq &stat t #l0 "R" 
+    ; If file is already in history, just move cursor (don't append)
+    !if &set #l1 &lfind .md-view.history #l0
+      set-variable .md-view.history-pos #l1
+      set-variable .md-view.history-nav 1
+    !endif
+    md-view #l0
+  !else
+    ; File not found - offer to create it (wiki-style)
+    set-variable #l1 @mc5 &spr "File \"%s\" not found - create (?/y/n) ? " #l0 "yYnN" "(Y)es create file, (N)o ? "
+    !iif &iseq #l1 "y"  find-file #l0
+  !endif
+!emacro
+
+; Tab / Shift-Tab link cycling
+
+0 define-macro mdview-forward-link
+  !if &les @# 0
+    set-variable #l0 &sub 0 @#
+    #l0 mdview-backward-link
+  !endif
+  !force @# search-forward "\CEs"
+  !if &not $status
+    beginning-of-buffer
+    search-forward "\CEs"
+  !endif
+  backward-char
+!emacro
+
+0 define-macro mdview-backward-link
+  !if &les @# 0
+    set-variable #l0 &sub 0 @#
+    #l0 mdview-forward-link
+  !endif
+  !force 3 backward-char
+  !force @# search-backward "\CEs"
+  !if &not $status
+    end-of-buffer
+    search-backward "\CEs"
+  !endif
+  forward-char
+!emacro
+
+; History navigation
+
+0 define-macro mdview-history-back
+  !iif &les .md-view.history-pos 1  -8 ml-write "Already at beginning of history!"
+  set-variable .md-view.history-nav "1"
+  md-view &lget .md-view.history &set .md-view.history-pos &sub .md-view.history-pos 1
+!emacro
+
+0 define-macro mdview-history-forward
+  !iif &gre .md-view.history-pos &sub &llen .md-view.history 1  -8 ml-write "Already at end of history!"
+  set-variable .md-view.history-nav "1"
+  md-view &lget .md-view.history &set .md-view.history-pos &add .md-view.history-pos 1
+!emacro
+
+; Quit viewer
+
+0 define-macro mdview-quit
+  !if &seq $buffer-bname "*md-view*"
+    !force 0 delete-buffer "*md-view*"
+    !if &not .md-view.history-pos
+    !elif &seq "*" &lef &set #l0 &lget .md-view.history .md-view.history-pos 1
+      !force 0 find-buffer &rig #l0 1
+    !elif &len #l0
+      !force 2 find-buffer #l0
+      !iif &not $status  find-file #l0
+    !endif
+  !endif
+!emacro
+
+buffer-init-fhook "mdview"

@@ -1,0 +1,46 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 1999-2009 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.\"  Created By    : Jon Green
+.\"  Created       : Mon Jul 5 21:40:07 1999
+.\"
+.Id $Id: m3fcl019.3,v 2.11 2026/08/26 08:23:49 jon Exp $
+.Im MicroEmacs filter
+.so me.tni
+.TH mdview 3f
+.XI mdview - "Browse Markdown files in MicroEmacs."
+.SH NAME
+mdview \-  Browse Markdown pages.
+.Me $a
+.SH SYNOPSIS
+.na
+\fBme\fR "@mdview" \fI<markdownfile>\fR
+.ad
+.SH DESCRIPTION
+The start-up file  \fCmdview.emf\fR may be
+invoked  from the command line as interactive Markdown file browser for
+Wiki like organized Markdown files so that these files are displayed
+in MicroEmacs in a sophisticated way with links to other Markdown files
+displayed  as  clickable  links and using a  navigation  header with links to
+home, next, previous, help etc.
+.SH EXAMPLE
+Here is how to use this  command  line  filter to  display
+specific markdown files \s-1ME\s0 as a command line filter, i.e.
+.CS
+me @mdview wiki/home.md
+.CE 0
+.SH NOTES
+The  start-up code is stored in the file  mdview.emf, the filehook code in the
+file hkmdview.emf. The macro was added in August 2026.
+.SH "SEE ALSO"
+.na
+.Ht me 1 ,
+.Ht start-up 3 ,
+.Ht info 3f ,
+.Ht pydoc 3f ,
+.Ht rdoc 3f .
+.ad
+.FH

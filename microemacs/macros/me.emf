@@ -150,6 +150,7 @@ define-macro-file ftp
 1 major-mode "m4"
 15 major-mode "man" "" "" "UNIX Man page" man aman
 7 major-mode "md" "markdown" ".md .rmd .tmd .tqd .qd" md-to-html md-to-htm md-to-latex md-process
+15 major-mode "mdview" "" "" "Markdown Viewer" md-view
 15 major-mode "mereg" "" "*registry*" "ME Registry"
 13 major-mode "meta" ".mp .mf" "MetaPost/Font"
 13 major-mode "mhg" ".mhg .mhg5" "MHEG"
