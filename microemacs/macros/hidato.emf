@@ -1,0 +1,621 @@
+; -!- emf -!-
+;
+; Hidato puzzle game - fill a 5x5 grid with letters A..Y
+; so that consecutive letters are adjacent.
+;
+; Data model: three nested lists (outer rows separated by \b,
+; inner cells separated by |), e.g.
+;   :hid-grid  "\b| |A| | | |\b| | | | | |\b..."
+; Access cell (r,c) 0-based via:
+;   &lget &lget :hid-grid &add r 1 &add c 1
+; All access goes through hid-get-cell / hid-set-cell (grid),
+; hid-get-sol / hid-set-sol (solution) and hid-is-hint / hid-set-hint.
+;
+; Each new game deals a random puzzle from an embedded set of 16
+; (path + hint mask), each proven to have exactly one solution.
+; A random dihedral symmetry and optional value-complement reversal
+; are applied on top - both map solution sets bijectively, so the
+; dealt puzzle is unique too.
+;
+; IMPORTANT: MeForth numbered locals (#l0-#l9) are NOT shared between
+; caller and macro scope. Each macro gets its own fresh set.
+; All inter-macro communication uses named variables (:hid-*).
+;
+
+0 define-macro bhook-hidato
+  !force set-variable :scroll-bar $scroll-bar
+  !force osd -1 0
+  set-variable $scroll-bar 0
+!emacro
+
+0 define-macro ehook-hidato
+  !force set-variable $scroll-bar :scroll-bar
+  !force osd -1 1
+!emacro
+
+; ---- nested-list access helpers ----
+; in: :hid-pr :hid-pc (0-based). out: :hid-ch
+0 define-macro hid-get-cell
+  set-variable :hid-ch &lget &lget :hid-grid &add :hid-pr 1 &add :hid-pc 1
+!emacro
+
+; in: :hid-pr :hid-pc :hid-val
+0 define-macro hid-set-cell
+  set-variable :hid-row &lget :hid-grid &add :hid-pr 1
+  set-variable :hid-row &lset :hid-row &add :hid-pc 1 :hid-val
+  set-variable :hid-grid &lset :hid-grid &add :hid-pr 1 :hid-row
+!emacro
+
+; in: :hid-pr :hid-pc. out: :hid-ch (solution letter)
+0 define-macro hid-get-sol
+  set-variable :hid-ch &lget &lget :hid-sol &add :hid-pr 1 &add :hid-pc 1
+!emacro
+
+; in: :hid-pr :hid-pc :hid-val
+0 define-macro hid-set-sol
+  set-variable :hid-row &lget :hid-sol &add :hid-pr 1
+  set-variable :hid-row &lset :hid-row &add :hid-pc 1 :hid-val
+  set-variable :hid-sol &lset :hid-sol &add :hid-pr 1 :hid-row
+!emacro
+
+; in: :hid-pr :hid-pc. out: :hid-ph ("1" = hint, "0" = editable)
+0 define-macro hid-is-hint
+  set-variable :hid-ph &lget &lget :hid-hints &add :hid-pr 1 &add :hid-pc 1
+!emacro
+
+; in: :hid-pr :hid-pc :hid-val
+0 define-macro hid-set-hint
+  set-variable :hid-row &lget :hid-hints &add :hid-pr 1
+  set-variable :hid-row &lset :hid-row &add :hid-pc 1 :hid-val
+  set-variable :hid-hints &lset :hid-hints &add :hid-pr 1 :hid-row
+!emacro
+
+; Pool of 16 puzzles with PROVEN UNIQUE solutions. Each puzzle is a
+; Hamiltonian path (50 chars r0c0r1c1...) plus a hint mask (25 chars
+; over path indices, always including A=0 and Y=24), computed offline:
+; backbite-sampled paths + greedy clue removal with a solver check
+; (solutions counted, cutoff 2). Runtime symmetries (dihedral +
+; reversal) are solution-set automorphisms, so uniqueness is preserved.
+0 define-macro hid-init-paths
+  set-variable :hid-npaths 16
+  set-variable :hid-paths "\b41304031211201001020110203041423332213243444434232"
+  set-variable :hid-paths &cat :hid-paths "\b42414030213120110010010212030413223243334434241423"
+  set-variable :hid-paths &cat :hid-paths "\b43334434241423221304030212110001102021304041423231"
+  set-variable :hid-paths &cat :hid-paths "\b33231304142434444332221110000102031221203040314142"
+  set-variable :hid-paths &cat :hid-paths "\b00101102011223322120314030414243443424332213031404"
+  set-variable :hid-paths &cat :hid-paths "\b12212030404131322211001001020313041423243342433444"
+  set-variable :hid-paths &cat :hid-paths "\b40302010213132414243344433222324131404031211000102"
+  set-variable :hid-paths &cat :hid-paths "\b34232433444342413222121120304031211000010213041403"
+  set-variable :hid-paths &cat :hid-paths "\b32332414040312221121302010000102132334444342414031"
+  set-variable :hid-paths &cat :hid-paths "\b33344443324241314030202122122324140413030201001110"
+  set-variable :hid-paths &cat :hid-paths "\b00112212020110203021314041423243443334241304031423"
+  set-variable :hid-paths &cat :hid-paths "\b11120201001020212213040314243342414030313243443423"
+  set-variable :hid-paths &cat :hid-paths "\b32221112030413231424344344334241314030212010000102"
+  set-variable :hid-paths &cat :hid-paths "\b10001120212233233241304031424344342413140403020112"
+  set-variable :hid-paths &cat :hid-paths "\b41403031324243334434241304142322120302112021100001"
+  set-variable :hid-paths &cat :hid-paths "\b24344443332231201102030414233242414030211000011213"
+  set-variable :hid-paths &cat :hid-paths "\b"
+  set-variable :hid-masks "\b1100010100000000110100001"
+  set-variable :hid-masks &cat :hid-masks "\b1000011001010010001100001"
+  set-variable :hid-masks &cat :hid-masks "\b1100000010010001010000011"
+  set-variable :hid-masks &cat :hid-masks "\b1100100000010100000000101"
+  set-variable :hid-masks &cat :hid-masks "\b1000110000001000000010101"
+  set-variable :hid-masks &cat :hid-masks "\b1000010110010001000110011"
+  set-variable :hid-masks &cat :hid-masks "\b1010001000100001110001001"
+  set-variable :hid-masks &cat :hid-masks "\b1101000000001001000000101"
+  set-variable :hid-masks &cat :hid-masks "\b1010000100010000100000001"
+  set-variable :hid-masks &cat :hid-masks "\b1100101100000100001000011"
+  set-variable :hid-masks &cat :hid-masks "\b1000010011000100011011001"
+  set-variable :hid-masks &cat :hid-masks "\b1010000100010001101000001"
+  set-variable :hid-masks &cat :hid-masks "\b1000001100001101011100001"
+  set-variable :hid-masks &cat :hid-masks "\b1000101000101000001010001"
+  set-variable :hid-masks &cat :hid-masks "\b1100101011010001000001001"
+  set-variable :hid-masks &cat :hid-masks "\b1010000101000010000001001"
+  set-variable :hid-masks &cat :hid-masks "\b"
+!emacro
+
+; Pick a random path and split it into :hid-path-r / :hid-path-c
+; (row/col of path index 0..24).
+0 define-macro hid-pick-path
+  hid-init-paths
+  set-variable :hid-which &mod $random :hid-npaths
+  set-variable :hid-pick &lget :hid-paths &add :hid-which 1
+  set-variable :hid-path-r ""
+  set-variable :hid-path-c ""
+  set-variable :hid-k 0
+  !while &les :hid-k 25
+    set-variable :hid-path-r &cat :hid-path-r &mid :hid-pick &mul :hid-k 2 1
+    set-variable :hid-path-c &cat :hid-path-c &mid :hid-pick &add &mul :hid-k 2 1 1
+    set-variable :hid-k &add :hid-k 1
+  !done
+!emacro
+
+; Map base coords through dihedral symmetry :hid-sym (0..7).
+; in: :hid-br :hid-bc :hid-sym. out: :hid-tr :hid-tc.
+0 define-macro hid-xform
+  !if &equ :hid-sym 0
+    set-variable :hid-tr :hid-br
+    set-variable :hid-tc :hid-bc
+  !elif &equ :hid-sym 1
+    set-variable :hid-tr :hid-bc
+    set-variable :hid-tc &sub 4 :hid-br
+  !elif &equ :hid-sym 2
+    set-variable :hid-tr &sub 4 :hid-br
+    set-variable :hid-tc &sub 4 :hid-bc
+  !elif &equ :hid-sym 3
+    set-variable :hid-tr &sub 4 :hid-bc
+    set-variable :hid-tc :hid-br
+  !elif &equ :hid-sym 4
+    set-variable :hid-tr :hid-br
+    set-variable :hid-tc &sub 4 :hid-bc
+  !elif &equ :hid-sym 5
+    set-variable :hid-tr &sub 4 :hid-br
+    set-variable :hid-tc :hid-bc
+  !elif &equ :hid-sym 6
+    set-variable :hid-tr :hid-bc
+    set-variable :hid-tc :hid-br
+  !else
+    set-variable :hid-tr &sub 4 :hid-bc
+    set-variable :hid-tc &sub 4 :hid-br
+  !endif
+!emacro
+
+; Map path index to grid cell.
+; in: :hid-pi (0..24). out: :hid-pr :hid-pc.
+; NOTE: reversal is a VALUE complement (see solution loop), so the
+; position mapping must NOT flip with :hid-rev - otherwise the hint
+; mask would be reflected into an unproven puzzle.
+0 define-macro hid-locate
+  set-variable :hid-j :hid-pi
+  set-variable :hid-br &mid :hid-path-r :hid-j 1
+  set-variable :hid-bc &mid :hid-path-c :hid-j 1
+  hid-xform
+  set-variable :hid-pr :hid-tr
+  set-variable :hid-pc :hid-tc
+!emacro
+
+; Reveal path letter as a hint.
+; in: :hid-pi (0..24).
+0 define-macro hid-reveal
+  hid-locate
+  set-variable :hid-val "1"
+  hid-set-hint
+  hid-get-sol
+  set-variable :hid-val :hid-ch
+  hid-set-cell
+!emacro
+
+; Build a fresh random puzzle into :hid-sol / :hid-hints / :hid-grid.
+0 define-macro hid-gen-puzzle
+  hid-pick-path
+  set-variable :hid-sym &mod $random 8
+  set-variable :hid-rev &mod $random 2
+  set-variable :hid-blank "| | | | | |"
+  set-variable :hid-sol &spr "\b%s\b%s\b%s\b%s\b%s\b" :hid-blank :hid-blank :hid-blank :hid-blank :hid-blank
+  set-variable :hid-blank-h "|0|0|0|0|0|"
+  set-variable :hid-hints &spr "\b%s\b%s\b%s\b%s\b%s\b" :hid-blank-h :hid-blank-h :hid-blank-h :hid-blank-h :hid-blank-h
+  ; lay the solution path A..Y (reversed = value complement,
+  ; which preserves solution uniqueness, unlike position reversal)
+  set-variable :hid-i 0
+  !while &les :hid-i 25
+    set-variable :hid-pi :hid-i
+    hid-locate
+    !if :hid-rev
+      set-variable :hid-val &itoa &add &sub 24 :hid-i 65
+    !else
+      set-variable :hid-val &itoa &add :hid-i 65
+    !endif
+    hid-set-sol
+    set-variable :hid-i &add :hid-i 1
+  !done
+  ; player grid starts blank
+  set-variable :hid-grid &spr "\b%s\b%s\b%s\b%s\b%s\b" :hid-blank :hid-blank :hid-blank :hid-blank :hid-blank
+  ; reveal the precomputed unique hint set (mask over path indices)
+  ; NOTE: loop var must not be :hid-j (hid-locate clobbers it)
+  set-variable :hid-mask &lget :hid-masks &add :hid-which 1
+  set-variable :hid-mj 0
+  !while &les :hid-mj 25
+    !if &seq &mid :hid-mask :hid-mj 1 "1"
+      set-variable :hid-pi :hid-mj
+      hid-reveal
+    !endif
+    set-variable :hid-mj &add :hid-mj 1
+  !done
+!emacro
+
+; Place the buffer dot on the current cell and refresh.
+0 define-macro hid-goto-cursor
+  goto-line &add 5 &mul :hid-cur-r 2
+  beginning-of-line
+  &add 9 &mul :hid-cur-c 6 forward-char
+  screen-update
+!emacro
+
+; Redraw the entire grid as buffer text
+0 define-macro hid-redraw
+  ; Count filled cells
+  set-variable :hid-filled 0
+  set-variable :hid-pr 0
+  !while &les :hid-pr 5
+    set-variable :hid-pc 0
+    !while &les :hid-pc 5
+      hid-get-cell
+      !if &not &seq :hid-ch " "
+        set-variable :hid-filled &add :hid-filled 1
+      !endif
+      set-variable :hid-pc &add :hid-pc 1
+    !done
+    set-variable :hid-pr &add :hid-pr 1
+  !done
+  ; Build each row string
+  set-variable :hid-ri 0
+  !while &les :hid-ri 5
+    set-variable :hid-row &lget :hid-grid &add :hid-ri 1
+    set-variable :hid-line &spr "      |  %s  |  %s  |  %s  |  %s  |  %s  |" &lget :hid-row 1 &lget :hid-row 2 &lget :hid-row 3 &lget :hid-row 4 &lget :hid-row 5
+    !if &equ :hid-ri 0
+      set-variable :hid-gline0 :hid-line
+    !elif &equ :hid-ri 1
+      set-variable :hid-gline1 :hid-line
+    !elif &equ :hid-ri 2
+      set-variable :hid-gline2 :hid-line
+    !elif &equ :hid-ri 3
+      set-variable :hid-gline3 :hid-line
+    !else
+      set-variable :hid-gline4 :hid-line
+    !endif
+    set-variable :hid-ri &add :hid-ri 1
+  !done
+  ; Erase buffer and rewrite
+  beginning-of-buffer
+  set-mark
+  end-of-buffer
+  !force -1 kill-region
+  beginning-of-buffer
+  insert-string "       H I D A T O\n"
+  insert-string "  Fill A..Y, adjacent only\n"
+  insert-string "\n"
+  insert-string "      +-----+-----+-----+-----+-----+\n"
+  insert-string :hid-gline0
+  insert-string "\n"
+  insert-string "      +-----+-----+-----+-----+-----+\n"
+  insert-string :hid-gline1
+  insert-string "\n"
+  insert-string "      +-----+-----+-----+-----+-----+\n"
+  insert-string :hid-gline2
+  insert-string "\n"
+  insert-string "      +-----+-----+-----+-----+-----+\n"
+  insert-string :hid-gline3
+  insert-string "\n"
+  insert-string "      +-----+-----+-----+-----+-----+\n"
+  insert-string :hid-gline4
+  insert-string "\n"
+  insert-string "      +-----+-----+-----+-----+-----+\n"
+  insert-string "\n"
+  insert-string "  Arrows / C-p C-n C-b C-f: move   a-y: place   ?: solve cell\n"
+  insert-string "  Del/Bksp: delete  z: undo  F5: new game  esc q: quit  (?/z -1pt)\n"
+  !if :hid-won
+    insert-string &spr "\n  Filled: %d / 25  *** SOLVED! %d/25 points! ***" :hid-filled :hid-score
+  !else
+    insert-string &spr "\n  Filled: %d / 25   Score: %d" :hid-filled :hid-score
+  !endif
+  hid-goto-cursor
+!emacro
+
+0 define-macro hid-up
+  !if &gre :hid-cur-r 0
+    set-variable :hid-cur-r &sub :hid-cur-r 1
+    hid-redraw
+  !endif
+!emacro
+
+0 define-macro hid-down
+  !if &les :hid-cur-r 4
+    set-variable :hid-cur-r &add :hid-cur-r 1
+    hid-redraw
+  !endif
+!emacro
+
+0 define-macro hid-left
+  !if &gre :hid-cur-c 0
+    set-variable :hid-cur-c &sub :hid-cur-c 1
+    hid-redraw
+  !endif
+!emacro
+
+0 define-macro hid-right
+  !if &les :hid-cur-c 4
+    set-variable :hid-cur-c &add :hid-cur-c 1
+    hid-redraw
+  !endif
+!emacro
+
+0 define-macro hid-place-letter
+  ; Check if hint cell
+  set-variable :hid-pr :hid-cur-r
+  set-variable :hid-pc :hid-cur-c
+  hid-is-hint
+  !if &seq :hid-ph "1"
+    ml-write "Cannot overwrite a hint cell!"
+    !return
+  !endif
+  ; Get letter from lastkey
+  set-variable :hid-letter :hid-lastkey
+  !if &sin :hid-letter "abcdefghijklmnopqrstuvwxyz"
+    set-variable :hid-letter &sup :hid-letter
+  !endif
+  !if &not &sin :hid-letter "ABCDEFGHIJKLMNOPQRSTUVWXY"
+    ml-write "Only letters A-Y are allowed!"
+    !return
+  !endif
+  ; Check if letter already used
+  set-variable :hid-check-r 0
+  !while &les :hid-check-r 5
+    set-variable :hid-check-c 0
+    !while &les :hid-check-c 5
+      set-variable :hid-skip 0
+      !if &equ :hid-check-r :hid-cur-r
+        !if &equ :hid-check-c :hid-cur-c
+          set-variable :hid-skip 1
+        !endif
+      !endif
+      !if &not :hid-skip
+        set-variable :hid-pr :hid-check-r
+        set-variable :hid-pc :hid-check-c
+        hid-get-cell
+        !if &seq :hid-ch :hid-letter
+          ml-write "Letter already used on the grid!"
+          !return
+        !endif
+      !endif
+      set-variable :hid-check-c &add :hid-check-c 1
+    !done
+    set-variable :hid-check-r &add :hid-check-r 1
+  !done
+  ; Place letter
+  set-variable :hid-pr :hid-cur-r
+  set-variable :hid-pc :hid-cur-c
+  set-variable :hid-val :hid-letter
+  hid-undo-push
+  hid-set-cell
+  set-variable :hid-won 0
+  hid-redraw
+  hid-check-complete
+!emacro
+
+0 define-macro hid-delete
+  ; Check if hint
+  set-variable :hid-pr :hid-cur-r
+  set-variable :hid-pc :hid-cur-c
+  hid-is-hint
+  !if &seq :hid-ph "1"
+    ml-write "Cannot delete a hint cell!"
+    !return
+  !endif
+  ; Delete cell (set to space)
+  set-variable :hid-val " "
+  hid-undo-push
+  hid-set-cell
+  set-variable :hid-won 0
+  hid-redraw
+!emacro
+
+0 define-macro hid-check-complete
+  ; Solved when the grid matches the stored solution
+  set-variable :hid-pr 0
+  !while &les :hid-pr 5
+    set-variable :hid-pc 0
+    !while &les :hid-pc 5
+      hid-get-cell
+      set-variable :hid-got :hid-ch
+      hid-get-sol
+      !if &not &seq :hid-got :hid-ch
+        !return
+      !endif
+      set-variable :hid-pc &add :hid-pc 1
+    !done
+    set-variable :hid-pr &add :hid-pr 1
+  !done
+  set-variable :hid-won 1
+  hid-redraw
+  ml-write "*** CONGRATULATIONS! Puzzle solved! ***"
+!emacro
+
+0 define-macro hid-new-game
+  hid-gen-puzzle
+  set-variable :hid-won 0
+  set-variable :hid-score 25
+  set-variable :hid-udepth 0
+  ; Park the cursor on the first empty cell
+  set-variable :hid-cur-r 0
+  set-variable :hid-cur-c 0
+  set-variable :hid-pr 0
+  !while &les :hid-pr 5
+    set-variable :hid-pc 0
+    !while &les :hid-pc 5
+      hid-get-cell
+      !if &seq :hid-ch " "
+        set-variable :hid-cur-r :hid-pr
+        set-variable :hid-cur-c :hid-pc
+        set-variable :hid-pr 5
+        set-variable :hid-pc 5
+      !endif
+      !if &les :hid-pc 5
+        set-variable :hid-pc &add :hid-pc 1
+      !endif
+    !done
+    !if &les :hid-pr 5
+      set-variable :hid-pr &add :hid-pr 1
+    !endif
+  !done
+  hid-redraw
+!emacro
+
+; ---- undo (10-deep snapshot stack) ----
+; Slots :hid-u0..:hid-u9 hold grids, :hid-uc0..:hid-uc9 hold packed
+; "rcw" strings (cursor row/col + won flag). :hid-udepth is the count.
+0 define-macro hid-undo-push
+  !if &equ :hid-udepth 10
+    ; full: shift down, reuse slot 9
+    set-variable :hid-ui 0
+    !while &les :hid-ui 9
+      set-variable :hid-un &spr ":hid-u%d" :hid-ui
+      set-variable :hid-un2 &spr ":hid-u%d" &add :hid-ui 1
+      set-variable &ind :hid-un &ind :hid-un2
+      set-variable :hid-cn &spr ":hid-uc%d" :hid-ui
+      set-variable :hid-cn2 &spr ":hid-uc%d" &add :hid-ui 1
+      set-variable &ind :hid-cn &ind :hid-cn2
+      set-variable :hid-ui &add :hid-ui 1
+    !done
+    set-variable :hid-ui 9
+  !else
+    set-variable :hid-ui :hid-udepth
+    set-variable :hid-udepth &add :hid-udepth 1
+  !endif
+  set-variable :hid-un &spr ":hid-u%d" :hid-ui
+  set-variable &ind :hid-un :hid-grid
+  set-variable :hid-cn &spr ":hid-uc%d" :hid-ui
+  set-variable &ind :hid-cn &spr "%d%d%d" :hid-cur-r :hid-cur-c :hid-won
+!emacro
+
+0 define-macro hid-undo
+  !if &equ :hid-udepth 0
+    ml-write "Nothing to undo!"
+    !return
+  !endif
+  set-variable :hid-udepth &sub :hid-udepth 1
+  set-variable :hid-un &spr ":hid-u%d" :hid-udepth
+  set-variable :hid-grid &ind :hid-un
+  set-variable :hid-cn &spr ":hid-uc%d" :hid-udepth
+  set-variable :hid-ucs &ind :hid-cn
+  set-variable :hid-cur-r &add &mid :hid-ucs 0 1 0
+  set-variable :hid-cur-c &add &mid :hid-ucs 1 1 0
+  set-variable :hid-won &add &mid :hid-ucs 2 1 0
+  ; successful undo costs 1 point (floor 0, never refunded)
+  !if &gre :hid-score 0
+    set-variable :hid-score &sub :hid-score 1
+  !endif
+  hid-redraw
+!emacro
+
+; Letter input handler - stores letter and calls hid-place-letter
+0 define-macro hid-letter-input
+  set-variable :hid-lastkey @cck
+  hid-place-letter
+!emacro
+
+; Solve-entry: fill the current cell with its solution letter.
+; A wrongly placed duplicate of that letter elsewhere is cleared,
+; keeping the no-duplicates invariant hid-place-letter enforces.
+0 define-macro hid-solve-cell
+  set-variable :hid-pr :hid-cur-r
+  set-variable :hid-pc :hid-cur-c
+  hid-get-sol
+  set-variable :hid-correct :hid-ch
+  hid-undo-push
+  ; solve-entry costs 1 point (floor 0)
+  !if &gre :hid-score 0
+    set-variable :hid-score &sub :hid-score 1
+  !endif
+  ; clear that letter anywhere else it was wrongly placed
+  set-variable :hid-check-r 0
+  !while &les :hid-check-r 5
+    set-variable :hid-check-c 0
+    !while &les :hid-check-c 5
+      set-variable :hid-skip 0
+      !if &equ :hid-check-r :hid-cur-r
+        !if &equ :hid-check-c :hid-cur-c
+          set-variable :hid-skip 1
+        !endif
+      !endif
+      !if &not :hid-skip
+        set-variable :hid-pr :hid-check-r
+        set-variable :hid-pc :hid-check-c
+        hid-get-cell
+        !if &seq :hid-ch :hid-correct
+          hid-is-hint
+          !if &not &seq :hid-ph "1"
+            set-variable :hid-val " "
+            hid-set-cell
+          !endif
+        !endif
+      !endif
+      set-variable :hid-check-c &add :hid-check-c 1
+    !done
+    set-variable :hid-check-r &add :hid-check-r 1
+  !done
+  ; fill current cell with the correct letter
+  set-variable :hid-pr :hid-cur-r
+  set-variable :hid-pc :hid-cur-c
+  set-variable :hid-val :hid-correct
+  hid-set-cell
+  set-variable :hid-won 0
+  hid-redraw
+  hid-check-complete
+!emacro
+
+0 define-macro hid-quit
+  !force 0 delete-buffer "*hidato*"
+  1 screen-update
+  ml-write "Thanks for playing Hidato!"
+!emacro
+
+define-macro Hidato
+  !force 0 delete-buffer "*hidato*"
+  1 find-buffer "*hidato*"
+  set-variable $buffer-bhook bhook-hidato
+  set-variable $buffer-ehook ehook-hidato
+  1 buffer-mode "cursor"
+  1 buffer-mode "edit"
+  !force osd -1 0
+  ; Bind arrow keys (plus Emacs-style C-p/C-n/C-b/C-f)
+  buffer-bind-key hid-up    "up"
+  buffer-bind-key hid-down  "down"
+  buffer-bind-key hid-left  "left"
+  buffer-bind-key hid-right "right"
+  buffer-bind-key hid-up    "C-p"
+  buffer-bind-key hid-down  "C-n"
+  buffer-bind-key hid-left  "C-b"
+  buffer-bind-key hid-right "C-f"
+  ; Neutralize keys that would corrupt the grid via self-insert
+  !force buffer-bind-key void "return"
+  !force buffer-bind-key void "space"
+  buffer-bind-key hid-delete   "delete"
+  buffer-bind-key hid-delete   "backspace"
+  buffer-bind-key hid-new-game "f5"
+  buffer-bind-key hid-quit     "esc q"
+  buffer-bind-key hid-solve-cell "?"
+  buffer-bind-key hid-undo "z"
+  ; Bind letter keys a-y (all place letters).
+  ; NOTE: the key parser folds case (bind.c: toLower), so "Q" is the
+  ; same key as "q" - Shift+letter commands are impossible; game
+  ; commands therefore live on non-letter keys (see above).
+  buffer-bind-key hid-letter-input "a"
+  buffer-bind-key hid-letter-input "b"
+  buffer-bind-key hid-letter-input "c"
+  buffer-bind-key hid-letter-input "d"
+  buffer-bind-key hid-letter-input "e"
+  buffer-bind-key hid-letter-input "f"
+  buffer-bind-key hid-letter-input "g"
+  buffer-bind-key hid-letter-input "h"
+  buffer-bind-key hid-letter-input "i"
+  buffer-bind-key hid-letter-input "j"
+  buffer-bind-key hid-letter-input "k"
+  buffer-bind-key hid-letter-input "l"
+  buffer-bind-key hid-letter-input "m"
+  buffer-bind-key hid-letter-input "n"
+  buffer-bind-key hid-letter-input "o"
+  buffer-bind-key hid-letter-input "p"
+  buffer-bind-key hid-letter-input "q"
+  buffer-bind-key hid-letter-input "r"
+  buffer-bind-key hid-letter-input "s"
+  buffer-bind-key hid-letter-input "t"
+  buffer-bind-key hid-letter-input "u"
+  buffer-bind-key hid-letter-input "v"
+  buffer-bind-key hid-letter-input "w"
+  buffer-bind-key hid-letter-input "x"
+  buffer-bind-key hid-letter-input "y"
+  hid-new-game
+  delete-other-windows
+  screen-update
+  set-variable :mmode 4
+!emacro
