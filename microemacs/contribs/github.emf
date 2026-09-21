@@ -61,7 +61,7 @@ set-variable $time 0
   !iif &gre #l0 399  -8 ml-write &spr "[Github %d Error: %s]" #l0 @wl
 !emacro
 
-0 define-macro github-api-json
+0 define-macro igithub-api-json
   set-variable #l1 @1
   !force set-variable #l2 @2
   !if &and $status &len #l2
@@ -85,7 +85,17 @@ set-variable $time 0
   !iif &gre #l0 399  -8 ml-write &spr "[Github %d Error: %s]" #l0 @wl
   json-parse "/json/ghaj"
 !emacro
-
+0 define-macro github-api-json
+  set-variable #l1 @1
+  !repeat
+    !force !force !force igithub-api-json @2 @3 @4
+    !iif $status  !return
+    set-variable #l0 @mc5 &spr "Github API call to %s failed, retry (?/y/n) ? " #l1 "nNyY" "(Y)es, (N)o, (C-g)Abort ? "
+    !iif &iseq #l0 "n"  !abort
+    0x10 file-op
+  !done
+!emacro
+  
 ; Build an action with given commit
 ;  @# - 0x01 Use refToBuild to pass commit SHA, 0x02 don't download artifacts
 ;  @1 - Commit SHA1
@@ -105,14 +115,14 @@ define-macro github-build-action
   github-api-call &cat #l1 "/dispatches" "" &spr "{\"ref\":\"%s\"%s}" .git.hub-brn #l3
   30000 ml-write &spr "[Action %s dispatched... ]" #l0
   ml-write &spr "[Action %s dispatched... Getting ID]" #l0
-  github-api-json &spr "%s/runs?created=%%3e%%3d%s&head_sha=%s" #l1 &rep .git.hub-date "-" "%2d" #l9
+  github-api-json "Get run ID" &spr "%s/runs?created=%%3e%%3d%s&head_sha=%s" #l1 &rep .git.hub-date "-" "%2d" #l9
   !iif &or &not &seq "#" &lef &set #l2 &reg "/json/ghaj/total_count" "" 1 &les &rig #l2 1 1  -8 ml-write &spr "[Github %s Error: Unexpected total_count %s]" #l0 #l2
   !iif &or &not &seq "#" &lef &set #l2 &reg "/json/ghaj/workflow_runs/0/id" "" 1 &les &set #l5 &rig #l2 1 1  -8 ml-write &spr "[Github %s Error: Unexpected run id %s]" #l0 #l2
   set-variable #p9 #l5
   10000 ml-write &spr "[Action %s run %s state %s... ]" #l0 #l5 &rig &reg "/json/ghaj/workflow_runs/0/status" "#<not set>" 1
   set-variable #l2 0
   !repeat
-    github-api-json &cat "actions/runs/" #l5
+    github-api-json "Get run status" &cat "actions/runs/" #l5
     !iif &seq "" &set #l3 &rig &reg "/json/ghaj/status" "" 1  -8 ml-write &spr "[Github %s Error: No run id %s status]" #l0 #l5
     !iif &not &lfin "|in_progress|queued|requested|waiting|pending|" #l3  !break
     10000 ml-write &spr "[Action %s run %s state %s... %d]" #l0 #l5 #l3 &inc #l2 1
@@ -120,7 +130,7 @@ define-macro github-build-action
   !iif &not &seq "completed" #l3  -8 ml-write &spr "[Github %s Error: Unexpected state %s for run id %s]" #l0 #l3 #l5
   !iif &not &seq "success" &set #l3 &rig &reg "/json/ghaj/conclusion" "" 1 -8 ml-write &spr "[Github %s Error: Workflow run failed for run id %s, conclusion: %s]" #l0 #l5
   !iif &band 2 @#  !return
-  github-api-json &spr "actions/runs/%s/artifacts" #l5
+  github-api-json "get run artifacts" &spr "actions/runs/%s/artifacts" #l5
   !iif &or &not &seq "[" &lef &set #l2 &reg "/json/ghaj/artifacts" "" 1 &seq &set #l6 &rig #l2 1 ""  -8 ml-write &spr "[Github %s Error: Unexpected artifacts array: %s]" #l0 #l2
   set-variable #l3 0
   !while &gre #l6 #l3
@@ -156,7 +166,7 @@ define-macro github-build
   ; this can be passed in or, if not given we get the latest commit on the main branch 
   !force set-variable #l0 @1
   !if &or &not $status &seq #l0 ""
-    github-api-json &cat "commits/" .git.hub-brn
+    github-api-json "get latest commit" &cat "commits/" .git.hub-brn
     !iif &not &xseq &set #l0 &rig &reg &spr "/json/ghaj/sha" "" 1 "\\h+"  -8 ml-write &spr "[Github Error: Failed to get latest commit sha - %s]" #l0
   !endif
   set-variable #p8 #l0
@@ -235,7 +245,7 @@ define-macro github-release
     !iif &not &seq "R" &stat t &cat #l1 "downloads/Jasspa_MicroEmacs_Latest_packages.zip"  -8 ml-write &spr "[Github Release Error: Failed to create packages zip - file not found]"
     !force 0 delete-buffer "*ghr1*"
   !endif
-  github-api-json "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":false,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
+  github-api-json "create relesae" "releases" "" &spr "{\"tag_name\":\"%s%s\",\"target_commitish\":\"%s\",\"name\":\"%s%s\",\"generate_release_notes\":false,\"draft\":false,\"prerelease\":true}" .git.hub-rtp #l9 #l0 .git.hub-rnp #l9
   !iif &not &xseq &set #l8 &rig &reg &spr "/json/ghaj/id" "" 1 "\\h+"  -8 ml-write &spr "[Github Release Error: Unexpected release ID - %s]" #l8
   !iif &not &seq "\"http" &lef &set #l2 &reg "/json/ghaj/upload_url" "" 5  -8 ml-write &spr "[Github Release Error: Unexpected upload_url %s]" #l2
   set-variable #p7 #l8
@@ -266,6 +276,7 @@ define-macro github-release
     set-variable %http-post-file &cat #l1 #l3
     set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
     !force insert-file &cat #l2 &rep &rep #l3 "_" "%5f" "." "%2e"
+    ; TODO retry
     !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %s%s]" #l1 #l3
     set-variable #l5 &add #l5 1
   !done
@@ -274,6 +285,7 @@ define-macro github-release
   set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
   find-buffer "*ghrc*"
   !force insert-file &cat #l2 &rep &rep #l3 "_" "%5f" "." "%2e"
+  ; TODO retry
   !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %s%s]" #l1 #l3
   set-variable #l5 &add #l5 1
   find-file &cat @4 "microemacs/microemacs-install.sh"
@@ -283,6 +295,7 @@ define-macro github-release
   set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
   find-buffer "*ghrc*"
   !force insert-file &cat #l2 "microemacs-install"
+  ; TODO retry
   !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %smicroemacs-install]" #l1
   set-variable #l5 &add #l5 1
   find-file &cat @4 "microemacs/microemacs-install.ps1"
@@ -292,6 +305,7 @@ define-macro github-release
   set-variable %http-header &cat .git.hub-hdr "\r\nContent-Type: application/octet-stream"
   find-buffer "*ghrc*"
   !force insert-file &cat #l2 "microemacs-install.ps1"
+  ; TODO retry
   !iif &not $status  -8 ml-write &spr "[Github Release Error: Failed to upload asset %smicroemacs-install.ps1]" #l1
   set-variable #l5 &add #l5 1
   find-file &cat @4 "microemacs/release_readme.md"
@@ -307,7 +321,7 @@ define-macro github-release
   2 backward-delete-char
   insert-string "\"}"
   !force 0 write-buffer &set %http-post-file &stat a &spr "%s../readme.md.upl" #l1
-  github-api-json &cat "releases/" #l8
+  github-api-json "Upload release readme" &cat "releases/" #l8
   ml-write &spr "[Github Release: Complete, uploaded %d assets]" #l5
 !emacro
 
@@ -448,7 +462,7 @@ define-macro github-finalise-release
   !iif &sub &len #l1 8  -8 ml-write &spr "[Github Release Error: Unexpected Version \"%s\", not 8 chars]" #l1
   !force set-variable #l2 @mc1 &spr "New MicroEmacs version is \"%s\", is this correct (y/n) ? " #l1 "NYny"
   !iif &not &iseq "y" #l2  -8 ml-write "[Github Release Error: Version incorrect - abort]"
-  github-api-json "releases?per_page=1"
+  github-api-json "get release list" "releases?per_page=1"
   !iif &not &seq &reg "/json/ghaj/0/tag_name" "" &set #l2 &spr "\"%s%s" .git.hub-rtp #l1  -8 ml-write &spr "[Github Release Error: Latest release has incorrect tag (%s)]" #l2
   !iif &not &xseq &set #l2 &reg "/json/ghaj/0/id" "" "#\\d\\{6,\\}"  -8 ml-write &spr "[Github Release Error: Latest release has an invalid ID (%s)]" #l2
   goto-position "\x80"
@@ -484,7 +498,7 @@ define-macro github-finalise-release
   replace-string &cat &rep .git.hub-rnp " " "_" "\\d\\{8\\}" &cat &rep .git.hub-rnp " " "_" #l1
   save-buffer
   set-variable #l9 &reg "/json/ghaj/0/id" ""
-  github-api-json &cat "releases/" &rig #l9 1 "PATCH" "{\"prerelease\":false,\"make_latest\":true}"
+  github-api-json "update release" &cat "releases/" &rig #l9 1 "PATCH" "{\"prerelease\":false,\"make_latest\":true}"
   !iif &not &seq &set #l2 &reg "/json/ghaj/id" "" #l9  -8 ml-write &spr "[Github Release Error: Unexpected release ID returned - %s]" #l2
   !iif &not &seq &set #l2 &reg "/json/ghaj/prerelease" "" "b0"  -8 ml-write &spr "[Github Release Error: Unexpected prerelease setting %s]" #l2
   ; run the build-webpages action to update docs and packages
