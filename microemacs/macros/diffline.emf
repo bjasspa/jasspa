@@ -214,6 +214,7 @@ define-macro diff-lines
   !while &not &seq #l8 $frame-id
     next-frame
   !done
+  exchange-point-and-mark
   goto-position "\x83"
   !if &ban @# 1
     popup-window "*diff-lines*"
