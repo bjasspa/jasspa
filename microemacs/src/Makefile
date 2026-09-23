@@ -45,31 +45,29 @@ ICOSRC	=	ne_logo.ico	me_logo.ico	me_logo_nc.ico	\
 
 MAKEXE	=	build
 MAKSRC	=	build.bat	\
-		aix4.gmk	aix4.mak	\
-		aix5.gmk	aix5.mak	\
-		cygwin.gmk	\
-		darwin.gmk	\
+		aix4cc.mak	aix4gcc.mak	\
+		aix5cc.mak	aix5gcc.mak	\
+		cygwingcc.mak	\
+		darwingcc.mak	\
 		dosdj1.mak	dosdj2.mak	\
-		freebsd.gmk	freebsd.mak	\
-		hpux10.gmk	hpux10.mak	\
-		hpux11.gmk	hpux11.mak	\
-		hpux9.gmk	hpux9.mak	\
-		irix5.gmk	irix5.mak	\
-		irix6.gmk	irix6.mak	\
-		linux2.gmk	linux26.gmk	\
-		mingw.gmk	mingw32.gmk	\
-		openbsd.gmk	\
-		openstep.mak	\
-		osf1.gmk	\
-		sunos5.gmk	sunos5.mak	\
-		suncsw.mak	suncsw86.mak	\
-		sunosx86.gmk	sunosx86.mak	\
-		win32b55.mak	win32bc.mak	\
-		win32sv2.mak	win32v2.mak	\
-		win32sv4.mak	\
-		win32v5.mak	\
-		win32v6.mak	win32v8.mak	\
-		zaurus.gmk
+		freebsdgcc.mak	freebsdcc.mak	\
+		hpux10gcc.mak	hpux10cc.mak	\
+		hpux11gcc.mak	hpux11cc.mak	\
+		hpux9gcc.mak	hpux9cc.mak	\
+		irix5gcc.mak	irix5cc.mak	\
+		irix6gcc.mak	irix6cc.mak	\
+		linuxgcc.mak	\
+		macoscc.mak	\
+		msyswingcc.mak	\
+		openbsdgcc.mak	\
+		openstepcc.mak	\
+		osf1gcc.mak	\
+		suncswcc.mak	suncsw86cc.mak	\
+		sunos5gcc.mak	sunos5cc.mak	\
+		sunosx86gcc.mak	sunosx86cc.mak	\
+		winmingw.mak 	\
+		winmsvc.mak	\
+		zaurusgcc.mak
 
 WIN32S=		win32s/win16.mak		win32s/w32sut32.lib		\
 		win32s/w32sut16.lib		win32s/w32sut.h			\
