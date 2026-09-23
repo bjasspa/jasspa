@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/07/31 18:27:20 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/09/23 15:52:00 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1925,142 +1925,10 @@ HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 .B "THIS NOTICE MUST BE CARRIED IN ALL COPIES OF THE DISTRIBUTION"
 .Me "!7  Contact Information - \*(mS"
 .SH "CONTACT INFORMATION"
-The  following  contact  point may be used to report all  problems and request
-information:
+Use GitHub to report any issues or to make suggestions.
 .IP
-\fCEmail:support@jasspa.com\fR
-.PP
-Also visit our web site's on the Internet:
-.IP
-\fChttp://www.jasspa.com\fR
-.PP
-This page carries the latest information and patches on the distribution.
-.SS "E-Mail Reflector"
-A E-Mail  reflector is available onto which  questions,  suggestions  and code
-fragments  may be posted. This is an  un-moderated  E-Mail  group. The mailing
-list archives may be found at:
-.IP
-\fChttp://groups.yahoo.com/group/jasspa/\fR
-.LP
-These should be referenced before posting any questions, as an answer may have
-already been given. This mailing list is likely to contain the most up-to-date
-information available, as \s-1JASSPA\s0 will use this for any notifications.
-.PP
-If you want to join the E-Mail  reflector  then mail a request,  with an empty
-message body to:
-.IP
-\fCjasspa-subscribe@yahoogroups.com\fR
-.LP
-This  should  add you to the  mailing  list.  If you  want to be  subsequently
-removed from the mailing list then mail an empty message to:
-.IP
-\fCjasspa-unsubscribe@yahoogroups.com\fR
-.LP
-and you will be removed  from the lists. There are  facilities  on the site to
-allow you to receive digests, rather than multiple posts to the group once you
-have subscribed.
-.PP
-The mailing list is hosted by \fBYAHOO! Groups\fR. General help information on
-the mailgroup is available at their site:
-.IP
-\fChttp://groups.yahoo.com\fR
-.SS "Help, FAQ and other queries"
-Please use \fBYAHOO!  Groups\fR  help  information  for any queries  about the
-mailing lists,  \s-1JASSPA\s0  have simply  registered and E-Mail group at the
-site  and  have  not  investigated  fully  all of the  facilities  that may be
-available.
-.PP
-Please check the
-.Hl "Frequently Asked Questions" faq - .
-list and the home page FAQ before you submit any  information  to JASSPA, your
-problem may have already been addressed in these pages.
-.PP
-Every  effort  will be made to deal  with your  problem  as soon as  possible.
-Please send mail with the titles  indicated  below so that it maybe  filtered.
-Unless explicitly  requested (or appropriate) JASSPA will only respond through
-the FAQ  lists  on the  Internet  site.  It will  not be  possible  to  answer
-individual enquiries and questions.
-.PP
-Any sites that wish to mirror the JASSPA  distribution  should  contact JASSPA
-first (use PORT), we will then include details of the mirror on the home page.
-.\".SS "Registering Usage"
-.\"Mail as:
-.\".IP
-.\".na
-.\".nf
-.\"\fITitle:\fR \fBREGISTER\fR
-.\"\fIMessage Body:\fR <your Email Address>
-.\".fi
-.\".ad
-.\".LP
-.\"If you  would  like to  receive  information  about  new  releases  and  other
-.\"informaton  then  simply  register  your  EMail  address.
-.SS "Reporting Problems"
-Mail as:
-.IP
-.na
-.nf
-\fITitle:\fR \fBBUG\fR
-\fIMessage Body:\fR Description of the problem ....
-.fi
-.ad
-.LP
-Problems should be reported such that they may be reproduced,  this may not be
-that easy. The information that is required is:
-.IP "\fBPlatform\fR"
-The host platform which is exhibiting a problem
-.ne 5
-.IP "\fBVersion\fR"
-The version of \*(mS. Use \fCesc-x  about\fR to retrieve the  information, the
-format of the date is \fCyyyy/mm/dd\fR, followed by the host system type. e.g.
-.RS
-.IP
-.C "MicroEmacs 06 - Date 2006/01/10 - sunos"
-.RE
-.IP "\fBDescription\fR"
-A description of the problem. Try to include as much  information as possible.
-Include any  material  necessary  to reproduce  the problem (i.e. macro files,
-text file that demonstrates problem etc).
-.SS "Suggestions"
-Mail as:
-.IP
-.na
-.nf
-\fITitle:\fR \fBSUGGEST\fR
-\fIMessage Body:\fR Your suggestion, macro code fragment etc.
-.fi
-.ad
-.LP
-We always appreciate suggestions, new macro code fragments etc. We do not have
-support for all languages, e.g.  \fBPerl\fR,  \fBLatex\fR...  If you wish have
-developed new macro templates, or games (we get a bit bored with the ones that
-we have developed  ourselves)  then please mail them to  \fCSUGGEST\fR  and we
-will incorporate them into the release.
-.SS "Feedback"
-Mail as:
-.IP
-.na
-.nf
-\fITitle:\fR \fBFEEDBACK\fR
-\fIMessage Body:\fR Your feedback.
-.fi
-.ad
-.LP
-Any general  comments  (which are not  suggestions),  your feelings about this
-version of \*(mS or any other non-technical dialogue.
-.SS "Porting"
-Mail as:
-.IP
-.na
-.nf
-\fITitle:\fR \fBPORT\fR
-\fIMessage Body:\fR Details
-.fi
-.ad
-.LP
-If you wish to port \*(mS to another  platform  and are  willing to  undertake
-responsibility  for  maintenance  of that platform then we would like to here
-from you. Send us some details.
+\fChttps://github.com/bjasspa/jasspa/\fR
+.LP 0
 .NH History - "\*(mS \- History"
 .XI History - -
 .SH "HISTORY"
@@ -2101,9 +1969,217 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 common editor across all working platforms has been achieved!
 .SS "Development History"
 .\"
+.B "Release - 1st September 2026"
+.br
+Release date specified as 2026-09-01.
+.BS
+New \fBmd-view\fR command and \fB@MDView\fR command-line interface.
+.BU
+Improvements to \s-1UNIX\s0 terminal mouse support.
+.BU
+Fixed issues with moving files across different drives.
+.BU
+Fixed ipipe'd command dropping important control characters.
+.BU
+Several other minor fixes and improvements.
+.BE
+.\"
+.B "Release - 1st August 2026"
+.br
+Release date specified as 2026-08-01.
+.BS
+New Arkanoid, Balls and Hearts games.
+.BU
+Added support for \s-1RGB\s0 colours in ipiped terminals.
+.BU
+Many improvements and fixes to ipipe terminal support on all platforms.
+.BU
+Unified several \s-1VCS\s0 commands and improved vcs-* wrapper.
+.BU
+Added bit flag 2 to  \fBsave-some-buffers\fR to stop prompting of buffers with
+no file.
+.BU
+Fixed issues with Cygwin and \s-1MSYS\s0 installer script.
+.BU
+Changed method of hiding cursor to a buffer mode.
+.BU
+Renamed \fBkeep-next-buffer\fR to \fBkeep-buffer\fR and made more general.
+.BU
+Added support for \fB-1\fR copy-region in Unix terminal via \s-1OSC52\s0.
+.BE
+.\"
+.B "Release - 1st July 2026"
+.br
+Release date specified as 2026-07-01.
+.BS
+Added \fBvcs\fR wrapper for all supported \s-1VCS1\s0's.
+.BU
+Auto-convert ipipe shell command \s-1UFT-8\s0 output to \*(mS charset.
+.BU
+Added support for Windows ConPTY pseudo terminal.
+.BU
+Added base support for ipipe colours via meth format.
+.BU
+Fixed numerous ipipe \s-1PTY\s0 issues.
+.BE
+.\"
+.B "Release - 1st June 2026"
+.br
+Release date specified as 2026-06-01.
+.BS
+New native MacOS \s-1GUI\s0 (no dependency on XQuartz).
+.BU
+Added Windows Cygwin platform to release.
+.BU
+Added simple update available check to main Help menu.
+.BU
+Fixed and standardised multi-window message-line handling.
+.BU
+Improve Unix install/update script to handle non-standard directories.
+.BE
+.\"
+.B "Release - 1st May 2026"
+.br
+Release date specified as 2026-05-01.
+.BS
+Added case  sensitive  order  option to directory  major mode and made default
+case-insensitive on all platforms.
+.BU
+Improved describe-word including use of \s-1OSD\s0 dialog interface for spelling.
+.BU
+Fixed crash caused by handling of absolute pathed symbolic links.
+.BU
+Fixed Unix and Cygwin group file permission issues.
+.BU
+Fixed X window sizing issue.
+.BU
+Several other minor fixes and optimisations.
+.BE
+.\"
+.B "Release - 1st April 2026"
+.br
+Release date specified as 2026-04-01.
+.PP
+\fBNote\fR:  Support for homebrew based  installation has been dropped, please
+uninstall  the  homebrew  version  and use one of the other  install  options,
+preferably the \fCmicroemacs-install.sh\fR script.
+.BS
+Improved installer scripts method of identifying current release.
+.BU
+Changed \fBfile-exec\fR, \fBfile-format\fR and \fBfile-lint\fR key bindings to
+avoid conflict.
+.BU
+Fixed missing Windows \s-1MSYS\s0 setup macro file and tags for Lua.
+.BU
+Fixed conflicts with \fIset-char-mask\fR 1,2,3 and 4 word classes.
+.BE
+.\"
+.B "Release - 1st March 2026"
+.br
+Release date specified as 2026-03-01.
+.BS
+New language support for Erlang and Haxe.
+.BU
+Added support for \s-1SVG\s0 to \s-1XML\s0 major-mode.
+.BU
+Improvements to Fusion major-mode.
+.BU
+Improvements to describe-word, including support for \fCdict:// URLs\fR.
+.BU
+Improved embedding of \fBdiff-lines\fR in diff \fBmajor-mode\fR buffers.
+.BU
+Improved  \fBfile-exec\fR  and added  support  for  executing  \s-1SQL\s0  via
+MySql/MariaDB and \s-1SQL\s0 Server.
+.BU
+Fixed build conflicts  between  \fItermcap\fR  and \fIXft\fR  colors and other
+minor build issues.
+.BE
+.\"
+.B "Release - 1st February 2026"
+.br
+Release date specified as 2026-02-01.
+.BS
+Updated support for platform Solaris x86
+.BU
+Changed  installer scripts to fix issue #26 which failed to obtain the version
+number of latest release.
+.BU
+Fixed issues building NanoEmacs (ne).
+.BU
+Improvements to regex replace string format.
+.BU
+Minor fixes to \s-1MD\s0, python, fusion and kotlin file support.
+.BU
+Clean up format issues in documentation.
+.BE
+.\"
+.B "Release - 1st January 2026"
+.br
+Release date specified as 2026-01-01.
+.PP
+\fBNote\fR:  For  this  release,  any  calls  to  \fBadd-file-hook\fR  must be
+migrated. See  \fBmajor-mode\fR(2)  documentation.  It is  recommended  to run
+\fBzfile-reset\fR if you have used \fBfind-zfile\fR.
+.BS
+New major-mode command.
+.BU
+New languages PlantUML, Groovy, Fusion, Typescript and Scala.
+.BU
+Improvement and fixes in Markdown, Python (py-doc!), \s-1TCL\s0 and C#.
+.BU
+Improved Info including \fCme[cw] @info ...\fR command-line support.
+.BU
+Improved \fBfind-zfile\fR to support single-compressed files.
+.BU
+Changed Windows rendering to use \fIWChar\fR functions.
+.BU
+Added base support for \fCdict://...\fR URLs.
+.BE
+.\"
+.B "Release - 1st December 2025"
+.br
+Release date specified as 2025-12-01.
+.BS
+Added build option \fB-dasan\fR (\s-1ASAN\s0 support) for Microsoft \s-1VC\s0.
+.BU
+Fixed several memory issues particularly with re-sizing dialogs.
+.BU
+Added automatic mapping of \fC\\x7f\fR to backspace for \s-1UNIX\s0 consoles.
+.BU
+Added support for http keep-alive timeout.
+.BU
+Implemented git-setup and documented \s-1GIT\s0 interface.
+.BU
+Improved generation of tags.
+.BU
+Other minor fixes and improvements.
+.BE
+.\"
+.B "Release - 1st November 2025"
+.br
+Release date specified as 2025-11-01.
+.BS
+Added  support for accented  Letter input on Unix X platforms  with 'dead key'
+keyboards.
+.BU
+Change Windows console to use Unicode output with extended char set support.
+.BU
+Support for Haskell language.
+.BU
+Support for Tcl manual pages markup
+.BU
+Improved MacOS application launcher, setting user environment correctly.
+.BU
+Support for ISO-8859-16 encoding.
+.BU
+Fixed install issues with MacOS apple chips (M1 thru M4).
+.BU
+Fixed user-setup font selection dialog issues on Unix X.
+.BE
+.\"
 .B "Patch Release - 11th October 2009"
 .br
-Release date specified as 2009/10/11.
+Release date specified as 2009-10-11.
 .BS
 [091011] Patch release of fixes; release date specified as 2009/10/11.
 .BU
@@ -2121,7 +2197,7 @@ arithmetic and undo structure alignment.
 .\"
 .B "Patch Release - 3rd October 2009"
 .br
-Release date specified as 2009/10/03.
+Release date specified as 2009-10-03.
 .BS
 [091003]  Fixed  documentation  for  crlf(2m)  which is replaced by cr(2m) and
 lf(2m).
@@ -2143,7 +2219,7 @@ loaded.
 .\"
 .B "Patch Release - September 2009"
 .br
-Release date specified as 2009/09/26.
+Release date specified as 2009-09-26.
 .BS
 [090926] Fixed Linux X-Window size issue.
 .BU
@@ -2154,7 +2230,7 @@ Release date specified as 2009/09/26.
 .\"
 .B "10th Release - September 2009"
 .br
-Release date specified as 2009/09/09.
+Release date specified as 2009-09-09.
 .BS
 [090903]
 .Ht file-browser 3
@@ -2520,7 +2596,7 @@ chasing a symbolic link.
 .\"
 .B "9th Release / Patch 1 / Build 2 - November 2006"
 .br
-Release date specified as 2006/09/09.
+Release date specified as 2006-09-09.
 .BS
 [061105] JASSPA MicroEmacs 20060909 patch - build 2.
 .BU
@@ -2552,7 +2628,7 @@ Schofield for identifying this problem.
 .\"
 .B "9th Release - September 2006"
 .br
-Release date specified as 2006/09/09.
+Release date specified as 2006-09-09.
 .PP
 User perspective summary of changes
 .BS
@@ -3786,7 +3862,7 @@ for \fBne\ -R\fR option change.
 .\"
 .B "8th Release - May 2005"
 .br
-Release date specified as 2005/05/05.
+Release date specified as 2005-05-05.
 .BS
 [050508]  JASSPA  MicroEmacs  8th  release - final.  Core and  macro  versions
 20050505.
