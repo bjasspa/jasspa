@@ -16,8 +16,7 @@ include $(TOPDIR)/etc/makeinc
 # Basic macros to release
 #
 EMFS=	user.emf myipipe.emf bol_eol.emf \
-	sunkeys.emf cygkeys.emf \
-	hkgroovy.emf
+	sunkeys.emf cygkeys.emf
 #
 # Windows registry files.
 #
