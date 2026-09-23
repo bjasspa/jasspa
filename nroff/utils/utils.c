@@ -10,7 +10,7 @@
  *  Revision      : $Revision: 1.2 $
  *  Date          : $Date: 2004-01-06 00:52:20 $
  *  Author        : $Author: jon $
- *  Last Modified : <040104.0023>
+ *  Last Modified : <260228.1614>
  *
  *  Description	
  *
@@ -44,7 +44,7 @@
 
 #define MODULE_NAME     "Text Processing Utilities"
 #define MODULE_VERSION  "2.2.1b"
-
+#define MAX_LINE_LENGTH 4096            /* Length of character buffer */
 /*
  * Buffering S/W
  */
@@ -107,14 +107,15 @@ char *bufChr (char *h, char c)
 
 char *bufFormat (char *h, char *format, ... )
 {
-    char buffer [1024];
+    char buffer [MAX_LINE_LENGTH];
 
     va_list ap;
     va_start(ap, format);
-    vsprintf(buffer, format, ap);
+    /* int len = */ vsnprintf(buffer, sizeof (buffer), format, ap);
+    /* if (len >= sizeof (buffer)) exit (1); */
     va_end(ap);
+    
     return (bufStr (h, buffer));
-
 }
 
 char *bufFree (char *h)
