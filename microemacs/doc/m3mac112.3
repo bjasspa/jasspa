@@ -1,0 +1,149 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac112.3,v 1.1 2026/09/24 00:00:00 daniel Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH json-beautify 3
+.XI json-beautify - "Reformat the buffer as indented JSON"
+.XI json-compact - "Remove all formatting from the JSON buffer"
+.XI json-validate - "Check the buffer holds well formed JSON"
+.XI json-show-path - "Report the path of the JSON value at the cursor"
+.XI json-context - "Toggle the sticky JSON parent context window"
+.SH NAME
+.Me "|json-beautify"
+json-beautify \- Reformat the buffer as indented JSON
+.br
+.Me "|json-compact"
+json-compact \- Remove all formatting from the JSON buffer
+.br
+.Me "|json-validate"
+json-validate \- Check the buffer holds well formed JSON
+.br
+.Me "|json-show-path"
+json-show-path \- Report the path of the JSON value at the cursor
+.br
+.Me "|json-context"
+json-context \- Toggle the sticky JSON parent context window
+.Me $a
+.SH SYNOPSIS
+.na
+\fBjson-beautify\fR
+.br
+\fBjson-compact\fR
+.br
+\fBjson-validate\fR
+.br
+\fBjson-show-path\fR
+.br
+\fBjson-context\fR
+.ad
+.SH DESCRIPTION
+.B json-beautify
+reformats the current buffer as indented JSON, one value to a line, with the
+indentation  step taken from  \fB%json-indent-width\fR  (2 by default).  Empty
+objects and arrays are left compact as \fC{}\fR and \fC[]\fR.
+.PP
+.B json-compact
+performs the reverse, removing all white space that lies outside of a string
+so that the whole document is reduced to a single line.
+.PP
+Both commands are string aware, matching either a complete string literal or a
+single structural  character, so braces, brackets, commas and colons that occur
+inside a string are never mistaken for structure. Both run
+.B json-validate
+first and make no change at all if the buffer is not well formed.  Both also
+apply the JSON hilighting scheme to the buffer, so a scratch buffer that is not
+attached to a \fC.json\fR file is coloured like one.
+.PP
+.B json-validate
+checks that the buffer holds well formed JSON without changing it. If a problem
+is found the cursor is moved to the first character of the offending token and
+the reason is reported on the message line; the buffer is left untouched.
+.PP
+.B json-show-path
+reports the path of the value at the cursor on the message line, for example
+\fCservers / { / config / tls\fR.
+.PP
+.B json-context
+toggles a sticky window at the top of the frame which shows the parent lines of
+the value the cursor is currently inside, in the manner of a folded outline:
+.Me $emf-scheme
+.CS
+{
+  "servers": [
+    {
+      "config": {
+        "tls": {
+.CE 0
+.Me $ehf-scheme
+The window is refreshed when the cursor comes to rest, and it grows and shrinks
+to the number of levels being shown, up to a limit of  \fB%json-context-depth\fR
+(8 by default); when the nesting is deeper than that the innermost levels are
+shown.  The main window is scrolled by the same amount in the opposite direction
+as the context window is resized, so the text does not appear to move.
+.PP
+While the context window is open \fC^G\fR closes it and then performs its usual
+abort.  Issuing
+.B json-context
+a second time also closes it.
+.SH DIAGNOSTICS
+.IP "\fC[JSON line \fIl\fC col \fIc\fC: \fIreason\fC]\fR"
+The buffer is not well formed JSON. The cursor is left on the offending token.
+The reason is one of:
+.RS
+.IP "\fCexpected a name or '}' but found \fIx\fR"
+An object member must start with a quoted name.
+.IP "\fCexpected ':' after the name but found \fIx\fR"
+A name and its value must be separated by a colon.
+.IP "\fCexpected a value but found \fIx\fR"
+A value was required at this point.
+.IP "\fCexpected ',' or a closing bracket but found \fIx\fR"
+Two values follow one another with no separator between them.
+.IP "\fCtrailing ',' before '}'\fR, \fCtrailing ',' before ']'\fR"
+JSON does not permit a separator after the last member.
+.IP "\fC'}' closes an array that was opened with '['\fR"
+The closing bracket does not match the container it closes.
+.IP "\fCunexpected \fIx\fC after the end of the JSON value\fR"
+Text follows the end of the document.
+.IP "\fCunterminated string - no closing quote on this line\fR"
+A string was opened but never closed.
+.IP "\fC'\fIx\fC' is not a valid number\fR"
+An unquoted value is not a well formed number.
+.IP "\fCreached the end with \fIn\fC container(s) still open\fR"
+The document ends before every object and array has been closed.
+.IP "\fCno JSON value found\fR"
+The buffer is empty.
+.RE
+.IP "\fC[JSON is valid]\fR"
+.B json-validate
+found no problem.
+.IP "\fC[JSON context needs a beautified buffer - run json-beautify first]\fR"
+.B json-context
+derives the nesting from the leading  indentation of each line, so it cannot be
+used on a document that is still on a single line.
+.SH NOTES
+These are macros defined in \fCjsonview.emf\fR.
+.PP
+.B json-context
+and
+.B json-show-path
+work from the indentation rather than by parsing, which makes them cheap enough
+to run as the cursor moves, but does require the buffer to have been beautified
+first.
+.PP
+The  supporting  macro  \fBjson-path\fR  is private, but may be called from user
+macros to obtain the position of the cursor within the document. It sets
+\fB%json-path\fR to the readable  path, \fB%json-lines\fR  to the parent  lines
+themselves and  \fB%json-count\fR  to the number of levels, leaving the buffer
+and the cursor untouched.
+.SH "SEE ALSO"
+.na
+.Ht hilight 2 ,
+.Ht major-mode 2 ,
+.Ht clean 3 .
+.ad
+.FH
