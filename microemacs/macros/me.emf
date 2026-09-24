@@ -51,6 +51,7 @@ define-macro-file password password-to-phonic generate-password insert-password
 define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
+define-macro-file jsonview json-beautify json-compact json-path json-show-path json-context json-validate
 define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file charsutl buffer-is-utf8 change-buffer-charset
 define-macro-file zfile find-zfile zfile-setup zfile-reset
