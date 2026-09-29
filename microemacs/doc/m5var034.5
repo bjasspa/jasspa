@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m5var034.5,v 2.6 2026/02/17 19:39:09 jon Exp $
+.Id $Id: m5var034.5,v 2.6 2026/09/29 15:44:39 jon Exp $
 .Im MicroEmacs variable|macrodevelop
 .so me.tni
 .TH $platform 5
@@ -49,6 +49,14 @@ All Silicon Graphics (\s-1SGI\s0) \s-1IRIX\s0 platforms 4.x, 5.x, 6.x.
 .TP
 "\fBlinux\fR"
 All \s-1LINUX\s0 \s-1O/S\s0.
+.TP
+"\fBmacos\fR"
+All Apple \s-1MacOS\s0 \s-1O/S\s0.
+.IP
+\fBNote:\fR  a native  window  build (as  opposed to a X-Window  build) may be
+differentiated by testing the 
+.Ht &opt 4
+function for \fCnwn\fR .
 .TP
 "\fBsunos\fR"
 All Sun's with \s-1SUNOS\s0 \s-1O/S\s0.

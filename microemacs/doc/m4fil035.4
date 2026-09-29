@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil035.4,v 1.4 2026/01/17 22:28:33 jon Exp $
+.Id $Id: m4fil035.4,v 1.4 2026/09/29 15:33:51 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &opt 4
@@ -105,6 +105,9 @@ Buffer narrowing (see
 .IP "nex - MEOPT_FILENEXT"
 Location list stepping (see
 .Ht get-next-line 2 ).
+.IP "nwn - _ME_MACOSNW"
+\fBMacOS\fR native window support. See also 
+.Ht $platform 5 .
 .IP "osd - MEOPT_OSD"
 On Screen Display GUI support (see
 .Ht osd 2 ).
@@ -150,6 +153,8 @@ Word-processor style commands like
 .Ht fill-paragraph 2
 (see
 .Ht forward-paragraph 2 ).
+.IP "xft - MEOPT_XFT"
+X-Windows \fBXft\fR font library support for anti-aliased font rendering.
 .SH EXAMPLE
 The following  example  checks for URL support and if not available it pops up
 an error:
@@ -171,6 +176,7 @@ the libraries.
 .SH "SEE ALSO"
 .na
 .Ht about 2 ,
+.Ht $platform 5 ,
 .Hl "Building \*(mS" Build 2 .
 .ad
 .FH
