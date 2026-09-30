@@ -11,15 +11,14 @@
 
 !iif &not &exi %json-indent-width   set-variable %json-indent-width 2
 !iif &not &exi %json-context-depth  set-variable %json-context-depth 8
+!iif &not &exi %json-context-pwin  set-variable %json-context-pwin "|"
+!iif &not &exi %json-context-owin  set-variable %json-context-owin "|"
+set-variable %json-context-walk 0
 set-variable %json-spaces "                                                                                                                                "
+set-variable %json-spaces &cat %json-spaces %json-spaces
+set-variable %json-spaces &cat %json-spaces %json-spaces
+set-variable %json-spaces &cat %json-spaces %json-spaces
 set-variable %json-token "\"\\([^\"\\\\\n]\\|\\\\.\\)*\"\\|\\([]{},:[]\\)\\|\\(\"\\)"
-0 define-macro json-indent-string
-  set-variable #l0 &mul @1 %json-indent-width
-  !while &and &gre #l0 &len %json-spaces &les &len %json-spaces 1024
-    set-variable %json-spaces &cat %json-spaces %json-spaces
-  !done
-  set-variable #p9 &lef %json-spaces #l0
-!emacro
 0 define-macro json-join-fits
   set-variable #l0 $window-col
   forward-char
@@ -33,7 +32,7 @@ set-variable %json-token "\"\\([^\"\\\\\n]\\|\\\\.\\)*\"\\|\\([]{},:[]\\)\\|\\(\
     !iif &equ $window-line $window-eline  !break
     !iif &seq @wc ""  !break
     !iif &and &equ &add $window-line 1 $window-eline &seq @wc "\n"  !break
-    !iif &not &sin @wc " \t\n"  !break
+    !iif &not &sin @wc " \t\r\n"  !break
     set-variable #l9 1
     !iif &seq @wc "\n"  json-join-fits
     !if #l9
@@ -46,14 +45,22 @@ set-variable %json-token "\"\\([^\"\\\\\n]\\|\\\\.\\)*\"\\|\\([]{},:[]\\)\\|\\(\
   !done
 !emacro
 0 define-macro json-insert-break
-  set-variable #p5 1
-  insert-string &cat "\n" @1
-  set-variable #l1 $window-col
-  set-variable $line-flags &bor $line-flags 16
-  backward-line
-  set-variable $line-flags &band $line-flags &bnot 16
-  forward-line
-  set-variable $window-col #l1
+  set-variable #l0 &band $line-flags 16
+  insert-string "\n"
+  !if #l0
+    set-variable #p5 1
+    set-variable $line-flags &bor $line-flags 16
+    backward-line
+    set-variable $line-flags &band $line-flags &bnot 16
+    forward-line
+    beginning-of-line
+  !endif
+  set-variable #l1 &mul @1 %json-indent-width
+  !while &gre #l1 1024
+    insert-string %json-spaces
+    set-variable #l1 &sub #l1 1024
+  !done
+  !iif #l1  insert-string &lef %json-spaces #l1
 !emacro
 0 define-macro json-next-char
   !iif &and &seq @wc "\n" &band $line-flags 16  forward-char
@@ -112,7 +119,7 @@ set-variable %json-token "\"\\([^\"\\\\\n]\\|\\\\.\\)*\"\\|\\([]{},:[]\\)\\|\\(\
     !force backward-char
     !iif &not $status  !break
     !iif &seq @wc ""  !break
-    !if &sin @wc " \t\n"
+    !if &sin @wc " \t\r\n"
       set-variable #l9 1
       !iif &seq @wc "\n"  json-join-fits
       !if #l9
@@ -132,13 +139,23 @@ set-variable %json-token "\"\\([^\"\\\\\n]\\|\\\\.\\)*\"\\|\\([]{},:[]\\)\\|\\(\
     forward-char
   !done
 !emacro
-set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\\u[0-9a-fA-F]\\{4\\}\\)*\"\\)\\|\\([]{},:[]\\)\\|\\([^][{},:[ \t\n\"]+\\)\\|\\(\"\\)"
+set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\\u[0-9a-fA-F]\\{4\\}\\)*\"\\)\\|\\([]{},:[]\\)\\|\\([^][{},:[ \t\r\n\"]+\\)\\|\\(\"\\)"
 0 define-macro json-stack-top
   !if &seq @1 ""
     set-variable #p9 ""
   !else
     set-variable #p9 &rig @1 &sub &len @1 1
   !endif
+!emacro
+0 define-macro json-stack-save
+  set-variable %json-stack-n &add %json-stack-n 1
+  set-variable &ind &spr "%%json-stack%d" %json-stack-n &lef #p0 1000
+  set-variable #p0 &rig #p0 1000
+!emacro
+0 define-macro json-stack-load
+  !iif &not %json-stack-n  !return
+  set-variable #p0 &ind &spr "%%json-stack%d" %json-stack-n
+  set-variable %json-stack-n &sub %json-stack-n 1
 !emacro
 0 define-macro json-check-literal
   set-variable #p9 ""
@@ -152,6 +169,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
 !emacro
 0 define-macro json-validate-buffer
   set-position "\x89"
+  set-variable %json-stack-n 0
   set-variable #l0 ""
   set-variable #l1 "v"
   set-variable #l8 ""
@@ -179,7 +197,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
         !repeat
           !force forward-char
           !iif &not $status  !break
-          !force -1 search-forward "^[^][{},:[ \t\n\"]+"
+          !force -1 search-forward "^[^][{},:[ \t\r\n\"]+"
           !iif &not $status  !break
           set-variable #l3 &cat #l3 @s0
         !until &not &and &seq @wc "\n" &band $line-flags 16
@@ -210,6 +228,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
         set-variable #l1 "c"
       !elif &seq #l3 "}"
         set-variable #l0 &lef #l0 &sub &len #l0 1
+        !iif &seq #l0 ""  json-stack-load
         set-variable #l1 "a"
       !else
         set-variable #l8 &spr "expected a name or '}' but found %s" #l3
@@ -237,13 +256,16 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
         !iif &seq #l8 ""  set-variable #l1 "a"
       !elif &seq #l3 "{"
         set-variable #l0 &cat #l0 "{"
+        !iif &gre &len #l0 1000  json-stack-save
         set-variable #l1 "n"
       !elif &seq #l3 "["
         set-variable #l0 &cat #l0 "["
+        !iif &gre &len #l0 1000  json-stack-save
         set-variable #l1 "e"
       !elif &and &seq #l3 "]" &seq #l1 "e"
         !if &seq #l4 "["
           set-variable #l0 &lef #l0 &sub &len #l0 1
+          !iif &seq #l0 ""  json-stack-load
           set-variable #l1 "a"
         !else
           set-variable #l8 "']' has no matching '['"
@@ -265,6 +287,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
       !elif &seq #l3 "}"
         !if &seq #l4 "{"
           set-variable #l0 &lef #l0 &sub &len #l0 1
+          !iif &seq #l0 ""  json-stack-load
           set-variable #l1 "a"
         !else
           set-variable #l8 "'}' closes an array that was opened with '['"
@@ -272,6 +295,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
       !elif &seq #l3 "]"
         !if &seq #l4 "["
           set-variable #l0 &lef #l0 &sub &len #l0 1
+          !iif &seq #l0 ""  json-stack-load
           set-variable #l1 "a"
         !else
           set-variable #l8 "']' closes an object that was opened with '{'"
@@ -294,7 +318,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
   !elif &not &seq #l0 ""
     end-of-buffer
     json-stack-top #l0
-    set-variable #l8 &spr "reached the end with %s container(s) still open - missing '%s'" &len #l0 &con &seq #l9 "[" "]" "}"
+    set-variable #l8 &spr "reached the end with %s container(s) still open - missing '%s'" &add &len #l0 &mul %json-stack-n 1000 &con &seq #l9 "[" "]" "}"
   !elif &not &seq #l1 "a"
     end-of-buffer
     set-variable #l8 "reached the end part way through a value"
@@ -307,7 +331,7 @@ set-variable %json-vtoken "\\(\"\\([^\"\\\\\x01-\x1f]\\|\\\\[\"\\\\/bfnrt]\\|\\\
   !endif
   set-variable #p9 #l8
 !emacro
-define-macro json-validate
+0 define-macro json-validate-current
   !iif &bmo "narrow"  !force 1 narrow-buffer
   set-variable #l0 &bmo "magic"
   !iif &not #l0  1 buffer-mode "magic"
@@ -322,7 +346,7 @@ define-macro json-validate
   !iif &not &seq $buffer-mask "luh1"  set-variable $buffer-mask "luh1"
 !emacro
 0 define-macro json-format-buffer
-  json-validate
+  json-validate-current
   set-variable #p9 #l9
   !iif &not &seq #l9 ""  !return
   set-variable :json-line $window-line
@@ -357,10 +381,7 @@ define-macro json-validate
     !if &seq #l4 ":"
       insert-string " "
     !elif &and &sin #l2 "{[" &sin #l4 ",[{"
-      json-indent-string #l1
-      set-variable #l6 &band $line-flags 16
-      !iif #l6  json-insert-break #l9
-      !iif &not #l6  insert-string &cat "\n" #l9
+      json-insert-break #l1
     !endif
     !if &sin #l2 "]}"
       set-variable #l1 &sub #l1 1
@@ -368,10 +389,7 @@ define-macro json-validate
       set-variable #l3 #l9
       !iif &seq #l3 ""  set-variable #l3 "~"
       !if &not &sin #l3 "{["
-        json-indent-string #l1
-        set-variable #l6 &band $line-flags 16
-        !iif #l6  json-insert-break #l9
-        !iif &not #l6  insert-string &cat "\n" #l9
+        json-insert-break #l1
       !endif
     !endif
     forward-char
@@ -379,16 +397,10 @@ define-macro json-validate
     !if &sin #l2 "{["
       set-variable #l1 &add #l1 1
       !if &not &sin @wc "]}"
-        json-indent-string #l1
-        set-variable #l6 &band $line-flags 16
-        !iif #l6  json-insert-break #l9
-        !iif &not #l6  insert-string &cat "\n" #l9
+        json-insert-break #l1
       !endif
     !elif &seq #l2 ","
-      json-indent-string #l1
-      set-variable #l6 &band $line-flags 16
-      !iif #l6  json-insert-break #l9
-      !iif &not #l6  insert-string &cat "\n" #l9
+      json-insert-break #l1
     !elif &seq #l2 ":"
       insert-string " "
     !endif
@@ -421,7 +433,7 @@ define-macro json-validate
   !iif &not #l8  -1 buffer-mode "magic"
 !emacro
 0 define-macro json-compact-buffer
-  json-validate
+  json-validate-current
   set-variable #p9 #l9
   !iif &not &seq #l9 ""  !return
   set-variable #l8 &bmo "magic"
@@ -565,14 +577,15 @@ define-macro json-validate
       set-variable #l4 $window-col
     !endif
     json-sniff 1
+    !iif &and &band #l0 6 &or &les #l1 #l3 &les #l2 #l4  set-variable #l9 1
     !if #l9
-      !if &and #l0 #l6
+      set-variable #p3 #l1
+      set-variable #p4 #l2
+      set-variable #p5 #l3
+      set-variable #p6 #l4
+      !if &and &equ &band #l0 5 1 #l6
         set-variable #p9 "r"
         set-variable #p8 "region replaced"
-        set-variable #p3 #l1
-        set-variable #p4 #l2
-        set-variable #p5 #l3
-        set-variable #p6 #l4
         set-variable $window-line #l1
         json-line-start
         set-variable #p7 ""
@@ -598,7 +611,7 @@ define-macro json-validate
     !iif &seq $buffer-major-mode "json"  set-variable #l9 1
   !endif
   !if #l9
-    !if #l6
+    !if &and &or #l6 &band #l0 2 &not &band #l0 4
       goto-position "\x8a"
       !return
     !endif
@@ -625,18 +638,24 @@ define-macro json-validate
   ml-write "[JSON copying the result back...]"
   set-variable #p9 ""
   set-variable #l8 "|"
-  set-variable #l2 0
   beginning-of-buffer
   !while &les $window-line $window-eline
-    beginning-of-line
-    !iif &and #l2 &len #p7  insert-string #p7
-    set-variable #l2 &not &band $line-flags 16
-    !iif &not #l2  set-variable #l8 &spr "%s%d|" #l8 &sub $window-line 1
+    !iif &band $line-flags 16  set-variable #l8 &spr "%s%d|" #l8 &sub $window-line 1
     forward-line
   !done
   !if &gre &len #l8 1800
     set-variable #p9 "too many split lines to copy back, the result is in *json-format*"
     !return
+  !endif
+  !if &len #p7
+    set-variable #l2 0
+    beginning-of-buffer
+    !while &les $window-line $window-eline
+      beginning-of-line
+      !iif #l2  insert-string #p7
+      set-variable #l2 &not &band $line-flags 16
+      forward-line
+    !done
   !endif
   set-variable #l1 &sub $window-eline 1
   beginning-of-buffer
@@ -679,6 +698,12 @@ define-macro json-validate
     ml-write "[No JSON found - select a region, copy some JSON or open a .json file]"
     !return
   !endif
+  set-variable #l8 @3
+  !if &not &seq #l8 ""
+    set-variable #l9 @4
+    json-pre-process #l8 #l9
+    set-variable #l2 &cond &seq #l2 "" &spr "%d replaced" #l9 &spr "%s, %d replaced" #l2 #l9
+  !endif
   !if &not &seq #l1 "b"
     !iif &not &seq $buffer-major-mode "json"  !force major-mode "json"
   !endif
@@ -715,13 +740,109 @@ define-macro json-validate
     ml-write &spr "[JSON %s - %s]" #l3 #l2
   !endif
 !emacro
+0 define-macro json-pre-ask
+  set-variable #p1 @ml05 "JSON pre-process regex"
+  set-variable #p2 ""
+  !iif &seq #p1 ""  !return
+  set-variable #p2 @ml05 &spr "Replace [%s] with" #p1
+!emacro
+0 define-macro json-pre-process
+  set-variable #l0 &bmo "magic"
+  !iif &not #l0  1 buffer-mode "magic"
+  beginning-of-buffer
+  !force replace-string @1 @2
+  set-variable #l1 &cond $status &lget $result 1 0
+  !iif &not #l0  -1 buffer-mode "magic"
+  beginning-of-buffer
+  set-variable #p9 #l1
+!emacro
 define-macro json-format
   set-variable #l0 @?
-  json-run #l0 "format"
+  set-variable #l1 ""
+  set-variable #l2 ""
+  !if &and @? &band @# 2
+    !force set-variable #l1 @1
+    !if $status
+      set-variable #l2 @2
+    !else
+      json-pre-ask
+    !endif
+    set-variable #l0 &cond &seq #l1 "" 0 4
+  !endif
+  json-run #l0 "format" #l1 #l2
 !emacro
 define-macro json-compact
   set-variable #l0 @?
-  json-run #l0 "compact"
+  set-variable #l1 ""
+  set-variable #l2 ""
+  !if &and @? &band @# 2
+    !force set-variable #l1 @1
+    !if $status
+      set-variable #l2 @2
+    !else
+      json-pre-ask
+    !endif
+    set-variable #l0 &cond &seq #l1 "" 0 4
+  !endif
+  json-run #l0 "compact" #l1 #l2
+!emacro
+define-macro json-validate
+  set-variable #l0 2
+  set-variable #l1 ""
+  set-variable #l2 ""
+  !if &and @? &band @# 2
+    !force set-variable #l1 @1
+    !if $status
+      set-variable #l2 @2
+    !else
+      json-pre-ask
+    !endif
+    !iif &not &seq #l1 ""  set-variable #l0 6
+  !endif
+  set-variable #l3 ""
+  json-source #l0
+  set-variable #l0 #l2
+  set-variable #l2 #l8
+  set-variable #l8 #l1
+  set-variable #l1 #l9
+  !if &seq #l1 ""
+    ml-write "[No JSON found - select a region, copy some JSON or open a .json file]"
+    !return
+  !endif
+  !if &not &seq #l8 ""
+    json-pre-process #l8 #l0
+    set-variable #l2 &cond &seq #l2 "" &spr "%d replaced" #l9 &spr "%s, %d replaced" #l2 #l9
+    set-variable #l3 ""
+  !endif
+  !if &not &seq #l1 "b"
+    !iif &not &seq $buffer-major-mode "json"  !force major-mode "json"
+  !endif
+  json-validate-current
+  set-variable #l0 #l9
+  !if &seq #l1 "b"
+    !iif &and &seq #l0 "" &not &seq #l2 ""  ml-write &spr "[JSON is valid - %s]" #l2
+  !elif &seq #l0 ""
+    goto-position "\x8a"
+    -1 show-region
+    ml-write &spr "[JSON is valid - %s]" #l2
+  !elif &seq #l3 ""
+    goto-position "\x8a"
+    popup-window "*json-format*"
+    ml-write &spr "[JSON line %s col %s: %s]" $window-line $window-col #l0
+  !else
+    set-variable #l7 &add #l3 &sub $window-line 1
+    set-variable #l8 &cond &equ $window-line 1 &add #l4 $window-col $window-col
+    !if &or &gre #l7 #l5 &and &equ #l7 #l5 &gre #l8 #l6
+      set-variable #l7 #l5
+      set-variable #l8 #l6
+    !endif
+    goto-position "\x8a"
+    -1 show-region
+    set-variable $window-line #l7
+    set-variable $window-col #l8
+    ml-write &spr "[JSON line %s col %s: %s]" $window-line $window-col #l0
+  !endif
+  set-variable #p9 #l0
 !emacro
 0 define-macro json-line-label
   !if &xse @1 "^[ \t]*\"\\(\\([^\"\\\\]\\|\\\\.\\)*\\)\"[ \t]*:.*$"
@@ -796,7 +917,7 @@ define-macro json-compact
       set-variable #p9 1
       !return
     !endif
-    next-window
+    3 next-window
     set-variable #l1 &add #l1 1
     !iif &equ $window-id #l0  !break
     !iif &gre #l1 32  !break
@@ -840,24 +961,130 @@ define-macro json-compact
   1 screen-update
 !emacro
 0 define-macro json-context-idle
-  !iif &not &seq :json-context "1"  !return
+  !if &not &seq :json-context "1"
+    json-context-detach
+    !return
+  !endif
+  set-variable %json-context-walk 1
   !force json-context-render
+  set-variable %json-context-walk 0
 !emacro
 0 define-macro json-context-abort
   !iif &seq :json-context "1"  json-context
   abort-command
 !emacro
+0 define-macro json-context-schedule
+  !iif &not %json-context-walk  1 create-callback json-context-sweep
+!emacro
+0 define-macro json-context-ehook
+  json-context-schedule
+  !iif &and &exi :json-context-ehook &not &seq :json-context-ehook ""  execute-named-command :json-context-ehook
+!emacro
+0 define-macro json-context-dhook
+  json-context-schedule
+  !iif &and &exi :json-context-dhook &not &seq :json-context-dhook ""  execute-named-command :json-context-dhook
+!emacro
+0 define-macro json-context-detach
+  !iif &seq $buffer-ehook "json-context-ehook"  set-variable $buffer-ehook &cond &exi :json-context-ehook :json-context-ehook ""
+  !iif &seq $buffer-dhook "json-context-dhook"  set-variable $buffer-dhook &cond &exi :json-context-dhook :json-context-dhook ""
+  !iif &exi :json-context-ehook  unset-variable :json-context-ehook
+  !iif &exi :json-context-dhook  unset-variable :json-context-dhook
+  !iif &seq &cbin "idle-pick" "json-context-idle"  !force buffer-unbind-key "idle-pick"
+  !iif &seq &cbin "C-g" "json-context-abort"  !force buffer-unbind-key "C-g"
+!emacro
+0 define-macro json-context-live
+  set-variable #p9 0
+  !iif &seq @1 ""  !return
+  !iif &not &exi &spr ":%s:" @1  !return
+  !iif &not &seq &ind &spr ":%s:json-context" @1 "1"  !return
+  !iif &not &lfind @2 @1  !return
+  !iif &not &lfind @2 &spr "*json-context:%s*" @1  !return
+  set-variable #p9 1
+!emacro
+0 define-macro json-context-drop-owner
+  !iif &seq @1 ""  !return
+  !iif &not &exi &spr ":%s:" @1  !return
+  !iif &seq &ind &spr ":%s:json-context" @1 "1"  set-variable &ind &spr ":%s:json-context" @1 "0"
+!emacro
+0 define-macro json-context-sweep-run
+  set-variable #l0 $window-id
+  set-variable #l1 "\b"
+  set-variable #l2 0
+  !repeat
+    set-variable #l1 &spr "%s%s\b" #l1 $buffer-bname
+    3 next-window
+  !until &or &equ $window-id #l0 &gre &inc #l2 1 32
+  set-variable #l5 0
+  !repeat
+    set-variable #l3 "|"
+    set-variable #l4 "|"
+    set-variable #l6 0
+    set-variable #l2 0
+    set-variable #l8 $window-id
+    !repeat
+      !if &lfind %json-context-pwin $window-id
+        set-variable #l7 ""
+        !iif &xse $buffer-bname "\\*json-context:\\(.*\\)\\*"  set-variable #l7 @s1
+        json-context-live #l7 #l1
+        !if #l9
+          set-variable #l3 &lins #l3 -1 $window-id
+        !else
+          json-context-drop-owner #l7
+          set-variable %json-context-pwin &ldel %json-context-pwin &lfind %json-context-pwin $window-id
+          !force delete-window
+          set-variable #l6 1
+        !endif
+      !elif &lfind %json-context-owin $window-id
+        set-variable #l7 $buffer-bname
+        json-context-live #l7 #l1
+        !if #l9
+          set-variable #l4 &lins #l4 -1 $window-id
+        !else
+          json-context-drop-owner #l7
+          set-variable $window-flags &band $window-flags &bnot 4
+          set-variable #l5 1
+        !endif
+      !endif
+      !iif #l6  !break
+      3 next-window
+    !until &or &equ $window-id #l8 &gre &inc #l2 1 32
+    !iif #l6  set-variable #l5 1
+  !until &not #l6
+  set-variable %json-context-pwin #l3
+  set-variable %json-context-owin #l4
+  set-variable #l3 "\b"
+  set-variable $buffer-names "\\*json-context:.*"
+  !while &not &seq &set #l6 $buffer-names ""
+    set-variable #l3 &spr "%s%s\b" #l3 #l6
+  !done
+  set-variable #l2 0
+  !while &not &seq &set #l6 &lget #l3 &inc #l2 1 ""
+    set-variable #l7 ""
+    !iif &xse #l6 "\\*json-context:\\(.*\\)\\*"  set-variable #l7 @s1
+    json-context-live #l7 #l1
+    !if &not #l9
+      json-context-drop-owner #l7
+      !force 0 delete-buffer #l6
+      set-variable #l5 1
+    !endif
+  !done
+  set-variable #l2 0
+  !while &not &equ $window-id #l0
+    3 next-window
+    !iif &gre &inc #l2 1 32  !break
+  !done
+  !iif #l5  !force 1 screen-update
+!emacro
+0 define-macro json-context-sweep
+  set-variable %json-context-walk 1
+  !force json-context-sweep-run
+  set-variable %json-context-walk 0
+!emacro
 define-macro json-context
   !if &seq :json-context "1"
     set-variable :json-context "0"
-    !force buffer-unbind-key "idle-pick"
-    !force buffer-unbind-key "C-g"
-    set-variable #l8 $buffer-bname
-    set-variable #l6 :json-context-buf
-    json-context-goto-window #l6
-    !iif #l9  delete-window
-    json-context-goto-window #l8
-    !force 0 delete-buffer #l6
+    json-context-detach
+    json-context-sweep
     ml-write "[JSON context off]"
     !return
   !endif
@@ -866,19 +1093,40 @@ define-macro json-context
     ml-write "[JSON context needs a formatted buffer - run json-format first]"
     !return
   !endif
-  set-variable :json-context "1"
-  set-variable :json-context-last "~"
-  set-variable :json-context-buf &spr "*json-context:%s*" #l8
-  set-variable #l6 :json-context-buf
-  1 split-window-vertically
+  json-context-detach
+  json-context-sweep
+  set-variable %json-context-walk 1
+  set-variable #l6 &spr "*json-context:%s*" #l8
+  !force 1 split-window-vertically
+  !if &not $status
+    set-variable %json-context-walk 0
+    ml-write "[JSON context needs a window that can be split]"
+    !return
+  !endif
   find-buffer #l6
+  set-variable $window-flags &bor $window-flags 0x1be
+  set-variable %json-context-pwin &lins %json-context-pwin -1 $window-id
+  set-variable $buffer-ehook json-context-schedule
+  set-variable $buffer-dhook json-context-schedule
   json-set-hilight
   -1 buffer-mode "edit"
   set-variable #l7 &sub &add %json-context-depth 1 $window-depth
   !force #l7 change-window-depth
   json-context-goto-window #l8
+  !if &not &band $window-flags 4
+    set-variable $window-flags &bor $window-flags 4
+    set-variable %json-context-owin &lins %json-context-owin -1 $window-id
+  !endif
+  set-variable :json-context "1"
+  set-variable :json-context-last "~"
+  set-variable :json-context-buf #l6
+  set-variable :json-context-ehook $buffer-ehook
+  set-variable :json-context-dhook $buffer-dhook
+  set-variable $buffer-ehook json-context-ehook
+  set-variable $buffer-dhook json-context-dhook
   buffer-bind-key json-context-idle "idle-pick"
   buffer-bind-key json-context-abort "C-g"
-  json-context-render
+  !force json-context-render
+  set-variable %json-context-walk 0
   ml-write "[JSON context on]"
 !emacro
