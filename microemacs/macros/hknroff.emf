@@ -786,7 +786,7 @@ define-macro fhook-me-dman
 !emacro
 15 major-mode "me-dman" "" "" "ME DMan"
 define-macro dman
-  1 pipe-shell-command &cat "droff -a -s " @ml "dMan on" "*dman*"
+  0 pipe-shell-command &cat "droff -a -s " @ml "dMan on" "*dman*"
   -1 buffer-mode "view"
   set-mark
   3 forward-line
@@ -801,7 +801,7 @@ define-macro adman
     !iif &iseq #l1 "y"  save-buffer
   !endif
   set-variable #l3 &con &les 140 &set #l3 &con &gre 70 &set #l3 &sub $window-width 4 70 #l3 140 #l3
-  1 pipe-shell-command &spr "droff -a -l 1000 -w %d -s %s" #l3 $buffer-fname "*dman*"
+  0 pipe-shell-command &spr "droff -a -l 1000 -w %d -s %s" #l3 $buffer-fname "*dman*"
   -1 buffer-mode "view"
   set-mark
   3 forward-line
