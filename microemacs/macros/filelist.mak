@@ -66,8 +66,8 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	hkxml.emf	hkyaml.emf	hkzig.emf	\
 	hpux.emf	htmlcore.emf	htmltool.emf	htmlutil.emf	\
 	info.emf	insdate.emf	irix.emf	itemlist.emf	\
-	javatags.emf	jst2html.emf	jst2ltx.emf	jst2rtf.emf	\
-	jst2text.emf	jstags.emf	jstutl.emf	\
+	javatags.emf	jsonview.emf	jst2html.emf	jst2ltx.emf	\
+	jst2rtf.emf	jst2text.emf	jstags.emf	jstutl.emf	\
 	keyboard.emf	killlist.emf	\
 	language.emf	langutl.emf	linux.emf	list.emf	\
 	luatags.emf	\
