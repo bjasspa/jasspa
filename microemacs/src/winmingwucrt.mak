@@ -1,9 +1,36 @@
 # -!- makefile -!-
 #
 # JASSPA MicroEmacs - www.jasspa.com
-# winmingw.mak - Make file for Windows using MinGW development kit.
+# winmingwucrt.mak - Make file for Windows using MinGW-w64 UCRT/MSYS2.
 #
-# Copyright (C) 2007-2024 JASSPA (www.jasspa.com)
+# This makefile builds true Windows GUI applications for MicroEmacs 26
+# using the MinGW-w64 toolchain from MSYS2. It supports three build
+# distributions controlled by BDIST:
+#   BDIST=ucrt64     - Native Windows UCRT64 executables (default when MSYSTEM=UCRT64)
+#   BDIST=mingw64    - Native Windows MINGW64 executables
+#   BDIST=msys2      - MSYS2 executables (requires msys-2.0.dll at runtime)
+#
+# For building from the command line using make & makefile:
+#
+#   Native Windows builds (UCRT64 or MINGW64):
+#     make -f winmingwucrt.mak                        release GUI build
+#     make -f winmingwucrt.mak BCFG=debug             debug GUI build
+#     make -f winmingwucrt.mak BTYP=c                 release console build
+#     make -f winmingwucrt.mak BCOR=ne                release ne build
+#
+#   MSYS2 builds:
+#     make -f winmingwucrt.mak BDIST=msys2            release GUI build
+#     make -f winmingwucrt.mak BDIST=msys2 BTYP=c     release console build
+#
+#     make -f winmingwucrt.mak clean                  to clean source directory
+#     make -f winmingwucrt.mak spotless               to clean source directory even more
+#
+# Output directories:
+#   UCRT64 builds:      ./.ucrt64win-{release,debug}-me{c,w}/
+#   MINGW64 builds:     ./.mingw64win-{release,debug}-me{c,w}/
+#   MSYS2 builds:       ./.msys2win-{release,debug}-me{c,w}/
+#
+# Copyright (C) 2007-2026 JASSPA (www.jasspa.com)
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
@@ -20,47 +47,49 @@
 # 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 ##############################################################################
-#
-# Created:     Sat Jan 24 1998
-# Synopsis:    Make file for Windows using MinGW development kit.
-# Notes:
-#     Run ./build.sh to compile, ./build.sh -h for more information.
-#
-#     To build from the command line using make & makefile. 
-#
-#	Run "mingw32-make -f winmingw.mak"            for optimised build produces ./.winmingw-release-mew/mew.exe
-#	Run "mingw32-make -f winmingw.mak BCFG=debug" for debug build produces     ./.winmingw-debug-mew/mew.exe
-#	Run "mingw32-make -f winmingw.mak BTYP=c"     for console support          ./.winmingw-release-mec/mec.exe
-#	Run "mingw32-make -f winmingw.mak BCOR=ne"    for ne build produces        ./.winmingw-release-new/new.exe
-#
-#	Run "mingw32-make -f winmingw.mak clean"      to clean source directory
-#	Run "mingw32-make -f winmingw.mak spotless"   to clean source directory even more
-#
-##############################################################################
 
 A        = .a
 EXE      = .exe
-CC       = $(TOOLPREF)gcc
-RC       = $(TOOLPREF)windres
-MK       = mingw32-make
+
+# BDIST controls build distribution:
+#   ucrt64   - Native Windows UCRT64 executables (default when MSYSTEM=UCRT64)
+#   mingw64  - Native Windows MINGW64 executables
+#   msys2    - MSYS2 executables (requires msys-2.0.dll at runtime)
+BDIST    ?= $(AUTO_BDIST)
+
+# Auto-detect MSYSTEM and set AUTO_BDIST + PKGPFX accordingly
+ifdef MSYSTEM
+ifeq "$(MSYSTEM)" "UCRT64"
+AUTO_BDIST = ucrt64
+PKGPFX   = mingw-w64-ucrt-x86_64
+else ifeq "$(MSYSTEM)" "MINGW64"
+AUTO_BDIST = mingw64
+PKGPFX   = mingw-w64-x86_64
+else ifeq "$(MSYSTEM)" "MINGW32"
+AUTO_BDIST = mingw32
+PKGPFX   = mingw-w64-i686
+else
+AUTO_BDIST = msys2
+PKGPFX   = gcc
+endif
+else
+# MSYSTEM not set (non-MSYS2 build)
+endif
+
+# Tool chain
+CC       = gcc
+RC       = windres
+STRIP    = strip
+AR       = ar
+MK       = make
 LD       = $(CC)
-STRIP    = $(TOOLPREF)strip
-AR       = $(TOOLPREF)ar
 RM       = rm -f
 RMDIR    = rm -r -f
 
 TOPDIR=..
 include $(TOPDIR)/etc/makeinc.ver
 
-ifneq "$(TOOLPREF)" ""
-UNX_SHLL = 1
-else ifeq (,$(MSYSTEM))
-UNX_SHLL = 0
-else
-UNX_SHLL = 1
-endif
-
-TOOLKIT  = mingw
+TOOLKIT  = winmingwucrt
 TOOLKIT_VER = $(subst -win32,,$(word 1,$(subst ., ,$(shell $(CC) -dumpversion))))
 
 ARCHITEC = intel
@@ -88,26 +117,107 @@ else
 PLATFORM_VER = 0
 endif
 
-MAKEFILE = win$(TOOLKIT)
-ifeq "$(BPRF)" "1"
-BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
+# Set OUTTAG based on BDIST and MSYSTEM
+# Format: .{env}{subsystem}-release-{type}
+ifeq "$(BDIST)" "ucrt64"
+ifdef MSYSTEM
+ifeq "$(MSYSTEM)" "UCRT64"
+OUTTAG   = ucrt64win
 else
-BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)
+OUTTAG   = ucrt64win
+endif
+else
+OUTTAG   = ucrt64win
+endif
+LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -Wl,-Bstatic -lz -Wl,-Bdynamic
+else ifeq "$(BDIST)" "mingw64"
+ifdef MSYSTEM
+ifeq "$(MSYSTEM)" "MINGW64"
+OUTTAG   = mingw64win
+else
+OUTTAG   = mingw64win
+endif
+else
+OUTTAG   = mingw64win
+endif
+LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -Wl,-Bstatic -lz -Wl,-Bdynamic
+else ifeq "$(BDIST)" "mingw32"
+ifdef MSYSTEM
+ifeq "$(MSYSTEM)" "MINGW32"
+OUTTAG   = mingw32win
+else
+OUTTAG   = mingw32win
+endif
+else
+OUTTAG   = mingw32win
+endif
+LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -Wl,-Bstatic -lz -Wl,-Bdynamic
+else
+# Default MSYS2 build (dynamic zlib)
+ifdef MSYSTEM
+ifeq "$(MSYSTEM)" "UCRT64"
+OUTTAG   = ucrt64msys
+else ifeq "$(MSYSTEM)" "MINGW64"
+OUTTAG   = mingw64msys
+else ifeq "$(MSYSTEM)" "MINGW32"
+OUTTAG   = mingw32msys
+else
+OUTTAG   = msys2msys
+endif
+else
+OUTTAG   = msys2msys
+endif
+LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32 -lz
+endif
+
+ifneq "$(TOOLPREF)" ""
+UNX_SHLL = 1
+else ifeq (,$(MSYSTEM))
+UNX_SHLL = 0
+else
+UNX_SHLL = 1
+endif
+
+ifeq "$(BPRF)" "1"
+BUILDID  = $(OUTTAG)p
+else
+BUILDID  = $(OUTTAG)
 endif
 OUTDIRR  = .$(BUILDID)-release
 OUTDIRD  = .$(BUILDID)-debug
 TRDPARTY = ../3rdparty
+MAKEFILE = $(TOOLKIT)
 
-CCDEFS   = -m$(BIT_SIZE) -D_MINGW -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
-CCFLAGSR = -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops -DNDEBUG=1 -Wno-uninitialized
+# Compiler defines: native Windows builds use -D_WIN32 -D_MINGW
+# MSYS2 builds also use these for Windows GUI apps
+CCDEFS   = -m$(BIT_SIZE) -D_WIN32 -D_MINGW -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
+CCFLAGSR = -O3 -mfpmath=sse -Ofast -flto -funroll-loops -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g -D_DEBUG
 LDDEFS   = -m$(BIT_SIZE)
-LDFLAGSR = -O3 -mfpmath=sse -Ofast -flto -march=native -funroll-loops
+LDFLAGSR = -O3 -mfpmath=sse -Ofast -flto -funroll-loops
 LDFLAGSD = -g
-LDLIBSB  = -lshell32 -luser32 -lgdi32 -lwinspool -lcomdlg32 -ladvapi32
+
+# When building native Windows from MSYS2, the native gcc cannot resolve
+# MSYS2 paths in TEMP/TMP environment variables. Override them with proper
+# Windows paths so cc1.exe and the assembler can create temp files.
+# Also ensure the mingw bin directory is on PATH so cc1.exe and as.exe can
+# find their dependent DLLs (libisl, libmpc, libmpfr, etc.).
+ifneq "$(BDIST)" "msys2"
+WINTEMP  := $(shell cygpath -w /tmp 2>/dev/null || echo C:\\msys64\\tmp)
+export TEMP  = $(WINTEMP)
+export TMP   = $(WINTEMP)
+ifdef MSYSTEM
+ifneq "$(MSYSTEM)" "UCRT64"
+export PATH := /mingw64/bin:$(PATH)
+else
+export PATH := /ucrt64/bin:$(PATH)
+endif
+endif
+endif
+
 ARFLAGSR = rcs
 ARFLAGSD = rcs
-RCFLAGS  = --input-format rc --output-format coff -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_MINGW $(RCOPTS)
+RCFLAGS  = --input-format rc --output-format coff -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY) -D_WIN32 -D_MINGW $(RCOPTS)
 
 ifeq "$(BCFG)" "debug"
 BOUTDIR  = $(OUTDIRD)
@@ -138,12 +248,17 @@ LDLIBS   = $(LDLIBSB)
 
 else
 
-ifeq "$(OPENSSLP)" ""
+ifneq "$(OPENSSLP)" ""
+else ifneq "$(BIT_SIZE)" ""
 ifeq "$(BIT_SIZE)" "64"
 OSSL_DIR = x64
 OSSL_LIB = -x64
 else
 OSSL_DIR = x86
+endif
+else
+OSSL_DIR = x64
+OSSL_LIB = -x64
 endif
 ifneq "$(wildcard $(TRDPARTY)/openssl-3.5/$(OSSL_DIR)/include/openssl/ssl.h)" ""
 OPENSSLP = $(TRDPARTY)/openssl-3.5/$(OSSL_DIR)
@@ -163,7 +278,6 @@ OPENSSLV = -3$(OSSL_LIB)
 else ifneq "$(wildcard $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)/include/openssl/ssl.h)" ""
 OPENSSLP = $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)
 OPENSSLV = -1_1$(OSSL_LIB)
-endif
 endif
 ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
@@ -224,7 +338,7 @@ $(OUTDIR)/%.coff : %.rc
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)
 
 $(OUTDIR)/$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
-	$(RM) $@
+	-$(RM) $@
 	$(LD) $(LDDEFS) $(LDPROF) $(BTYP_LDF) $(LDFLAGS) -o $@ $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	$(STRIP) $@
 ifeq "$(UNX_SHLL)" "0"
@@ -246,13 +360,23 @@ else
 endif
 
 $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A):
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK) BUILDID=$(BUILDID)
 
 clean:
 	$(RMDIR) $(OUTDIR)
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak clean BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK) BUILDID=$(BUILDID)
 
 spotless: clean
 	$(RM) *~
 	$(RM) tags
-	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK)
+	cd $(TRDPARTY)/tfs && $(MK) -f $(MAKEFILE).mak spotless BCFG=$(BCFG) BPRF=$(BPRF) BIT_SIZE=$(BIT_SIZE) TOOLPREF=$(TOOLPREF) PLATFORM_VER=$(PLATFORM_VER) MK=$(MK) BUILDID=$(BUILDID)
+
+print-info:
+	@echo "MSYSTEM=$(MSYSTEM)"
+	@echo "BDIST=$(BDIST)"
+	@echo "OUTTAG=$(OUTTAG)"
+	@echo "PKGPFX=$(PKGPFX)"
+	@echo "OUTDIR=$(OUTDIR)"
+	@echo "CC=$(CC)"
+	@echo "CCDEFS=$(CCDEFS)"
+	@echo "LDLIBSB=$(LDLIBSB)"
