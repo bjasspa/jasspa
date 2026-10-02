@@ -77,9 +77,9 @@ PLATFORM = windows
 ifneq "$(PLATFORM_VER)" ""
 else ifeq "$(TOOLPREF)" ""
 ifeq "$(UNX_SHLL)" "0"
-WINDOWS_VER = $(subst ., ,$(shell ver))
+WINDOWS_VER := $(subst ., ,$(shell ver))
 else
-WINDOWS_VER = $(subst ., ,$(shell cmd /c ver))
+WINDOWS_VER := $(subst ., ,$(shell MSYS2_ARG_CONV_EXCL='*' cmd.exe /c ver))
 endif
 WINDOWS_MNV = $(word 5,$(WINDOWS_VER))
 $(eval WINDOWS_MNR := $$$(WINDOWS_MNV))

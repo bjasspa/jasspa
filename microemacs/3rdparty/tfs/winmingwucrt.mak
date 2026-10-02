@@ -1,7 +1,7 @@
 ##############################################################################
 #
 ## JASSPA MicroEmacs - www.jasspa.com
-# win32mingw.mak - Make file for Windows using MinGW development kit.
+# winmingwucrt.mak - Make file for Windows UCRT64/MinGW-w64 development kit.
 #
 # Copyright (C) 2007-2022 JASSPA (www.jasspa.com)
 #
@@ -68,7 +68,7 @@ else
 PLATFORM_VER = 0
 endif
 
-MAKEFILE = win$(TOOLKIT)
+MAKEFILE = winmingwucrt
 ifeq "$(BPRF)" "1"
 BUILDID  = $(PLATFORM)$(PLATFORM_VER)-$(ARCHITEC)$(BIT_SIZE)-$(TOOLKIT)$(TOOLKIT_VER)p
 else

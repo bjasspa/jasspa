@@ -1,0 +1,103 @@
+name: Build mingwwin intel 64
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sys: [ ucrt64, mingw64 ]
+    name: Build ${{ matrix.sys }} true Windows on windows-latest intel
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.refToBuild }}
+
+    - name: Install MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.sys }}
+        update: true
+        install: >-
+          make
+
+    - name: Install MinGW toolchain and libraries
+      run: |
+        case "${{ matrix.sys }}" in
+          mingw64) PKGPFX="mingw-w64-x86_64" ;;
+          ucrt64)  PKGPFX="mingw-w64-ucrt-x86_64" ;;
+          *)       echo "Unknown sys: ${{ matrix.sys }}"; exit 1 ;;
+        esac
+        pacman -S --noconfirm --needed ${PKGPFX}-gcc ${PKGPFX}-winpthreads \
+          ${PKGPFX}-zlib ${PKGPFX}-openssl ${PKGPFX}-pkgconf
+        gcc -dumpmachine
+
+    - name: Detect version and build id
+      run: |
+        export VRS=`grep -E '^meVER_(CN|YR|MN|DY)' microemacs/etc/makeinc.ver | awk -F'=' '{ print $2 }' | tr -d ' \r' | paste -sd ''`
+        echo "VERSION=$VRS" >> $GITHUB_ENV
+        echo "OUTTAG=${{ matrix.sys }}win" >> $GITHUB_ENV
+        gcc --version
+        echo "MSYSTEM=$MSYSTEM"
+
+    - name: Print makefile info
+      run: |
+        cd microemacs/src
+        make -f winmingwucrt.mak print-info | tee make-info.txt
+        grep -q 'OPENSSLP=sys' make-info.txt || { echo "ERROR: OpenSSL not enabled (https support missing)"; exit 1; }
+
+    - name: Build mec console executable
+      run: |
+        cd microemacs/src
+        bash build.sh -t c -m winmingwucrt.mak
+        ls -la .${OUTTAG}-release-mec/
+        ./.${OUTTAG}-release-mec/mec.exe -V
+
+    - name: Build mew window executable
+      run: |
+        cd microemacs/src
+        bash build.sh -t w -m winmingwucrt.mak
+        ls -la .${OUTTAG}-release-mew/
+
+    - name: Build single executable mesc and mesw
+      run: |
+        export PATH="$GITHUB_WORKSPACE/microemacs/bin/${OUTTAG}:$PATH"
+        cd microemacs/mesingle
+        bash mesgen.sh -d -o mesc.exe -p ../src/.${OUTTAG}-release-mec/mec.exe -t ../3rdparty/tfs/.${OUTTAG}-release/tfs.exe
+        bash mesgen.sh -d -o mesw.exe -p ../src/.${OUTTAG}-release-mew/mew.exe -t ../3rdparty/tfs/.${OUTTAG}-release/tfs.exe
+        ls -la mesc.exe mesw.exe
+
+    - name: Package mingwwin binaries
+      run: |
+        mkdir -p package/${OUTTAG}
+        cp microemacs/bin/${OUTTAG}/* package/${OUTTAG}/
+        cp microemacs/mesingle/mesc.exe microemacs/mesingle/mesw.exe package/${OUTTAG}/
+        cp microemacs/LICENSE package/${OUTTAG}/
+        ls -la package/${OUTTAG}/
+
+    - name: Upload mingwwin binaries
+      uses: actions/upload-artifact@v6
+      with:
+        name: mingwwin-${{ matrix.sys }}-${{ env.VERSION }}
+        path: package
