@@ -52,7 +52,7 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=c BIT_SIZE=64 ARCHITEC=arm
-          .\.windows100-arm64-msvc17-release-mec\mec.exe -V
+          .\.windows100-arm64-msvc18-release-mec\mec.exe -V
         working-directory: ./microemacs/src
 
       - name: Compile windows-arm mew
@@ -62,7 +62,7 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=w BIT_SIZE=64 ARCHITEC=arm
-          .\.windows100-arm64-msvc17-release-mew\mew.exe -V
+          .\.windows100-arm64-msvc18-release-mew\mew.exe -V
         working-directory: ./microemacs/src
 
       - name: Create windows-arm bin download
@@ -72,7 +72,7 @@ jobs:
           mkdir -Path packages
           cd .\microemacs\bin
           Remove-Item .gitignore
-          Rename-Item -Path windows100-arm64-msvc17 -NewName windows100-arm64
+          Rename-Item -Path windows100-arm64-msvc18 -NewName windows100-arm64
           cd ..
           Rename-Item -Path release_readme.txt -NewName readme.txt
           $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
@@ -119,7 +119,7 @@ jobs:
           $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
           cd .\mesingle
           mkdir -Path bin\windows100-arm64
-          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc17s\mec.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesc.exe
+          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc18s\mec.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesc.exe
           Copy-Item -Path ..\LICENSE -Destination .
           Copy-Item -Path ..\readme.txt -Destination .
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesc
@@ -140,7 +140,7 @@ jobs:
           $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
           cd .\mesingle
           Remove-Item bin\windows100-arm64\mesc.exe
-          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc17s\mew.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesw.exe
+          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc18s\mew.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesw.exe
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesw
 
       - name: Upload windows-intel downloads
