@@ -86,6 +86,21 @@ LD       = $(CC)
 RM       = rm -f
 RMDIR    = rm -r -f
 
+# Native Windows builds need a MinGW-w64 gcc; when the toolchain directory
+# (e.g. /ucrt64/bin) is empty the MSYS2 POSIX gcc (/usr/bin/gcc) is picked up
+# silently and fails later with missing Windows headers like <direct.h>.
+ifneq "$(BDIST)" "msys2"
+CCMACHINE := $(shell $(CC) -dumpmachine 2>/dev/null)
+ifeq "$(findstring w64-mingw32,$(CCMACHINE))" ""
+$(error MinGW-w64 gcc not found (CC=gcc dumpmachine='$(CCMACHINE)'). Install the toolchain, e.g. pacman -S mingw-w64-ucrt-x86_64-toolchain, or build MSYS2-native with BDIST=msys2)
+endif
+ifeq "$(MSYSTEM)" "UCRT64"
+ifeq "$(findstring /ucrt64/,$(shell command -v $(CC) 2>/dev/null))" ""
+$(warning WARNING: MSYSTEM=UCRT64 but gcc resolves to '$(shell command -v $(CC) 2>/dev/null)' - install mingw-w64-ucrt-x86_64-toolchain for true UCRT64 builds)
+endif
+endif
+endif
+
 TOPDIR=..
 include $(TOPDIR)/etc/makeinc.ver
 
@@ -245,11 +260,23 @@ ifeq "$(BCOR)" "ne"
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
+ifneq "$(BDIST)" "msys2"
+LDLIBS  += -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
+endif
 
 else
 
 ifneq "$(OPENSSLP)" ""
-else ifneq "$(BIT_SIZE)" ""
+ifeq "$(OPENSSLV)" ""
+ifeq "$(BIT_SIZE)" ""
+OSSL_LIB = -x64
+else ifeq "$(BIT_SIZE)" "64"
+OSSL_LIB = -x64
+endif
+OPENSSLV = -3$(OSSL_LIB)
+endif
+else
+ifneq "$(BIT_SIZE)" ""
 ifeq "$(BIT_SIZE)" "64"
 OSSL_DIR = x64
 OSSL_LIB = -x64
@@ -280,7 +307,40 @@ OPENSSLP = $(TRDPARTY)/openssl-1.1/$(OSSL_DIR)
 OPENSSLV = -1_1$(OSSL_LIB)
 endif
 ifeq "$(OPENSSLP)" ""
+ifeq "$(UNX_SHLL)" "1"
+ifneq (0,$(shell pkg-config --exists openssl 2>/dev/null; echo $$?))
+else ifeq (0,$(shell pkg-config --modversion openssl 2>/dev/null | grep -c "^3\."))
+else
+ifeq "$(BDIST)" "msys2"
+OSSL_SYSFX = /usr
+OPENSSLV = -3
+else ifeq "$(BDIST)" "mingw32"
+OSSL_SYSFX = /mingw32
+OPENSSLV = -3$(OSSL_LIB)
+else ifeq "$(BDIST)" "mingw64"
+OSSL_SYSFX = /mingw64
+OPENSSLV = -3$(OSSL_LIB)
+else
+OSSL_SYSFX = /ucrt64
+OPENSSLV = -3$(OSSL_LIB)
+endif
+OSSL_SYSPREFIX := $(shell pkg-config --variable=prefix openssl 2>/dev/null)
+ifneq "$(findstring $(OSSL_SYSFX),$(OSSL_SYSPREFIX))" ""
+OPENSSLP = sys
+endif
+endif
+endif
+endif
+endif
+ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else ifeq "$(OPENSSLP)" "sys"
+ifeq "$(BDIST)" "msys2"
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -D_OPENSSLLNM=msys-ssl$(OPENSSLV).dll -D_OPENSSLCNM=msys-crypto$(OPENSSLV).dll
+else
+OPENSSLDEFS = -DMEOPT_OPENSSL=1 -D_OPENSSLLNM=libssl$(OPENSSLV).dll -D_OPENSSLCNM=libcrypto$(OPENSSLV).dll
+endif
+OPENSSLLIBS = -lssl -lcrypto -lcrypt32
 else
 OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).dll -D_OPENSSLCNM=libcrypto$(OPENSSLV).dll
 OPENSSLLIBS = $(OPENSSLP)/lib/libssl.lib $(OPENSSLP)/lib/libcrypto.lib -lcrypt32
@@ -289,6 +349,9 @@ BCOR     = me
 BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)
 PRGLIBS  = $(TRDPARTY)/tfs/$(BOUTDIR)/tfs$(A)
 LDLIBS   = $(OPENSSLLIBS) -lws2_32 -lmpr $(LDLIBSB)
+ifneq "$(BDIST)" "msys2"
+LDLIBS  += -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic
+endif
 
 endif
 
@@ -346,6 +409,15 @@ ifeq "$(UNX_SHLL)" "0"
 else
 	$(INSTPRG) $@ $(INSTDIR)
 endif
+ifneq "$(INSTDIR)" ""
+ifeq "$(OPENSSLP)" "sys"
+ifeq "$(UNX_SHLL)" "0"
+	copy $(subst /,\\,$(OSSL_SYSPREFIX)/bin/libssl$(OPENSSLV).dll $(OSSL_SYSPREFIX)/bin/libcrypto$(OPENSSLV).dll $(INSTDIR))
+else
+	cp $(OSSL_SYSPREFIX)/bin/libssl$(OPENSSLV).dll $(OSSL_SYSPREFIX)/bin/libcrypto$(OPENSSLV).dll $(INSTDIR)
+endif
+endif
+endif
 
 $(PRGOBJS): $(PRGHDRS)
 
@@ -379,4 +451,6 @@ print-info:
 	@echo "OUTDIR=$(OUTDIR)"
 	@echo "CC=$(CC)"
 	@echo "CCDEFS=$(CCDEFS)"
+	@echo "BCOR_CDF=$(BCOR_CDF)"
+	@echo "OPENSSLP=$(OPENSSLP)"
 	@echo "LDLIBSB=$(LDLIBSB)"
