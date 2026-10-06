@@ -1003,6 +1003,10 @@ var gMEView: MEView? = nil
 var gWindowControllers: [MEWindowController] = []
 
 // ---- Colour cache - NSColor objects keyed by MEColor palette index ---
+// Main thread only: Swift dictionaries are not thread-safe and the cache is
+// read by draw(), so changes requested by the ME engine thread are performed
+// on the main queue. As the queue is serial these are always applied before
+// the engine's next meNativeViewFlush (DispatchQueue.main.sync).
 var colorCache: [Int: NSColor] = [:]
 var bgColorIdx: UInt8 = 1
 
@@ -1032,8 +1036,13 @@ func meNativeBell()
 }
 
 
-@_cdecl("meNativeSetBgColor")
-func meNativeSetBgColor(_ bgColor: UInt8)
+// Run block on the main thread, asynchronously if called from another thread
+private func meRunOnMain(_ block: @escaping () -> Void) {
+    if Thread.isMainThread { block() } else { DispatchQueue.main.async(execute: block) }
+}
+
+// Main thread only
+private func applyBgColor(_ bgColor: UInt8)
 {
     bgColorIdx = bgColor;
     let bc = nsColor(index: Int(bgColor)).cgColor;
@@ -1045,15 +1054,24 @@ func meNativeSetBgColor(_ bgColor: UInt8)
     }
 }
 
+@_cdecl("meNativeSetBgColor")
+func meNativeSetBgColor(_ bgColor: UInt8)
+{
+    meRunOnMain { applyBgColor(bgColor) }
+}
+
 @_cdecl("meNativeColorTableChanged")
 func meNativeColorTableChanged() {
-    colorCache.removeAll();
-    meNativeSetBgColor(bgColorIdx);
+    meRunOnMain {
+        colorCache.removeAll();
+        applyBgColor(bgColorIdx);
+    }
 }
 
 @_cdecl("meNativeCharsetChanged")
 func meNativeCharsetChanged() {
-    MEView.updateCharset();
+    // The glyph tables are read by draw() so must be replaced on the main thread
+    meRunOnMain { MEView.updateCharset() }
 }
 
 @_cdecl("meNativeViewChangeFont")

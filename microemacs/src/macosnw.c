@@ -148,6 +148,18 @@ static volatile int   gResizeRows       = 24;
 static volatile void *gResizeView       = NULL;
 static volatile void *gDeleteFrameView  = NULL;
 
+/* ---- Pending open-document requests --------------------------------------
+ * Files sent by Finder (Open With, Dock drop etc) while ME is running. The
+ * Swift event thread appends; the ME engine thread moves them onto ME's drag
+ * and drop list (dadHead) in drainQueue. Protected by gInputMutex.
+ * ---------------------------------------------------------------------- */
+typedef struct meOpenFileReq {
+    struct meOpenFileReq *next;
+    char fname[1];
+} meOpenFileReq;
+static meOpenFileReq  *gOpenFileHead = NULL;
+static meOpenFileReq  *gOpenFileTail = NULL;
+
 /* ---- Self-pipe - used to wake select() from any thread or signal --------
  * gWakePipe[0] = read end (watched by ME engine in waitForEvent)
  * gWakePipe[1] = write end (written by Swift threads and sigAlarm)
@@ -272,8 +284,64 @@ static void
 drainQueue(void)
 {
     meUShort k;
+#ifdef _DRAGNDROP
+    if (gOpenFileHead != NULL) {
+        meOpenFileReq *ofr, *nfr;
+        struct s_DragAndDrop *dadp;
+        int len;
+        pthread_mutex_lock(&gInputMutex);
+        ofr = gOpenFileHead;
+        gOpenFileHead = gOpenFileTail = NULL;
+        pthread_mutex_unlock(&gInputMutex);
+        /* Add to the head of the drag and drop list so the first file
+         * requested is loaded last and becomes the current buffer. The
+         * mouse position is set to the current window so files load there. */
+        while (ofr != NULL) {
+            nfr = ofr->next;
+            len = meStrlen(ofr->fname);
+            if ((dadp = (struct s_DragAndDrop *)
+                 meMalloc(sizeof(struct s_DragAndDrop) + len)) != NULL) {
+                meStrcpy(dadp->fname, ofr->fname);
+                dadp->mouse_x = frameCur->windowCur->frameColumn * mecm.fwidth;
+                dadp->mouse_y = frameCur->windowCur->frameRow * mecm.fdepth;
+                dadp->frame = frameCur;
+                dadp->next = dadHead;
+                dadHead = dadp;
+            }
+            free(ofr);
+            ofr = nfr;
+        }
+    }
+#endif
     while (queuePop(&k))
         addKeyToBuffer(k);
+}
+
+/* Request ME loads a file - called from the Swift event thread when Finder
+ * sends an open documents event to a running ME. The file is loaded once ME
+ * returns to its base state, a break is sent to abort any current command. */
+void
+meNativeOpenFile(const char *path)
+{
+#ifdef _DRAGNDROP
+    meOpenFileReq *ofr;
+    size_t len;
+    if ((path == NULL) || (path[0] == '\0'))
+        return;
+    len = strlen(path);
+    if ((ofr = (meOpenFileReq *) malloc(sizeof(meOpenFileReq) + len)) == NULL)
+        return;
+    memcpy(ofr->fname, path, len + 1);
+    ofr->next = NULL;
+    pthread_mutex_lock(&gInputMutex);
+    if (gOpenFileTail == NULL)
+        gOpenFileHead = ofr;
+    else
+        gOpenFileTail->next = ofr;
+    gOpenFileTail = ofr;
+    pthread_mutex_unlock(&gInputMutex);
+    queuePush(breakc);
+#endif
 }
 
 /* Maximum time to block in select() before re-checking timer expiry.

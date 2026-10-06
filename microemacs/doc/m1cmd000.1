@@ -380,6 +380,9 @@ set MEPATH=c:\\usr\\local\\info
 .RE
 .IP
 There is no default location in these environments.
+.IP \fBME_NO_SHELL_ENV\fR
+macOS native application only. When defined, the user's login shell
+environment is not imported at start-up, see the \fBMACOS\fR section below.
 .SH FILES
 All of the macro files and  dictionaries  are located in the  \fB\*(mS\fR
 home directory. The standard file extensions that are utilized are:
@@ -423,6 +426,40 @@ editor window is brought into focus following the drop.
 Xdnd drag and drop support is provided in the X-Windows  version of \*(mS. The
 editor  window is not  raised or  brought  into  focus  following  the drop as
 expected in the \s-1UNIX\s0 environment. 
+.SH MACOS
+When the native macOS application (\fCMicroEmacs.app\fR) is started from
+the Finder, Dock or Launchpad it is launched by \fClaunchd\fR and not from a
+shell, so the user's shell start-up files (\fC.zprofile\fR, \fC.zshrc\fR
+etc.) are not read and only a minimal environment is provided (e.g.
+\fB$PATH\fR is \fC/usr/bin:/bin:/usr/sbin:/sbin\fR and \fB$MENAME\fR is not
+set). To correct this, when started without a terminal (\fB$TERM\fR not
+defined) \*(mS runs the user's login shell as an interactive login shell, i.e.
+\fC$SHELL -l -i\fR, and imports the resulting environment before
+initializing. This makes environment variables such as \fB$PATH\fR,
+\fB$MENAME\fR, \fB$MEPATH\fR and \fB$MEUSERPATH\fR available to \*(mS
+and to any processes it runs, such as compilers.
+.PP
+The shell is given 5 seconds to complete, after which it is abandoned and the
+original environment is used. As a slow \fC.zshrc\fR will delay start-up,
+environment variable settings are best placed in \fC.zprofile\fR or
+\fC.zshenv\fR. The import may be disabled by defining the environment
+variable \fBME_NO_SHELL_ENV\fR, e.g. using
+\fClaunchctl setenv ME_NO_SHELL_ENV 1\fR.
+.PP
+\fClaunchd\fR also starts the application with the root directory (\fC/\fR)
+as its current directory. When started without a terminal from \fC/\fR,
+\*(mS changes to the user's home directory (\fB$HOME\fR), as a terminal
+does, so commands such as
+.Ht find-file 2
+start from the home directory.
+.PP
+The application registers itself with the Finder as an editor for plain text
+and source files, so \*(mS is offered in the Finder's \fBOpen With\fR menu
+without becoming the default application for these files. It is the default
+application for \*(mS's own macro (\fC.emf\fR), abbreviation
+(\fC.eaf\fR), template (\fC.etf\fR) and help (\fC.ehf\fR) files. Files
+opened from the Finder, or dropped onto the Dock icon, are loaded into the
+current window of the running \*(mS, any command in progress is aborted.
 .SH "SESSIONS"
 Reading a session is generally performed when a \*(mS session is started using
 the  "\fB-c\fR"  command line option rather than from the mode line or main

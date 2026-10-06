@@ -22,5 +22,142 @@
     <string>MicroEmacs.MEApplication</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.15</string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeName</key>
+        <string>MicroEmacs File</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+          <string>com.jasspa.microemacs.macro</string>
+          <string>com.jasspa.microemacs.abbrev</string>
+          <string>com.jasspa.microemacs.template</string>
+          <string>com.jasspa.microemacs.help</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleTypeName</key>
+        <string>Source File</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+        <key>LSItemContentTypes</key>
+        <array>
+          <string>public.c-source</string>
+          <string>public.c-header</string>
+          <string>public.make-source</string>
+          <string>com.jasspa.microemacs.def</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleTypeName</key>
+        <string>Text File</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+        <key>LSItemContentTypes</key>
+        <array>
+          <string>public.plain-text</string>
+          <string>public.source-code</string>
+        </array>
+      </dict>
+    </array>
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+      <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.jasspa.microemacs.macro</string>
+        <key>UTTypeDescription</key>
+        <string>MicroEmacs Macro File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.plain-text</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <array>
+            <string>emf</string>
+          </array>
+        </dict>
+      </dict>
+      <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.jasspa.microemacs.abbrev</string>
+        <key>UTTypeDescription</key>
+        <string>MicroEmacs Abbreviation File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.plain-text</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <array>
+            <string>eaf</string>
+          </array>
+        </dict>
+      </dict>
+      <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.jasspa.microemacs.template</string>
+        <key>UTTypeDescription</key>
+        <string>MicroEmacs Template File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.plain-text</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <array>
+            <string>etf</string>
+          </array>
+        </dict>
+      </dict>
+      <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.jasspa.microemacs.help</string>
+        <key>UTTypeDescription</key>
+        <string>MicroEmacs Help File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.plain-text</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <array>
+            <string>ehf</string>
+          </array>
+        </dict>
+      </dict>
+    </array>
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+      <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.jasspa.microemacs.def</string>
+        <key>UTTypeDescription</key>
+        <string>Definition File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+          <string>public.plain-text</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+          <key>public.filename-extension</key>
+          <array>
+            <string>def</string>
+          </array>
+        </dict>
+      </dict>
+    </array>
   </dict>
 </plist>

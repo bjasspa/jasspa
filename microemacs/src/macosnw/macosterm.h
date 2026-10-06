@@ -98,6 +98,10 @@ void meNativeScrollWheel(int up, int col, int row, uint16_t modifiers);
 void meStartEngine(int argc, char **argv);
 void meNativeQuit(void);
 
+/* Request ME loads the given file (Finder open documents event). Safe to
+ * call from any thread once the engine is running. */
+void meNativeOpenFile(const char *path);
+
 /* -------------------------------------------------------------------------
  * C - Swift: return a retained pointer to the already-created primary view.
  * Called by meFrameTermInit for the very first frame (frameList==NULL).
