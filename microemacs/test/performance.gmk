@@ -1,0 +1,374 @@
+# test/performance.gmk - MicroEmacs performance regression check
+#
+# Runs the fixed editing workload test/performance.emf against either the
+# console build (mec) or the X11 window build (mew), measures wall clock
+# time and peak memory (maximum resident set size), splits the workload into
+# gen / replace / dialog phases and writes everything as TEST: lines to
+# test/perf/perf-output.txt (mec) or test/perf/perf-output-mew.txt (mew) so
+# runs can be compared over time. The two targets only share the scratch
+# files the macro names itself, i.e. both can be run in one workspace one
+# after the other.
+#
+# Usage (from the microemacs directory):
+#   make -f test/performance.gmk                # prep + run + report (mec)
+#   make -f test/performance.gmk TARGET=w       # the mew build instead
+#   make -f test/performance.gmk prep           # clean slate only
+#   make -f test/performance.gmk run            # workload only
+#   make -f test/performance.gmk report         # re-check existing results
+#   make -f test/performance.gmk clean          # remove all results
+#
+# Options (command line overrides):
+#   TARGET=c|w         c (default) runs the console build, w the window build
+#   BIN=<path>         binary under test, default per TARGET
+#                      src/.linux*-release-mec/mec resp. .../mew
+#   MAXWALL=<seconds>  fail the report when the run exceeds this wall time
+#   MAXRSS=<kbytes>    fail the report when the run exceeds this peak RSS
+#   TIMEOUT=<seconds>  hard kill for a hung run (default 120)
+#   DIALOGDELAY=<n>    window mode only: polls (0.1s each) after which the
+#                      close key is fed even when the process could not be
+#                      inspected (default 5, i.e. 0.5s)
+#
+# TARGET=w needs an X display and xdotool, so on a headless machine start
+# the whole driver under a framebuffer:
+#
+#   xvfb-run -a -s "-screen 0 1280x800x24" \
+#       make -f test/performance.gmk TARGET=w
+#
+# The default goal is "prep run report" and the exit status comes from
+# report, which is the last target - a failed workload therefore still
+# produces the full result table (and the job summary of the GitHub action)
+# before make returns non-zero. Only a missing binary - or, in window mode,
+# a missing display or missing xdotool - aborts "run" early.
+#
+# The dialog close key is fed by this driver: insert-symbol blocks until it
+# reads a C-g (byte 0x07). test/perf/perf-dialog.flag is the macro's "I am
+# in the dialog phase" marker, but feeding on that alone is racy - a C-g
+# arriving between the marker being written and the dialog being up aborts
+# the macro itself instead of the dialog, and the run then sits here until
+# TIMEOUT (this happened, about 1 run in 6). So exactly one key is fed, and
+# only once the dialog is known to be up:
+#
+#   console (mec): the key is written to stdin and the gate is ME rendering
+#     the dialog - the driver watches perf-mec.log for the button row of its
+#     box. A dialog we cannot recognise is fed after 20 polls (2s) anyway.
+#   window (mew): there is nothing to watch for (mew draws into its own X
+#     window and writes no rendering to stdout) and the keys come from the X
+#     server, so xdotool delivers them instead. The gate is ME going quiet:
+#     the macro runs synchronously, so once mew has not used the CPU for two
+#     polls in a row after the marker appeared it is blocked in the dialog.
+#     A process we cannot inspect (no /proc, no pgrep) falls back to
+#     DIALOGDELAY polls, which is what the marker-to-dialog gap costs anyway.
+#
+# The poll interval is the resolution of the dialog phase: the reported
+# dialog-ms is "dialog open + wait for the close key" and is therefore a few
+# hundred ms above the pure rendering cost - the same offset for every
+# version, so comparisons stay valid.
+#
+# The workload text is pure ASCII, i.e. an ISO-8859-1 subset - ME26 has no
+# unicode support, so nothing outside ISO-8859-1 is used anywhere.
+#
+# GNU make is required (used by all *.gmk files of this project).
+
+.ONESHELL:
+SHELL := /bin/sh
+.NOTPARALLEL:
+
+ROOT    := $(abspath $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))/..)
+
+# Which binary to benchmark. "mec" and "mew" differ in more than the
+# terminal: only the console build gets the log based dialog gate, so the
+# target also picks the measurement file names and the TEST: key prefix.
+TARGET  ?= c
+ifeq ($(TARGET),w)
+TGT     := mew
+SUF     := -mew
+BTYPE   := -t w
+BIN     ?= $(firstword $(wildcard $(ROOT)/src/.linux*-release-mew/mew $(ROOT)/bin/*/mew))
+else ifeq ($(TARGET),c)
+TGT     := mec
+SUF     :=
+BTYPE   := -t c
+BIN     ?= $(firstword $(wildcard $(ROOT)/src/.linux*-release-mec/mec $(ROOT)/bin/*/mec))
+else
+$(error TARGET must be c or w (got "$(TARGET)"))
+endif
+
+TIMEOUT     ?= 120
+MAXWALL     ?=
+MAXRSS      ?=
+DIALOGDELAY ?= 5
+WORK        := $(ROOT)/test/perf
+OUT         := $(WORK)/perf-output$(SUF).txt
+LOG         := $(WORK)/perf-$(TGT).log
+STATS       := $(WORK)/perf-$(TGT).stats
+GTIME       := $(WORK)/perf-$(TGT).time
+# the macro itself names its scratch files, they are shared between both
+# targets and rebuilt from scratch on every run
+MACROOUT    := $(WORK)/perf-macro.out
+DUMP        := $(WORK)/perf-macro-$(TGT).out
+FLAG        := $(WORK)/perf-dialog.flag
+TMP         := $(WORK)/perf-tmp.txt
+ACTIVE      := $(WORK)/perf-run.active
+MACRO       := @test/performance
+
+# GNU time gives wall clock and maximum RSS in one run; without it the wall
+# clock is measured around the run with date +%s%N and peak RSS is reported
+# as "-".
+#
+# Note the order in the run recipe below: /usr/bin/time is OUTSIDE and
+# timeout is INSIDE, i.e. time -> sh -c exec -> timeout -> <binary>. That is
+# deliberate and needs both properties:
+#   * timeout's direct child is the editor itself, so SIGTERM and the -k
+#     SIGKILL really reach a binary that ignores SIGTERM (ME does) - time can
+#     never be signalled away from underneath us and always gets to write its
+#     file;
+#   * ru_maxrss still ends up being the editor's: the kernel accumulates
+#     cmaxrss recursively when a parent reaps a child (kernel/exit.c
+#     wait_task_zombie), so time's wait4() on timeout includes timeout's
+#     reaped child. In window mode Xvfb is a sibling of make, not of time,
+#     so the framebuffer's own memory is never counted either.
+GNUTIME := $(shell /usr/bin/time -v true >/dev/null 2>&1 && echo yes)
+
+.PHONY: all prep run report clean
+
+all: prep run report
+
+prep:
+	@cd "$(ROOT)"
+	# only this target's results - the other target's perf-output*.txt and
+	# perf-macro-*.out have to survive so both runs share one workspace
+	rm -f $(OUT) $(LOG) $(STATS) $(GTIME) $(DUMP)
+	# scratch the macro names itself, rebuilt by every run anyway
+	rm -f $(MACROOUT) $(FLAG) $(FLAG).* $(TMP) $(TMP).* $(ACTIVE)
+	rm -rf $(WORK)/user
+	mkdir -p $(WORK)/user
+	echo "TEST:perf-date=$$(date -u +%Y-%m-%dT%H:%M:%SZ)" > $(OUT)
+	echo "TEST:perf-target=$(TGT)" >> $(OUT)
+	echo "TEST:perf-binary=$(BIN)" >> $(OUT)
+	# window mode: record how the text is rendered, that is the point of
+	# running mew rather than mecw
+	@if [ "$(TARGET)" = "w" ] && [ -n "$(BIN)" ] && command -v ldd >/dev/null 2>&1; then
+		if ldd "$(BIN)" 2>/dev/null | grep -q 'libXft'; then
+			echo "TEST:perf-xft=yes" >> $(OUT)
+		else
+			echo "TEST:perf-xft=no" >> $(OUT)
+		fi
+	fi
+
+run:
+	@cd "$(ROOT)"
+	if [ -z "$(BIN)" ] || [ ! -x "$(BIN)" ]; then
+		echo "ERROR: $(TGT) binary not found: $(BIN)"
+		echo "       build it first: cd src && ./build.sh $(BTYPE)"
+		exit 1
+	fi
+	if [ "$(TARGET)" = "w" ]; then
+		if [ -z "$$DISPLAY" ]; then
+			echo "ERROR: window mode needs an X display - run it under xvfb-run -a"
+			exit 1
+		fi
+		if ! command -v xdotool >/dev/null 2>&1; then
+			echo "ERROR: xdotool is required to send the dialog close key"
+			exit 1
+		fi
+	fi
+	echo "== $(TGT): workload on $(BIN)"
+	mkdir -p $(WORK)/user
+	rm -f $(MACROOUT) $(FLAG) $(FLAG).* $(TMP) $(TMP).* $(LOG) $(STATS) $(GTIME) $(ACTIVE)
+	: > $(ACTIVE)
+	{
+		# The dialog phase blocks until it gets a key, so this side feeds it
+		# C-g - to stdin for the console build, through the X server for the
+		# window build. C-g aborts *macro execution* whenever no dialog is
+		# reading it, and there is a window between the macro writing
+		# test/perf/perf-dialog.flag and insert-symbol actually putting the
+		# dialog on screen - a C-g landing in that window kills the macro,
+		# the marker is never cleared and the run then sits here until
+		# TIMEOUT. That really happened (me_20260601, ~1 run in 6), so in
+		# both modes the key is gated on the dialog being up and fed exactly
+		# once - which also keeps the closing keystroke from racing with the
+		# marker being cleared again.
+		#
+		# Bound the loop: if the binary dies without ever clearing the
+		# marker the pipeline must still end shortly after TIMEOUT
+		# (10 iterations per second == the 0.1s poll interval).
+		left=$$(((( $(TIMEOUT) + 10) * 10)))
+		fed=0
+		seen=0
+		idle=0
+		nflag=0
+		ncpu=0
+		prevc=""
+		mpid=""
+		while [ -f $(ACTIVE) ] && [ $$left -gt 0 ]; do
+			if [ -s $(FLAG) ] && [ $$fed -eq 0 ]; then
+				if [ "$(TARGET)" = "w" ]; then
+					# ---------------- window build: xdotool ----------------
+					# mew draws the dialog into its own window, so nothing
+					# in the log says "the dialog is up". ME runs the macro
+					# synchronously though: it cannot block anywhere between
+					# writing the marker and opening the dialog, so once the
+					# process has spent two whole polls without touching the
+					# CPU it is parked in XNextEvent - i.e. in the dialog.
+					nflag=$$((nflag + 1))
+					if [ -z "$$mpid" ]; then
+						mpid=$$(pgrep -x "$$(basename $(BIN))" 2>/dev/null | head -n 1)
+					fi
+					if [ -n "$$mpid" ] && [ -r "/proc/$$mpid/stat" ]; then
+						# utime+stime, fields 14/15 - trimmed after the
+						# ")" of the comm field, which may contain blanks
+						cpu=$$(awk '{sub(/^.*\) /,""); print $$12+$$13}' "/proc/$$mpid/stat" 2>/dev/null)
+						if [ -n "$$cpu" ] && [ "$$cpu" = "$$prevc" ]; then
+							ncpu=$$((ncpu + 1))
+						else
+							ncpu=0
+						fi
+						prevc=$$cpu
+					fi
+					# ready when ME went quiet twice, or after DIALOGDELAY
+					# polls when we cannot look at it at all
+					if [ $$ncpu -ge 2 ] || [ $$nflag -ge $(DIALOGDELAY) ]; then
+						wid=$$(xdotool search --class MicroEmacs 2>/dev/null | head -n 1)
+						if [ -n "$$wid" ]; then
+							# synthetic event first: it needs no focus and
+							# no window manager. Only when the server
+							# refuses it fall back to focusing the window
+							# and going through the real input queue - by
+							# then nothing has been sent yet, so feeding
+							# twice is impossible.
+							if xdotool key --window "$$wid" ctrl+g >/dev/null 2>&1; then
+								fed=1
+							elif xdotool windowfocus --sync "$$wid" >/dev/null 2>&1 &&
+							     xdotool key ctrl+g >/dev/null 2>&1; then
+								fed=1
+							fi
+						fi
+					fi
+				else
+					# ---------------- console build: stdin ----------------
+					# "> Cancel <" is the button row of the dialog box, it
+					# is written once per run by every version tested. The
+					# fallback feeds a dialog we do not recognise after 2s
+					# anyway: the macro is then either blocked in a dialog or
+					# already dead, and one late C-g makes neither worse.
+					if grep -q '> Cancel <' $(LOG) 2>/dev/null; then
+						seen=1
+					else
+						idle=$$((idle + 1))
+					fi
+					if [ $$seen -eq 1 ] || [ $$idle -ge 20 ]; then
+						printf '\007'
+						fed=1
+					fi
+				fi
+			fi
+			sleep 0.1
+			left=$$((left - 1))
+		done
+	} | {
+		cmd="exec timeout -k 5 $(TIMEOUT) env MEPATH=$(ROOT)/macros MEUSERPATH=$(WORK)/user TERM=$${TERM:-xterm-256color} $(BIN) $(MACRO)"
+		rc=0
+		if [ -n "$(GNUTIME)" ]; then
+			/usr/bin/time -v -o $(GTIME) sh -c "$$cmd" || rc=$$?
+		else
+			# no GNU time: measure the wall clock ourselves. %N needs
+			# GNU date (Ubuntu, MSYS2) - good enough for a fallback.
+			s=$$(date +%s%N)
+			sh -c "$$cmd" || rc=$$?
+			e=$$(date +%s%N)
+			awk -v s=$$s -v e=$$e 'BEGIN{printf "wall=%.3f\n",(e-s)/1000000000}' > $(STATS)
+			printf 'rss=-\n' >> $(STATS)
+		fi
+		# the editor is done - release the key feeder, it waits for this file
+		rm -f $(ACTIVE)
+		exit $$rc
+	} > $(LOG) 2>&1
+	rc=$$?
+	rm -f $(ACTIVE) $(FLAG)
+	if [ -n "$(GNUTIME)" ] && [ -s $(GTIME) ]; then
+		w=$$(awk -F': ' '/Elapsed \(wall clock\)/{print $$NF}' $(GTIME))
+		wall=$$(awk -v t="$$w" 'BEGIN{n=split(t,a,":"); if(n==3) print a[1]*3600+a[2]*60+a[3]; else if(n==2) print a[1]*60+a[2]; else print t}')
+		rss=$$(awk -F': ' '/Maximum resident/{print $$NF}' $(GTIME))
+		[ -n "$$wall" ] || wall="-"
+		[ -n "$$rss" ] || rss="-"
+		printf 'wall=%s\nrss=%s\n' "$$wall" "$$rss" > $(STATS)
+	fi
+	# the run was killed before either measurement could be written - say so
+	# rather than reporting an empty number
+	if [ ! -s $(STATS) ]; then
+		printf 'wall=-\nrss=-\n' > $(STATS)
+	fi
+	wall=$$(sed -n 's/^wall=//p' $(STATS))
+	rss=$$(sed -n 's/^rss=//p' $(STATS))
+	{ echo "TEST:$(TGT)-wall=$$wall"; echo "TEST:$(TGT)-maxrss=$$rss"; } >> $(OUT)
+	# the macro writes its scratch files under fixed names, so keep this
+	# run's stamps before the other target overwrites them
+	if [ -s $(MACROOUT) ]; then
+		cp $(MACROOUT) $(DUMP)
+	fi
+	# split the raw $unix-time stamps written by the macro into milliseconds
+	if [ -s $(MACROOUT) ]; then
+		awk -F= 'BEGIN{gs=ge=rs=re=ds=de=""} $$1=="TEST:gen-start"{gs=$$2} $$1=="TEST:gen-end"{ge=$$2} $$1=="TEST:replace-start"{rs=$$2} $$1=="TEST:replace-end"{re=$$2} $$1=="TEST:dialog-start"{ds=$$2} $$1=="TEST:dialog-end"{de=$$2} END{if(gs!=""&&ge!="") printf "TEST:gen-ms=%.0f\n",(ge-gs)*1000; if(rs!=""&&re!="") printf "TEST:replace-ms=%.0f\n",(re-rs)*1000; if(ds!=""&&de!="") printf "TEST:dialog-ms=%.0f\n",(de-ds)*1000; if(gs!=""&&de!="") printf "TEST:macro-total-ms=%.0f\n",(de-gs)*1000}' $(MACROOUT) >> $(OUT)
+		grep '^TEST:insert-symbol=' $(MACROOUT) | sed 's/^TEST:/TEST:$(TGT)-macro-/' >> $(OUT)
+	fi
+	if [ $$rc -eq 0 ] && grep -q 'TEST:workload-complete=1' $(MACROOUT) 2>/dev/null; then
+		echo "TEST:$(TGT)-status=ok" >> $(OUT)
+		echo "   wall=$$wall s  peak RSS=$$rss kB  [ok]"
+	else
+		if [ $$rc -eq 124 ] || [ $$rc -eq 137 ]; then st="timeout"; else st="failed"; fi
+		echo "TEST:$(TGT)-status=$$st" >> $(OUT)
+		echo "   FAIL: $(TGT) workload ($$st, rc=$$rc) - log tail:"
+		tail -n 8 $(LOG) 2>/dev/null | sed 's/^/     /'
+	fi
+
+report:
+	@cd "$(ROOT)"
+	if [ ! -s $(OUT) ]; then
+		echo "FAIL: no results - run 'make -f test/performance.gmk' first"
+		exit 1
+	fi
+	echo "== performance results ($(TGT)) =="
+	st=$$(sed -n 's/^TEST:$(TGT)-status=//p' $(OUT) | tail -n 1)
+	w=$$(sed -n 's/^TEST:$(TGT)-wall=//p' $(OUT) | tail -n 1)
+	r=$$(sed -n 's/^TEST:$(TGT)-maxrss=//p' $(OUT) | tail -n 1)
+	fail=0
+	case "$$st" in
+	ok)
+		echo "  $(TGT): wall=$$w s  peak RSS=$$r kB  [ok]"
+		g=$$(sed -n 's/^TEST:gen-ms=//p' $(OUT) | tail -n 1)
+		rp=$$(sed -n 's/^TEST:replace-ms=//p' $(OUT) | tail -n 1)
+		d=$$(sed -n 's/^TEST:dialog-ms=//p' $(OUT) | tail -n 1)
+		t=$$(sed -n 's/^TEST:macro-total-ms=//p' $(OUT) | tail -n 1)
+		echo "  phases: gen=$$g ms  replace=$$rp ms  dialog=$$d ms  total=$$t ms"
+		if [ -n "$(MAXWALL)" ] && awk -v a="$$w" -v b="$(MAXWALL)" 'BEGIN{exit !(a>b)}'; then
+			echo "  FAIL: wall $$w s exceeds MAXWALL=$(MAXWALL) s"
+			fail=1
+		fi
+		if [ -n "$(MAXRSS)" ] && [ "$$r" != "-" ] && awk -v a="$$r" -v b="$(MAXRSS)" 'BEGIN{exit !(a>b)}'; then
+			echo "  FAIL: peak RSS $$r kB exceeds MAXRSS=$(MAXRSS) kB"
+			fail=1
+		fi
+		;;
+	skipped)
+		echo "  $(TGT): skipped" ;;
+	"")
+		echo "  $(TGT): not run"
+		fail=1 ;;
+	*)
+		echo "  FAIL: $(TGT) workload $$st (details in $(LOG))"
+		fail=1 ;;
+	esac
+	if [ $$fail -eq 0 ]; then
+		grep -q 'TEST:all-tests=complete' $(OUT) || echo "TEST:all-tests=complete" >> $(OUT)
+		echo "PASS"
+	else
+		echo "FAIL"
+	fi
+	echo "--- $(OUT) ---"
+	cat $(OUT)
+	exit $$fail
+
+clean:
+	@cd "$(ROOT)"
+	rm -f $(WORK)/perf-*
+	rm -rf $(WORK)/user
