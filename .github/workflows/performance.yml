@@ -31,7 +31,7 @@ on:
       tags:
         description: "Space separated git tags to benchmark against the current code"
         required: false
-        default: "me_20260901 me_20260601 me_20260301 me_20251201"
+        default: "me_20260901 me_20260601 me_20260301 me_20251201 me_20250901"
 
 jobs:
   refs:
