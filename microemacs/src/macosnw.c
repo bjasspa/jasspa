@@ -149,12 +149,17 @@ static volatile void *gResizeView       = NULL;
 static volatile void *gDeleteFrameView  = NULL;
 
 /* ---- Pending open-document requests --------------------------------------
- * Files sent by Finder (Open With, Dock drop etc) while ME is running. The
- * Swift event thread appends; the ME engine thread moves them onto ME's drag
- * and drop list (dadHead) in drainQueue. Protected by gInputMutex.
+ * Files sent by Finder (Open With, Dock drop, window drop etc) while ME is
+ * running. The Swift event thread appends; the ME engine thread moves them
+ * onto ME's drag and drop list (dadHead) in drainQueue. Protected by
+ * gInputMutex. view is the drop target view or NULL for the current window,
+ * col & row the character cell the files were dropped on.
  * ---------------------------------------------------------------------- */
 typedef struct meOpenFileReq {
     struct meOpenFileReq *next;
+    void *view;
+    int col;
+    int row;
     char fname[1];
 } meOpenFileReq;
 static meOpenFileReq  *gOpenFileHead = NULL;
@@ -288,23 +293,41 @@ drainQueue(void)
     if (gOpenFileHead != NULL) {
         meOpenFileReq *ofr, *nfr;
         struct s_DragAndDrop *dadp;
+        meFrame *ff;
         int len;
         pthread_mutex_lock(&gInputMutex);
         ofr = gOpenFileHead;
         gOpenFileHead = gOpenFileTail = NULL;
         pthread_mutex_unlock(&gInputMutex);
         /* Add to the head of the drag and drop list so the first file
-         * requested is loaded last and becomes the current buffer. The
-         * mouse position is set to the current window so files load there. */
+         * requested is loaded last and becomes the current buffer. Files
+         * dropped on a window are loaded into the frame and window under the
+         * drop point, otherwise into the current window. */
         while (ofr != NULL) {
             nfr = ofr->next;
             len = meStrlen(ofr->fname);
             if ((dadp = (struct s_DragAndDrop *)
                  meMalloc(sizeof(struct s_DragAndDrop) + len)) != NULL) {
                 meStrcpy(dadp->fname, ofr->fname);
-                dadp->mouse_x = frameCur->windowCur->frameColumn * mecm.fwidth;
-                dadp->mouse_y = frameCur->windowCur->frameRow * mecm.fdepth;
-                dadp->frame = frameCur;
+                ff = NULL;
+                if (ofr->view != NULL) {
+                    if (frameCur->termData == ofr->view)
+                        ff = frameCur;
+                    else {
+                        ff = frameList;
+                        while ((ff != NULL) && (ff->termData != ofr->view))
+                            ff = ff->next;
+                    }
+                }
+                if (ff != NULL) {
+                    dadp->mouse_x = ofr->col * mecm.fwidth;
+                    dadp->mouse_y = ofr->row * mecm.fdepth;
+                    dadp->frame = ff;
+                } else {
+                    dadp->mouse_x = frameCur->windowCur->frameColumn * mecm.fwidth;
+                    dadp->mouse_y = frameCur->windowCur->frameRow * mecm.fdepth;
+                    dadp->frame = frameCur;
+                }
                 dadp->next = dadHead;
                 dadHead = dadp;
             }
@@ -317,11 +340,12 @@ drainQueue(void)
         addKeyToBuffer(k);
 }
 
-/* Request ME loads a file - called from the Swift event thread when Finder
- * sends an open documents event to a running ME. The file is loaded once ME
- * returns to its base state, a break is sent to abort any current command. */
+/* Request ME loads a file dropped on view at character cell col, row - called
+ * from the Swift event thread. If view is NULL the file is loaded into the
+ * current window. The file is loaded once ME returns to its base state, a
+ * break is sent to abort any current command. */
 void
-meNativeOpenFile(const char *path)
+meNativeDropFile(void *view, int col, int row, const char *path)
 {
 #ifdef _DRAGNDROP
     meOpenFileReq *ofr;
@@ -332,6 +356,9 @@ meNativeOpenFile(const char *path)
     if ((ofr = (meOpenFileReq *) malloc(sizeof(meOpenFileReq) + len)) == NULL)
         return;
     memcpy(ofr->fname, path, len + 1);
+    ofr->view = view;
+    ofr->col = col;
+    ofr->row = row;
     ofr->next = NULL;
     pthread_mutex_lock(&gInputMutex);
     if (gOpenFileTail == NULL)
@@ -342,6 +369,14 @@ meNativeOpenFile(const char *path)
     pthread_mutex_unlock(&gInputMutex);
     queuePush(breakc);
 #endif
+}
+
+/* Request ME loads a file into the current window - called from the Swift
+ * event thread when Finder sends an open documents event to a running ME. */
+void
+meNativeOpenFile(const char *path)
+{
+    meNativeDropFile(NULL, 0, 0, path);
 }
 
 /* Maximum time to block in select() before re-checking timer expiry.

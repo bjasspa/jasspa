@@ -125,12 +125,14 @@ final class MEView: NSView {
         super.init(frame: frame)
         wantsLayer = true;
         layer?.backgroundColor = NSColor.black.cgColor;
+        registerForDraggedTypes([.fileURL])
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         wantsLayer = true;
         layer?.backgroundColor = NSColor.black.cgColor;
+        registerForDraggedTypes([.fileURL])
     }
 
     /// Initialise a secondary view's cell buffer; font/glyph/cell metrics are shared statics.
@@ -987,6 +989,38 @@ final class MEView: NSView {
     // MARK: - Become first responder on click
     override func becomeFirstResponder() -> Bool { true }
     override func resignFirstResponder() -> Bool { true }
+
+    // MARK: - Drag and drop of files from the Finder
+
+    private static let dropReadOptions: [NSPasteboard.ReadingOptionKey: Any] =
+        [.urlReadingFileURLsOnly: true]
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        sender.draggingPasteboard.canReadObject(forClasses: [NSURL.self],
+                                                options: MEView.dropReadOptions) ? .copy : []
+    }
+
+    // Files are loaded into the frame & window under the drop point, as with
+    // the X-Windows and MS-Windows versions.
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        guard let urls = sender.draggingPasteboard.readObjects(forClasses: [NSURL.self],
+                                                               options: MEView.dropReadOptions) as? [URL],
+              !urls.isEmpty else {
+            return false
+        }
+        let pt  = convert(sender.draggingLocation, from: nil)
+        let col = min(max(Int(pt.x) / MEView.cellW, 0), cols - 1)
+        let row = min(max((Int(pixelHeight) - Int(pt.y)) / MEView.cellH, 0), rows - 1)
+        let vp  = Unmanaged.passUnretained(self).toOpaque()
+        for url in urls {
+            meNativeDropFile(vp, Int32(col), Int32(row), url.path)
+        }
+        // Bring the dropped on window to the front so it can be edited
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
+        window?.makeFirstResponder(self)
+        return true
+    }
 }
 
 // ---------------------------------------------------------------------------

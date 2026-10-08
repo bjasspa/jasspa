@@ -102,6 +102,11 @@ void meNativeQuit(void);
  * call from any thread once the engine is running. */
 void meNativeOpenFile(const char *path);
 
+/* Request ME loads the given file dropped onto viewPtr at character cell
+ * col, row (Finder drag and drop onto a window). Safe to call from any
+ * thread once the engine is running. */
+void meNativeDropFile(void *viewPtr, int col, int row, const char *path);
+
 /* -------------------------------------------------------------------------
  * C - Swift: return a retained pointer to the already-created primary view.
  * Called by meFrameTermInit for the very first frame (frameList==NULL).

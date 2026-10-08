@@ -459,7 +459,16 @@ without becoming the default application for these files. It is the default
 application for \*(mS's own macro (\fC.emf\fR), abbreviation
 (\fC.eaf\fR), template (\fC.etf\fR) and help (\fC.ehf\fR) files. Files
 opened from the Finder, or dropped onto the Dock icon, are loaded into the
-current window of the running \*(mS, any command in progress is aborted.
+current window of the running \*(mS. Files dragged from the Finder and dropped
+onto a \*(mS window are loaded into the window under the drop point. In both
+cases any command in progress is aborted.
+.PP
+Clicking the Dock icon activates a running \*(mS rather than starting another.
+To run a further, totally independent, \*(mS select \fBNew MicroEmacs\fR from
+the Dock icon's menu (right click or control click the icon). Each running
+\*(mS has its own Dock icon. Note that files opened from the Finder are sent to
+only one of the running instances, drop files onto the required \*(mS window
+or Dock icon to select the instance.
 .SH "SESSIONS"
 Reading a session is generally performed when a \*(mS session is started using
 the  "\fB-c\fR"  command line option rather than from the mode line or main

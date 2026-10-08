@@ -191,6 +191,33 @@ class MEAppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    // Dock icon menu. Clicking the Dock icon only activates a running ME, so
+    // provide a way to start another, totally independent, ME process.
+    func applicationDockMenu(_ sender: NSApplication) -> NSMenu? {
+        // Only possible when running from an app bundle
+        guard Bundle.main.bundleURL.pathExtension == "app" else { return nil }
+        let menu = NSMenu()
+        let item = NSMenuItem(title: "New MicroEmacs",
+                              action: #selector(newMicroEmacsInstance(_:)),
+                              keyEquivalent: "")
+        item.target = self
+        menu.addItem(item)
+        return menu
+    }
+
+    @objc private func newMicroEmacsInstance(_ sender: Any?) {
+        let config = NSWorkspace.OpenConfiguration()
+        config.createsNewApplicationInstance = true
+        config.addsToRecentItems = false
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL,
+                                           configuration: config) { _, error in
+            if let error = error {
+                NSLog("MicroEmacs: failed to start a new instance: %@",
+                      error.localizedDescription)
+            }
+        }
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         true
     }
