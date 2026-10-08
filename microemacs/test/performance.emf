@@ -27,14 +27,22 @@
 ; The text is plain ASCII, i.e. a strict ISO-8859-1 subset - the ME26
 ; binaries have no unicode support, so nothing outside ISO-8859-1 is used.
 ;
-; The dialog is closed by the driver: while the marker file
-; test/perf/perf-dialog.flag is non-empty the driver feeds C-g (0x07) to
-; stdin - but only once the dialog has actually been drawn (it watches for
-; the button row of the box), because a C-g arriving earlier would abort
-; this macro instead of the dialog. The dialog phase really blocks - without
-; the injected key this macro would hang.
+; The dialog is closed by the driver, and it really blocks - without a key
+; this macro would hang. test/perf/perf-dialog.flag is the "I am in the
+; dialog phase" marker, but feeding a C-g (0x07) on that marker alone is
+; racy: a C-g arriving before insert-symbol has put the dialog up aborts
+; this macro instead of the dialog. Exactly one key is fed, and only once
+; the dialog is known to be open:
+;
+;   console (mec) - the key is written to stdin and the driver watches for
+;     the button row of the box ME renders into the terminal;
+;   window (mew)  - the X build takes its keys from the X server, so there
+;     is no rendering in the log to watch either; the driver sends the key
+;     with xdotool once ME has stopped using the CPU, which means it is
+;     blocked waiting for input.
 ;
 ; Run via:  make -f test/performance.gmk
+;      or:  xvfb-run -a make -f test/performance.gmk TARGET=w
 
 ; An @<file> argument replaces the normal me.emf load (see main.c), so load
 ; it explicitly first - it registers the deferred commands

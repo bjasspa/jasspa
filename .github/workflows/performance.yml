@@ -8,9 +8,17 @@ name: performance
 # default list have src/build.sh + src/linuxgcc.mak so they build the same
 # way, but only HEAD carries the harness.
 #
-# Results are written to microemacs/test/perf/perf-output.txt (TEST: lines),
-# uploaded as artifacts (perf-<version>) and rendered as a comparison table
-# in the job summary. This is the console (mec) build only; no thresholds
+# Every version is measured twice, each run writing its own result file:
+#
+#   microemacs/test/perf/perf-output.txt      mec - console build (ncurses)
+#   microemacs/test/perf/perf-output-mew.txt  mew - X11 window build, run
+#                                             against the Xvfb framebuffer
+#                                             and rendered with libXft
+#
+# The result files are uploaded as artifacts (perf-<version>) and rendered
+# as two comparison tables in the job summary - console and window numbers
+# stay apart because mew draws through a different path and closes its
+# dialog through the X server instead of stdin. No thresholds
 # (MAXWALL/MAXRSS) are enforced yet, the numbers are collected first.
 #
 # Run manually via workflow_dispatch to benchmark an arbitrary tag list.
@@ -83,8 +91,17 @@ jobs:
           # build-essential: gcc/make, pkg-config + libncurses-dev: needed by
           # src/linuxgcc.mak (it falls back to a missing -ltermcap without
           # ncurses.pc), ncurses-term: the xterm-256color terminfo the driver
-          # forces via TERM, time: /usr/bin/time -v for the peak RSS
-          sudo apt-get install -y build-essential pkg-config libncurses-dev ncurses-term time
+          # forces via TERM, time: /usr/bin/time -v for the peak RSS.
+          # libx11/libxft/libxrender/libxpm: the window build - linuxgcc.mak
+          # only adds -DMEOPT_XFT=1 and -lXft when pkg-config finds xft.pc, so
+          # without libxft-dev mew would silently render with core fonts.
+          # xvfb + xauth: the framebuffer the window run draws into, xdotool:
+          # sends the dialog close key, procps: pgrep locates mew for that
+          # gate, fonts-dejavu-core: something for Xft to render with.
+          sudo apt-get install -y build-essential pkg-config libncurses-dev \
+            ncurses-term time \
+            libx11-dev libxft-dev libxrender-dev libxpm-dev \
+            xvfb xauth xdotool procps fonts-dejavu-core
 
       - name: Build console binary (mec)
         run: |
@@ -119,10 +136,47 @@ jobs:
       # Runs the 10000 line gen / whole-buffer replace-string / insert-symbol
       # dialog workload. The workload text is plain ASCII, i.e. an ISO-8859-1
       # subset - the ME26 binaries have no unicode support.
-      - name: Run performance workload
+      - name: Run console workload (mec)
         run: |
           cd ./microemacs
-          make -f test/performance.gmk MEC="$MEC"
+          make -f test/performance.gmk BIN="$MEC"
+
+      # Deliberately after the console run: when a tag cannot build the window
+      # support its mec numbers have already been measured and are still
+      # uploaded below, only the mew columns come up empty.
+      - name: Build window binary (mew)
+        run: |
+          cd ./microemacs/src
+          ./build.sh -t w
+
+      - name: Locate window binary (mew) and check Xft
+        run: |
+          MEW=$(ls -d ./microemacs/src/.linux*-release-mew/mew 2>/dev/null | head -n 1)
+          if [ -z "$MEW" ]; then
+            echo "::error::no ./microemacs/src/.linux*-release-mew/mew produced by build.sh - linuxgcc.mak silently falls back to a console build when it cannot find X11"
+            ls -d ./microemacs/src/.linux* 2>/dev/null || true
+            exit 1
+          fi
+          MEW=$(readlink -f "$MEW")
+          echo "INFO: MEW=$MEW"
+          if ldd "$MEW" | grep -q 'libXft'; then
+            echo "INFO: mew renders text with libXft"
+          else
+            echo "::error::mew does not link libXft - libxft-dev was missing when it was built"
+            ldd "$MEW" || true
+            exit 1
+          fi
+          echo "MEW=$MEW" >> "$GITHUB_ENV"
+
+      # Same workload, second binary. xvfb-run gives the window build a
+      # display; Xvfb is started as a sibling of make, so the /usr/bin/time
+      # inside the driver measures mew alone and the framebuffer's own
+      # memory never reaches the RSS column.
+      - name: Run window workload (mew, Xvfb)
+        run: |
+          cd ./microemacs
+          xvfb-run -a -s "-screen 0 1920x1080x24" \
+            make -f test/performance.gmk TARGET=w BIN="$MEW"
 
       - name: Job summary
         if: always()
@@ -131,13 +185,16 @@ jobs:
         run: |
           {
             echo "### ${LABEL}"
-            echo '```'
-            if [ -f ./microemacs/test/perf/perf-output.txt ]; then
-              cat ./microemacs/test/perf/perf-output.txt
-            else
-              echo 'no results produced'
-            fi
-            echo '```'
+            for f in perf-output.txt perf-output-mew.txt; do
+              echo '```'
+              if [ -f "./microemacs/test/perf/$f" ]; then
+                echo "# $f"
+                cat "./microemacs/test/perf/$f"
+              else
+                echo "# $f: not produced"
+              fi
+              echo '```'
+            done
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload results
@@ -146,14 +203,19 @@ jobs:
         with:
           # all paths share microemacs/test/perf/ as the least common
           # ancestor, so the artifact root is that directory and the
-          # comparison job finds results/*/perf-output.txt
+          # comparison job finds results/*/perf-output*.txt
           name: perf-${{ matrix.label }}
           path: |
             microemacs/test/perf/perf-output.txt
-            microemacs/test/perf/perf-macro.out
+            microemacs/test/perf/perf-output-mew.txt
+            microemacs/test/perf/perf-macro-mec.out
+            microemacs/test/perf/perf-macro-mew.out
             microemacs/test/perf/perf-mec.log
             microemacs/test/perf/perf-mec.stats
             microemacs/test/perf/perf-mec.time
+            microemacs/test/perf/perf-mew.log
+            microemacs/test/perf/perf-mew.stats
+            microemacs/test/perf/perf-mew.time
           if-no-files-found: ignore
 
   summary:
@@ -171,23 +233,42 @@ jobs:
         run: |
           val() { sed -n "s/^TEST:$2=//p" "$1" | tail -n 1; }
           cell() { v="$(val "$1" "$2")"; if [ -n "$v" ]; then printf '%s' "$v"; else printf 'n/a'; fi; }
-          {
-            echo "## Performance comparison"
+          # $1 = heading, $2 = TEST: key prefix of the binary, $3 = result
+          # file name. Both tables walk the artifact directories, not the
+          # result files, so every version shows up in both of them - a run
+          # that never got as far as writing its file reads "not run".
+          table() {
+            echo "## $1"
             echo
-            echo "| version | mec wall (s) | mec RSS (kB) | gen (ms) | replace (ms) | dialog (ms) | total (ms) | status |"
+            echo "| version | $2 wall (s) | $2 RSS (kB) | gen (ms) | replace (ms) | dialog (ms) | total (ms) | status |"
             echo "|---|---|---|---|---|---|---|---|"
             rows=0
-            for f in results/*/perf-output.txt; do
-              [ -f "$f" ] || continue
-              label="$(basename "$(dirname "$f")")"
+            for d in results/*/; do
+              [ -d "$d" ] || continue
+              label="$(basename "$d")"
               label="${label#perf-}"
-              st="$(val "$f" mec-status)"
+              f="$d$3"
+              if [ ! -f "$f" ]; then
+                echo "| ${label} | n/a | n/a | n/a | n/a | n/a | n/a | not run |"
+                rows=$((rows + 1))
+                continue
+              fi
+              st="$(val "$f" "$2-status")"
               [ -n "$st" ] || st="not run"
-              echo "| ${label} | $(cell "$f" mec-wall) | $(cell "$f" mec-maxrss) | $(cell "$f" gen-ms) | $(cell "$f" replace-ms) | $(cell "$f" dialog-ms) | $(cell "$f" macro-total-ms) | ${st} |"
+              echo "| ${label} | $(cell "$f" "$2-wall") | $(cell "$f" "$2-maxrss") | $(cell "$f" gen-ms) | $(cell "$f" replace-ms) | $(cell "$f" dialog-ms) | $(cell "$f" macro-total-ms) | ${st} |"
               rows=$((rows + 1))
             done
             if [ "$rows" -eq 0 ]; then
               echo
               echo "_No results uploaded (build or run failed before any output)._"
             fi
+            echo
+          }
+          {
+            table "Performance comparison (console: mec)" mec "perf-output.txt"
+            table "Performance comparison (window: mew, libXft)" mew "perf-output-mew.txt"
+            echo "_The two tables are not directly comparable: mew renders through"
+            echo "libXft on an Xvfb framebuffer and its dialog phase is gated on the"
+            echo "process going quiet, so compare each column across versions rather"
+            echo "than across binaries._"
           } >> "$GITHUB_STEP_SUMMARY"
