@@ -1,0 +1,86 @@
+name: Performance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  performance:
+    runs-on: ubuntu-22.04
+    name: Console performance check on ubuntu-22.04
+
+    # The whole job is self limiting: the workload has a hard timeout in
+    # microemacs/test/performance.gmk (default 120s) and the driver kills a
+    # hung binary with SIGKILL.
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          # build-essential: gcc/make, pkg-config + libncurses-dev: needed by
+          # src/linuxgcc.mak (it falls back to a missing -ltermcap without
+          # ncurses.pc), time: /usr/bin/time -v for the peak RSS measurement
+          sudo apt-get install -y build-essential pkg-config libncurses-dev time
+
+      - name: Build console binary (mec)
+        run: |
+          echo INFO: uname -a
+          uname -a
+          cd ./microemacs/src
+          ./build.sh -t c
+
+      - name: Locate console binary
+        run: |
+          MEC=$(ls -d ./microemacs/src/.linux*-release-mec/mec 2>/dev/null | head -n 1)
+          if [ -z "$MEC" ]; then
+            echo "ERROR: no ./microemacs/src/.linux*-release-mec/mec produced by build.sh"
+            exit 1
+          fi
+          MEC=$(readlink -f "$MEC")
+          echo "INFO: MEC=$MEC"
+          echo "MEC=$MEC" >> "$GITHUB_ENV"
+
+      # Runs test/performance.emf (10000 line file, whole-buffer replace-string,
+      # insert-symbol dialog open/close) and writes test/perf/perf-output.txt.
+      # The workload text is plain ASCII, i.e. an ISO-8859-1 subset - the ME26
+      # binaries have no unicode support.
+      #
+      # No MAXWALL/MAXRSS thresholds are enforced yet so the first runs only
+      # collect numbers; add them once a baseline is known, e.g.
+      #   make -f test/performance.gmk MAXWALL=30 MAXRSS=200000
+      - name: Run performance workload
+        run: |
+          cd ./microemacs
+          make -f test/performance.gmk MEC="$MEC"
+
+      - name: Publish performance results
+        if: always()
+        run: |
+          {
+            echo '### MicroEmacs console performance'
+            echo '```'
+            if [ -f ./microemacs/test/perf/perf-output.txt ]; then
+              cat ./microemacs/test/perf/perf-output.txt
+            else
+              echo 'no results produced'
+            fi
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload performance results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: performance-results
+          path: |
+            microemacs/test/perf/perf-output.txt
+            microemacs/test/perf/perf-macro.out
+            microemacs/test/perf/perf-mec.log
+            microemacs/test/perf/perf-mec.time
+            microemacs/test/perf/perf-mec.stats
+          if-no-files-found: ignore

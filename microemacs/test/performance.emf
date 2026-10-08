@@ -1,0 +1,118 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 Detlef Groth (https://github.com/mittelmark)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Performance workload driven by test/performance.gmk
+; Authors:     Detlef Groth
+;
+; Phases:
+;
+;   gen     - open test/perf/perf-tmp.txt, insert 10000 lines of text and
+;             save it (line editing, screen updates, file I/O)
+;   replace - replace-string over the whole 10000 line buffer and save again
+;   dialog  - insert-symbol open/close round trip
+;
+; Every phase boundary is stamped with the raw $unix-time value
+; (<seconds>.<nanoseconds>).  The stamps are written as
+;
+;     TEST:<tag>=<seconds.nanoseconds>
+;
+; to test/perf/perf-macro.out and test/performance.gmk turns them into
+; milliseconds with awk.  Keeping the arithmetic in the driver keeps this
+; macro free of floating point formatting quirks.
+;
+; The text is plain ASCII, i.e. a strict ISO-8859-1 subset - the ME26
+; binaries have no unicode support, so nothing outside ISO-8859-1 is used.
+;
+; The dialog is closed by the driver: while it is open the marker file
+; test/perf/perf-dialog.flag is non-empty and the driver feeds C-g (0x07) to
+; stdin every 0.1s until this macro has cleared the marker again. The dialog
+; phase really blocks - without the injected key this macro would hang.
+;
+; Run via:  make -f test/performance.gmk
+
+; An @<file> argument replaces the normal me.emf load (see main.c), so load
+; it explicitly first - it registers the deferred commands
+; (define-macro-file ... insert-symbol ...) that the dialog phase needs.
+; me.emf defines start-up itself; the definition below then overrides it.
+execute-file "me"
+
+0 define-macro perf-log       ; @1 = tag, appends TEST:<tag>=<unix-time>
+    !force set-variable #l0 @1
+    set-variable %perf-log &cat %perf-log &cat "TEST:" &cat #l0 &cat "=" &cat $unix-time "\n"
+!emacro
+
+0 define-macro perf-flag      ; @1 = "set" opens / "clear" closes the marker
+    ; The marker buffer is emptied first (a buffer that does not exist yet
+    ; is already empty, kill-region then simply does nothing), "set" then
+    ; inserts one character, "clear" saves the empty buffer again.
+    !force set-variable #l0 @1
+    find-file "perf-dialog.flag"
+    !force beginning-of-buffer
+    !force set-mark
+    !force end-of-buffer
+    !force kill-region
+    !if &seq #l0 "set"
+        insert-string "x"
+    !endif
+    !force save-buffer
+    find-file "perf-tmp.txt"
+!emacro
+
+0 define-macro start-up
+    set-variable %perf-log ""
+
+    ; --------------------------------------------------- gen: 10000 lines
+    perf-log "gen-start"
+    ; this is the one and only find-file given a path: it is issued from
+    ; *scratch*, whose directory is the project root that
+    ; test/performance.gmk runs the binary in, so it lands in test/perf/.
+    ; Every later find-file in this macro uses a bare name and is then
+    ; resolved against the directory of the buffer we are in, i.e. test/perf/
+    find-file "test/perf/perf-tmp.txt"
+    beginning-of-buffer
+    set-variable #l9 0
+    !while &les #l9 10000
+        insert-string &spr "line %d jasspa microemacs performance test, PERFTOKEN alpha beta gamma\n" #l9
+        set-variable #l7 &mod #l9 1000
+        !if &equ #l7 0
+            screen-update
+        !endif
+        set-variable #l9 &add #l9 1
+    !done
+    beginning-of-buffer
+    screen-update
+    save-buffer
+    perf-log "gen-end"
+
+    ; -------------------------------------- replace: whole 10000 line buffer
+    perf-log "replace-start"
+    beginning-of-buffer
+    replace-string "PERFTOKEN" "REPLACED"
+    beginning-of-buffer
+    screen-update
+    save-buffer
+    perf-log "replace-end"
+
+    ; ------------------------------------------------ dialog open and close
+    perf-log "dialog-start"
+    perf-flag "set"
+    !force insert-symbol
+    !force perf-flag "clear"
+    perf-log "dialog-end"
+
+    ; ------------------------------------------------------------ report
+    find-file "perf-macro.out"
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    !force kill-region
+    insert-string %perf-log
+    insert-string &spr "TEST:insert-symbol=%d\n" &exi "insert-symbol"
+    insert-string "TEST:workload-complete=1\n"
+    save-buffer
+    exit-emacs
+!emacro

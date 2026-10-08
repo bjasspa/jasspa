@@ -1,0 +1,4 @@
+# Scratch area created and filled by test/performance.gmk - keep it out of
+# git even when a run is interrupted before "make ... clean".
+*
+!.gitignore
