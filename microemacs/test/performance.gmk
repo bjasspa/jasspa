@@ -24,12 +24,20 @@
 # produces the full result table (and the job summary of the GitHub action)
 # before make returns non-zero. Only a missing binary aborts "run" early.
 #
-# The dialog close key is injected while test/perf/perf-dialog.flag is
-# non-empty: the console build reads it from stdin (byte 0x07 = C-g), a byte
-# is sent every 0.1s until the workload macro has cleared the marker again.
-# The poll interval is therefore the resolution of the dialog phase: the
-# reported dialog-ms is "dialog open + wait for the close key" and can be up
-# to ~0.1s higher than the pure rendering cost.
+# The dialog close key is injected by this driver: the dialog phase blocks
+# until it reads one from stdin (byte 0x07 = C-g). test/perf/perf-dialog.flag
+# is the macro's "I am in the dialog phase" marker, but feeding on that alone
+# is racy - a C-g arriving between the marker being written and the dialog
+# being up aborts the macro itself instead of the dialog, and the run then
+# sits here until TIMEOUT (this happened, about 1 run in 6). So exactly one
+# key is fed, and only once the dialog has actually been drawn: the driver
+# watches perf-mec.log for the button row of its box. A dialog we cannot
+# recognise is fed after 20 polls (2s) anyway.
+#
+# The poll interval is the resolution of the dialog phase: the reported
+# dialog-ms is "dialog open + wait for the close key" and is therefore a few
+# hundred ms above the pure rendering cost - the same offset for every
+# version, so comparisons stay valid.
 #
 # The workload text is pure ASCII, i.e. an ISO-8859-1 subset - ME26 has no
 # unicode support, so nothing outside ISO-8859-1 is used anywhere.
@@ -90,12 +98,41 @@ run:
 	      $(WORK)/perf-run.active
 	: > $(WORK)/perf-run.active
 	{
-		# bound the loop: if the binary dies without ever clearing the
+		# The dialog phase blocks until it gets a key, so this side feeds it
+		# C-g. C-g aborts *macro execution* whenever no dialog is reading it,
+		# and there is a window between the macro writing
+		# test/perf/perf-dialog.flag and insert-symbol actually putting the
+		# dialog on screen - a C-g landing in that window kills the macro,
+		# the marker is never cleared and the run then sits here until
+		# TIMEOUT. That really happened (me_20260601, ~1 run in 6), so the
+		# key is gated on the dialog having been drawn: "> Cancel <" is its
+		# button row, written once per run by every version tested. Exactly
+		# one key is fed, which also keeps the closing keystroke from racing
+		# with the marker being cleared again.
+		#
+		# Bound the loop: if the binary dies without ever clearing the
 		# marker the pipeline must still end shortly after TIMEOUT
-		# (10 iterations per second == the 0.1s poll interval)
+		# (10 iterations per second == the 0.1s poll interval).
 		left=$$(((( $(TIMEOUT) + 10) * 10)))
+		fed=0
+		seen=0
+		idle=0
 		while [ -f $(WORK)/perf-run.active ] && [ $$left -gt 0 ]; do
-			if [ -s $(WORK)/perf-dialog.flag ]; then printf '\007'; fi
+			if [ -s $(WORK)/perf-dialog.flag ] && [ $$fed -eq 0 ]; then
+				if grep -q '> Cancel <' $(WORK)/perf-mec.log 2>/dev/null; then
+					seen=1
+				else
+					idle=$$((idle + 1))
+				fi
+				# seen: dialog is up, feed it now. Fallback: a dialog we do
+				# not recognise - feed it after 2s anyway, the macro is then
+				# either blocked in a dialog or already dead, and one late
+				# C-g makes neither case worse.
+				if [ $$seen -eq 1 ] || [ $$idle -ge 20 ]; then
+					printf '\007'
+					fed=1
+				fi
+			fi
 			sleep 0.1
 			left=$$((left - 1))
 		done

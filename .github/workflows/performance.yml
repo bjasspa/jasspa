@@ -1,31 +1,90 @@
-name: Performance
+name: performance
+
+# Benchmarks the editing workload microemacs/test/performance.emf (driven by
+# microemacs/test/performance.gmk) against the current code AND against
+# previous releases given by git tags, so performance changes become visible
+# over time. The workload harness is always taken from the current commit
+# while the editor binary is built from the ref under test - all tags in the
+# default list have src/build.sh + src/linuxgcc.mak so they build the same
+# way, but only HEAD carries the harness.
+#
+# Results are written to microemacs/test/perf/perf-output.txt (TEST: lines),
+# uploaded as artifacts (perf-<version>) and rendered as a comparison table
+# in the job summary. This is the console (mec) build only; no thresholds
+# (MAXWALL/MAXRSS) are enforced yet, the numbers are collected first.
+#
+# Run manually via workflow_dispatch to benchmark an arbitrary tag list.
 
 on:
-  workflow_dispatch:
   push:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: "Space separated git tags to benchmark against the current code"
+        required: false
+        default: "me_20260901 me_20260601 me_20260301 me_20251201"
 
 jobs:
-  performance:
+  refs:
+    name: resolve versions
     runs-on: ubuntu-22.04
-    name: Console performance check on ubuntu-22.04
-
-    # The whole job is self limiting: the workload has a hard timeout in
-    # microemacs/test/performance.gmk (default 120s) and the driver kills a
-    # hung binary with SIGKILL.
-    timeout-minutes: 30
-
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
     steps:
-      - name: Checkout code
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Build version matrix
+        id: list
+        env:
+          TAGS: ${{ github.event.inputs.tags }}
+        run: |
+          set -e
+          tags="${TAGS:-me_20260901 me_20260601 me_20260301 me_20251201}"
+          short="$(git rev-parse --short HEAD)"
+          json="[{\"ref\":\"${GITHUB_SHA}\",\"label\":\"current-${short}\"}"
+          for t in ${tags}; do
+            if ! git rev-parse -q --verify "refs/tags/${t}" >/dev/null; then
+              echo "::error::unknown git tag: ${t}"
+              exit 1
+            fi
+            json="${json},{\"ref\":\"${t}\",\"label\":\"${t}\"}"
+          done
+          json="${json}]"
+          echo "matrix=${json}" >> "$GITHUB_OUTPUT"
+          echo "matrix: ${json}"
+
+  bench:
+    name: bench (${{ matrix.label }})
+    needs: refs
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.refs.outputs.matrix) }}
+    steps:
+      - name: Checkout version under test
         uses: actions/checkout@v6
+        with:
+          ref: ${{ matrix.ref }}
+
+      - name: Checkout performance harness (current)
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: harness
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           # build-essential: gcc/make, pkg-config + libncurses-dev: needed by
           # src/linuxgcc.mak (it falls back to a missing -ltermcap without
-          # ncurses.pc), time: /usr/bin/time -v for the peak RSS measurement
-          sudo apt-get install -y build-essential pkg-config libncurses-dev time
+          # ncurses.pc), ncurses-term: the xterm-256color terminfo the driver
+          # forces via TERM, time: /usr/bin/time -v for the peak RSS
+          sudo apt-get install -y build-essential pkg-config libncurses-dev ncurses-term time
 
       - name: Build console binary (mec)
         run: |
@@ -38,31 +97,40 @@ jobs:
         run: |
           MEC=$(ls -d ./microemacs/src/.linux*-release-mec/mec 2>/dev/null | head -n 1)
           if [ -z "$MEC" ]; then
-            echo "ERROR: no ./microemacs/src/.linux*-release-mec/mec produced by build.sh"
+            echo "::error::no ./microemacs/src/.linux*-release-mec/mec produced by build.sh"
+            ls -d ./microemacs/src/.linux* 2>/dev/null || true
             exit 1
           fi
           MEC=$(readlink -f "$MEC")
           echo "INFO: MEC=$MEC"
           echo "MEC=$MEC" >> "$GITHUB_ENV"
 
-      # Runs test/performance.emf (10000 line file, whole-buffer replace-string,
-      # insert-symbol dialog open/close) and writes test/perf/perf-output.txt.
-      # The workload text is plain ASCII, i.e. an ISO-8859-1 subset - the ME26
-      # binaries have no unicode support.
-      #
-      # No MAXWALL/MAXRSS thresholds are enforced yet so the first runs only
-      # collect numbers; add them once a baseline is known, e.g.
-      #   make -f test/performance.gmk MAXWALL=30 MAXRSS=200000
+      # The harness always comes from the current commit, only the binary
+      # under test is taken from the ref - that is what keeps the numbers
+      # comparable over time. The old tag's macros/ stay in place on purpose:
+      # the workload runs against its own version of the editor support files.
+      - name: Install performance harness
+        run: |
+          mkdir -p ./microemacs/test/perf
+          cp harness/microemacs/test/performance.gmk ./microemacs/test/
+          cp harness/microemacs/test/performance.emf  ./microemacs/test/
+          cp harness/microemacs/test/perf/.gitignore ./microemacs/test/perf/
+
+      # Runs the 10000 line gen / whole-buffer replace-string / insert-symbol
+      # dialog workload. The workload text is plain ASCII, i.e. an ISO-8859-1
+      # subset - the ME26 binaries have no unicode support.
       - name: Run performance workload
         run: |
           cd ./microemacs
           make -f test/performance.gmk MEC="$MEC"
 
-      - name: Publish performance results
+      - name: Job summary
         if: always()
+        env:
+          LABEL: ${{ matrix.label }}
         run: |
           {
-            echo '### MicroEmacs console performance'
+            echo "### ${LABEL}"
             echo '```'
             if [ -f ./microemacs/test/perf/perf-output.txt ]; then
               cat ./microemacs/test/perf/perf-output.txt
@@ -72,15 +140,54 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload performance results
+      - name: Upload results
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: performance-results
+          # all paths share microemacs/test/perf/ as the least common
+          # ancestor, so the artifact root is that directory and the
+          # comparison job finds results/*/perf-output.txt
+          name: perf-${{ matrix.label }}
           path: |
             microemacs/test/perf/perf-output.txt
             microemacs/test/perf/perf-macro.out
             microemacs/test/perf/perf-mec.log
-            microemacs/test/perf/perf-mec.time
             microemacs/test/perf/perf-mec.stats
+            microemacs/test/perf/perf-mec.time
           if-no-files-found: ignore
+
+  summary:
+    name: comparison table
+    needs: [ refs, bench ]
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download results
+        uses: actions/download-artifact@v6
+        with:
+          path: results
+
+      - name: Write comparison table
+        run: |
+          val() { sed -n "s/^TEST:$2=//p" "$1" | tail -n 1; }
+          cell() { v="$(val "$1" "$2")"; if [ -n "$v" ]; then printf '%s' "$v"; else printf 'n/a'; fi; }
+          {
+            echo "## Performance comparison"
+            echo
+            echo "| version | mec wall (s) | mec RSS (kB) | gen (ms) | replace (ms) | dialog (ms) | total (ms) | status |"
+            echo "|---|---|---|---|---|---|---|---|"
+            rows=0
+            for f in results/*/perf-output.txt; do
+              [ -f "$f" ] || continue
+              label="$(basename "$(dirname "$f")")"
+              label="${label#perf-}"
+              st="$(val "$f" mec-status)"
+              [ -n "$st" ] || st="not run"
+              echo "| ${label} | $(cell "$f" mec-wall) | $(cell "$f" mec-maxrss) | $(cell "$f" gen-ms) | $(cell "$f" replace-ms) | $(cell "$f" dialog-ms) | $(cell "$f" macro-total-ms) | ${st} |"
+              rows=$((rows + 1))
+            done
+            if [ "$rows" -eq 0 ]; then
+              echo
+              echo "_No results uploaded (build or run failed before any output)._"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

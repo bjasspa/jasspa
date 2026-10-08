@@ -27,10 +27,12 @@
 ; The text is plain ASCII, i.e. a strict ISO-8859-1 subset - the ME26
 ; binaries have no unicode support, so nothing outside ISO-8859-1 is used.
 ;
-; The dialog is closed by the driver: while it is open the marker file
-; test/perf/perf-dialog.flag is non-empty and the driver feeds C-g (0x07) to
-; stdin every 0.1s until this macro has cleared the marker again. The dialog
-; phase really blocks - without the injected key this macro would hang.
+; The dialog is closed by the driver: while the marker file
+; test/perf/perf-dialog.flag is non-empty the driver feeds C-g (0x07) to
+; stdin - but only once the dialog has actually been drawn (it watches for
+; the button row of the box), because a C-g arriving earlier would abort
+; this macro instead of the dialog. The dialog phase really blocks - without
+; the injected key this macro would hang.
 ;
 ; Run via:  make -f test/performance.gmk
 
