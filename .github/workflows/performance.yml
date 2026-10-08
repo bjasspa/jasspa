@@ -50,7 +50,7 @@ jobs:
           TAGS: ${{ github.event.inputs.tags }}
         run: |
           set -e
-          tags="${TAGS:-me_20260901 me_20260601 me_20260301 me_20251201}"
+          tags="${TAGS:-me_20260901 me_20260601 me_20260301 me_20251201 me_20250901}"
           short="$(git rev-parse --short HEAD)"
           json="[{\"ref\":\"${GITHUB_SHA}\",\"label\":\"current-${short}\"}"
           for t in ${tags}; do
