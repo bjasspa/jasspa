@@ -1,0 +1,292 @@
+.\" -*- dangit -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac112.3,v 1.1 2026/09/30 22:58:40 daniel Exp $
+.Im MicroEmacs command|file
+.so me.tni
+.TH json-format 3
+.XI json-format - "Reformat the buffer as indented JSON"
+.XI json-compact - "Remove all formatting from the JSON buffer"
+.XI json-validate - "Check that JSON is well formed"
+.XI json-context - "Toggle the sticky JSON parent context window"
+.SH NAME
+.Me "|json-format"
+json-format \- Reformat the buffer as indented JSON
+.br
+.Me "|json-compact"
+json-compact \- Remove all formatting from the JSON buffer
+.br
+.Me "|json-validate"
+json-validate \- Check that JSON is well formed
+.br
+.Me "|json-context"
+json-context \- Toggle the sticky JSON parent context window
+.Me $a
+.SH SYNOPSIS
+.na
+\fIn\fR \fBjson-format\fR [\|\fIregex\fR \fIreplace\fR\|]
+.br
+\fIn\fR \fBjson-compact\fR [\|\fIregex\fR \fIreplace\fR\|]
+.br
+\fIn\fR \fBjson-validate\fR [\|\fIregex\fR \fIreplace\fR\|]
+.br
+\fBjson-context\fR
+.ad
+.SH DESCRIPTION
+.B json-format
+reformats the current buffer as indented JSON, one value to a line, with the
+indentation  step taken from  \fB%json-indent-width\fR  (2 by default).  Empty
+objects and arrays are left compact as \fC{}\fR and \fC[]\fR.
+.PP
+.B json-compact
+performs the reverse, removing all white space that lies outside of a string
+so that the whole document is reduced to a single line.
+.PP
+Both commands work out which JSON to process, taking the first of the following
+that applies:
+.IP \fB1\fR
+In the \fC*json-format*\fR buffer the whole buffer is processed again.
+.IP \fB2\fR
+An active region in the current buffer that, ignoring white space, starts with
+\fC{\fR or \fC[\fR and ends with \fC}\fR or \fC]\fR is copied to
+\fC*json-format*\fR and processed there, leaving the source unchanged. When a
+numeric argument \fIn\fR is given (e.g. \fCC-u\fR), without bit \fC0x02\fR set
+(see below), and the buffer can be edited
+the region is replaced in place instead, with each line after the first given
+the indentation of the region's first line. Checking both ends means a lone
+bracket left hilighted is not taken for the region, and a region left by a yank
+or a search, which hilights the pasted text or the match, is not taken as a
+selection at all.
+.IP \fB3\fR
+A buffer in the \fCjson\fR major mode is processed in place.
+.IP \fB4\fR
+A buffer with no file, such as \fC*scratch*\fR, or a plain text one (a
+\fC.txt\fR file or one with no specific major mode), is processed in place when its first non white character is \fC{\fR or \fC[\fR.
+Buffers of other major modes (C, JavaScript etc.) are not searched for JSON,
+select it as a region or copy it instead.
+.IP \fB5\fR
+The kill buffer, into which the system clipboard is fetched first, is yanked
+into \fC*json-format*\fR and processed there when its first non white character
+is \fC{\fR or \fC[\fR.
+.LP
+A buffer that cannot be edited, either in view mode or a pipe buffer such as
+\fC*shell*\fR, is never changed; in cases 3 and 4 its content is copied to
+\fC*json-format*\fR instead. The \fC*json-format*\fR buffer is shown in a popup
+window and given the JSON major mode, so it can be saved, searched or viewed with
+.B json-context
+like any other JSON buffer. Copies are made through the kill ring and removed
+from it again, without touching the system clipboard. Any narrows (folds) in the
+buffer being used are removed first, as the lines they hide are part of the
+document.
+.PP
+Both commands are string aware, matching either a complete string literal or a
+single structural  character, so braces, brackets, commas and colons that occur
+inside a string are never mistaken for structure. Both run
+.B json-validate
+first and make no change at all if the buffer is not well formed.  Both also
+apply the JSON hilighting scheme to the buffer, so a scratch buffer that is not
+attached to a \fC.json\fR file is coloured like one.
+.PP
+.B json-validate
+checks that JSON is well formed without changing it. It works out which JSON to
+check in the same way as
+.BR json-format ,
+with two differences that follow from it never making a change: a buffer that
+cannot be edited is checked in place rather than copied, and any region that is
+not empty is checked as it stands, whatever it starts and ends with, so a
+selection with a missing closing bracket or trailing text is reported rather
+than passed over for the buffer. If a problem is found the cursor is moved to
+the first character of the offending token, or to the end of a region that ends
+too soon, and the reason is reported on the message line. A region is checked
+in a copy in \fC*json-format*\fR but the cursor is still placed in the source;
+only JSON taken from the kill buffer, or pre-processed as described below, is
+left in the \fC*json-format*\fR popup.
+The source is left untouched, except that any narrows are removed so the hidden
+lines are checked too. As the JSON
+standard requires, a string may not hold a raw control character (a tab must be
+written as \et) or an unknown escape, and a number may not have a leading zero.
+.PP
+When bit \fC0x02\fR of the numeric argument \fIn\fR is set (e.g. \fCesc 2\fR)
+all three commands first make a regular expression replacement in the JSON.
+This is useful for JSON held in a string literal of another language, where
+every quote inside it is escaped. The user is prompted for the expression and
+then for its replacement, both starting empty with the search history available;
+an empty expression skips the step. For example selecting the text between the
+outer quotes of the Java line
+.Me $emf-scheme
+.CS
+String s = "{\e"name\e": \e"a\e\e\e"b\e"}";
+.CE 0
+.Me $ehf-scheme
+and running \fCesc 2 json-validate\fR, replacing \fC\e\e\e(["\e\e]\e)\fR with
+\fC\e1\fR, which removes one level of escaping so an escaped quote becomes a
+quote and a doubled backslash a single one, checks
+.Me $emf-scheme
+.CS
+{"name": "a\e"b"}
+.CE 0
+.Me $ehf-scheme
+From a macro the expression and replacement are given as arguments, which
+avoids the prompts:
+.Me $emf-scheme
+.CS
+2 json-validate "\e\e\e\e\e\e([\e"\e\e\e\e]\e\e)" "\e\e1"
+.CE 0
+.Me $ehf-scheme
+The replacement is only ever made in the copy in \fC*json-format*\fR, it is
+made with
+.Ht replace-string 2
+in magic mode and the number of replacements is added to the final message. A
+buffer or region is always copied, even when it could otherwise be processed or
+replaced in place, so the source is never changed, and any region is taken as
+it stands, as with
+.BR json-validate ,
+because the brackets being checked for may only appear once it has been
+unescaped. As the positions in the copy no longer match the source, the result
+or any error is shown in the \fC*json-format*\fR popup.
+.PP
+.B json-context
+toggles a sticky window at the top of the frame which shows the parent lines of
+the value the cursor is currently inside, in the manner of a folded outline:
+.Me $emf-scheme
+.CS
+{
+  "servers": [
+    {
+      "config": {
+        "tls": {
+.CE 0
+.Me $ehf-scheme
+The window is refreshed when the cursor comes to rest, and it grows and shrinks
+to the number of levels being shown, up to a limit of  \fB%json-context-depth\fR
+(8 by default); when the nesting is deeper than that the innermost levels are
+shown.  The main window is scrolled by the same amount in the opposite direction
+as the context window is resized, so the text does not appear to move.
+.PP
+While the context window is open \fC^G\fR closes it and then performs its usual
+abort.  Issuing
+.B json-context
+a second time also closes it. Each buffer has its own context buffer, named
+\fC*json-context:\fIname\fC*\fR, so the context of several buffers can be shown
+at once.
+.PP
+While the context window is open the buffer's own window is locked, so pop-up
+buffers such as help or the buffer list use another window. The context is
+turned off and its window removed when the buffer is deleted or is no longer
+shown in any window, for example when another buffer is selected into its
+window, its window is deleted or
+.Ht delete-other-windows 2
+is used from another window.  Run
+.B json-context
+again to restore it.
+.SH DIAGNOSTICS
+.IP "\fC[JSON line \fIl\fC col \fIc\fC: \fIreason\fC]\fR"
+The JSON is not well formed. The cursor is left on the offending token,
+in \fC*json-format*\fR when the JSON was copied there (for
+.B json-validate
+only when it came from the kill buffer or was pre-processed), and the source is
+left unchanged. The reason is one of:
+.RS
+.IP "\fCexpected a name or '}' but found \fIx\fR, \fCexpected a name but found \fIx\fR"
+An object member must start with a quoted name; the second form follows a
+\fC,\fR, after which a closing \fC}\fR is not allowed either.
+.IP "\fCexpected ':' after the name but found \fIx\fR"
+A name and its value must be separated by a colon.
+.IP "\fCexpected a value but found \fIx\fR"
+A value was required at this point.
+.IP "\fCexpected ',' or a closing bracket but found \fIx\fR"
+Two values follow one another with no separator between them.
+.IP "\fCtrailing ',' before '}'\fR, \fCtrailing ',' before ']'\fR"
+JSON does not permit a separator after the last member.
+.IP "\fC'}' closes an array that was opened with '['\fR, \fC']' closes an object that was opened with '{'\fR"
+The closing bracket does not match the container it closes.
+.IP "\fCunexpected \fIx\fC after the end of the JSON value\fR"
+Text follows the end of the document.
+.IP "\fCunterminated string - no closing quote\fR"
+A string was opened but never closed. A string cannot continue onto the next
+line, so a raw newline in a string is also reported this way.
+.IP "\fCcontrol character in a string - it must be escaped, e.g. \et\fR"
+A string holds a raw tab or other control character.
+.IP "\fCinvalid escape '\e\fIx\fC' in a string\fR"
+Only the escapes of a quote, a backslash, a slash, \fCb\fR, \fCf\fR, \fCn\fR,
+\fCr\fR, \fCt\fR and \fCu\fR are allowed.
+.IP "\fC'\eu' in a string must be followed by 4 hex digits\fR"
+A \fC\eu\fR escape is incomplete or not hexadecimal.
+.IP "\fC'\fIx\fC' is not a valid number\fR"
+An unquoted value is not a well formed number, for example \fC01\fR, which has a
+leading zero.
+.IP "\fC'\fIx\fC' is not a value - expected a string, number, true, false or null\fR"
+An unquoted word that is not \fCtrue\fR, \fCfalse\fR or \fCnull\fR, for example
+a name without quotes or \fCNaN\fR.
+.IP "\fCreached the end with \fIn\fC container(s) still open - missing '\fIx\fC'\fR"
+The document ends before every object and array has been closed; \fIx\fR is the
+bracket that closes the innermost one.
+.IP "\fCno JSON value found\fR"
+The buffer or region holds nothing but white space.
+.RE
+.IP "\fC[JSON is valid]\fR"
+.B json-validate
+found no problem. When the JSON came from elsewhere the source is added,
+\fC- from the region\fR or \fC- from the kill buffer\fR, followed by the
+number of replacements when it was pre-processed, e.g.
+\fC- from the region, 14 replaced\fR.
+.IP "\fC[JSON validating... \fIn\fC%]\fR, \fC[JSON formatting... \fIn\fC%]\fR, \fC[JSON compacting... \fIn\fC%]\fR"
+Shown while a large document is worked through, with \fIn\fR the percentage
+done, so that the time taken by a document of many megabytes is not mistaken
+for the editor having stopped. \fC[JSON is valid, formatting...]\fR (or
+\fCcompacting...\fR) marks the end of the validation, and
+\fC[JSON copying to *json-format*...]\fR and
+\fC[JSON copying the result back...]\fR the copies made for a region, a buffer
+that cannot be edited or the kill buffer.
+.IP "\fC[JSON formatted]\fR, \fC[JSON compacted]\fR"
+The current buffer was processed in place. When the JSON came from elsewhere the
+source is added, one of \fC- from the region\fR, \fC- from the buffer\fR,
+\fC- from the kill buffer\fR or \fC- region replaced\fR, followed by the number of
+replacements when it was pre-processed, e.g. \fC- from the buffer, 3 replaced\fR.
+.IP "\fC[No JSON found - select a region, copy some JSON or open a .json file]\fR"
+None of the sources listed under DESCRIPTION applied.
+.IP "\fC[JSON: too many split lines to copy back, the result is in *json-format*]\fR"
+A region being replaced in place formatted to more lines over the 65520
+character line limit than can be tracked; the source is left unchanged.
+.IP "\fC[JSON context needs a formatted buffer - run json-format first]\fR"
+.B json-context
+derives the nesting from the leading  indentation of each line, so it cannot be
+used on a document that is still on a single line.
+.SH NOTES
+These are macros defined in \fCjsonview.emf\fR.
+.PP
+A line in the kill buffer longer than the 65520 character line limit cannot be
+yanked, so a large single line document on the clipboard is cut short and fails
+to validate. Save it to a file and open that instead, lines that long are split
+when a file is loaded and rejoined when it is saved. For the same reason,
+copying text from such a line puts a line break where it was split, which can
+fall inside a string; select the JSON as a region instead of copying it. Kill
+buffer text that starts with more than 2KB of white space is not recognised. A
+pre-process replacement (bit \fC0x02\fR) cannot match across the point where
+such a line was split. NUL characters are dropped when a file is loaded, so a
+NUL in a JSON file is never seen and cannot be reported.
+.PP
+.B json-context
+works from the indentation rather than by parsing, which makes it cheap enough
+to run as the cursor moves, but does require the buffer to have been formatted
+first.
+.PP
+The  supporting  macro  \fBjson-path\fR  is private, but once \fCjsonview.emf\fR
+has been loaded (by any of the commands above) it may be called from user macros
+to obtain the position of the cursor within the document. It sets
+\fB%json-path\fR to the readable  path, \fB%json-lines\fR  to the parent  lines
+themselves and  \fB%json-count\fR  to the number of levels, leaving the buffer
+and the cursor untouched. As a variable holds at most 2KB, \fB%json-lines\fR
+keeps only the innermost \fB%json-context-depth\fR parent lines and a long
+\fB%json-path\fR keeps the innermost names, starting with \fC... /\fR where the
+outer ones were dropped.
+.SH "SEE ALSO"
+.na
+.Ht hilight 2 ,
+.Ht major-mode 2 ,
+.Ht clean 3 .
+.ad
+.FH
