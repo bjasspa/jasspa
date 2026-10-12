@@ -413,9 +413,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             }
         }
         else if(*nn == '?')
-            meRegCurr->f = meAtoi(vvalue);
+            regs->f = meAtoi(vvalue);
         else if(*nn == '#')
-            meRegCurr->n = meAtoi(vvalue);
+            regs->n = meAtoi(vvalue);
         else if(*nn == 'y')
         {
             int len = (int) meStrlen(vvalue);
