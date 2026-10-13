@@ -719,8 +719,18 @@ typedef struct meNarrow {
  * Buffers may be "Inactive" which means the files accosiated with them
  * have not been read in yet. These get read in at "use buffer" time.
  */
+/* A named single byte code page, the Unicode char of each byte from 0x80 (0 if none). Pages
+ * are shared and never freed until exit, spelling keeps an ignore dictionary for each page */
+typedef struct meCodePage {
+    struct meCodePage *next;
+    struct meDictionary *spellIgnore;
+    meUShort           chrToUni[128];
+    meUByte            name[2];
+} meCodePage;
+
 typedef struct  meBuffer {
     struct  meBuffer  *next;                    /* Link to next struct meBuffer */
+    meCodePage        *codePage;                /* code page current when the file was loaded */
 #if MEOPT_ABBREV
     meAbbrev          *abbrevFile;              /* Abreviation file             */
 #endif

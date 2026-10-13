@@ -180,13 +180,47 @@ meUByte charIntrnlDsplyTbl[256] = {
     0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8, 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF,
     0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF
 };
-meUShort charToUnicode[128] = { 0 };
+meCodePage  codePageDefault = { NULL, NULL, { 0 }, { 'C', '\0' } };
+meCodePage *codePageCur = &codePageDefault;
+meUShort   *charToUnicode = codePageDefault.chrToUni;
+meCodePage *codePageSpell = NULL;
+
+/* Returns the code page called name, if create is set an empty one is made when there is none */
+meCodePage *
+meCodePageFind(meUByte *name, int create)
+{
+    meCodePage *cp=&codePageDefault, *lp;
+    do {
+        if(!meStrcmp(cp->name,name))
+            return cp;
+        lp = cp;
+    } while((cp = cp->next) != NULL);
+    if(!create || ((cp = meMalloc(sizeof(meCodePage)+meStrlen(name))) == NULL))
+        return NULL;
+    cp->spellIgnore = NULL;
+    memset(cp->chrToUni,0,sizeof(cp->chrToUni));
+    meStrcpy(cp->name,name);
+    cp->next = NULL;
+    lp->next = cp;
+    return cp;
+}
+
+void
+meCodePageFreeAll(void)
+{
+    meCodePage *cp;
+    while((cp = codePageDefault.next) != NULL)
+    {
+        codePageDefault.next = cp->next;
+        free(cp);
+    }
+}
 meUByte isWordMask=CHRMSK_DEFWORDMSK;
-meUByte charMaskFlags[]="luhs1234dpPwaAMIDkc";
+meUByte charMaskFlags[]="luhs1234dpPwaAMIDkcCS";
 
 /* Convert a Unicode codepoint to the best single ME codepage byte.
  * Tries codepage reverse lookup first, then box-drawing chars, then
- * ASCII approximations for common typography (matches charsutl.emf). */
+ * ASCII approximations for common typography (matches encodutl.emf). */
 meUByte
 utf8ToMeChar(meUInt uc)
 {
@@ -2065,6 +2099,10 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                 else
                     meModeClear(bp->mode,MDLF);
             }
+#if MEOPT_EXTENDED
+            if(!(flags & meRWFLAG_INSERT))
+                bp->codePage = codePageCur;
+#endif
         }
     }
     if(length > 0)

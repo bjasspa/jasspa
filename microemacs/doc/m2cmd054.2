@@ -53,7 +53,7 @@ more like a text file.
 Convert a Unicode UTF-8 formatted file, loaded in rbin format, to a Unicode preserving text mode. In this mode line
 termination is auto-detected and handled as normal but the same spacial bytes as lossless text are protected. Then any
 Unicode character which as a value of \fCU+0080\fR or more is then handled in one of 4 ways, if the character is
-supported by the current \*(mS charset it is converted to that single byte value. Otherwise, if the hex value of
+supported by the current code page it is converted to that single byte value. Otherwise, if the hex value of
 the character is less than \fC0x01000\fR then it is converted to a byte sequence of "\fC\\x01###\fR" where ### is the
 hex value of the character in ASCII text, if less than \fC0x100000\fR it is converted to byte sequence of
 "\fC\\x02#####\fR", if the value is \fC0x100000\fR or greater the character is replace with a literal \fC\\x07\fR byte

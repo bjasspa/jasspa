@@ -104,8 +104,8 @@ modes as these will affect the output.
 .PP
 \fBfind-ufile\fR allows loading of any UTF-8, UTF-16 or UTF-32 encoded Unicode file as if a normal text file, while preserving every
 character (except those in the last \fC0x100000\fR Unicode plane). This allows for easy reading and editing of all languages
-supported by the current charset of \*(mS. Care must be taken to avoid corrupting the byte sequences of characters not
-supported by the current charset, see command 
+supported by the current code page of \*(mS. Care must be taken to avoid corrupting the byte sequences of characters not
+supported by the current code page, see command 
 .Ht translate-buffer 2
 for more information on the Unicode preserving text format used.
 .SH NOTES

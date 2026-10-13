@@ -8,8 +8,8 @@
 ; Synopsis:    Spelling dictionary creation and maintenance routines.
 ; Authors:     Steven Phillips
 ;
-; Get a list of charsets
-0 execute-file "charset"
+; Get a list of code pages
+0 execute-file "codepage"
 
 define-macro insert-word-list
   set-variable $find-words ".*"
@@ -195,11 +195,13 @@ define-macro ispell-convert
       execute-file "language"
     !endif
     ; get the best code page for the language
-    set-variable .mc &lget .change-font.cs-id &sin &lef .change-font.ln-type 1 .change-font.cs-type
+    set-variable .mc &lget .change-font.cp-id &sin &lef .change-font.ln-type 1 .change-font.cp-type
     set-variable #l9 .spell.language
     set-registry "/history/language" .ul
     execute-file "language"
   !endif
+  ; the unicode build reads the files with their code page and writes the dictionary through .mc
+  !iif &and &opt "uni" &lfin .change-font.cp-id .mc  0 code-page-define .mc
   !if &band 2 @#
     !force 0 delete-buffer "*isp-aff"
     !force 0 delete-buffer "*isp-dic"
@@ -221,8 +223,8 @@ define-macro ispell-convert
     set-variable .sc .mc
   !elif &seq &set .sc &slo @s1 "utf-8"
     set-variable .sc "utf8"
-  !elif &not &lfin .change-font.cs-id .sc
-    -8 ml-write &spr "[ERROR: aff uses unknown/unsupported character set - %s]" .sc
+  !elif &not &lfin .change-font.cp-id .sc
+    -8 ml-write &spr "[ERROR: aff uses unknown/unsupported code page - %s]" .sc
   !elif &seq .sl "test"
     set-variable .mc .sc
   !endif
@@ -231,12 +233,24 @@ define-macro ispell-convert
   !elif &seq .sc "utf8"
     3 forward-delete-char
   !else
-    -8 ml-write "[ERROR: AFF charset not SET as utf-8 but aff has utf-8 signature - check encoding]"
+    -8 ml-write "[ERROR: AFF encoding not SET as utf-8 but aff has utf-8 signature - check encoding]"
+  !endif
+  !if &or &not &opt "uni" &seq .sc "utf8"
+  !elif &not &seq $buffer-code-page .sc
+    0 code-page-define .sc
+    beginning-of-buffer
+    set-mark
+    end-of-buffer
+    -1 kill-region
+    set-variable $buffer-code-page .sc
+    insert-file #l0
+    -1 buffer-mode "edit"
+    beginning-of-buffer
   !endif
   !if &not &seq .sc .mc
-    !iif &seq .mc "test"  -8 ml-write &spr "[ERROR: Must convert test files to correct charset first - %s %s]" .sc .mc
-    4 change-buffer-charset .sc .mc
-    !if &lget .change-buffer-charset.result 1
+    !iif &seq .mc "test"  -8 ml-write &spr "[ERROR: Must convert test files to correct encoding first - %s %s]" .sc .mc
+    4 change-buffer-encoding .sc .mc
+    !if &lget .change-buffer-encoding.result 1
       beginning-of-buffer
       !force search-buffer "me" &spr "^[ \\t]*[PS]FX[ \\t].*\CG"
       !if $status
@@ -254,6 +268,7 @@ define-macro ispell-convert
   !if &not &seq $buffer-fname #l1
     !force 0 delete-buffer "*isp-dic"
     find-buffer "*isp-dic"
+    !iif &and &opt "uni" &not &seq .sc "utf8"  set-variable $buffer-code-page .sc
     insert-file #l1
     set-variable $buffer-fname #l1
   !endif
@@ -264,15 +279,15 @@ define-macro ispell-convert
   !elif &seq .sc "utf8"
     3 forward-delete-char
   !else
-    -8 ml-write "[ERROR: Charset not SET as utf-8 but dic has utf-8 signature - check encoding]"
+    -8 ml-write "[ERROR: Encoding not SET as utf-8 but dic has utf-8 signature - check encoding]"
   !endif
   ; First of all remove all Morphological analysis as these can contain unconvertable chars
   replace-string "[ \t].*" ""
   beginning-of-buffer
   !if &not &seq .sc .mc
     -1 buffer-mode "edit"
-    4 change-buffer-charset .sc .mc
-    !if &lget .change-buffer-charset.result 1
+    4 change-buffer-encoding .sc .mc
+    !if &lget .change-buffer-encoding.result 1
       beginning-of-buffer
       !force search-buffer "Me" "\CG"
       !if $status
@@ -311,6 +326,15 @@ define-macro ispell-convert
     !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\S\\S\\S"
     !iif $status  -8 ml-write "[Abort - affix rule flag length inconsistent - 2 to many]"
     set-variable #l3 32
+    set-variable .mt ""
+    !if &and &opt "uni" &lfin .change-font.cp-id .mc
+      0 set-char-mask "C"
+      set-variable #l5 $result
+      set-char-mask "C" .mc
+      0 set-char-mask "c"
+      set-variable .mt $result
+      set-char-mask "C" #l5
+    !endif
     beginning-of-buffer
     !repeat
       !force search-buffer "me" "^[ \\t]*\\(PFX\\|SFX\\|CIRCUMFIX\\|COMPOUNDBEGIN\\|COMPOUNDEND\\|COMPOUNDMIDDLE\\|COMPOUNDPERMITFLAG\\|FORBIDDENWORD\\|KEEPCASE\\|LEMMA_PRESENT\\|NEEDAFFIX\\|NOSUGGEST\\|ONLYINCOMPOUND\\|PSEUDOROOT\\)[ \\t]+\\(\\S[^ \t\n\x01]\\)\\s"
@@ -322,6 +346,12 @@ define-macro ispell-convert
       !iif &gre &inc #l3 1 255  -8 ml-write "[Abort - Too many affix rule flags used - max is 235]"
       !if &equ #l3 92
         set-variable #l4 "\\\\\x01"
+      !elif &and &len .mt &gre #l3 127
+        ; a flag is a byte of the dictionary's code page, one it has no char for is skipped
+        !while &not &set #l4 &add &cat "0x" &mid .mt &mul &sub #l3 128 4 4 0
+          !iif &gre &inc #l3 1 255  -8 ml-write "[Abort - Too many affix rule flags used - max is 235]"
+        !done
+        set-variable #l4 &cat &itoa #l4 "\x01"
       !else
         set-variable #l4 &cat &itoa #l3 "\x01"
       !endif
@@ -410,6 +440,7 @@ define-macro ispell-convert
   insert-string "; Rules used - list used by spell-edit-word\nset-variable .spell.rules \""
   end-of-line
   insert-string "\"\n\n; Reset the spell rules\n0 add-spell-rule\n\n; Add prefix & suffix spell rules"
+  !iif &and &opt "uni" &lfin .change-font.cp-id .mc  set-variable $buffer-code-page .mc
   &band @# 1 write-buffer &spr "%slsr%s.emf" #l8 #l9
   !if &band @# 2
     !force 0 delete-buffer "*isp-aff.emf"
@@ -418,8 +449,13 @@ define-macro ispell-convert
     !force 0 delete-buffer $buffer-bname
   !endif
   !force 0 delete-dictionary &set #l7 &spr "%slsm%s.edf" #l8 #l9
-  ; above change-buffer-charset gets the dic file into the ME internal charset so must clear the internal-display mapping table to avoid the spell function messing with the chars
+  ; above change-buffer-encoding gets the dic file into the ME internal code page so must clear the internal-display mapping table to avoid the spell function messing with the chars
   set-char-mask "M" ""
+  !if &opt "uni"
+    0 set-char-mask "S"
+    set-variable #l4 $result
+    !iif &lfin .change-font.cp-id .mc  set-char-mask "S" .mc
+  !endif
   0 add-dictionary #l7
   find-buffer "*isp-dic"
   beginning-of-buffer
@@ -442,6 +478,7 @@ define-macro ispell-convert
     !endif
     forward-line
   !done
+  !iif &opt "uni"  set-char-mask "S" #l4
   !if &not &band @# 2
     &band @# 1 save-dictionary #l7
     ; this forces the reload of the dictionary with will rehash to a reasonable hash table size
@@ -450,8 +487,8 @@ define-macro ispell-convert
     !force spell "foobar"
     0 save-dictionary #l7
   !endif
-  ; reset the charset
-  !force !force execute-file "charset"
+  ; reset the code page
+  !force !force execute-file "codepage"
   ml-write "All Done!!"
 !emacro
 

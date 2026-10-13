@@ -655,7 +655,8 @@ justify(int leftMargin, int leftDoto, meUByte jmode)
                 meUndoAddInsChars(jj);
 #endif
         }
-        cwp->dotOffset++;
+        else
+            cwp->dotOffset++;
     }
     len = meLineGetLength(cwp->dotLine) - doto + leftMargin;
 

@@ -593,8 +593,8 @@ transChars(int f, int n)
     meUndoAddRepChar();
     meLineSetChar(dotp, cwp->dotOffset, cl);
 #else
-    meLineSetChar(dotp, doto+0, cr);
-    meLineSetChar(dotp, doto+1, cl);
+    meLineSetChar(dotp, cwp->dotOffset, cr);
+    meLineSetChar(dotp, cwp->dotOffset+1, cl);
 #endif
     cwp->dotOffset = doto;
     return (meTRUE);

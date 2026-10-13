@@ -167,6 +167,15 @@ add-spell-rule "*" "0[xX][[:xdigit:]]+"
 .Me $ehf-scheme
 This will  completely  match the words  "\fC0x0\fR",  "\fC0xff\fR" etc but not  "\fC0x00z\fR" as the whole word is not
 matched, only the first 4 letters.
+.PP
+\fBadd-spell-rule\fR "\fI@\fR" "\fIfile\fR"
+.IP
+Executes the rules file \fIfile\fR, found in the same way as by
+.Ht execute-file 2 ,
+e.g. \fBlsrenus.emf\fR. The rules and the dictionaries are in the spelling code page set by
+.Ht set-char-mask 2
+flag \fBS\fR, the command fails if it is not set. A Unicode build reads the file as single byte in that code page,
+never as UTF-8, so the rules are read as written whatever the current code page is.
 .SH NOTES
 The \fBispell-convert\fR macro in \fBspellutl.emf\fR can be used to convert
 .Hr ispell 1 ,
@@ -202,6 +211,7 @@ for compounds may be added at some point in the future, see \fBspell.c\fR for th
 .SH "SEE ALSO"
 .na
 .Ht add-dictionary 2 ,
+.Ht set-char-mask 2 ,
 .Ht spell 2 ,
 .Ht spell-buffer 3 ,
 .Ht spell-word 3 ,

@@ -426,8 +426,9 @@ in \*(mS  paragraphs are removed first.
 As with \fCParagraph to Line\fR except it converts the current and all following paragraph. Note the conversion only
 starts from the current position, earlier paragraphs remain unchanged.
 .\" -----------------
-.IP "\fCChange Character Set ...\fR"
-Converts the ASCII text from one character set to another, this allows diacritical marks to be maintained.
+.IP "\fCChange Encoding ...\fR"
+Converts the buffer from one encoding to another, see
+.Ht change-buffer-encoding 3 .
 .IP "\fCTabs to Spaces\fR"
 Converts \fCTAB\fR characters to spaces whilst retaining the correct tab stop positions within the file. Note that if
 the tab stops appear to be incorrect then the tab width should be temporarily changed using 

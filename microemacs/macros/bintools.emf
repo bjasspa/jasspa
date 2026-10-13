@@ -11,13 +11,8 @@
 define-macro bin-txt-to-hex
   !force set-variable #l1 @1
   !iif &not $status  set-variable #l1 @ml "String"
-  !iif &gre &len #l1 510  -8 ml-write "[ERROR: Invalid string given, too long to convert]"
-  set-variable #l4 ""
-  set-variable #l2 0
-  !while &not &seq "" &set #l3 &mid #l1 &pinc #l2 1 1
-    set-variable #l4 &spr "%s%02x" #l4 &atoi #l3
-  !done
-  set-variable $result &sup #l4
+  !iif &gre &blen #l1 510  -8 ml-write "[ERROR: Invalid string given, too long to convert]"
+  set-variable $result &sup &bhex #l1
 !emacro
 
 define-macro bin-hex-to-txt
@@ -25,12 +20,7 @@ define-macro bin-hex-to-txt
   !iif &not $status  set-variable #l1 @ml "Hex string"
   !iif &not &xse #l1 "\\h+"  -8 ml-write "[ERROR: Invalid hex string given, non-hex chars found]"
   !iif &band &len #l1 1  -8 ml-write "[ERROR: Invalid hex string given, half byte given]"
-  set-variable #l4 ""
-  set-variable #l2 0
-  !while &not &seq "" &set #l3 &mid #l1 &pinc #l2 2 2
-    !iif &not &seq #l3 "00"  set-variable #l4 &cat #l4 &itoa &cat "0x" #l3
-  !done
-  set-variable $result #l4
+  set-variable $result &hexb #l1
 !emacro
 
 0 define-macro ibin-hex-to-dis-txt
@@ -185,8 +175,11 @@ define-macro bin-yank-to-hex
     !while &gre $window-eline &add $window-line 1
       !if &seq @wc "\n"
         insert-string #l1
+      !elif &seq @wc ""
+        ; an 8-bit build's 0 byte
+        insert-string "00"
       !else
-        insert-string &spr "%02X" &ato @wc
+        insert-string &sup &bhex @wc
       !endif
       forward-delete-char
       !iif &gre $window-col 511  insert-newline
@@ -322,8 +315,9 @@ define-macro bin-hex-yank-bin-insert
     replace-string " " ""
     beginning-of-buffer
   !endif
-  set-variable #l4 0
+  set-variable #l5 0
   set-variable #l2 0
+  set-variable #l6 ""
   !while &gre $window-eline &add $window-line 1
     !if &set #l0 &isin @wc "0123456789abcdef"
       forward-delete-char
@@ -333,11 +327,20 @@ define-macro bin-hex-yank-bin-insert
       !elif &and &equ #l2 13 &equ &set #l2 &add &mul &sub #l0 1 16 &sub #l1 1 10
         ; last char was a \r this is a \n so nothing to do as newline already inserted - could test for eol consistency but bin warning below should be enough
       !elif &or &equ #l2 13 &equ #l2 10
+        insert-string &hexb #l6
+        set-variable #l6 ""
         insert-newline
-        set-variable #l4 &add #l4 1
+      !elif &and &not #l2 &not &opt "uni"
+        ; an 8-bit build cannot insert a 0 byte
+        set-variable #l5 &add #l5 1
       !else
-        insert-string &itoa #l2
-        set-variable #l4 &add #l4 1
+        ; the bytes are decoded together so a UTF-8 sequence becomes a char, so only a long run
+        ; of continuation bytes (not UTF-8) is split, a raw byte takes 4 bytes in a string
+        !if &gre &len #l6 &cond &equ &band #l2 0xc0 0x80 500 400
+          insert-string &hexb #l6
+          set-variable #l6 ""
+        !endif
+        set-variable #l6 &spr "%s%02x" #l6 #l2
       !endif
       forward-delete-char
     !elif &seq @wc "\n"
@@ -347,15 +350,14 @@ define-macro bin-hex-yank-bin-insert
       !abort
     !endif
   !done
-  0 buffer-info
-  set-variable #l5 &lget $result 5
+  insert-string &hexb #l6
   set-mark
   beginning-of-buffer
   -1 yank
   copy-region
   !force 0 delete-buffer "*bin-tmp*"
   goto-position "\x82"
-  set-variable $result &sub #l4 #l5
+  set-variable $result #l5
 !emacro
 
 define-macro bin-yank
@@ -372,7 +374,7 @@ define-macro bin-yank
     set-variable #l1 1
   !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)*\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ ?\\)?"
     set-variable #l1 1
-  !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)\\{11\\}[\x01-\xff]*"
+  !elif &xseq @y "\\([?\\h]\\{8\\}:\\)? ?\\h\\h\\( \\h\\h\\)* +|  .\\{1,16\\}\n\\([?\\h]\\{8\\}:\\( \\h\\h\\)+ +|  .\\{1,16\\}\n\\)\\{11\\}[\\s\\S]*"
     set-variable #l1 1
   !else
     set-variable #l1 0

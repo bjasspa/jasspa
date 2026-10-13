@@ -273,6 +273,7 @@ define-macro zfile-find-file
     !if &seq #l4 "z"
       set-variable #l5 0
     !elif &seq #l4 "u"
+      ; UNICODE: as find-ufile, a text read then a re-read as UTF-8; (l) is a text read as find-lfile
       set-variable #l5 &bor #l5 8
       set-variable #l6 0x100
     !elif &seq #l4 "l"
@@ -318,6 +319,7 @@ define-macro zfile-find-file
     !if &not #l0
       !if #l5
         #l5 find-file #l2 @mna
+        ; UNICODE: see (u) above
         !iif &len #l6  #l6 translate-buffer
       !else
         find-zfile #l2 @mna

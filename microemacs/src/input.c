@@ -200,8 +200,8 @@ kbd_rep:
                 }
                 else if(cc == meCHAR_TRAIL_NULL)
                     cc = 0;
-                else if(cc == meCHAR_TRAIL_LEADER)
-                    /* special '\?' key (e.g. OSD hot key) - ignore */
+                else if(cc != meCHAR_TRAIL_LEADER)
+                    /* special '\?' key (e.g. OSD hot key) - ignore, a leader pair is the leader char */
                     goto kbd_rep;
             }
             return cc;
@@ -1099,7 +1099,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_DELBAK:    /* ^H : backwards delete. */
-            if(ipos && ii)
+            if(ipos && (ii > 0))
             {
                 if((ipos -= ii) < 0)
                 {
@@ -1715,9 +1715,12 @@ ml_yank:
             while(ilen && (ipos != ilen) && ii--)
             {
                 mlForwardToNextWord(buf,ipos,ilen);
-                buf[ipos] = toUpper(buf[ipos]);
-                for(ipos++ ; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                    buf[ipos] = toLower(buf[ipos]);
+                if(ipos < ilen)
+                {
+                    buf[ipos] = toUpper(buf[ipos]);
+                    for(ipos++ ; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
+                        buf[ipos] = toLower(buf[ipos]);
+                }
                 changed=1;
             }
             break;

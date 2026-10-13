@@ -7,12 +7,12 @@
 .Id $Id: m3mac041.3,v 2.6 2025/09/07 12:43:45 jon Exp $
 .Im MicroEmacs command
 .so me.tni
-.TH change-buffer-charset 3
-.XI change-buffer-charset - "Convert buffer between two character sets"
+.TH change-buffer-encoding 3
+.XI change-buffer-encoding - "Convert buffer between two encodings"
 .XI buffer-is-utf8 - "Detect if the current buffer is UTF-8 encoded"
 .SH NAME
-.Me "|change-buffer-charset"
-change-buffer-charset \- Convert buffer; between two character sets
+.Me "|change-buffer-encoding"
+change-buffer-encoding \- Convert buffer; between two encodings
 .Me $a
 .br
 .Me "|buffer-is-utf8"
@@ -20,23 +20,24 @@ buffer-is-utf8 \- Detect if the current buffer is UTF-8 encoded
 .Me $a
 .SH SYNOPSIS
 .na
-\fBchange-buffer-charset\fR
+\fBchange-buffer-encoding\fR
 .br
 .I n
-\fBchange-buffer-charset\fR "\fIfrom-charset\fR" "\fIfto-charset\fR"
+\fBchange-buffer-encoding\fR "\fIfrom-encoding\fR" "\fIto-encoding\fR"
 .br
 .I n
 \fBbuffer-is-utf8\fR \fIvariable\fR
 .ad
 .SH DESCRIPTION
-\fBchange-buffer-charset\fR opens a dialog allowing the user to select a \fBFrom\fR and \fBTo\fR character set. If the
-\fIConvert\fR button is selected the current buffer is converted to the destination character set. The command assumes
-that the current buffer is written in the \fBFrom\fR character set, no attempt is made to verify this.
+\fBchange-buffer-encoding\fR opens a dialog allowing the user to select a \fBFrom\fR and \fBTo\fR encoding, either a
+code page, e.g. \fCcp1253\fR, or \fCutf8\fR. If the \fIConvert\fR button is selected the current buffer is converted
+to the destination encoding. The command assumes that the current buffer is written in the \fBFrom\fR encoding, no
+attempt is made to verify this.
 .PP
 The command also provides the ability to convert to and from UTF-8. \*(mS cannot directly support Unicode, UTF-8 or 
 any multi-byte code pages, for various reasons (insert FAQ ref here) \*(mS only supports a single byte code page 
-restricting the user to working with 255 characters at any one time. However, \fBchange-buffer-charset\fR does provide 
-the user with the ability to load a UTF-8 file, losslessly convert the loaded file to the current code-page, edit the 
+restricting the user to working with 255 characters at any one time. However, \fBchange-buffer-encoding\fR does provide 
+the user with the ability to load a UTF-8 file, losslessly convert the loaded file to the current code page, edit the 
 file and then convert it back to UTF-8 before saving.
 .PP
 The lossless conversion makes use of 2 special prefix characters, \fB0x01\fR and \fB0x02\fR, followed by 3 or 5
@@ -49,18 +50,18 @@ extended character rendering is enabled, see bit \fB0x10000\fR of
 .Ht $system 5
 for more information.
 .PP
-\fBchange-buffer-charset\fR also allows unsupported characters to be changed to the unsupported character (\fB0x07\fR) 
+\fBchange-buffer-encoding\fR also allows unsupported characters to be changed to the unsupported character (\fB0x07\fR) 
 or the characters can be removed.
 .PP
-The current character set is configured using the
+The current code page is configured using the
 .Ht user-setup 3
 dialog (see
-.Hl "Display Font Set" user-setup 3 ).
+.Hl "Display Code Page" user-setup 3 ).
 This in turn uses the command
 .Ht set-char-mask 2
 to create the low level character conversion tables.
 .PP
-The \fBchange-buffer-charset\fR dialog is not opened if both \fIfrom-charset\fR and \fIfto-charset\fR are given on the
+The \fBchange-buffer-encoding\fR dialog is not opened if both \fIfrom-encoding\fR and \fIto-encoding\fR are given on the
 command-line,  the  argument  \fIn\fR is used to set the  options  of the  conversion,  where the bits are  defined as
 follows:
 .IP \fB0x01\fR
@@ -75,8 +76,8 @@ When set, unsupported characters are, where possible, converted to a character t
 same meaning. This is used in preference to converting to the unsupported char or removing, but is not an accurate 
 translation. 
 .PP
-A value of  "\fCdisplay\fR"  can be given for either of the  \fIfrom-charset\fR  or  \fIfto-charset\fR  to indicate the
-user's current display character set, see
+A value of  "\fCdisplay\fR"  can be given for either of the \fIfrom-encoding\fR or \fIto-encoding\fR to indicate the user's
+current display code page, see
 .Ht user-setup 3 .
 .PP
 The  \fBbuffer-is-utf8\fR  command  attempts to determine if the current  buffer is UTF-8  encoded or not, setting the
@@ -90,7 +91,7 @@ not foolproof, the characters all being correctly encoded could be a fluke.
 .IP \fB-1\fR
 If the buffer contains  characters that would need encoding and at least one is not encoded correctly for UTF-8.
 .SH NOTES
-\fBchange-buffer-charset\fR and \fBbuffer-is-utf8\fR are macros defined in \fCcharsutl.emf\fR.
+\fBchange-buffer-encoding\fR and \fBbuffer-is-utf8\fR are macros defined in \fCencodutl.emf\fR.
 .SH "SEE ALSO"
 .na
 .Ht user-setup 3 ,

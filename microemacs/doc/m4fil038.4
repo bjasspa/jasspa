@@ -55,14 +55,14 @@ is 0x00 (the Nul character) the \fIutf8\fP  string is "" (the empty string and 0
 if the input to \fB&uni\fP or \fB&uci\fP cannot be mapped to a valid Unicode character.
 .SH EXAMPLE
 The  following  macro code can be used to convert the UTF-8  encode  character  string at the current  location to the
-current display character set equivalent:
+current display code page equivalent:
 .Me $emf-scheme
 .CS
 set-variable #l0 &ufi &mid @wl $window-col 4
 !if &not &band 1 &lget #l0 1
   ml-write "Error: String at current location is not a valid UTF-8 char"
 !elif &not &band 2 &lget #l0 1
-  ml-write "Error: UTF-8 character not supported in current dsplay charset"
+  ml-write "Error: UTF-8 character not supported in current display code page"
 !else
   &lget #l0 4 forward-delete-char
   insert-string &lget #l0 3
@@ -86,7 +86,7 @@ the character is drawn as a crossed diamond, an attempt to represent the Unicode
 .na
 .Hl "Variable Functions" Functions - ,
 .Ht set-char-mask 2 ,
-.Ht change-buffer-charset 3 ,
+.Ht change-buffer-encoding 3 ,
 .Ht &lget 4 ,
 .Ht &equal 4 .
 .ad

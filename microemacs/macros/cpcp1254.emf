@@ -1,0 +1,21 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Code page cp1254, run by code-page-define (codepage.emf)
+; Authors:     Steven Phillips
+;
+0 set-char-mask "C"
+set-variable #l0 $result
+set-char-mask "C" "cp1254"
+set-char-mask "c" "20AC0081201A0192201E20262020202102C62030016020390152008D008E008F009020182019201C201D20222013201402DC21220161203A0153009D009E017800A000A100A200A300A400A500A600A700A800A900AA00AB00AC00AD00AE00AF00B000B100B200B300B400B500B600B700B800B900BA00BB00BC00BD00BE00BF00C000C100C200C300C400C500C600C700C800C900CA00CB00CC00CD00CE00CF011E00D100D200D300D400D500D600D700D800D900DA00DB00DC0130015E00DF00E000E100E200E300E400E500E600E700E800E900EA00EB00EC00ED00EE00EF011F00F100F200F300F400F500F600F700F800F900FA00FB00FC0131015F00FF"
+!if &not @#
+  set-char-mask "C" #l0
+!elif &not &opt "uni"
+  set-char-mask "M" ""
+  set-char-mask "dp" "€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ"
+  set-char-mask "a" "ŠšŒœŸÿÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖöØøÙùÚúÛûÜüİıŞşßßSsYy"
+!endif

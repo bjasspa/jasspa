@@ -1,0 +1,530 @@
+; -!- emf -!-
+;
+; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Buffer encoding utilities
+; Authors:     Steven Phillips
+;
+; change-buffer-encoding iso8859-7 cp1253
+!iif &not &exi .osd.encoding  set-variable .osd.encoding &pinc .osd.next 1
+
+define-macro buffer-is-utf8
+  !if &opt "uni"
+    ; the text is decoded: UTF-8 unless read through a code page or holding invalid bytes
+    set-alpha-mark "\x84"
+    beginning-of-buffer
+    !force search-buffer "me" "[^\x01-\x7f]"
+    !if &not $status
+      set-variable @1 0
+    !elif &len $buffer-code-page
+      set-variable @1 -1
+    !else
+      beginning-of-buffer
+      !force search-buffer "me" "[[:raw:]]"
+      set-variable @1 &con $status -1 1
+    !endif
+    goto-alpha-mark "\x84"
+    !return
+  !endif
+  ; UTF8 - 2 byte: \xc2\x80 - \xdf\xbf  3: \xe0\x80\x80 - \xef\xbf\xbf 4: \xf0\x80\x80\x80 - \xf4\x8f\xbf\xbf
+  set-alpha-mark "\x84"
+  beginning-of-buffer
+  !force search-buffer "me" "[\x80-\xff]"
+  !if $status
+    !force 2 backward-char
+    ; search for a standalone trail byte or bad leader byte OR a leader with too many trail bytes OR a leader with not enough trail bytes
+    !force search-buffer "me" "\\(^\\|[\x01-\x09\x0b-\x7f]\\)[\x80-\xbf\xf5-\xff]\\|\\([\xc2-\xdf][\x80-\xbf]\\|[\xe0-\xef][\x80-\xbf][\x80-\xbf]\\|[\xf0-\xf4][\x80-\xbf][\x80-\xbf][\x80-\xbf]\\)[\x80-\xbf]\\|\\([\xc2-\xdf]\\|[\xe0-\xef][\x80-\xbf]?\\|[\xf0-\xf4][\x80-\xbf]?[\x80-\xbf]?\\)\\([\x01-\x09\x0b-\x7f]\\|$\\)"
+    set-variable @1 &con $status -1 1
+  !else
+    set-variable @1 0
+  !endif
+  goto-alpha-mark "\x84"
+!emacro
+define-macro change-buffer-encoding
+  !force set-variable #l1 @2
+  !if $status
+    set-variable #l0 @1
+    !iif &seq #l0 "display"  set-variable #l0 &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+    !iif &seq #l1 "display"  set-variable #l1 &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+  !else
+    !if &opt "uni"
+      ; both default to how the buffer was read
+      set-variable #l2 &cond &len $buffer-code-page &lfind .change-font.cp-id $buffer-code-page 0x8000
+      !iif &not #l2  set-variable #l2 &lfind .change-font.cp-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+      #l2 change-encoding-set
+      &bor 0x10000 #l2 change-encoding-set
+    !endif
+    .osd.encoding osd
+    set-variable #l0 .change-encoding-set.from
+    set-variable #l1 .change-encoding-set.to
+    set-variable @# &bor &band @# 1 &mul .change-encoding-us.n 2
+  !endif
+  !if &opt "uni"
+    @# change-encoding-convert #l0 #l1
+    !return
+  !endif
+  !if &seq #l0 #l1
+    ml-write "[From & To are the same - nothing to do!]"
+    !return
+  !endif
+  set-alpha-mark "\x82"
+  set-variable #l3 3
+  !repeat
+    beginning-of-buffer
+    !force search-buffer "Me" &set #l4 &itoa #l3
+    !iif &not $status  !break
+    !if &gre &inc #l3 1 127
+      goto-alpha-mark "\x82"
+      -8 ml-write "[ERROR: Failed to find padding char for change-buffer-encoding]"
+    !elif &equ #l3 7
+      set-variable #l3 13
+    !endif
+  !done
+  ; don't assume/default a code page
+  set-variable #l2 &reg &spr "/history/%s/char-set" %platform ""
+  !if &not &set #l9 &con &seq #l0 "utf8" 1 0
+    !if &not &seq #l0 #l2
+      set-registry &spr "/history/%s/char-set" %platform #l0
+      !force !force execute-file "codepage"
+      !iif &not $status  !goto abort
+    !endif
+    ; get list of unicode values for chars 0x80 - 0xff
+    0 set-char-mask "c"
+    set-variable #l3 $result
+  !endif
+  !if &seq #l1 "utf8"
+    set-variable #l9 2
+  !else
+    ; load the code page to convert to
+    set-registry &spr "/history/%s/char-set" %platform #l1
+    !force !force execute-file "codepage"
+    !iif &not $status  !goto abort
+  !endif
+  set-variable #l8 &cond &bmod magic 1 -1
+  set-variable .result "|||||||"
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  !repeat
+    !force search-buffer "me" &spr "[\x80-\xff][^%s]" #l4
+    !iif &not $status  !break
+    2 backward-char
+    set-alpha-mark "\x83"
+    !if &band #l9 1
+      set-variable #l0 &ufi &mid @wl $window-col 4
+      set-variable #l5 &spr "%s" &lget #l0 5
+      !if &equ &lget #l0 1 3
+        set-variable #l6 &spr "%s%s" &lget #l0 3 #l4
+      !elif &and &lget #l0 1 &not &band @# 4
+        !if &seq "0x000" &lef &lget #l0 2 5
+          set-variable #l6 &cat "" &rig &lget #l0 2 -3
+        !else
+          set-variable #l6 &cat "" &rig &lget #l0 2 -5
+        !endif
+      !elif &and &band @# 8 &set #l6 &lfind "|2502|250c|2510|2514|2518|252c|251c|253c|2524|2534|2500|" &rig &lget #l0 2 -4
+        set-variable #l6 &spr "%s%s" &mid $box-chars &sub #l6 1 1 #l4
+      !elif &and &band @# 8 &set #l6 &lfind "|00b4|00b7|2010|2011|2012|2013|2014|2015|2018|2019|201a|201b|201c|201d|201e|201f|2022|" &rig &lget #l0 2 -4
+        set-variable #l6 &spr "%s%s" &mid " '*------'',`\"\",\"*" #l6 1 #l4
+      !elif &band @# 2
+        set-variable #l6 ""
+      !else
+        set-variable #l6 &spr "%s%s" &lget #l0 3 #l4
+      !endif
+    !else
+      ; the group must not take the line end, a replace re-inserting it adds a line at the end
+      set-variable #l5 &spr "%s\\([^%s\n]\\|$\\)" @wc #l4
+      set-variable #l0 &uni &cat "0x" &mid #l3 &mul &sub &atoi @wc 128 4 4
+      !if &band #l9 2
+        set-variable #l6 &cat &xre &lget #l0 5 "." &cat "\\0" #l4 "\\1"
+      !elif &equ &lget #l0 1 3
+        set-variable #l6 &spr "%s%s\\1" &lget #l0 3 #l4
+      !elif &and &lget #l0 1 &not &band @# 4
+        !if &seq "0x000" &lef &lget #l0 2 5
+          set-variable #l6 &spr "%s\\1" &rig &lget #l0 2 -3
+        !else
+          set-variable #l6 &spr "%s\\1" &rig &lget #l0 2 -5
+        !endif
+      !elif &band @# 2
+        set-variable #l6 "\\1"
+      !else
+        set-variable #l6 &spr "%s%s\\1" &lget #l0 3 #l4
+      !endif
+    !endif
+    replace-string #l5 #l6
+    set-variable #l7 &lget $result 1
+    goto-alpha-mark "\x83"
+    replace-string #l5 #l6
+    set-variable #l7 &add #l7 &lget $result 1
+    !if &les &lget #l0 1 3
+      set-variable .result &lset &lset .result 1 &add &lget .result 1 1 4 &add &lget .result 4 #l7
+    !elif &seq #l5 &lget #l0 3
+      set-variable .result &lset &lset .result 3 &add &lget .result 3 1 6 &add &lget .result 6 #l7
+    !else
+      set-variable .result &lset &lset .result 2 &add &lget .result 2 1 5 &add &lget .result 5 #l7
+    !endif
+    goto-alpha-mark "\x83"
+  !done
+  beginning-of-buffer
+  replace-string &spr "[%s]" #l4 ""
+  !if &band @# 4
+  !elif &band #l9 2
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" &spr "\\h\\h\\h\\|\\h\\{5\\}"
+      !iif &not $status  !break
+      set-variable #l0 &uni &cat "0x" &rig &set #l4 @s0 1
+      &len #l4 backward-char
+      set-alpha-mark "\x83"
+      replace-string #l4 &lget #l0 5
+      set-variable #l7 &lget $result 1
+      goto-alpha-mark "\x83"
+    !done
+  !endif
+  #l8 buffer-mode "magic"
+  goto-alpha-mark "\x82"
+  ; is the code page different from when we started? if so change back
+  !if &not &seq #l2 &reg &spr "/history/%s/char-set" %platform ""
+    set-registry &spr "/history/%s/char-set" %platform #l2
+    !force !force execute-file "codepage"
+  !endif
+  ; must also reset the language
+  !force !force execute-file "language"
+  !if &not &band @# 1
+  !elif &lget .result 1
+    ml-write &spr "[buffer converted to \"%s\" - Warning no conversion for %d chars (%d) converted %d (%d)]" #l1 &lget .result 4 &lget .result 1 &lget .result 5 &lget .result 2
+  !else
+    ml-write &spr "[buffer converted to \"%s\" - converted %d chars (%d)]" #l1 &lget .result 5 &lget .result 2
+  !endif
+  !return
+*abort
+  !if &not &seq #l2 &reg &spr "/history/%s/char-set" %platform ""
+    set-registry &spr "/history/%s/char-set" %platform #l2
+    !force !force execute-file "codepage"
+  !endif
+  !force !force execute-file "language"
+  -8 ml-write "[Command Aborted!]"
+!emacro
+
+; change-encoding-convert - the unicode build's change-buffer-encoding: the text is re-decoded as the
+; first encoding, its bytes taken from how the buffer was read, and the second becomes the buffer's
+; code page (or UTF-8); chars it lacks are kept, changed or removed as change-buffer-encoding's @#
+0 define-macro change-encoding-convert
+  set-variable #l0 &cond &seq @1 "utf8" "" @1
+  set-variable #l1 &cond &seq @2 "utf8" "" @2
+  set-variable .cp $buffer-code-page
+  !if &and &seq #l0 .cp &seq #l1 .cp
+    ml-write "[From & To are the same - nothing to do!]"
+    !return
+  !endif
+  !iif &len #l0  0 code-page-define #l0
+  !iif &len #l1  0 code-page-define #l1
+  set-variable .change-buffer-encoding.result "|0|0|0|0|0|0|"
+  set-variable #l8 &cond &bmod "magic" 1 -1
+  set-variable #l9 &cond &bmod "exact" 1 -1
+  1 buffer-mode "magic"
+  1 buffer-mode "exact"
+  set-alpha-mark "\x82"
+  set-variable #l3 3
+  !repeat
+    beginning-of-buffer
+    !force search-buffer "Me" &set #l4 &itoa #l3
+    !iif &not $status  !break
+    !if &gre &inc #l3 1 127
+      goto-alpha-mark "\x82"
+      -8 ml-write "[ERROR: Failed to find padding char for change-buffer-encoding]"
+    !elif &equ #l3 7
+      set-variable #l3 13
+    !endif
+  !done
+  !if &len .cp
+    change-encoding-table .cp
+    set-variable .tf $result
+  !endif
+  !if &seq #l0 .cp
+  !elif &len #l0
+    ; a char at a time, its bytes become the code page's chars, each followed by the pad
+    change-encoding-table #l0
+    set-variable .tt $result
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" &spr "[^\x01-\x7f][^%s]" #l4
+      !iif &not $status  !break
+      2 backward-char
+      set-alpha-mark "\x83"
+      set-variable #l5 @wc
+      change-encoding-bytes #l5
+      set-variable #l6 $result
+      set-variable #l7 ""
+      !while &len #l6
+        set-variable #l2 &add &cat "0x" &lef #l6 2 0
+        set-variable #l6 &rig #l6 2
+        !if &les #l2 128
+          set-variable #l7 &cat #l7 &cat &itoa #l2 #l4
+        !elif &lget .tt &sub #l2 127
+          set-variable #l7 &cat #l7 &cat &itoa &lget .tt &sub #l2 127 #l4
+        !else
+          set-variable #l7 &cat #l7 &cat &bitoa #l2 #l4
+        !endif
+      !done
+      !iif &seq #l7 ""  set-variable #l7 &cat #l5 #l4
+      ; twice as the group takes the next char, so a char followed by the same is left
+      replace-string &spr "%s\\([^%s\n]\\|$\\)" #l5 #l4 &cat #l7 "\\1"
+      set-variable #l2 &lget $result 1
+      goto-alpha-mark "\x83"
+      replace-string &spr "%s\\([^%s\n]\\|$\\)" #l5 #l4 &cat #l7 "\\1"
+      !iif &not &seq #l7 &cat #l5 #l4  set-variable .change-buffer-encoding.result &lset &lset .change-buffer-encoding.result 2 &add &lget .change-buffer-encoding.result 2 1 5 &add &lget .change-buffer-encoding.result 5 &add #l2 &lget $result 1
+      goto-alpha-mark "\x83"
+    !done
+    beginning-of-buffer
+    replace-string #l4 ""
+  !else
+    ; a run of chars at a time, its bytes are decoded as UTF-8
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" "[^\x01-\x7f]+"
+      !iif &not $status  !break
+      set-variable #l5 @s0
+      set-variable #l6 ""
+      set-variable #l2 0
+      !while &les #l2 &len #l5
+        change-encoding-bytes &mid #l5 #l2 1
+        set-variable #l6 &cat #l6 &cond &len $result $result &bhex &mid #l5 #l2 1
+        set-variable #l2 &add #l2 1
+      !done
+      !if &not &seq #l5 &set #l7 &hexb #l6
+        &len #l5 backward-char
+        &len #l5 forward-delete-char
+        insert-string #l7
+        set-variable .change-buffer-encoding.result &lset &lset .change-buffer-encoding.result 2 &add &lget .change-buffer-encoding.result 2 1 5 &add &lget .change-buffer-encoding.result 5 1
+      !endif
+    !done
+  !endif
+  !if &len #l1
+    ; chars the new code page lacks are kept (no 4 bit), changed (8 bit) or removed (2 bit)
+    change-encoding-table #l1
+    set-variable .tt $result
+    beginning-of-buffer
+    !repeat
+      !force search-buffer "me" &spr "[^\x01-\x7f][^%s]" #l4
+      !iif &not $status  !break
+      2 backward-char
+      set-alpha-mark "\x83"
+      set-variable #l5 @wc
+      set-variable #l7 &cat #l5 #l4
+      !if &or &gre &atoi #l5 0x10ffff &lfind .tt &atoi #l5
+        set-variable #l2 0
+      !elif &not &band @# 4
+        set-variable #l2 1
+      !elif &and &band @# 8 &set #l6 &lfind "|9474|9484|9488|9492|9496|9516|9500|9532|9508|9524|9472|" &atoi #l5
+        set-variable #l7 &cat &mid $box-chars &sub #l6 1 1 #l4
+        set-variable #l2 1
+      !elif &and &band @# 8 &set #l6 &lfind "|180|183|8208|8209|8210|8211|8212|8213|8216|8217|8218|8219|8220|8221|8222|8223|8226|" &atoi #l5
+        set-variable #l7 &cat &mid " '*------'',`\"\",\"*" #l6 1 #l4
+        set-variable #l2 1
+      !elif &band @# 2
+        set-variable #l7 ""
+        set-variable #l2 1
+      !else
+        set-variable #l7 &cat "\CG" #l4
+        set-variable #l2 1
+      !endif
+      replace-string &spr "%s\\([^%s\n]\\|$\\)" #l5 #l4 &cat #l7 "\\1"
+      set-variable #l6 &lget $result 1
+      goto-alpha-mark "\x83"
+      replace-string &spr "%s\\([^%s\n]\\|$\\)" #l5 #l4 &cat #l7 "\\1"
+      !iif #l2  set-variable .change-buffer-encoding.result &lset &lset .change-buffer-encoding.result 1 &add &lget .change-buffer-encoding.result 1 1 4 &add &lget .change-buffer-encoding.result 4 &add #l6 &lget $result 1
+      goto-alpha-mark "\x83"
+    !done
+    beginning-of-buffer
+    replace-string #l4 ""
+  !endif
+  set-variable $buffer-code-page #l1
+  #l8 buffer-mode "magic"
+  #l9 buffer-mode "exact"
+  goto-alpha-mark "\x82"
+  !if &not &band @# 1
+  !elif &lget .change-buffer-encoding.result 1
+    ml-write &spr "[buffer converted to \"%s\" - Warning no conversion for %d chars (%d) converted %d (%d)]" @2 &lget .change-buffer-encoding.result 4 &lget .change-buffer-encoding.result 1 &lget .change-buffer-encoding.result 5 &lget .change-buffer-encoding.result 2
+  !else
+    ml-write &spr "[buffer converted to \"%s\" - converted %d chars (%d)]" @2 &lget .change-buffer-encoding.result 5 &lget .change-buffer-encoding.result 2
+  !endif
+!emacro
+
+; change-encoding-table - $result is |n|n|...|, the code point of each byte from 0x80 of code page @1
+0 define-macro change-encoding-table
+  0 set-char-mask "C"
+  set-variable #l0 $result
+  set-char-mask "C" @1
+  0 set-char-mask "c"
+  set-variable #l1 $result
+  set-char-mask "C" #l0
+  set-variable #l2 "|"
+  set-variable #l3 0
+  !while &les #l3 128
+    set-variable #l2 &cat #l2 &cat &add &cat "0x" &mid #l1 &mul #l3 4 4 0 "|"
+    set-variable #l3 &add #l3 1
+  !done
+  set-variable $result #l2
+!emacro
+
+; change-encoding-bytes - $result is the hex of the bytes char @1 was read from, "" for a char the
+; buffer's code page lacks
+0 define-macro change-encoding-bytes
+  set-variable #l0 &atoi @1
+  !if &gre #l0 0x10ffff
+    set-variable #l0 &sub #l0 0x110000
+  !elif &les #l0 128
+  !elif &not &len .change-encoding-convert.cp
+    set-variable $result &bhex @1
+    !return
+  !elif &not &set #l0 &lfind .change-encoding-convert.tf #l0
+    set-variable $result ""
+    !return
+  !else
+    set-variable #l0 &add #l0 127
+  !endif
+  set-variable $result &rig &spr "0%x" #l0 -2
+!emacro
+
+0 define-macro change-encoding-set
+  !if &band @# 0x8000
+    set-variable #l0 "utf8"
+    set-variable #l1 "Unicode - UTF-8"
+  !else
+    set-variable #l0 &lget .change-font.cp-id &band @# 0xffff
+    set-variable #l1 &lget .change-font.cp-name &band @# 0xffff
+  !endif
+  !if &band @# 0x10000
+    set-variable .to #l0
+    osd .osd.encoding 60  "RMdtxmshfHzi" .scheme.osd-entry 32 1 #l1 .osd.tmp "change-encoding-setup 0x10000"
+  !else
+    set-variable .from #l0
+    osd .osd.encoding 30  "RMdtxmshfHzi" .scheme.osd-entry 32 1 #l1 .osd.tmp "change-encoding-setup 0x0"
+  !endif
+!emacro
+
+0 define-macro change-encoding-setup
+  set-variable #l9 @1
+  -1 osd .osd.tmp
+  osd .osd.tmp 0 "bs" 35 0 0 0
+  osd .osd.tmp 1 "" "Unicode - UTF-8" &bor #l9 0x8000 change-encoding-set
+  set-variable #l0 0
+  !while &not &seq "" &set #l1 &lget .change-font.cp-name &inc #l0 1
+    osd .osd.tmp &add #l0 1 "" #l1 &bor #l9 #l0 change-encoding-set
+  !done
+!emacro
+
+0 define-macro change-encoding-us
+  !if &les @# 0
+    -1 osd .osd.tmp
+    osd .osd.tmp 0 "bs" 35 0 0 0
+    set-variable #l0 0
+    !while &not &seq "" &set #l1 &lget .list &inc #l0 1
+      osd .osd.tmp #l0 "i" #l1 &sub #l0 1 "set-variable .change-encoding-us.n @#"
+    !done
+  !else
+    set-variable $result &rep &lget .list &add .n 1 "\H" ""
+  !endif
+!emacro
+set-variable .change-encoding-us.list "|Preser\Hve or change to |\HPreserve or remove|\HChange to |\HRemove|"
+
+-1 osd .osd.encoding
+osd .osd.encoding 0   "batcDIHs" 3 6 52 0 -1 -1 620 630 .scheme.osd-title "Change Buffer Encoding"
+osd .osd.encoding 10  ""
+osd .osd.encoding 20  "Sfh" "  Change \HFrom: " 30
+osd .osd.encoding 32  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 30
+osd .osd.encoding 40  ""
+osd .osd.encoding 50  "Sfh" "           \HTo: " 60
+osd .osd.encoding 62  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 60
+osd .osd.encoding 70  ""
+osd .osd.encoding 80  "Sfh" "  \HUnsupported: " 90
+osd .osd.encoding 90  "OtxmsfhHzR" .scheme.osd-entry 32 1 "" .osd.tmp change-encoding-us
+osd .osd.encoding 92  "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 90
+osd .osd.encoding 600 ""
+osd .osd.encoding 610 ""
+osd .osd.encoding 620 "BthrfH" .scheme.osd-ebtt " C\Honvert " f void
+osd .osd.encoding 625 "hf" "  "
+osd .osd.encoding 630 "BthrfH" .scheme.osd-ebtt " \HCancel "  0 void
+osd .osd.encoding 640 "f" "  "
+
+; Get a list of display code pages
+0 execute-file "codepage"
+set-variable #l0 &lfind .change-font.cp-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+#l0 change-encoding-set
+&bor 0x10000 #l0 change-encoding-set
+
+; describe-char - the char at the cursor: code point, UTF-8 bytes and, when a UnicodeData.txt
+; is on the search path, its name and general category; also left in $result
+define-macro describe-char
+  !if &seq @wc ""
+    ml-write "[End of buffer]"
+    !return
+  !endif
+  !if &opt "uni"
+    !if &gre &set #l0 &atoi @wc 0x10ffff
+      ml-write &spr "[Raw byte 0x%02X, not part of a valid UTF-8 char]" &band #l0 255
+      !return
+    !endif
+    set-variable #l1 &bhex @wc
+  !else
+    !if &not &band &lget &set #l2 &uci @wc 1 1
+      ml-write &spr "[Char 0x%02X, the code page has no Unicode char for it]" &atoi @wc
+      !return
+    !endif
+    set-variable #l0 &lget #l2 2
+    set-variable #l1 &bhex &lget #l2 5
+  !endif
+  set-variable #l1 &trr &xrep #l1 "\\(..\\)" "\\1 "
+  describe-char-name #l0
+  !if &seq $result ""
+    set-variable $result &spr "U+%04X %s, UTF-8 %s" #l0 &cond &atoi @wc @wc "^@" #l1
+  !else
+    set-variable $result &spr "U+%04X %s %s, %s, UTF-8 %s" #l0 &cond &atoi @wc @wc "^@" &lget $result 1 &lget $result 2 #l1
+  !endif
+  ml-write &spr "[%s]" $result
+!emacro
+
+; sets $result to "|name|category|" for code point @1, "" if not known
+0 define-macro describe-char-name
+  set-variable $result ""
+  !if &not &exi .describe-char.file
+    set-variable .describe-char.file &find "UnicodeData" ".txt"
+  !endif
+  !iif &seq .describe-char.file "ERROR"  !return
+  set-variable #l9 $buffer-bname
+  !force 0 find-buffer "*unicode-data*"
+  !if &not $status
+    find-buffer "*unicode-data*"
+    !force insert-file .describe-char.file
+    -1 buffer-mode "edit"
+  !endif
+  set-variable #l8 &cond &bmod "magic" 1 -1
+  1 buffer-mode "magic"
+  beginning-of-buffer
+  set-variable #l0 &spr "%04X" @1
+  !force search-forward &spr "^%s;" #l0
+  !if $status
+    set-variable #l1 &cat ";" @wl
+    set-variable #l2 &lget #l1 2
+    !iif &seq #l2 "<control>"  set-variable #l2 &spr "<control> %s" &lget #l1 11
+  !else
+    ; a range of chars, e.g. CJK ideographs, given by First and Last entries
+    set-variable #l2 ""
+    !repeat
+      !force search-forward ", First>;"
+      !iif &not $status  !break
+      set-variable #l1 &cat ";" @wl
+      forward-line
+      !if &and &not &les @1 &cat "0x" &lget #l1 1 &not &gre @1 &cat "0x" &lget &cat ";" @wl 1
+        set-variable #l2 &xrep &lget #l1 2 "<\\(.*\\), First>" "\\1"
+        !iif &sin "Ideograph" #l2  set-variable #l2 &spr "%s-%s" &sup &rep #l2 "Ideograph" "Unified Ideograph" #l0
+        !break
+      !endif
+    !until 0
+  !endif
+  #l8 buffer-mode "magic"
+  find-buffer #l9
+  !iif &len #l2  set-variable $result &spr "|%s|%s|" #l2 &lget #l1 3
+!emacro

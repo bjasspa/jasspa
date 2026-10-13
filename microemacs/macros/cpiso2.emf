@@ -1,0 +1,20 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Code page iso8859-2, run by code-page-define (codepage.emf)
+; Authors:     Steven Phillips
+;
+0 set-char-mask "C"
+set-variable #l0 $result
+set-char-mask "C" "iso8859-2"
+set-char-mask "c" "0080008100820083008400850086008700880089008A008B008C008D008E008F0090009100920093009400950096009700980099009A009B009C009D009E009F00A0010402D8014100A4013D015A00A700A80160015E0164017900AD017D017B00B0010502DB014200B4013E015B02C700B80161015F0165017A02DD017E017C015400C100C2010200C40139010600C7010C00C9011800CB011A00CD00CE010E01100143014700D300D4015000D600D70158016E00DA017000DC00DD016200DF015500E100E2010300E4013A010700E7010D00E9011900EB011B00ED00EE010F01110144014800F300F4015100F600F70159016F00FA017100FC00FD016302D9"
+!if &not @#
+  set-char-mask "C" #l0
+!elif &not &opt "uni"
+  set-char-mask "M" "¥¡¼¥Œ¦Š©«¬®¹±¾µœ¶¡·š¹»Ÿ¼¾"
+  set-char-mask "a" "ŠšŒœŸ£³¥¹ªº¯¿¼¾ÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖöØøÙùÚúÛûÜüİıŞşßß"
+!endif

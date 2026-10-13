@@ -39,6 +39,9 @@ DEFVAR ("buffer-backup",       EVCBUFBACKUP)    /* current buffer backup name */
 DEFVAR ("buffer-bhook",        EVBUFBHK)        /* Buffer bhook  */
 #endif
 DEFVAR ("buffer-bname",        EVCBUFNAME)      /* current buffer name */
+#if MEOPT_EXTENDED
+DEFVAR ("buffer-code-page",    EVBUFCP)         /* Buffer single byte code page */
+#endif
 #if MEOPT_MAJORMODE
 DEFVAR ("buffer-dhook",        EVBUFDHK)        /* Buffer dhook  */
 DEFVAR ("buffer-ehook",        EVBUFEHK)        /* Buffer ehook  */
@@ -246,6 +249,13 @@ DEFFUN (UFAND,      "and", 0x616E64, FUN_DYNAMIC)     /* boolean 'and' two logic
 DEFFUN (UFATOI,     "ato", 0x61746F, FUN_MONAMIC)     /* char to integer i.e. "A" to "41" */
 #endif
 DEFFUN (UFBAND,     "ban", 0x62616E, FUN_DYNAMIC)     /* Binary and test */
+#if MEOPT_EXTENDED
+DEFFUN (UFBATOI,    "bat", 0x626174, FUN_MONAMIC)     /* first byte to integer */
+DEFFUN (UFBHEX,     "bhe", 0x626865, FUN_MONAMIC)     /* string bytes to hex */
+DEFFUN (UFBITOA,    "bit", 0x626974, FUN_MONAMIC)     /* integer to byte */
+DEFFUN (UFBLEN,     "ble", 0x626C65, FUN_MONAMIC)     /* string length in bytes */
+DEFFUN (UFBMID,     "bmi", 0x626D69, FUN_TRINAMIC)    /* mid string in bytes(string, pos, len) */
+#endif
 DEFFUN (UFBMODE,    "bmo", 0x626D6F, FUN_MONAMIC)     /* Test for a given buffer mode */
 DEFFUN (UFBNOT,     "bno", 0x626E6F, FUN_MONAMIC)     /* Binary not test */
 DEFFUN (UFBOR,      "bor", 0x626F72, FUN_DYNAMIC)     /* Binary or test */
@@ -271,6 +281,9 @@ DEFFUN (UFFSUB,     "fsu", 0x667375, FUN_DYNAMIC)     /* floating point subtract
 #endif
 DEFFUN (UFGMODE,    "gmo", 0x676D6F, FUN_MONAMIC)     /* Test for a given global mode */
 DEFFUN (UFGREATER,  "gre", 0x677265, FUN_DYNAMIC)     /* logical greater than */
+#if MEOPT_EXTENDED
+DEFFUN (UFHEXB,     "hex", 0x686578, FUN_MONAMIC)     /* hex to string bytes */
+#endif
 #if MEOPT_EXTENDED
 DEFFUN (UFINC,      "inc", 0x696E63, FUN_DYNAMIC|FUN_SETVAR|FUN_GETVAR)     /* increment variable and set */
 #endif

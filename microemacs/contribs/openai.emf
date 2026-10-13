@@ -82,7 +82,7 @@ define-macro openai-setup
   !endif
   beginning-of-buffer
   copy-region
-  2 change-buffer-charset "display" "utf8"
+  2 change-buffer-encoding "display" "utf8"
   beginning-of-buffer
   replace-string "\\\\" "\\\\\\\\"
   beginning-of-buffer
@@ -222,7 +222,7 @@ define-macro openai-setup
   replace-string "\\(\\([^\\\\\n]\\|^\\)\\(\\\\\\\\\\)*\\)\\\\t" "\\1\t"
   beginning-of-buffer
   replace-string "\\\\\\(.\\)" "\\1"
-  4 change-buffer-charset "utf8" "display"
+  4 change-buffer-encoding "utf8" "display"
   md-process
   beginning-of-buffer
   set-mark

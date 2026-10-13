@@ -1,0 +1,19 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Code page ascii, run by code-page-define (codepage.emf)
+; Authors:     Steven Phillips
+;
+0 set-char-mask "C"
+set-variable #l0 $result
+set-char-mask "C" "ascii"
+set-char-mask "c" ""
+!if &not @#
+  set-char-mask "C" #l0
+!elif &not &opt "uni"
+  set-char-mask "M" "ÀAÁAÂAÃAÄAÇCÈEÉEÊEËEÌIÍIÎIÏIÑNÒOÓOÔOÕOÖO×xØOÙUÚUÛUÜUÝYßBàaáaâaäaåaçcèeéeêeëeìiíiîiïiñnòoóoôoõoöoøoùuúuûuüuýyþbÿy"
+!endif

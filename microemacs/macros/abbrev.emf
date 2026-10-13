@@ -95,7 +95,7 @@ define-macro expand-iso-accents
     ml-write &spr "[Error: Unrecognised ISO accent - %s]" #l1
     !abort
   !elif &not &equ 3 &lget &set #l1 &uni &cat 0x0 &lget "|b1|bd|bc|be|e0|e2|e1|e4|e3|e5|e6|e7|a9|e8|ea|e9|eb|ec|ee|ed|ef|f0|f1|153|f2|f4|f3|f6|f5|f7|f8|ae|df|2122|f9|fb|fa|fc|fd|fe|ff|c0|c2|c1|c4|c3|c5|c6|c7|c8|ca|c9|cb|cc|ce|cd|cf|d0|d1|152|d2|d4|d3|d6|d5|d7|d8|d9|db|da|dc|dd|de|178|17e|a1|bf|ab|bb|" #l0 1
-    ml-write &spr "[Error: ISO accent not supported by current display charset - U+%04X]" &lget #l1 2
+    ml-write &spr "[Error: ISO accent not supported by current display code page - U+%04X]" &lget #l1 2
     !abort
   !endif
   backward-delete-char

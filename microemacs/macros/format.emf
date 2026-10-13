@@ -252,7 +252,8 @@ define-macro ifill-paragraph
   set-variable #l1 ""
   set-variable #l2 $fill-bullet
   !while &len &set #l3 &lef #l2 1
-    set-variable #l1 &spr "%s\\x%02x" #l1 &atoi #l3
+    ; \x takes 2 hex digits, a char above 0xff needs no escaping
+    set-variable #l1 &cond &les &atoi #l3 256 &spr "%s\\x%02x" #l1 &atoi #l3 &cat #l1 #l3
     set-variable #l2 &rig #l2 1
   !done
   set-variable .ifill-para.b #l1

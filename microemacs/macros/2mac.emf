@@ -21,12 +21,12 @@ define-macro start-up
     set-variable #l2 0
     !if &band $buffer-fmod 0x10000
       set-variable #l0 "Directory, skip"
-    !elif &band $buffer-fmod 0x80000
+    !elif &band $buffer-fmod 0x20000
       set-variable #l0 "Binary, skip"
     !else
       set-variable #l3 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
       set-variable #l0 &trr &mid "Strange0Mac     Unix    Windows Strange4Strange5Strange6Dos" &mul #l3 8 8
-      !if &band $buffer-fmod 0x100000
+      !if &band $buffer-fmod 0x40000
         set-variable #l0 &cat #l0 " (bad), fix"
         set-variable #l2 1
       !elif &sub #l3 1

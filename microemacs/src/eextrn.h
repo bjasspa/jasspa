@@ -281,6 +281,7 @@ extern	meVariable *SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue,
 extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs);
 extern	int	setVariable(int f, int n);
 extern	meUByte *meItoa(int i);
+extern  int     meMacroPutChar(meUByte *dd, meUInt cc);
 #define mePtos(pp) (((pp) == NULL) ? emptym:(pp))
 extern	meUByte *getval(meUByte *token);
 extern	int	descVariable(int f, int n);
@@ -291,6 +292,10 @@ extern	int	unsetVariable(int f, int n);
 #define listVariables notAvailable
 #define unsetVariable notAvailable
 #endif
+
+/* fileio.c code pages */
+extern  meCodePage *meCodePageFind(meUByte *name, int create);
+extern  void    meCodePageFreeAll(void);
 
 /* exec.c externals */
 #define biChopFindString(str,tbl,tblSz,retIx)                                \

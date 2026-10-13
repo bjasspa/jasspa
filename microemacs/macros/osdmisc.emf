@@ -54,7 +54,12 @@
 ; Macro to print up the ascii table on screen using the poke and allowing
 ; the user to select a code
 0 define-macro symbol-insert
-  insert-string &itoa @#
+  !if &les @# 0
+    ; a byte with no char in the code page
+    insert-string &bitoa &neg @#
+  !else
+    insert-string &itoa @#
+  !endif
 !emacro
 
 osd .osd.symbol 0 "bnatcHsI" 2 3 75 0 -1 -1 620 .scheme.osd-title "Insert Symbol"
@@ -62,22 +67,47 @@ osd .osd.symbol 1 ""
 osd .osd.symbol 2 "" "   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C   D  X C"
 osd .osd.symbol 3 ""
 
-set-variable #l0 255
-!repeat
-  set-variable #l1 &spr "%3d %2x %s" #l0 #l0 &itoa #l0
-  set-variable #l1 &spr "%s%n" #l1 &sub 8 &len #l1 " "
-  !if &equ &band #l0 7 7
-    osd .osd.symbol &add &mul #l0 2 11 "f"  #l1 #l0 symbol-insert
-  !else
-    osd .osd.symbol &add &mul #l0 2 11 "hf" #l1 #l0 symbol-insert
+0 define-macro symbol-setup
+  !if &opt "uni"
+    ; the chars of the buffer's code page, else the current one's, a char with no glyph is a '.'
+    0 set-char-mask "C"
+    set-variable #l2 $result
+    !iif &len $buffer-code-page  set-char-mask "C" $buffer-code-page
   !endif
-  osd .osd.symbol &add &mul #l0 2 10 "hf" " "
-!until &not &pdec #l0 1
+  set-variable #l0 255
+  !repeat
+    set-variable #l3 &itoa &set #l4 #l0
+    !if &and &opt "uni" &gre #l0 127
+      set-variable #l5 &uci &bitoa #l0
+      !if &equ &lget #l5 1 2
+        set-variable #l4 &neg #l0
+        set-variable #l3 "."
+      !elif &les &set #l4 &add &lget #l5 2 0 160
+        set-variable #l3 "."
+      !else
+        set-variable #l3 &lget #l5 3
+      !endif
+    !elif &and &opt "uni" &or &les #l0 32 &equ #l0 127
+      set-variable #l3 "."
+    !endif
+    set-variable #l1 &spr "%3d %2x %s" #l0 #l0 #l3
+    set-variable #l1 &spr "%s%n" #l1 &sub 8 &len #l1 " "
+    !if &equ &band #l0 7 7
+      osd .osd.symbol &add &mul #l0 2 11 "f"  #l1 #l4 symbol-insert
+    !else
+      osd .osd.symbol &add &mul #l0 2 11 "hf" #l1 #l4 symbol-insert
+    !endif
+    osd .osd.symbol &add &mul #l0 2 10 "hf" " "
+  !until &not &pdec #l0 1
+  !iif &opt "uni"  set-char-mask "C" #l2
+!emacro
+symbol-setup
 osd .osd.symbol 600 ""
 osd .osd.symbol 610 ""
 osd .osd.symbol 620 "BcfH" .scheme.osd-ebtt " Cancel " f void
 
 define-macro insert-symbol
+  !iif &opt "uni"  symbol-setup
   .osd.symbol osd
 !emacro
 

@@ -449,7 +449,10 @@ extern meUByte    charCaseTbl[];
 extern meUByte    charIntrnlDsplyTbl[];
 extern meUByte    charDsplyIntrnlTbl[];
 extern meUByte    charMaskFlags[];
-extern meUShort   charToUnicode[];
+extern meUShort  *charToUnicode;             /* the current code page's table */
+extern meCodePage  codePageDefault;
+extern meCodePage *codePageCur;
+extern meCodePage *codePageSpell;
 extern meUByte   *charKeyboardMap;
 extern meUByte    isWordMask;
 

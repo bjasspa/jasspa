@@ -35,7 +35,7 @@ or less.
 When \fIn\fR is -98 or -99 yank checks for and gets the current global clipboard text regardless of whether \*(mS is
 currently running a macro, this can be useful for macros that need to interact with the system clipboard. If a system
 clipboard text is available it is inserted into the kill buffer and \fInot\fR inserted into the current buffer, if 
-\fIn\fR is -99 the text is inserted as a UTF8 encoded string rather than converted to the current \*(mS charset.
+\fIn\fR is -99 the text is inserted as a UTF8 encoded string rather than converted to the current code page.
 .PP
 When \fIn\fR is -100 the last search string match is inserted/yanked into the current buffer instead. If \fIn\fR is -101
 then the matches first regex group is inserted, -102 the 2nd group etc., see help on

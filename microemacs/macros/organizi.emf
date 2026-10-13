@@ -405,11 +405,11 @@ osd .osd.org-aimp 650 "BhcfH"  .scheme.osd-ebtt " \HCancel  "   f void
       set-variable #l1 &spr "%s%n" #l1 &sub #l3 .var-str-sub.count "\x01"
     !endif
     !tjump &sin "\n" #l1 2
-    !if &xse #l1 ".*[\x80-\xff].*"
-      insert-string ";CHARSET=WINDOWS-1252;ENCODING=QUOTED-PRINTABLE:"
+    !if &xse #l1 ".*[^\x01-\x7f].*"
+      insert-string &cond &opt "uni" ";CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:" ";CHARSET=WINDOWS-1252;ENCODING=QUOTED-PRINTABLE:"
       set-variable #l4 0
       !while &len &set #l5 &mid #l1 &pinc #l4 1 1
-        insert-string &con &seq #l5 "\x01" ";" &spr "=%02X" &atoi #l5
+        insert-string &con &seq #l5 "\x01" ";" &sup &xrep &bhex #l5 "\\(..\\)" "=\\1"
       !done
     !else
       insert-string ":"

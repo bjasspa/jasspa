@@ -193,6 +193,8 @@ meUndoAddRepChar(void)
             nn->str[0] = cc ;
             nn->str[1] = '\0' ;
         }
+        else
+            return;
         nn->doto++ ;
     }
 }

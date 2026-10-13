@@ -1,0 +1,87 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m4fil039.4,v 1.1 2026/10/10 00:00:00 steve Exp $
+.Im MicroEmacs macro;function;string
+.so me.tni
+.TH &blen 4
+.XI &blen - "String length in bytes"
+.XI &bmid - "Mid string in bytes"
+.XI &batoi - "First byte to integer"
+.XI &bitoa - "Integer to byte"
+.XI &bhex - "String bytes to hexadecimal"
+.XI &hexb - "Hexadecimal to string bytes"
+.SH NAME
+&blen, &bmid, &batoi, &bitoa, &bhex, &hexb \- Byte functions
+.SH SYNOPSIS
+.na
+.B &blen
+.I str
+.br
+.B &bmid
+.I str index len
+.br
+.B &batoi
+.I str
+.br
+.B &bitoa
+.I num
+.br
+.B &bhex
+.I str
+.br
+.B &hexb
+.I hex
+.ad
+.SH DESCRIPTION
+The byte functions work on the bytes of a string, which are the bytes the string would be written to a file as: in a
+Unicode build the UTF-8 bytes of each character, an invalid byte being that byte and a Nul character the byte
+\fC0\fR. In other builds a byte is a character.
+.PP
+Bytes made into a string are decoded as a whole, in a Unicode build valid UTF-8 becomes characters, any other byte
+an invalid byte and \fC0\fR the Nul character.
+.IP "\fB&blen\fR \fIstr\fR"
+Returns the number of bytes in \fIstr\fR.
+.IP "\fB&bmid\fR \fIstr index len\fR"
+Returns the \fIlen\fR bytes of \fIstr\fR from byte \fIindex\fR (the first byte is 0), negative values work as for
+.Ht &mid 4 .
+A character may be split, its bytes are then invalid bytes.
+.IP "\fB&batoi\fR \fIstr\fR"
+Returns the value of the first byte of \fIstr\fR, \fC0\fR if it is empty.
+.IP "\fB&bitoa\fR \fInum\fR"
+Returns the byte \fInum\fR as a string, in a Unicode build a byte from \fC0x80\fR is an invalid byte.
+.IP "\fB&bhex\fR \fIstr\fR"
+Returns the bytes of \fIstr\fR in lower case hexadecimal, e.g. \fC&bhex\ "a\\xe9"\fR returns "\fC61c3a9\fR" in a
+Unicode build.
+.IP "\fB&hexb\fR \fIhex\fR"
+Returns the string of the bytes given in hexadecimal by \fIhex\fR, it fails if \fIhex\fR holds a non-hexadecimal
+character or half a byte.
+.SH NOTES
+As each result is decoded on its own, joining the results of \fB&bitoa\fR gives invalid bytes rather than a UTF-8
+character, \fC&bmid\fR of the joined string decodes them together:
+.CS
+&bmid &cat &bitoa 0xc3 &bitoa 0xa9 0 2
+.CE
+returns an 'e' acute (U+00E9) in a Unicode build, as does \fC&hexb\ "c3a9"\fR.
+.PP
+\fC&blen\ &lef\ @wl\ $window-col\fR gives the byte offset of the cursor in the current line.
+.SH EXAMPLE
+The following converts a string to its bytes in hexadecimal and back:
+.Me $emf-scheme
+.CS
+set-variable #l0 &bhex "Caf\\xe9"
+set-variable #l1 &hexb #l0
+.CE
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht &len 4 ,
+.Ht &mid 4 ,
+.Ht &atoi 4 ,
+.Ht &itoa 4 ,
+.Ht &uni 4 .
+.ad
+.FH

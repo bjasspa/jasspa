@@ -330,7 +330,7 @@ ISO-8859-13  (Baltic). The alias defined above  _mfontscale_ gives easy access
 to monospaced fonts. See as well the
 [Wikipedias entry for ISO-encodings](https://de.wikipedia.org/wiki/ISO_8859).
 
-Hint: To convert between different encodings using the command: `change-buffer-charset`
+Hint: To convert between different encodings using the command: `change-buffer-encoding`
 
 To install other fonts like Ubuntu Mono you can do the following:
 

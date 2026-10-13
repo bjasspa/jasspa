@@ -247,6 +247,37 @@ quote_spec_key1:
                             *dd++ = cc ;
                     }
                     break;
+                case 'u':
+                case 'U':
+                    {
+                        /* \uXXXX or \UXXXXXX code point, up to 4 or 6 hex digits, the code page
+                         * char or ? if it has none */
+                        meUInt uc=0;
+                        int ii=(cc == 'u') ? 4:6;
+                        while((--ii >= 0) && isXDigit(*ss))
+                        {
+                            uc = (uc << 4) | hexToNum(*ss);
+                            ss++;
+                        }
+                        if(ii == ((cc == 'u') ? 3:5))
+                        {
+                            /* no digits, as before it is a plain u */
+                            *dd++ = cc;
+                            break;
+                        }
+                        if(uc >= 0x80)
+                        {
+                            ii = -1;
+#if MEOPT_EXTENDED
+                            ii = 127;
+                            while((ii >= 0) && (charToUnicode[ii] != uc))
+                                ii--;
+#endif
+                            uc = (ii < 0) ? '?':(ii+128);
+                        }
+                        dd += meMacroPutChar(dd,uc);
+                    }
+                    break;
                 case '{':
                     /* OSD start hilight */
                     *dd++ = meCHAR_LEADER ;

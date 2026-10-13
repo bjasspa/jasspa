@@ -1,0 +1,24 @@
+; -!- emf -!-
+;
+; Copyright (C) 2026 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Synopsis:    Code page cp437, run by code-page-define (codepage.emf)
+; Authors:     Steven Phillips
+;
+0 set-char-mask "C"
+set-variable #l0 $result
+set-char-mask "C" "cp437"
+set-char-mask "c" "00C700FC00E900E200E400E000E500E700EA00EB00E800EF00EE00EC00C400C500C900E600C600F400F600F200FB00F900FF00D600DC00A200A300A520A7019200E100ED00F300FA00F100D100AA00BA00BF231000AC00BD00BC00A100AB00BB259125922593250225242561256225562555256325512557255D255C255B251025142534252C251C2500253C255E255F255A25542569256625602550256C25672568256425652559255825522553256B256A2518250C25882584258C2590258003B100DF039303C003A303C300B503C403A6039803A903B4221E03C603B52229226100B1226522642320232100F7224800B0221900B7221A207F00B225A000A0"
+!if &not @#
+  set-char-mask "C" #l0
+!elif &not &opt "uni"
+  set-char-mask "M" "ƒŸŠSZšszŸY ÿ¡­¢›£œ¥ª¦«®¬ª°ø±ñ²ıµæ·úº§»¯¼¬½«¿¨ÀAÁAÂAÃAÄÅÆ’Ç€ÈEÉÊEËEÌIÍIÎIÏIÑ¥ÒOÓOÔOÕOÖ™ØOÙUÚUÛUÜšİYßáà…á âƒãaä„å†æ‘ç‡èŠé‚êˆë‰ìí¡îŒï‹ñ¤ò•ó¢ô“õoö”÷öøoù—ú£û–üıyÿ˜AAEEIIOOSSUUYYZZoossyyzz"
+  set-char-mask "dp" "\CA\CB\CC\CD\CE\CF\CG\CP\CQ\CZ\C[\C^\C_"
+  set-variable $box-chars "³Ú¿ÀÙÂÃÅ´ÁÄ"
+  set-variable $window-chars "=-#*%=\C^± ±\C_\CD==\C^\C^±±  ±±\C_\C_\C[\CZ|\CQ± ±\CP\CD||\CQ\CQ±±  ±±\CP\CP\C[\CZ x* \CP \CQ>\\.$$\\"
+  set-char-mask "a" "ŠšŒœŸÿÀàÁáÂâÃãÄäÅåÆæÇçÈèÉéÊêËëÌìÍíÎîÏïĞğÑñÒòÓóÔôÕõÖöØøÙùÚúÛûÜüİıŞşßßAaEeIiOoSsUuYyZz"
+  set-variable .change-font.cp-box 1
+!endif

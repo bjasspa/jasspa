@@ -176,6 +176,110 @@ meItoa(int i)
     return sp;
 }
 
+/* Writes char cc to dd as a macro string, 0 and the leader become a leader pair. Returns the
+ * length written */
+int
+meMacroPutChar(meUByte *dd, meUInt cc)
+{
+    if((cc == 0) || (cc == meCHAR_LEADER))
+    {
+        dd[0] = meCHAR_LEADER;
+        dd[1] = (cc) ? meCHAR_TRAIL_LEADER:meCHAR_TRAIL_NULL;
+        return 2;
+    }
+    dd[0] = (meUByte) cc;
+    return 1;
+}
+
+/* The macro string functions work a char at a time, a char is a leader pair or one char of
+ * text. Returns the length of the char at ss, 0 at the end */
+static int
+macStrCharLen(const meUByte *ss)
+{
+    meUByte cc=*ss;
+    if(cc == meCHAR_LEADER)
+        return (ss[1] == '\0') ? 1:2;
+    return (cc != '\0');
+}
+
+/* Returns ss moved on nn chars, or to its end. These and macStrCharCount use the library's fast
+ * string scans, each byte up to the next leader is a char */
+static meUByte *
+macStrSkip(meUByte *ss, int nn)
+{
+    meUByte *lp;
+    int ll;
+    while(nn > 0)
+    {
+        if((lp = meStrchr(ss,meCHAR_LEADER)) == NULL)
+        {
+            ll = (int) meStrlen(ss);
+            return ss + ((nn < ll) ? nn:ll);
+        }
+        if((ll = (int) (lp - ss)) >= nn)
+            return ss + nn;
+        nn -= ll + 1;
+        ss = lp + macStrCharLen(lp);
+    }
+    return ss;
+}
+
+static int
+macStrCharCount(const meUByte *ss)
+{
+    const meUByte *lp;
+    int nn, ll;
+    nn = ll = (int) meStrlen(ss);
+    while((lp = memchr(ss,meCHAR_LEADER,ll)) != NULL)
+    {
+        if(lp[1] == '\0')
+            break;
+        nn--;
+        ll -= (int) (lp + 2 - ss);
+        ss = lp + 2;
+    }
+    return nn;
+}
+
+#if MEOPT_EXTENDED
+/* Returns the value of the first char of ss */
+static meUInt
+macStrGetChar(const meUByte *ss)
+{
+    meUInt uc=*ss;
+    if(uc == meCHAR_LEADER)
+        return (ss[1] == meCHAR_TRAIL_NULL) ? 0:meCHAR_LEADER;
+    return uc;
+}
+
+/* Writes the bytes of macro string ss to dd, dd may be ss. Returns the count */
+static int
+macStrToBytes(meUByte *dd, const meUByte *ss)
+{
+    meUByte *d0=dd;
+    int ll;
+    while((ll = macStrCharLen(ss)) > 0)
+    {
+        if(*ss == meCHAR_LEADER)
+            *dd++ = (meUByte) macStrGetChar(ss);
+        else
+            *dd++ = *ss;
+        ss += ll;
+    }
+    return (int) (dd - d0);
+}
+
+/* Converts len bytes to a macro string in dd (meBUF_SIZE_MAX) */
+static void
+macBytesToStr(meUByte *dd, const meUByte *ss, int len)
+{
+    meUByte *de=dd+meBUF_SIZE_MAX-4;
+    while((--len >= 0) && (dd < de))
+        dd += meMacroPutChar(dd,*ss++);
+    *dd = '\0';
+}
+#endif
+
 
 meVariable *
 SetUsrLclCmdVar(meUByte *vname, meUByte *vvalue, meVariable **varList)
@@ -850,6 +954,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVBUFXLATE:
             frameCur->windowCur->buffer->xlateFlag = (meByte) meAtoi(vvalue);
             break;
+        case EVBUFCP:
+            {
+                meCodePage *cp=NULL;
+                if((vvalue[0] != '\0') && ((cp = meCodePageFind(vvalue,0)) == NULL))
+                    return mlwrite(MWABORT,(meUByte *)"[Unknown code page %s]",vvalue);
+                frameCur->windowCur->buffer->codePage = cp;
+                break;
+            }
         case EVSHWMDS:
             {
                 meUByte cc;
@@ -1499,6 +1611,9 @@ handle_namesvar:
 #endif
         return evalResult;
     case EVCBUFNAME:    return frameCur->windowCur->buffer->name;
+#if MEOPT_EXTENDED
+    case EVBUFCP:       return (frameCur->windowCur->buffer->codePage == NULL) ? emptym:frameCur->windowCur->buffer->codePage->name;
+#endif
     case EVBUFFMOD:     return meItoa((((meInt) frameCur->windowCur->buffer->fileFlag) << 16) | ((meInt) frameCur->windowCur->buffer->stats.stmode));
     case EVGLOBFMOD:    return meItoa(meUmask);
     case EVCFNAME:      return mePtos(frameCur->windowCur->buffer->fileName);
@@ -2567,7 +2682,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         return meLtoa(meStrstr(meOptionList,arg1) != NULL);
         
 #if MEOPT_EXTENDED
-    case UFATOI:       return meItoa(arg1[0]);
+    case UFATOI:       return meItoa((int) macStrGetChar(arg1));
     case UFITOA:
         {
             int ii = meAtoi(arg1);
@@ -2579,6 +2694,69 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             }
             else
                 evalResult[1] = '\0';
+            return evalResult;
+        }
+    case UFBLEN:
+        return meItoa(macStrToBytes(arg1,arg1));
+    case UFBMID:
+        {
+            /* as &mid but on bytes */
+            int ii=meAtoi(arg2), ll=meAtoi(arg3), nn=macStrToBytes(arg1,arg1);
+            if(ii < 0)
+                ii += nn;
+            if(ii > 0)
+            {
+                if(ii > nn)
+                    ii = nn;
+            }
+            else
+            {
+                if(ll >= 0)
+                    ll += ii;
+                ii = 0;
+            }
+            if(ll < 0)
+                ll += nn - ii;
+            if(ll > (nn - ii))
+                ll = nn - ii;
+            macBytesToStr(evalResult,arg1+ii,(ll < 0) ? 0:ll);
+            return evalResult;
+        }
+    case UFBATOI:
+        return meItoa((macStrToBytes(arg1,arg1) > 0) ? arg1[0]:0);
+    case UFBITOA:
+        arg1[0] = (meUByte) meAtoi(arg1);
+        macBytesToStr(evalResult,arg1,1);
+        return evalResult;
+    case UFBHEX:
+        {
+            static meUByte hexDigits[]="0123456789abcdef";
+            int ii, nn=macStrToBytes(arg1,arg1);
+            if(nn > ((meBUF_SIZE_MAX-1) >> 1))
+                nn = (meBUF_SIZE_MAX-1) >> 1;
+            for(ii=0 ; ii<nn ; ii++)
+            {
+                evalResult[ii << 1] = hexDigits[arg1[ii] >> 4];
+                evalResult[(ii << 1)+1] = hexDigits[arg1[ii] & 0x0f];
+            }
+            evalResult[nn << 1] = '\0';
+            return evalResult;
+        }
+    case UFHEXB:
+        {
+            meUByte c1, c2;
+            int nn=0;
+            while((c1 = arg1[nn << 1]) != '\0')
+            {
+                c2 = arg1[(nn << 1)+1];
+                if(!isXDigit(c1) || !isXDigit(c2))
+                {
+                    mlwrite(MWABORT|MWWAIT,(meUByte *) "[Invalid hex string &hexb]");
+                    return abortm;
+                }
+                arg2[nn++] = (meUByte) ((hexToNum(c1) << 4) | hexToNum(c2));
+            }
+            macBytesToStr(evalResult,arg2,nn);
             return evalResult;
         }
     case UFFABS:        return meFtoa(fabs(meAtof(arg1)));
@@ -2611,105 +2789,50 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         }
     case UFLEFT:
         {
-            meUByte *dd, *ss, cc;
+            meUByte *ss;
             int ii=meAtoi(arg2);
-            ss = arg1;
             if(ii < 0)
-                ii = ((int) meStrlen(ss)) + ii;
-            dd = evalResult;
-            while(--ii >= 0)
-            {
-                if((cc=*ss++) == meCHAR_LEADER)
-                {
-                    *dd++ = cc;
-                    cc = *ss++;
-                }
-                if(cc == '\0')
-                    break;
-                *dd++ = cc;
-            }
-            *dd = '\0';
+                ii += macStrCharCount(arg1);
+            ss = macStrSkip(arg1,ii);
+            ii = (int) (ss - arg1);
+            memcpy(evalResult,arg1,ii);
+            evalResult[ii] = '\0';
             return evalResult;
         }
     case UFRIGHT:
         {
-            meUByte *dd, *ss, cc;
             int ii=meAtoi(arg2);
-            ss = arg1;
             if(ii < 0)
-                ii = ((int) meStrlen(ss)) + ii;
-            while(--ii >= 0)
-            {
-                if((cc=*ss++) == meCHAR_LEADER)
-                    cc = *ss++;
-                if(cc == '\0')
-                {
-                    ss--;
-                    break;
-                }
-            }
-            dd = evalResult;
-            while((*dd++ = *ss++) != '\0')
-                ;
+                ii += macStrCharCount(arg1);
+            meStrcpy(evalResult,macStrSkip(arg1,ii));
             return evalResult;
         }
     case UFMID:
         {
-            meUByte *dd, *ss, cc;
+            meUByte *ss, *dd;
             int ii, ll;
-            ss = arg1;
             
             ll = meAtoi(arg3);
             ii = meAtoi(arg2);
             if(ii < 0)
-                ii = ((int) meStrlen(ss)) + ii;
+                ii += macStrCharCount(arg1);
             if(ii > 0)
+                ss = macStrSkip(arg1,ii);
+            else
             {
-                do
-                {
-                    if((cc=*ss++) == meCHAR_LEADER)
-                        cc = *ss++;
-                    if(cc == '\0')
-                    {
-                        ss--;
-                        break;
-                    }
-                } while(--ii > 0);
+                ss = arg1;
+                if(ll >= 0)
+                    ll += ii;
             }
-            else if(ll >= 0)
-                ll += ii;
             if(ll < 0)
-                ll = ((int) meStrlen(ss)) + ll;
-            dd = evalResult;
-            while(--ll >= 0)
-            {
-                if((cc=*ss++) == meCHAR_LEADER)
-                {
-                    *dd++ = cc;
-                    cc = *ss++;
-                }
-                if(cc == '\0')
-                    break;
-                *dd++ = cc;
-            }
-            *dd = '\0';
+                ll += macStrCharCount(ss);
+            dd = macStrSkip(ss,ll);
+            ii = (int) (dd - ss);
+            memcpy(evalResult,ss,ii);
+            evalResult[ii] = '\0';
             return evalResult;
         }
-    case UFLEN:
-        {
-            meUByte *ss, cc;
-            int ii=0;
-            ss = arg1;
-            for(;;)
-            {
-                if((cc=*ss++) == meCHAR_LEADER)
-                    cc=*ss++;
-                if(cc == '\0')
-                    break;
-                ii++;
-            }
-            return meItoa(ii);
-        }
+    case UFLEN:        return meItoa(macStrCharCount(arg1));
 #if MEOPT_EXTENDED
     case UFSLOWER:
         {

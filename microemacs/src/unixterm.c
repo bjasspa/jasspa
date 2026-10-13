@@ -1791,9 +1791,80 @@ meFrameKillFocus(meFrame *frame)
     }
 }
 
-/* following are used for incremental Selection getting */
+/* following are used for incremental Selection getting, the bytes are converted when all are received */
+static meUByte *meClipRaw=NULL ;
 static meUByte *meClipBuff=NULL ;
 static meUInt   meClipSize=0 ;
+static meUByte  meClipString=0 ;
+
+/* Makes the received clipboard text (nitems bytes followed by a 0) the current kill, a UTF8_STRING
+ * is converted to the code page */
+static void
+meXClipReceived(meUByte *buff, int nitems, int isString)
+{
+    meUByte *dd;
+#if MEOPT_EXTENDED
+    if(!isString && !(clipState & CLIP_UTF8))
+    {
+        int ss, uc;
+        meUByte cc, c1, bc, bm;
+        ss = nitems = 0;
+        while((cc=buff[ss++]) != '\0')
+        {
+            if(cc < 0x80)
+                buff[nitems++] = cc;
+            else
+            {
+                bc = 0;
+                uc = 0;
+                bm = 0x40;
+                while(cc & bm)
+                {
+                    if(((c1 = buff[ss++]) & 0xc0) != 0x80)
+                    {
+                        bc = 0;
+                        break;
+                    }
+                    uc = (uc << 6) | (c1 & 0x3f);
+                    bm >>= 1;
+                    bc += 6;
+                }
+                if((bc == 0) || ((uc |= (cc & (bm - 1)) << bc) == 0) || (uc > 0xffff))
+                    buff[nitems++] = meCHAR_UNDEF;
+                else if((uc < 256) && ((uc < 128) || (charToUnicode[uc-128] == uc)))
+                    buff[nitems++] = uc;
+                else
+                {
+                    int ii = 127;
+                    while((charToUnicode[ii] != uc) && (--ii >= 0))
+                        ;
+                    if(ii >= 0)
+                        buff[nitems++] = ii+128;
+                    else
+                        buff[nitems++] = meCHAR_UNDEF;
+                }
+                if(c1 == 0)
+                    break;
+            }
+        }
+        buff[nitems] = '\0';
+    }
+#endif /* MEOPT_EXTENDED */
+    if((klhead == NULL) || (klhead->kill == NULL) ||
+       (klhead->kill->next != NULL) ||
+       meStrncmp(klhead->kill->data,buff,nitems) ||
+       (klhead->kill->data[nitems] != '\0'))
+    {
+        /* always new kill, don't want to glue 'em together */
+        killInit(0);
+        if((dd = killAddNode(nitems)) != NULL)
+        {
+            memcpy(dd,buff,nitems);
+            dd[nitems] = '\0';
+        }
+        thisflag = meCFKILL;
+    }
+}
 
 /* The xterm XEvent handler */
 static void
@@ -2610,7 +2681,7 @@ special_bound:
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
             unsigned long nitems, left;
-            meUByte *buff, *dd;
+            meUByte *buff;
             Atom type;
             int  fmt;
             
@@ -2634,14 +2705,12 @@ special_bound:
                 {
                     nitems = ((long *) buff)[0] ;
                     XFree(buff) ;
-                    /* always new kill, don't want to glue 'em together */
-                    killInit(0);
-                    if((dd = killAddNode(nitems)) != NULL)
+                    buff = NULL;
+                    meNullFree(meClipRaw);
+                    if((meClipRaw = meMalloc(nitems+1)) != NULL)
                     {
-                        dd[0] = '\0';
-                        thisflag = meCFKILL ;
                         meClipSize = nitems ;
-                        meClipBuff = dd ;
+                        meClipBuff = meClipRaw ;
                         /* Start the text transfer */
                         XDeleteProperty(mecm.xdisplay,meFrameGetXWindow(frame),meAtoms[meATOM_COPY_TEXT]);
                         XFlush(mecm.xdisplay);
@@ -2657,70 +2726,9 @@ special_bound:
                     break;
                 }
                 else if(((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8) && (nitems > 0))
-                {
-#if MEOPT_EXTENDED
-                    if((type != XA_STRING) && !(clipState & CLIP_UTF8))
-                    {
-                        int ss, uc;
-                        meUByte cc, c1, bc, bm;
-                        ss = nitems = 0;
-                        while((cc=buff[ss++]) != '\0')
-                        {
-                            if(cc < 0x80)
-                                buff[nitems++] = cc;
-                            else
-                            {
-                                bc = 0;
-                                uc = 0;
-                                bm = 0x40;
-                                while(cc & bm)
-                                {
-                                    if(((c1 = buff[ss++]) & 0xc0) != 0x80)
-                                    {
-                                        bc = 0;
-                                        break;
-                                    }
-                                    uc = (uc << 6) | (c1 & 0x3f);
-                                    bm >>= 1;
-                                    bc += 6;
-                                }
-                                if((bc == 0) || ((uc |= (cc & (bm - 1)) << bc) == 0) || (uc > 0xffff))
-                                    buff[nitems++] = meCHAR_UNDEF;
-                                else if((uc < 256) && ((uc < 128) || (charToUnicode[uc-128] == uc)))
-                                    buff[nitems++] = uc;
-                                else
-                                {
-                                    int ii = 127;
-                                    while((charToUnicode[ii] != uc) && (--ii >= 0))
-                                        ;
-                                    if(ii >= 0)
-                                        buff[nitems++] = ii+128;
-                                    else
-                                        buff[nitems++] = meCHAR_UNDEF;
-                                }
-                                if(c1 == 0)
-                                    break;
-                            }
-                        }
-                        buff[nitems] = '\0';
-                    }
-#endif /* MEOPT_EXTENDED */
-                    if((klhead == NULL) || (klhead->kill == NULL) ||
-                       (klhead->kill->next != NULL) ||
-                       meStrncmp(klhead->kill->data,buff,nitems) ||
-                       (klhead->kill->data[nitems] != '\0'))
-                    {
-                        /* always new kill, don't want to glue 'em together */
-                        killInit(0);
-                        if((dd = killAddNode(nitems)) != NULL)
-                        {
-                            memcpy(dd,buff,nitems);
-                            dd[nitems] = '\0';
-                        }
-                        thisflag = meCFKILL;
-                    }
-                }
-                XFree(buff) ;
+                    meXClipReceived(buff,(int) nitems,(type == XA_STRING));
+                if(buff != NULL)
+                    XFree(buff) ;
                 
                 /* Always flag that we got the event */
                 clipState |= CLIP_RECEIVED ;
@@ -2744,27 +2752,24 @@ special_bound:
                                      0L,0x1fffffffL,True,AnyPropertyType,
                                      &type, &fmt, &nitems, &left, &buff) ;
             
-            if((ret == Success) && (type == XA_STRING) && (fmt == 8))
+            if((ret == Success) && ((type == XA_STRING) || (type == meAtoms[meATOM_UTF8_STRING])) && (fmt == 8))
             {
-                if(nitems == 0)
+                /* the chunks are all the same type, an empty one ends the transfer */
+                meClipString = (type == XA_STRING);
+                if(nitems > meClipSize)
+                    nitems = meClipSize ;
+                memcpy(meClipBuff,buff,nitems) ;
+                meClipSize -= nitems ;
+                meClipBuff += nitems ;
+                *meClipBuff = '\0' ;
+                XFree(buff) ;
+                if((nitems == 0) || (meClipSize == 0))
                 {
-                    /* got all we're going to */
+                    meXClipReceived(meClipRaw,(int) (meClipBuff-meClipRaw),meClipString);
+                    meFree(meClipRaw);
+                    meClipRaw = NULL;
                     meClipSize = 0 ;
                     clipState |= CLIP_RECEIVED ;
-                }
-                else
-                {
-                    if(nitems >= meClipSize)
-                    {
-                        /* flag that we have the clipboard */
-                        nitems = meClipSize ;
-                        clipState |= CLIP_RECEIVED ;
-                    }
-                    memcpy(meClipBuff,buff,nitems) ;
-                    meClipSize -= nitems ;
-                    meClipBuff += nitems ;
-                    *meClipBuff = '\0' ;
-                    XFree(buff) ;
                 }
             }
         }

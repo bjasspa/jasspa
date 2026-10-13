@@ -27,6 +27,10 @@ set-variable #l2 &lget .spell.lang-id &set #l1 &lfin .spell.lang-name &set #l0 &
   !endif
   !if &len #l2
     set-variable .change-font.ln-type &lget .spell.lang-type #l1
+    ; the rules and dictionaries are in the Windows code page of the language's script, as spellutl
+    set-variable #l3 &lget .change-font.cp-id &sin &lef .change-font.ln-type 1 .change-font.cp-type
+    0 code-page-define #l3
+    set-char-mask "S" #l3
     !iif &not &exi &ind &cat ".describe-word." &set .spell.language #l2  set-variable &ind &cat ".describe-word." #l2 &cat &con &len &set #l3 &lget .spell.lang-dict #l1 &spr "\b\fu\f\fdescribe-word-dct\fdict://dict.org/d:%%w:%s\f" #l3 "" "\b\fu\f\fdescribe-word-dct\fdict://dict.org/d:%w:*\f\b"
   !elif &len #l0
     2000 ml-write &spr "[Error: Unknown/unsupported language \"%s\" - use user-setup to reconfigure]" #l0

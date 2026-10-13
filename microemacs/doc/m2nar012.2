@@ -374,6 +374,11 @@ as an escape character. the escape sequences that are interpreted include:
 \fC\\n\fR \- A literal NEWLINE character.
 .br
 \fC\\xx\fR \- A hexadecimal character.
+.br
+\fC\\u\fIhhhh\fR \- The Unicode character U+\fIhhhh\fR, 1 to 4 hexadecimal digits (\fC\\U\fR takes up to 6). In a build
+without Unicode support it is the character of the current code page (see
+.Ht set-char-mask 2 ),
+or '\fC?\fR' if the code page has none.
 .SH "SEE ALSO"
 .na
 .Hl "Introduction to Variable Functions" functions -

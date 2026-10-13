@@ -467,6 +467,7 @@ static int
 meSpellInitDictionaries(void)
 {
     meDictionary   *dict, *ldict;
+    meCodePage     *cp;
 
     ldict = NULL;
     dict = dictHead;
@@ -517,7 +518,9 @@ meSpellInitDictionaries(void)
         ldict = dict;
         dict = ldict->next;
     }
-    if(dictIgnr == NULL)
+    /* each code page has its own ignore dictionary */
+    cp = (codePageSpell != NULL) ? codePageSpell:&codePageDefault;
+    if((dictIgnr = cp->spellIgnore) == NULL)
     {
         meDictAddr *table;
         meInt dSize, dUsed;
@@ -536,6 +539,7 @@ meSpellInitDictionaries(void)
         dictIgnr->flags = DTACTIVE;
         dictIgnr->fname = NULL;
         dictIgnr->next = NULL;
+        cp->spellIgnore = dictIgnr;
     }
     return meTRUE;
 }
@@ -730,6 +734,19 @@ spellRuleAdd(int f, int n)
                     return meABORT;
                 hyphenCheck = (meUByte) rule;
                 return meTRUE;
+            }
+            if(rule == '@')
+            {
+                /* a rules file, read as single byte in the spelling code page */
+                if(meGetString((meUByte *)"Rules file",MLFILECASE,0,buff,meBUF_SIZE_MAX) <= 0)
+                    return meABORT;
+                if(codePageSpell == NULL)
+                    return mlwrite(MWABORT,(meUByte *)"[No spelling code page]");
+#if MEOPT_UNICODE
+                return execFileCodePage(buff,codePageSpell);
+#else
+                return execFile(buff,meFALSE,1);
+#endif
             }
             if(rule == '#')
             {
@@ -1052,11 +1069,16 @@ dictionaryDelete(int f, int n)
     }
     if(n & 0x04)
     {
-        if(dictIgnr != NULL)
-        {
-            meDictionaryFree(dictIgnr);
-            dictIgnr = NULL;
-        }
+        /* the ignore dictionaries of all code pages */
+        meCodePage *cp=&codePageDefault;
+        do {
+            if(cp->spellIgnore != NULL)
+            {
+                meDictionaryFree(cp->spellIgnore);
+                cp->spellIgnore = NULL;
+            }
+        } while((cp = cp->next) != NULL);
+        dictIgnr = NULL;
         if(!(n & 0x02))
             /* just remove the ignore */
             return meTRUE;

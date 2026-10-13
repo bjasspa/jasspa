@@ -20,12 +20,12 @@ define-macro start-up
     set-variable #l2 ""
     !if &band $buffer-fmod 0x10000
       set-variable #l0 "Directory"
-    !elif &band $buffer-fmod 0x80000
+    !elif &band $buffer-fmod 0x20000
       set-variable #l0 "Binary"
     !else
       set-variable #l0 &add 1 &add &add &bmod "cr" &mul &bmod "lf" 2 &mul &bmod "ctrlz" 4
       set-variable #l0 &lget "|Strange0|Mac|Unix|Windows|Strange4|Strange5|Strange6|Dos|" #l0
-      !if &band $buffer-fmod 0x100000
+      !if &band $buffer-fmod 0x40000
         set-variable #l2 &cat #l2 "EOL"
       !endif
       end-of-buffer

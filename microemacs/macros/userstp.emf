@@ -27,8 +27,8 @@ set-variable %hscroll-names "|Fast, One line & Reset|Default, One line|Scroll Al
 set-variable %vscroll-names "|Default, Half screen|Smooth, Single line|"
 set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|Wide, no splitter|Wide with splitter|"
 set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
-; Get a list of display char sets, keyboards & schemes
-0 execute-file "charset"
+; Get a list of display code pages, keyboards & schemes
+0 execute-file "codepage"
 0 execute-file "keyboard"
 0 execute-file "schemes"
 ; Implemented Emulation modes
@@ -397,10 +397,10 @@ set-variable .user-set-mouse.A ""
       set-registry &spr "/history/%s/font-weight" %platform &lget $result 3
       set-registry &spr "/history/%s/font-width" %platform &lget $result 6
       set-registry &spr "/history/%s/font-depth" %platform &lget $result 7
-      set-variable #l0 &lfind .change-font.cs-wftp &lget $result 2
-      !iif &not #l0  set-variable #l0 &lfind .change-font.cs-wftp 0
+      set-variable #l0 &lfind .change-font.cp-wftp &lget $result 2
+      !iif &not #l0  set-variable #l0 &lfind .change-font.cp-wftp 0
       set-registry &spr "/history/%s/ext-char-set" %platform &not &equ #l0 255
-      set-registry &spr "/history/%s/char-set" %platform &lget .change-font.cs-id #l0
+      set-registry &spr "/history/%s/char-set" %platform &lget .change-font.cp-id #l0
     !endif
   !emacro
 !else
@@ -418,7 +418,7 @@ set-variable .user-set-mouse.A ""
       0x400 pipe-shell-command "LC_ALL=C xfontsel -pattern \"-*-*-*-r-*-*-*-*-*-*-*-*-*-*\" -print -scaled" #l0
       !if &set #l1 $result
         osd-dialog "User Setup Error" &spr "  Failed to run xfontsel, system returned error (%d):  \n\n    %s  " #l1 #l0 "  \HOK  "
-      !elif &not &xseq #l0 "\\([\x01-\xff]*\n\\)?\\(.*\\S.*\\)"
+      !elif &not &xseq #l0 "\\([\\s\\S]*\n\\)?\\(.*\\S.*\\)"
       !elif &not &seq &lef &set #l0 &trb @s2 8 "Warning:"
         !force 3 change-font &set #l0 &trb @s2
         !if &not $status
@@ -623,20 +623,20 @@ set-variable .user-set-mouse.A ""
   !endif
 !endif
 
-0 define-macro user-setup-charset-set
-  set-registry &spr "/history/%s/char-set" %platform &lget .change-font.cs-id @#
+0 define-macro user-setup-code-page-set
+  set-registry &spr "/history/%s/char-set" %platform &lget .change-font.cp-id @#
 !emacro
 
-0 define-macro user-setup-charset
+0 define-macro user-setup-code-page
   !if &les @# 0
     -1 osd .osd.tmp
     osd .osd.tmp 0 "bs" 33 0 0 0
     set-variable #l0 0
-    !while &not &seq "" &set #l1 &lget .change-font.cs-name &inc #l0 1
-      osd .osd.tmp #l0 "" #l1 #l0 user-setup-charset-set
+    !while &not &seq "" &set #l1 &lget .change-font.cp-name &inc #l0 1
+      osd .osd.tmp #l0 "" #l1 #l0 user-setup-code-page-set
     !done
   !else
-    set-variable $result &lget .change-font.cs-name &lfind .change-font.cs-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+    set-variable $result &lget .change-font.cp-name &lfind .change-font.cp-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
   !endif
 !emacro
 
@@ -784,8 +784,8 @@ set-variable .user-set-mouse.A ""
 osd .osd.user-plat 0   "s" 55 18 -1 -1
 ; draw the common parts first
 osd .osd.user-plat 10  ""
-osd .osd.user-plat 300 "Sfh" "  \HDisplay Char Set:  " 310
-osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-charset
+osd .osd.user-plat 300 "Sfh" "  \HDisplay Code Page: " 310
+osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-code-page
 osd .osd.user-plat 311 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 310
 osd .osd.user-plat 400 "fh" "    "
 osd .osd.user-plat 410 "Ctfxph" &cat .osd.checkbox-chars "\} Draw \HWhite Spaces" 0x80000 user-set-system

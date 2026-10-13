@@ -22,10 +22,10 @@
     osd-dialog "Spelling Checker" #l0 "  \HOk  "
     !abort
   !endif
-  !force execute-file &cat "lsr" .spell.language
+  !force add-spell-rule "@" &cat "lsr" .spell.language
   !if &not $status
     !force osd-pinstall &cat "ls" .spell.language &cat &set #l1 &lget .spell.lang-name &lfin .spell.lang-id .spell.language " Language"
-    !force execute-file &cat "lsr" .spell.language
+    !force add-spell-rule "@" &cat "lsr" .spell.language
     !if &not $status
       !if @#
         set-variable #l0 &spr "  Rules and dictionaries for %s language  \n     are not available, please download." #l1

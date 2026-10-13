@@ -1,0 +1,61 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m3mac112.3,v 1.1 2026/10/10 00:00:00 steve Exp $
+.Im MicroEmacs command|macrodevelop
+.so me.tni
+.TH code-page-define 3
+.XI code-page-define - "Define a named code page"
+.SH NAME
+code-page-define \- Define a named code page
+.Me $a
+.SH SYNOPSIS
+.na
+.I n
+.B code-page-define
+"\fIname\fR"
+.ad
+.SH DESCRIPTION
+.B code-page-define
+executes the macro file \fBcp\fR\fIname\fR\fB.emf\fR with the "\fC-\fR" and "\fC8859\fR" removed from \fIname\fR,
+e.g. "\fCiso8859-5\fR" is defined by \fBcpiso5.emf\fR. The file defines the code page with
+.Ht set-char-mask 2
+flags \fBC\fR and \fBc\fR and makes it the current code page; in a build without Unicode support it also sets up the
+display for it (flags \fBM\fR, \fBdp\fR and \fBa\fR,
+.Ht $box-chars 5
+and
+.Ht $window-chars 5 ).
+The user's display code page is set up this way when \*(mS starts.
+.PP
+With an argument \fIn\fR of \fC0\fR a code page not yet defined is defined but the current code page is left as it
+was, this only gives the Unicode character of each byte, as needed to read a file or a spelling dictionary.
+.PP
+The code page file is executed with the same argument, a new code page file must follow this form:
+.Me $emf-scheme
+.CS
+0 set-char-mask "C"
+set-variable #l0 $result
+set-char-mask "C" "\fIname\fR"
+set-char-mask "c" "\fIunicode-table\fR"
+!if &not @#
+  set-char-mask "C" #l0
+!elif &not &opt "uni"
+  set-char-mask "M" "\fImapping\fR"
+  .
+  .
+  set-variable .change-font.cp-box 1
+!endif
+.CE
+.Me $ehf-scheme
+where \fC.change-font.cp-box\fR is set when the file sets \fB$box-chars\fR and \fB$window-chars\fR, otherwise
+\fBcodepage.emf\fR sets plain ones.
+.SH "SEE ALSO"
+.na
+.Ht set-char-mask 2 ,
+.Ht $buffer-code-page 5 ,
+.Ht change-buffer-encoding 3 .
+.ad
+.FH

@@ -31,7 +31,7 @@
 0 define-macro describe-word-dct
   !iif &les $window-eline 3  !abort
   buffer-is-utf8 #l1
-  !iif #l1  12 change-buffer-charset "utf8" "display"
+  !iif #l1  12 change-buffer-encoding "utf8" "display"
   beginning-of-buffer
   !force search-buffer "me" "^\\([^\\n1]\\|1[^\\n5]\\)"
   set-variable #l0 $status

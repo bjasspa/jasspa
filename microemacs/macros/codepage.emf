@@ -1,0 +1,52 @@
+; -!- emf -!-
+;
+; Copyright (C) 1999-2024 JASSPA (www.jasspa.com)
+;
+; This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+; copying information.
+;
+; Created:     Tue Feb 16 1999
+; Synopsis:    Named single byte code pages and the display code page set-up.
+; Authors:     Steven Phillips
+;
+; Notes:       Each code page is defined by its cp<id>.emf file, in an 8-bit build that also
+;              sets up the display.
+;
+; Define the list of supported code pages and if windows then the font type
+set-variable .change-font.cp-id "|cp1252|iso8859-1|iso8859-15|cp850|cp1250|iso8859-2|iso8859-16|cp1251|iso8859-5|cp866|koi8-f|cp1253|iso8859-7|cp1254|iso8859-9|cp437|ascii|"
+set-variable .change-font.cp-type "2222000111133442-"
+set-variable .change-font.cp-wftp "|0|||238|||204||||161||162|||255||"
+!if &les @# 1
+  ; if executed with an argument of 0 or less, define the code page names and return
+  set-variable .change-font.cp-name "|Western Europe - Win CP-1252|Western Europe - ISO-8859-1|Western Europe - ISO-8859-15|Western Europe - DOS CP-850|Central Europe - Win CP-1250|Central Europe - ISO-8859-2|Southeast Europe - ISO-8859-16|Cyrillic - Windows CP-1251|Cyrillic - ISO-8859-5|Cyrillic - DOS CP-866|Cyrillic - KOI8-F|Greek - Windows CP-1253|Greek - ISO-8859-7|Turkish - Windows CP-1254|Turkish - ISO-8859-9|Western - DOS CP-437|Plain Text|"
+  !return
+!endif
+; code-page-define "name" - executes cp<nm>.emf, @# = 0 for just char-to-unicode definition, @# = 1 for full setup on 8-bit builds
+define-macro code-page-define
+  !force -1 set-char-mask "C" &set #l0 @1
+  !iif &or @# &not $status  @# execute-file &rep &rep &cat "cp" #l0 "-" "" "8859" ""
+!emacro
+; get the users display code page
+set-variable #l0 &reg &spr "/history/%s/char-set" %platform "iso8859-1"
+set-variable .change-font.cp-box 0
+!if &lfind .change-font.cp-id #l0
+  code-page-define #l0
+!else
+  2000 ml-write &spr "[Error: Unknown code page \"%s\", use user-setup to reconfigure]" #l0
+!endif
+!iif &seq "" &set .change-font.wftp &lget .change-font.cp-wftp &lfind .change-font.cp-id #l0  set-variable .change-font.wftp 0
+set-variable $system &band $system &bnot 0x10000
+!iif &reg &spr "/history/%s/ext-char-set" %platform "0"  set-variable $system &bor $system 0x10000
+!if &ban $system 0x10000
+  set-char-mask "dp" "\CA\CB\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR\CP\CQ\CS\CT\C^\C_\CG\C[\C]"
+  set-char-mask "p" "\CH\CI\CJ\CZ"
+  set-variable .osd.checkbox-chars "^ \CS\CT ^"
+  set-variable $box-chars "\CY\CM\CL\CN\CK\CX\CU\CO\CV\CW\CR"
+  set-variable $window-chars "=-#*%=\C^\C[ \C[\C_*==\C^\C^\C[\C[  \C[\C[\C_\C_**|\CQ\C] \C]\CP*||\CQ\CQ\C]\C]  \C]\C]\CP\CP** x\CZ \CP \CQ\t\n\CH\CQ\CP\\"
+!else
+  set-variable .osd.checkbox-chars "^[ X]^"
+  !if &not .change-font.cp-box
+    set-variable $box-chars "|+++++++++-"
+    set-variable $window-chars "=-#*%=^   v*==^^      vv**|<   >*||<<      >>** x* > <>\\.$$\\"
+  !endif
+!endif

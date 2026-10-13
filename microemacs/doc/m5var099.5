@@ -1,0 +1,38 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m5var099.5,v 1.1 2026/10/10 00:00:00 steve Exp $
+.Im MicroEmacs variable|buffer|macrodevelop
+.so me.tni
+.TH $buffer-code-page 5
+.XI $buffer-code-page - "Buffer single byte code page"
+.SH NAME
+.na
+$buffer-code-page \- Buffer single byte code page
+.Me $a
+.ad
+.SH SYNOPSIS
+\fB$buffer-code-page\fR "\fIname\fR"
+.SH DESCRIPTION
+.B $buffer-code-page
+is the name of the code page of the current buffer's file, a code page defined by
+.Ht set-char-mask 2
+flag \fBC\fR, normally with
+.Ht code-page-define 3 .
+When set the code page must exist.
+.PP
+A Unicode build reads a file which is not UTF-8 with the current code page, which the buffer keeps, and writes it
+back with the buffer's code page, so a file stays byte identical. Setting a different code page converts the file
+when next saved, an empty name makes it UTF-8.
+.PP
+Other builds set it to the code page current when the file was loaded, the text is not converted.
+.SH "SEE ALSO"
+.na
+.Ht set-char-mask 2 ,
+.Ht code-page-define 3 ,
+.Ht change-buffer-encoding 3 .
+.ad
+.FH

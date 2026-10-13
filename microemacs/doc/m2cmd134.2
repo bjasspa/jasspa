@@ -33,39 +33,39 @@ Adds characters to the given set.
 .PP
 The first argument "\fIflags\fR" determines the required character set as follows:
 .IP "\fBM\fR"
-Character set Map. Internally \*(mS uses a standard character set, or code page, for each language so that only one
-set of spelling rules and dictionaries are required, however the current display character set may be different so a
+Code page Map. Internally \*(mS uses a standard code page for each language so that only one
+set of spelling rules and dictionaries are required, however the current display code page may be different so a
 mapping is required to enable \*(mS to convert between the two. By convention \*(mS uses the most appropriate Windows
-code page for its internal character set, e.g. Windows CP-1252 is the internal character set used for American,
+code page as its internal code page, e.g. Windows CP-1252 is the internal code page used for American,
 British, French, German, Spanish, Portuguese and Italian while CP-1253 is used for Greek. Windows code pages are used
-in preference to \*(iF character sets because they tend to have more characters available so have slightly better
+in preference to \*(iF code pages because they tend to have more characters available so have slightly better
 language coverage.
 .IP
-The "\fIvalue\fR" for the \fBM\fR flag must be a string containing pairs of characters, an internal character set
-character followed by its display character set equivalent. For example, if the current internal character set is
-CP-1252 and the display character set is CP-437 (a common DOS code page), then 'e' acute must be mapped from 0xe9 in
+The "\fIvalue\fR" for the \fBM\fR flag must be a string containing pairs of characters, an internal code page
+character followed by its display code page equivalent. For example, if the current internal code page is
+CP-1252 and the display code page is CP-437 (a common DOS code page), then 'e' acute must be mapped from 0xe9 in
 CP-1252 to 0x82 in CP-437 so "\fIvalue\fR" should contain "\fC\\xe9\\x82\fR" as well as many other mappings. All
-characters in the display character set should be mapped if possible rather than just the letters most commonly used
+characters in the display code page should be mapped if possible rather than just the letters most commonly used
 by the current language as this creates the best support for any text entered.
 .IP
-Some display character sets may not have all the characters available in the internal character set, for instance 
+Some display code pages may not have all the characters available in the internal code page, for instance 
 DOS code page CP-437 does not have an upper-case 'E' grave. In this case an ordinary 'E' should be used as a sensible
 replacement, i.e. "`EE" (where `E is an 'E' grave) as this is the best that can be done given the limitations of the 
-current display character set.
+current display code page.
 .IP
 This flag cannot be incrementally altered, any calls to alter this set leads to the resetting of all the character
 tables so the character mapping must be performed first and in a single call. No other set may be altered in the same
 call.
 .IP "\fBc\fR"
-Unicode character mapping. This flag is used to define a mapping between the upper half of the current display
-character set (the lower half is assumed to be \s-1ASCII\s0) and the Unicode character set. This flag cannot be
+Unicode character mapping. This flag is used to define a mapping between the upper half of the current code page
+(see flag \fBC\fR, the lower half is assumed to be \s-1ASCII\s0) and Unicode. This flag cannot be
 incrementally altered, any call to set this mapping first resets the mapping table to \fC0\fR's so the mapping must be
 performed in a single call. No other set may be altered in the same call. The \fBvalue\fR must be a continuous
 string of up to 128 4-digit hexadecimal numbers, each value being either 0 for no mapping or the U+#### Unicode character
 value. The values must be given in ascending order with the first being for character 0x80 etc.
 .IP
 The mapping is used by \*(mS on Windows and UNIX XTerm systems to better map the system clipboard text to the current 
-display character set. For example XTerm typically uses an \*aF code page which does not support a euro currency 
+display code page. For example XTerm typically uses an \*aF code page which does not support a euro currency 
 symbol, however CP-1252 based fonts can be installed and used correctly by \*(mS allowing support for the euro and 
 many other characters. This mapping then allows \*(mS to correctly handle these characters when copied between 
 different applications. The mapping table is also used by the
@@ -73,8 +73,34 @@ different applications. The mapping table is also used by the
 functions, 
 .Ht expand-iso-accents 3
 and  
-.Ht change-buffer-charset 3
+.Ht change-buffer-encoding 3
 commands.
+.IP "\fBC\fR"
+Named code page. \*(mS keeps a list of named code pages, each with its own flag \fBc\fR mapping. With a positive
+\fIn\fR the code page "\fIvalue\fR" becomes the current code page, which flag \fBc\fR returns and sets, a new code
+page is created with an empty mapping. An argument of \fC0\fR returns the name of the current code page in
+.Ht $result 5 ,
+the default code page is called "\fCC\fR". An argument of \fC-1\fR only tests whether the code page "\fIvalue\fR"
+exists, the command fails if it does not (silently when run from a macro) and the current code page is not changed
+either way, so
+.Ht !force 4
+and
+.Ht $status 5
+can be used to test it. Code pages are normally defined by
+.Ht code-page-define 3 .
+.IP "\fBS\fR"
+Spelling code page. The code page "\fIvalue\fR", which must exist, is the code page of the spelling rules and
+dictionaries, an empty "\fIvalue\fR" removes it. An argument of \fC0\fR returns its name in
+.Ht $result 5 .
+It is set by the language set-up (\fBlanguage.emf\fR) and is not changed by
+.Ht add-spell-rule 2
+or
+.Ht delete-dictionary 2 .
+A rules file cannot be run with
+.Ht add-spell-rule 2
+"\fC@\fR" when it is not set. A Unicode build converts between the text and the dictionaries with it and reads a
+rules file in it, its spell checker fails if it is not set. Each code page has its own ignore dictionary, so the words ignored in a language are
+kept while another language with a different code page is used.
 .IP "\fBd\fR"
 Is Displayable. Characters in this set can be directly displayed to the screen (as a single character) when occurring
 in a buffer. When a character not in this set is to be displayed it is performed using more than one character.
@@ -94,18 +120,18 @@ or
 .Ht print-region 2 .
 Any character not in this set is printed in a similar fashion to \fBd\fR.
 .IP "\fBI\fR"
-Internal character set map list. This set cannot be altered using this flag, character mappings must be set up using flag
+Internal code page map list. This set cannot be altered using this flag, character mappings must be set up using flag
 \fBM\fR. The order of the characters in the returned \fB$result\fR string is the same as the order for flag \fBD\fR.
 .IP "\fBD\fR"
-Display character set map list. This set cannot be altered using this flag, character mappings must be set up using
+Display code page map list. This set cannot be altered using this flag, character mappings must be set up using
 flag \fBM\fR. The order of the characters in \fB$result\fR when returned is the same as the order for flag \fBI\fR.
 .IP "\fBa\fR"
 Is Alphabetic letter. Characters in this set are alphabetical characters, used by many \*(mS commands such as
 .Ht forward-word 2 .
-When setting, the "\fIvalue\fR" must specify pairs of internal character set chars, an upper-case character followed by its
+When setting, the "\fIvalue\fR" must specify pairs of internal code page chars, an upper-case character followed by its
 lower-case equivalent. This enables commands such as
 .Ht lower-case-word 2
-to operate correctly regardless of the font and language being used. Some character sets may not have all the characters
+to operate correctly regardless of the font and language being used. Some code pages may not have all the characters
 available for rendering, for instance PC DOS Code page 437 does not have an upper-case 'e' grave. In this case an ordinary
 \&'E' should be used as a sensible replacement, i.e. "E`e" (where `e is an 'e' grave). However, this will lead to all
 upper-case 'E's to map to a lower-case \&'e' grave in a case changing operation, this may be corrected by adding a
@@ -197,8 +223,8 @@ Small A grave (`a)      \\xE0          \\x85           \\x85
 Small A acute ('a)      \\xE1          \\xA0           \\xA0
 .CE
 As the spell checker for French will operates in Windows CP-1252, the character font mapping (flag \fBM\fR) must be correctly setup for
-spell checking to operate correctly. When CP-1252 is also used as the display character set the mapping is the empty 
-string as the internal and display character set are fully in-sync, but
+spell checking to operate correctly. When CP-1252 is also used as the display code page the mapping is the empty 
+string as the internal and display code pages are fully in-sync, but
 for both Windows Console CP-850 and DOS code page CP-437 the mappings should be set as follows:
 .Me "$emf-scheme"
 .CS
@@ -211,7 +237,7 @@ set-char-mask "M" "\\xC0A\\xC1AAA\\xE0\\x85\\xE1\\xA0"
 As all the characters in CP-1252 have equivalents in CP-850, the mapping for Windows console is a simple 1-to-1 
 lossless character list.
 However the missing capital \fBA\fR's in CP-437 causes problems, for the command
-.Ht change-buffer-charset 3
+.Ht change-buffer-encoding 3
 it is preferable for a mapping of \fB`A\fR to be given, otherwise the document being converted may become corrupted and unreadable.
 Therefore a mapping of \fB`A\fR to \fBA\fR is given to alleviate this problem, similarly \fB'A\fR is also mapped to
 \fBA\fR leading to loss of information.
@@ -240,13 +266,13 @@ using the \fBa\fR flag as follows:
 set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1"
 .CE
 .Me "$ehf-scheme"
-Note that this flag always expects an internal character set based string, this allows the same map character list to
-be used regardless of the display character set being used, i.e. the above line can be used for CP-1252, CP-850,
-CP-437 & \*(aF code pages. But it does mean that the internal to display character set mapping (flag \fBM\fR) must
+Note that this flag always expects an internal code page based string, this allows the same map character list to
+be used regardless of the display code page being used, i.e. the above line can be used for CP-1252, CP-850,
+CP-437 & \*(aF code pages. But it does mean that the internal to display code page mapping (flag \fBM\fR) must
 already have been provided.
 .PP
 Similar mapping problems are encountered with the \fBa\fR flag as with flag \fBM\fR above. The problem is not
-immediately obvious because the mapping is always given in internal character set which will support the widest set of
+immediately obvious because the mapping is always given in the internal code page which will support the widest set of
 characters, but when CP-437 is used the mapping string of "\fCA\\x85A\\xA0\fR" must be used. As can be seen, \fBA\fR
 is mapped last to \fB'a\fR so an upper to lower character operation will convert a \fBA\fR to \fB'a\fR. A similar
 solution is used, a further mapping of \fBA\fR to \fBa\fR is given to correct the default case mapping for both
@@ -260,8 +286,10 @@ set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1Aa"
 .na
 .Ht forward-word 2 ,
 .Ht upper-case-word 2 ,
-.Ht change-buffer-charset 3 ,
+.Ht change-buffer-encoding 3 ,
+.Ht code-page-define 3 ,
 .Ht &uni 4 ,
+.Ht $buffer-code-page 5 ,
 .Ht $buffer-mask 5 ,
 .Ht screen-poke 2 ,
 .Ht spell 2 ,

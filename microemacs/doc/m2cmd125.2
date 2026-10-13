@@ -41,8 +41,9 @@ not flagged as erroneous and it already exists in the  dictionary, the word is
 not removed, instead a combined rule list is created.
 .IP \fB0x008\fR
 When set flags  that word  additions  (bit  0x004) and  deletions  (bit 0x200)
-should be made to the ignore dictionary. Otherwise word additions are made the
-last added dictionary and deletions are made to all main dictionaries.
+should be made to the ignore dictionary of the spelling code page (see
+.Ht delete-dictionary 2 ).
+Otherwise word additions are made the last added dictionary and deletions are made to all main dictionaries.
 .IP \fB0x010\fR
 When set flags that the given word is erroneous, used solely by word additions
 to create auto-corrections.

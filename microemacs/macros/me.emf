@@ -52,7 +52,13 @@ define-macro-file toolbar toolbar toolbar-close toolbar-open toolbar-mode-line
 define-macro-file spell spell-word spell-buffer spell-edit-word find-word
 define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file notes notes notes-file notes-instant notes-context
-define-macro-file charsutl buffer-is-utf8 change-buffer-charset
+define-macro-file encodutl buffer-is-utf8 change-buffer-encoding describe-char
+; UNICODE: the Unicode builds have no translate-buffer, the macros calling it are marked UNICODE:
+!if &not &exi translate-buffer
+  0 define-macro translate-buffer
+    -8 ml-write "[translate-buffer is not supported by this build]"
+  !emacro
+!endif
 define-macro-file zfile find-zfile zfile-setup zfile-reset
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file hktools file-exec file-format file-lint
@@ -202,9 +208,9 @@ set-variable $mouse &reg &spr "/history/%s/mouse" %platform $mouse
 set-variable $scroll &reg &spr "/history/%s/scroll" %platform $scroll
 set-variable $show-modes &reg "/history/show-modes" $show-modes
 set-variable $cursor-blink &reg &spr "/history/%s/blink" %platform $cursor-blink
-; setup the display scheme, char set, keyboard, language and buffer initialiser
+; setup the display scheme, code page, keyboard, language and buffer initialiser
 execute-file "scheme"
-execute-file "charset"
+execute-file "codepage"
 execute-file "keyboard"
 execute-file "language"
 execute-file "buffinit"

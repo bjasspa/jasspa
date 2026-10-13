@@ -399,6 +399,13 @@ setCharMask(int f, int n)
             for(c1=0 ; c1<128 ; c1++)
                 ss += sprintf((char *) ss,"%04x",charToUnicode[c1]);
         }
+        else if(flags & 0x80000)
+            ss += sprintf((char *) ss,"%s",codePageCur->name);
+        else if(flags & 0x100000)
+        {
+            if(codePageSpell != NULL)
+                ss += sprintf((char *) ss,"%s",codePageSpell->name);
+        }
         else if(flags & 0x20000)
         {
             if(charKeyboardMap != NULL)
@@ -495,6 +502,27 @@ setCharMask(int f, int n)
         meStrcpy(tnkyPrompt+14,"chars");
         if(meGetString(tnkyPrompt,MLFFZERO,0,buf1,meBUF_SIZE_MAX) <= 0)
             return meFALSE;
+        if(flags & 0x180000)
+        {
+            /* C makes the named code page current (a new one has no chars), a -ve n only tests
+             * it exists; S sets the spelling code page, an existing one or none */
+            meCodePage *cp=NULL;
+            if((buf1[0] != '\0') && ((cp = meCodePageFind(buf1,((flags & 0x80000) && (n > 0)))) == NULL))
+                return mlwrite(((n < 0) ? MWABORT|MWCLEXEC:MWABORT),(meUByte *)"[Unknown code page %s]",buf1);
+            if(n < 0)
+                return meTRUE;
+            if(!(flags & 0x80000))
+                codePageSpell = cp;
+            else if(cp != NULL)
+            {
+                codePageCur = cp;
+                charToUnicode = cp->chrToUni;
+#ifdef _ME_MACOSNW
+                TTcharsetChanged();
+#endif            
+            }
+            return meTRUE;
+        }
         if(flags & 0x40000)
         {
             ss = buf1;

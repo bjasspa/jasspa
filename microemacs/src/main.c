@@ -741,6 +741,7 @@ exitEmacs(int f, int n)
             osdFreeMemory();
             regFreeMemory();
             srchFreeMemory();
+            meCodePageFreeAll();
             TTfreeTranslateKey();
             
             meNullFree(mlBinds);

@@ -1191,8 +1191,8 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
                         if(((ii & 0x001) && isSpace(jj)) ||
                            ((ii & 0x002) && isDigit(jj)) ||
                            ((ii & 0x004) && isXDigit(jj)) ||
-                           ((ii & 0x008) && isLower(jj)) ||
-                           ((ii & 0x010) && isUpper(jj)) ||
+                           ((ii & 0x008) && isUpper(jj)) ||
+                           ((ii & 0x010) && isLower(jj)) ||
                            ((ii & 0x020) && isPrint(jj)) ||
                            ((ii & 0x040) && isPunct(jj)) ||
                            ((ii & 0x080) && isGraph(jj)) ||

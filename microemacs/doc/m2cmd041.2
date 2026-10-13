@@ -27,7 +27,7 @@ Prompt the user before loosing any changes (except to the ignore dictionary).
 .IP \fB0x02\fR
 Delete all the dictionaries other than the ignore dictionary.
 .IP \fB0x04\fR
-Delete the ignore dictionary.
+Delete the ignore dictionaries.
 .PP
 If the  argument  does  not  have  bit 0x02 or 0x04  set,  which  specify  the
 dictionaries  to be deleted, the user is prompted for the  "\fIdictionary\fR".
@@ -37,7 +37,10 @@ The ignore  dictionary  is a  temporary  dictionary  that exists in memory for
 duration  of the \*(mS  session;  the  dictionary  holds  words that have been
 ignored during any previous spell checks (see
 .Ht spell 2 ).
-All of the words that have been ignored may be discarded with:
+Each spelling code page (see
+.Ht set-char-mask 2
+flag \fBS\fR) has its own ignore dictionary, so the words ignored in a language are kept while a language with a
+different code page is used. All of the words that have been ignored may be discarded with:
 .Me $emf-scheme
 .CS
 4 delete-dictionary

@@ -157,7 +157,7 @@
 
 0 define-macro find-proc-grep
   set-variable #l0 $buffer-bname
-  !if &band $buffer-fmod 0x80000
+  !if &band $buffer-fmod 0x20000
     !repeat
       !if &exi :page-0
         !force page-file-search-buffer #p7 #p4
@@ -329,7 +329,7 @@
           !endif
         !endif
         !if &not &sin "b" #l9
-        !elif &band $buffer-fmod 0x80000
+        !elif &band $buffer-fmod 0x20000
           !cont
         !endif
         set-alpha-mark "\x81"

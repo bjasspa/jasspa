@@ -17,15 +17,19 @@ EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	abbrev.emf	abbrlist.emf	aix.emf		arkanoid.emf	\
 	balls.emf	bintools.emf	bookmark.emf	brag.emf	\
 	buffinit.emf	bytecomp.emf	\
-	calc.emf	cc.emf		cfind.emf	charset.emf	\
-	charsutl.emf	cmacros.emf	collapse.emf	comment.emf	\
-	crosswd.emf	crtappln.emf	ctags.emf	cvs.emf		\
-	cygwin.emf	\
+	calc.emf	cc.emf		cfind.emf	cmacros.emf	\
+	codepage.emf	collapse.emf	comment.emf	\
+	cpascii.emf	cpcp1250.emf	cpcp1251.emf	cpcp1252.emf	\
+	cpcp1253.emf	cpcp1254.emf	cpcp437.emf	cpcp850.emf	\
+	cpcp866.emf	cpiso1.emf	cpiso15.emf	cpiso16.emf	\
+	cpiso2.emf	cpiso5.emf	cpiso7.emf	cpiso9.emf	\
+	cpkoi8f.emf	crosswd.emf	\
+	crtappln.emf	ctags.emf	cvs.emf		cygwin.emf	\
 	darwin.emf	diffline.emf    dmf.emf		docmacro.emf	\
 	docutl.emf	dos.emf		draw.emf	\
-	ehftools.emf	emftags.emf	etfinsrt.emf	fahtzee.emf	\
-	fattrib.emf	favorite.emf	fileopen.emf	filetool.emf	\
-	filetype.emf	find.emf	fold.emf	\
+	ehftools.emf	emftags.emf	encodutl.emf	etfinsrt.emf	\
+	fahtzee.emf	fattrib.emf	favorite.emf	fileopen.emf	\
+	filetool.emf	filetype.emf	find.emf	fold.emf	\
 	format.emf	freebsd.emf	ftp.emf		\
 	games.emf	gdiff.emf	gentagsc.emf	gentags.emf	\
 	git.emf		hearts.emf	\
