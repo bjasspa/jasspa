@@ -27,10 +27,10 @@ define-macro vcs-id
     !elif &seq "D" &stat "t" &cat &set #l4 #l0 "CVS"
       set-variable #p9 "cvs"
     !else
-      !while &gre &set #l1 &rsin "/" &lef #l0 -1 3
+      !while &gre &set #l1 &rsin "/" &lef #l0 -1 2
         !iif &seq "D" &stat "t" &cat &set #l0 &lef #l0 #l1 &set #l3 ".git"  !break
       !until &seq "D" &stat "t" &cat #l0 &set #l3 ".svn"  !break
-      !if &gre #l1 3
+      !if &gre #l1 2
         set-variable #p9 &rig #l3 1
       !else
         set-variable #l1 0
