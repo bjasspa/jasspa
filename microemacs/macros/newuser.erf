@@ -71,13 +71,13 @@
    "mask" = ".*\\.\\(7z\\|rar\\|zip\\|msi\\|iso\\|epub\\|t?[bgx]?z\\)"
   }
   "5" = "Create \\H7z" {
-   "cmd" = "sh rm %\"%i[4|7z file name|%b].7z%\" ; 7zzs a -t7z -mx=9 -xr!.svn/ %\"%1.7z%\" %*[ %\"%f%\"]"
+   "cmd" = "sh rm %\"%i[4|7z file name|%b].7z%\" ; 7z a -t7z -mx=9 -xr!.svn/ %\"%1.7z%\" %*[ %\"%f%\"]"
    "flag" = "1536"
    "mask" = ".*"
   }
   "6" = "Create \\Hzip" {
    "bname" = "*create zip*"
-   "cmd" = "sh rm %\"%i[4|Zip file name|%b].zip%\" ; 7zzs a -tzip -xr!.svn/ %\"%1.zip%\" %*[ %\"%f%\"]"
+   "cmd" = "sh rm %\"%i[4|Zip file name|%b].zip%\" ; 7z a -tzip -xr!.svn/ %\"%1.zip%\" %*[ %\"%f%\"]"
    "flag" = "1536"
    "mask" = ".*"
   }
