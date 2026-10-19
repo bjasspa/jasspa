@@ -39,12 +39,14 @@ DEFVAR ("buffer-backup",       EVCBUFBACKUP)    /* current buffer backup name */
 DEFVAR ("buffer-bhook",        EVBUFBHK)        /* Buffer bhook  */
 #endif
 DEFVAR ("buffer-bname",        EVCBUFNAME)      /* current buffer name */
-#if MEOPT_EXTENDED
-DEFVAR ("buffer-code-page",    EVBUFCP)         /* Buffer single byte code page */
-#endif
 #if MEOPT_MAJORMODE
 DEFVAR ("buffer-dhook",        EVBUFDHK)        /* Buffer dhook  */
 DEFVAR ("buffer-ehook",        EVBUFEHK)        /* Buffer ehook  */
+#endif
+#if MEOPT_EXTENDED
+DEFVAR ("buffer-encoding",     EVBUFENC)        /* Buffer file encoding */
+#endif
+#if MEOPT_MAJORMODE
 DEFVAR ("buffer-fhook",        EVBUFFHK)        /* Buffer fhook  */
 #endif
 #if MEOPT_WORDPRO

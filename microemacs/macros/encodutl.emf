@@ -19,7 +19,7 @@ define-macro buffer-is-utf8
     !force search-buffer "me" "[^\x01-\x7f]"
     !if &not $status
       set-variable @1 0
-    !elif &len $buffer-code-page
+    !elif &not &seq &lef $buffer-encoding 3 "utf"
       set-variable @1 -1
     !else
       beginning-of-buffer
@@ -52,7 +52,7 @@ define-macro change-buffer-encoding
   !else
     !if &opt "uni"
       ; both default to how the buffer was read
-      set-variable #l2 &cond &len $buffer-code-page &lfind .change-font.cp-id $buffer-code-page 0x8000
+      set-variable #l2 &cond &seq &lef $buffer-encoding 3 "utf" 0x8000 &lfind .change-font.cp-id $buffer-encoding
       !iif &not #l2  set-variable #l2 &lfind .change-font.cp-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
       #l2 change-encoding-set
       &bor 0x10000 #l2 change-encoding-set
@@ -213,7 +213,7 @@ define-macro change-buffer-encoding
 0 define-macro change-encoding-convert
   set-variable #l0 &cond &seq @1 "utf8" "" @1
   set-variable #l1 &cond &seq @2 "utf8" "" @2
-  set-variable .cp $buffer-code-page
+  set-variable .cp &cond &seq &lef $buffer-encoding 3 "utf" "" $buffer-encoding
   !if &and &seq #l0 .cp &seq #l1 .cp
     ml-write "[From & To are the same - nothing to do!]"
     !return
@@ -340,7 +340,8 @@ define-macro change-buffer-encoding
     beginning-of-buffer
     replace-string #l4 ""
   !endif
-  set-variable $buffer-code-page #l1
+  ; a UTF buffer converted to UTF-8 keeps its UTF form
+  !iif &or &len #l1 &len .cp  set-variable $buffer-encoding &cond &len #l1 #l1 "utf8"
   #l8 buffer-mode "magic"
   #l9 buffer-mode "exact"
   goto-alpha-mark "\x82"

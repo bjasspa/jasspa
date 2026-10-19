@@ -954,11 +954,11 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVBUFXLATE:
             frameCur->windowCur->buffer->xlateFlag = (meByte) meAtoi(vvalue);
             break;
-        case EVBUFCP:
+        case EVBUFENC:
             {
                 meCodePage *cp=NULL;
                 if((vvalue[0] != '\0') && ((cp = meCodePageFind(vvalue,0)) == NULL))
-                    return mlwrite(MWABORT,(meUByte *)"[Unknown code page %s]",vvalue);
+                    return mlwrite(MWABORT,(meUByte *)"[Unknown encoding %s]",vvalue);
                 frameCur->windowCur->buffer->codePage = cp;
                 break;
             }
@@ -1612,7 +1612,7 @@ handle_namesvar:
         return evalResult;
     case EVCBUFNAME:    return frameCur->windowCur->buffer->name;
 #if MEOPT_EXTENDED
-    case EVBUFCP:       return (frameCur->windowCur->buffer->codePage == NULL) ? emptym:frameCur->windowCur->buffer->codePage->name;
+    case EVBUFENC:      return (frameCur->windowCur->buffer->codePage == NULL) ? emptym:frameCur->windowCur->buffer->codePage->name;
 #endif
     case EVBUFFMOD:     return meItoa((((meInt) frameCur->windowCur->buffer->fileFlag) << 16) | ((meInt) frameCur->windowCur->buffer->stats.stmode));
     case EVGLOBFMOD:    return meItoa(meUmask);

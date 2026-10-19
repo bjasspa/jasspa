@@ -10,18 +10,25 @@
 ;
 ; Notes:
 ;     See the value of %keyboard-names for a list of currently supported
-;     keyboards. Note that translate-keys are not automatically removed
-;     if another keyboard is used, you may have to exit and restart ME
+;     keyboards. A non-Latin keyboard (Greek, Russian) gets a map from each
+;     letter key's char to the Latin letter on the same key, so a prompt
+;     wanting a Latin answer (y/n) or a binding (C-a) works without changing
+;     the keyboard layout. Each key is the char's 4 hex digit code point and
+;     then the Latin char, so the map does not depend on the code page.
 ;
 !if &les @# 1
   ; if executed with an argument of 0 or less, return the list
-  set-variable %keyboard-names "|American|Belgian|British|Deutsch|Espanol|Finnish|Francais|Polish|Portugues|Russian|"
+  set-variable %keyboard-names "|American|Belgian|British|Deutsch|Espanol|Finnish|Francais|Greek|Polish|Portugues|Russian|"
   !return
 !endif
 
 set-char-mask "k" ""
 ; get the users keyboard
 !if &seq "" &set #l0 &reg "/history/keyboard" ""
+!elif &seq #l0 "Greek"
+  ; the Q key gives ; and :, W gives final sigma which has no capital (S gives it)
+  set-char-mask "k" "03B1a0391A03B2b0392B03C8c03A8C03B4d0394D03B5e0395E03C6f03A6F03B3g0393G03B7h0397H03B9i0399I03BEj039EJ03BAk039AK03BBl039BL03BCm039CM03BDn039DN03BFo039FO03C0p03A0P03C1r03A1R03C3s03A3S03C4t03A4T03B8u0398U03C9v03A9V03C2w03C7x03A7X03C5y03A5Y03B6z0396Z"
 !elif &seq #l0 "Russian"
-  set-char-mask "k" "äaØbácÒdãeÐfßgàhèiÞjÛkÔlìmânéo×pÙqÚrësÕtÓuÜvæwçxÝyïzÄA¸BÁC²DÃE°F¿GÀHÈI¾J»K´LÌMÂNÉO·P¹QºRËSµT³U¼VÆWÇX½YÏZ"
+  ; the JCUKEN layout
+  set-char-mask "k" "0444a0424A0438b0418B0441c0421C0432d0412D0443e0423E0430f0410F043Fg041FG0440h0420H0448i0428I043Ej041EJ043Bk041BK0434l0414L044Cm042CM0442n0422N0449o0429O0437p0417P0439q0419Q043Ar041AR044Bs042BS0435t0415T0433u0413U043Cv041CV0446w0426W0447x0427X043Dy041DY044Fz042FZ"
 !endif

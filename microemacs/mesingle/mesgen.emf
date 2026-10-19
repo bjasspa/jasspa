@@ -44,12 +44,62 @@ set-variable #l0 0
 set-variable %mes-verb &sub &len %mes-opts &len &rep %mes-opts "V" ""
 !iif &sin "S" %mes-opts  set-variable %mes-opts &cat %mes-opts "C"
 
+; a build with compiled macros (cmc) has no byte compiled files, its macro files are stripped
 !if &sin "d" %mes-opts
+!elif &opt "cmc"
 !elif &seq "R" &stat "t" &set #l2 &stat "a" &cat &lef $buffer-fname &rsin "/" $buffer-fname "../macros/bytecomp.emf"
   execute-file #l2
 !else
   execute-file "bytecomp"
 !endif
+
+; copies macro file @1 to @2 without the comment and empty lines and indentation of its macro
+; bodies, which compiled macros drop anyway; top-level comment lines are left empty, as a
+; top-level !jump counts lines and !goto only finds a label in column 1, and define-help text
+; is left as it is
+define-macro mesingle-strip
+  !force 0 delete-buffer "*mes-strip*"
+  find-buffer "*mes-strip*"
+  -1 buffer-mode "undo"
+  !force insert-file @1
+  !iif &not $status  !abort
+  beginning-of-buffer
+  set-variable #l0 0
+  set-variable #l1 0
+  !while &not &seq @wc ""
+    beginning-of-line
+    !if #l1
+      !iif &seq "!ehe" &lef @wl 4  set-variable #l1 0
+      forward-line
+    !elif &xseq @wl "[ \t]*\\(;.*\\)?"
+      set-mark
+      !if #l0
+        forward-line
+        -1 kill-region
+      !else
+        end-of-line
+        -1 kill-region
+        forward-line
+      !endif
+    !else
+      !if #l0
+        !iif &xseq @wl "\\([ \t]+\\).*"  &len @s1 forward-delete-char
+        !iif &seq "!ema" &lef @wl 4  set-variable #l0 &sub #l0 1
+      !endif
+      !if &xseq @wl "[ \t]*\\(\\d+[ \t]+\\)?define-macro\\([ \t].*\\)?"
+        set-variable #l0 &add #l0 1
+      !elif &xseq @wl "[ \t]*\\(\\d+[ \t]+\\)?define-help\\([ \t].*\\)?"
+        set-variable #l1 1
+      !endif
+      forward-line
+    !endif
+  !done
+  -1 buffer-mode "backup"
+  !force 0 write-buffer @2
+  set-variable #l2 $status
+  !force 0 delete-buffer "*mes-strip*"
+  !iif &not #l2  !abort
+!emacro
 
 define-macro mesingle-gen
   set-variable #l0 @1
@@ -147,6 +197,19 @@ define-macro mesingle-gen
                 !force 0x80 file-op &cat #l9 #l6 &cat #l3 #l6
                 !if &not $status
                   -2 ml-write &spr "mesgen Error: Failed to copy file to [%s%s]" #l3 #l6
+                  !abort
+                !endif
+              !endif
+            !elif &opt "cmc"
+              !if &seq "R" &stat "t" &cat #l3 #l7
+                !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Removing %s%s" #l3 #l7
+                !force 0x20 file-op &cat #l3 #l7
+              !endif
+              !if &not &seq "R" &stat "t" &cat #l3 #l6
+                !iif &gre %mes-verb 1  -2 ml-write &spr "mesgen:     Stripping %s%s" #l9 #l6
+                !force mesingle-strip &cat #l9 #l6 &cat #l3 #l6
+                !if &not $status
+                  -2 ml-write &spr "mesgen Error: Failed to strip macro file [%s%s] to [%s%s]" #l9 #l6 #l3 #l6
                   !abort
                 !endif
               !endif

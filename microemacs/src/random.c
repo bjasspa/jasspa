@@ -328,7 +328,8 @@ sortLines(int f, int n)
                 jj++;
             }
         }
-        sortStrings(jj,(meUByte **)list, offs,cmpFunc);
+        /* offs is already negative when sorting backwards, which sortStrings takes as -1-offset */
+        sortStrings(jj,(meUByte **)list,(n < 0) ? offs-1:offs,cmpFunc);
     }
     else
         jj = 0;

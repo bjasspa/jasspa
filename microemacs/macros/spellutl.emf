@@ -236,13 +236,13 @@ define-macro ispell-convert
     -8 ml-write "[ERROR: AFF encoding not SET as utf-8 but aff has utf-8 signature - check encoding]"
   !endif
   !if &or &not &opt "uni" &seq .sc "utf8"
-  !elif &not &seq $buffer-code-page .sc
+  !elif &not &seq $buffer-encoding .sc
     0 code-page-define .sc
     beginning-of-buffer
     set-mark
     end-of-buffer
     -1 kill-region
-    set-variable $buffer-code-page .sc
+    set-variable $buffer-encoding .sc
     insert-file #l0
     -1 buffer-mode "edit"
     beginning-of-buffer
@@ -268,7 +268,7 @@ define-macro ispell-convert
   !if &not &seq $buffer-fname #l1
     !force 0 delete-buffer "*isp-dic"
     find-buffer "*isp-dic"
-    !iif &and &opt "uni" &not &seq .sc "utf8"  set-variable $buffer-code-page .sc
+    !iif &and &opt "uni" &not &seq .sc "utf8"  set-variable $buffer-encoding .sc
     insert-file #l1
     set-variable $buffer-fname #l1
   !endif
@@ -440,7 +440,7 @@ define-macro ispell-convert
   insert-string "; Rules used - list used by spell-edit-word\nset-variable .spell.rules \""
   end-of-line
   insert-string "\"\n\n; Reset the spell rules\n0 add-spell-rule\n\n; Add prefix & suffix spell rules"
-  !iif &and &opt "uni" &lfin .change-font.cp-id .mc  set-variable $buffer-code-page .mc
+  !iif &and &opt "uni" &lfin .change-font.cp-id .mc  set-variable $buffer-encoding .mc
   &band @# 1 write-buffer &spr "%slsr%s.emf" #l8 #l9
   !if &band @# 2
     !force 0 delete-buffer "*isp-aff.emf"

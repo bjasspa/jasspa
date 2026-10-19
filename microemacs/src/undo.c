@@ -244,9 +244,12 @@ meUndoAddDelChars(meInt numChars)
                  * don't actually store the '\n' as this is automatically
                  * added by the system
                  */
-                if((numChars == 0) && (ll == cbp->baseLine))
+                if((numChars == 0) && (ll == cbp->baseLine) && meLineGetLength(meLineGetPrev(ll)))
                     break ;
                 *dd++ = meCHAR_NL ;
+                /* an empty last line is only added back by its '\n' */
+                if(numChars == 0)
+                    break ;
                 if(numChars <= (len=meLineGetLength(ll)))
                     break ;
             }

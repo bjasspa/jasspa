@@ -78,7 +78,10 @@ commands.
 .IP "\fBC\fR"
 Named code page. \*(mS keeps a list of named code pages, each with its own flag \fBc\fR mapping. With a positive
 \fIn\fR the code page "\fIvalue\fR" becomes the current code page, which flag \fBc\fR returns and sets, a new code
-page is created with an empty mapping. An argument of \fC0\fR returns the name of the current code page in
+page is created with an empty mapping. A code page name cannot start with "\fCutf\fR" in any case, those being the
+Unicode encodings of
+.Ht $buffer-encoding 5 .
+An argument of \fC0\fR returns the name of the current code page in
 .Ht $result 5 ,
 the default code page is called "\fCC\fR". An argument of \fC-1\fR only tests whether the code page "\fIvalue\fR"
 exists, the command fails if it does not (silently when run from a macro) and the current code page is not changed
@@ -167,8 +170,8 @@ Many different file types operate better with a different word character set, e.
 \&'\fC_\fR' character when editing C files. See variable
 .Ht $buffer-mask 5 .
 .IP "\fBk\fR"
-Keyboard character map. This flag is used to configure a mapping from a foreign non-latin keyboard (such as Russian)
-to Latin characters, setting the mapping correctly can greatly improve usability in \*(mS as changing keyboards is
+Keyboard character map. This flag is used to configure a mapping from a foreign non-latin keyboard (such as Greek or
+Russian) to Latin characters, setting the mapping correctly can greatly improve usability in \*(mS as changing keyboards is
 required less frequently. The mapping is used by character input routines which first check the main key typed (e.g.
 the Cyrillic character) and if not bound or invalid \*(mS uses this keyboard mapping to translate the character into a
 Latin character. This allows the user to execute binding such as "\fCC-x k\fR" or responding to "\fC[y/n]\fR" prompts
@@ -176,8 +179,14 @@ without having to change keyboards.
 .IP
 As with flag \fBM\fR, this cannot be incrementally altered, any call to set this mapping first resets the mapping
 table so the mapping must be performed in a single call. No other set may be altered in the same call. When setting,
-the "\fIvalue\fR" must supply pairs of characters, the keyboard character followed by the character to map it to, 
-typically an ASCII character.
+the "\fIvalue\fR" must supply 5 characters for each key, the 4 digit hexadecimal Unicode code point of the
+keyboard character (which must not be an ASCII character) followed by the printable ASCII character it maps to,
+e.g. "\fC0444a0424A\fR" maps the Cyrillic '\fCf\fR' key's lower and upper case characters to '\fCa\fR' and
+\&'\fCA\fR'. The map does not depend on the code page; an 8-bit version of \*(mS maps the characters the current
+code page has when the map is set. An empty "\fIvalue\fR" removes the map and an invalid one gives an error. When
+read (\fIn\fR is 0) the map is returned in the same form. The macro file \fCkeyboard.emf\fR sets the map for
+the user's keyboard (see
+.Ht user-setup 3 ).
 .PP
 Unless stated otherwise, multiple flags may be specified at the same time returning a combined character set or
 setting multiple properties for the given "\fIvalue\fR" characters.
@@ -289,7 +298,7 @@ set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1Aa"
 .Ht change-buffer-encoding 3 ,
 .Ht code-page-define 3 ,
 .Ht &uni 4 ,
-.Ht $buffer-code-page 5 ,
+.Ht $buffer-encoding 5 ,
 .Ht $buffer-mask 5 ,
 .Ht screen-poke 2 ,
 .Ht spell 2 ,

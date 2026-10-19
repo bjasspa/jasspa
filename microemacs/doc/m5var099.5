@@ -7,32 +7,45 @@
 .Id $Id: m5var099.5,v 1.1 2026/10/10 00:00:00 steve Exp $
 .Im MicroEmacs variable|buffer|macrodevelop
 .so me.tni
-.TH $buffer-code-page 5
-.XI $buffer-code-page - "Buffer single byte code page"
+.TH $buffer-encoding 5
+.XI $buffer-encoding - "Buffer file encoding"
 .SH NAME
 .na
-$buffer-code-page \- Buffer single byte code page
+$buffer-encoding \- Buffer file encoding
 .Me $a
 .ad
 .SH SYNOPSIS
-\fB$buffer-code-page\fR "\fIname\fR"
+\fB$buffer-encoding\fR "\fIencoding\fR"
 .SH DESCRIPTION
-.B $buffer-code-page
-is the name of the code page of the current buffer's file, a code page defined by
+.B $buffer-encoding
+is the encoding of the current buffer's file, the name of a single byte code page defined by
 .Ht set-char-mask 2
 flag \fBC\fR, normally with
-.Ht code-page-define 3 .
-When set the code page must exist.
+.Ht code-page-define 3 ,
+or in a Unicode build one of:
+.IP \fButf8\fR
+UTF-8.
+.IP "\fButf16le\fR, \fButf16be\fR"
+UTF-16, little or big endian.
+.IP "\fButf32le\fR, \fButf32be\fR"
+UTF-32, little or big endian.
 .PP
-A Unicode build reads a file which is not UTF-8 with the current code page, which the buffer keeps, and writes it
-back with the buffer's code page, so a file stays byte identical. Setting a different code page converts the file
-when next saved, an empty name makes it UTF-8.
+followed by \fC-bom\fR when the file starts with a byte order mark, e.g. \fCutf16le-bom\fR. When set the code page
+must exist, the names are case sensitive; a code page name cannot start with \fCutf\fR so the two never clash.
 .PP
-Other builds set it to the code page current when the file was loaded, the text is not converted.
+A Unicode build detects the encoding when reading a file, a file which is not Unicode being read with the current
+code page, and writes the file back in the buffer's encoding, so a file stays byte identical. Setting a different
+encoding converts the file when next saved; a re-read of the file then uses it rather than detecting the encoding
+again, so a file read with the wrong code page can be fixed by setting the right one and re-reading it. A new buffer
+is \fCutf8\fR.
+.PP
+Other builds set it to the code page current when the file was loaded, \fC""\fR for a new buffer; setting it
+changes the code page recorded but the text is not converted, an empty value is allowed.
 .SH "SEE ALSO"
 .na
 .Ht set-char-mask 2 ,
 .Ht code-page-define 3 ,
-.Ht change-buffer-encoding 3 .
+.Ht change-buffer-encoding 3 ,
+.Ht reread-file 3 .
 .ad
 .FH

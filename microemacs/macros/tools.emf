@@ -451,7 +451,7 @@ define-macro find-ufile
     !return
   !endif
   ; UNICODE: the reader detects Unicode encodings, so this becomes a text read with a file read as
-  ; single byte re-read as UTF-8 ($buffer-encoding 1), or a find-file flag that forces UTF-8
+  ; single byte re-read as UTF-8 ($buffer-encoding "utf8"), or a find-file flag that forces UTF-8
   &bor @# 24 find-file #l0 @mna
   beginning-of-buffer
   translate-buffer

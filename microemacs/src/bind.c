@@ -371,6 +371,25 @@ charMaskTblInit(void)
 }
 
 
+/* Returns the value of the 4 hex digits at ss, -1 if they are not hex digits */
+static int
+setCharMaskHex(meUByte *ss)
+{
+    int ii, cc, vv=0;
+    for(ii=0 ; ii<4 ; ii++)
+    {
+        cc = ss[ii];
+        if((cc >= '0') && (cc <= '9'))
+            cc -= '0';
+        else if(((cc |= 0x20) >= 'a') && (cc <= 'f'))
+            cc -= 'a' - 10;
+        else
+            return -1;
+        vv = (vv << 4) | cc;
+    }
+    return vv;
+}
+
 int
 setCharMask(int f, int n)
 {
@@ -408,19 +427,14 @@ setCharMask(int f, int n)
         }
         else if(flags & 0x20000)
         {
+            /* the keyboard map as a key's 4 hex digit code point and its Latin char */
             if(charKeyboardMap != NULL)
             {
-                for(c1=1 ; c1<256 ; c1++)
+                for(c1=0x80 ; c1<256 ; c1++)
                 {
-                    if((c2 = charKeyboardMap[c1]) != '\0')
-                    {
-                        if(c1 == meCHAR_LEADER)
-                            *ss++ = meCHAR_LEADER;
-                        *ss++ = c1;
-                        if(c2 == meCHAR_LEADER)
-                            *ss++ = meCHAR_LEADER;
-                        *ss++ = c2;
-                    }
+                    if(((c2 = charKeyboardMap[c1]) != '\0') &&
+                       ((jj = charToUnicode[toInternalCharset(c1) & 0x7f]) != 0))
+                        ss += sprintf((char *) ss,"%04X%c",jj,c2);
                 }
             }
                 
@@ -507,6 +521,9 @@ setCharMask(int f, int n)
             /* C makes the named code page current (a new one has no chars), a -ve n only tests
              * it exists; S sets the spelling code page, an existing one or none */
             meCodePage *cp=NULL;
+            if((flags & 0x80000) && (n > 0) && !meStrnicmp(buf1,(meUByte *) "utf",3))
+                /* utf* names are the UTF values of $buffer-encoding, not code pages */
+                return mlwrite(MWABORT,(meUByte *)"[Code page name %s cannot start with utf]",buf1);
             if((buf1[0] != '\0') && ((cp = meCodePageFind(buf1,((flags & 0x80000) && (n > 0)))) == NULL))
                 return mlwrite(((n < 0) ? MWABORT|MWCLEXEC:MWABORT),(meUByte *)"[Unknown code page %s]",buf1);
             if(n < 0)
@@ -554,31 +571,34 @@ setCharMask(int f, int n)
         }
         if(flags & 0x20000)
         {
+            /* the keyboard map, each key a 4 hex digit code point (a non-ASCII char) followed by the
+             * Latin char it gives, "" removes it. A key is the current code page's char, which keys
+             * arrive as the display's */
             ss = buf1;
-            if(*ss != '\0')
+            if((ii = (int) meStrlen(ss)) % 5)
+                return mlwrite(MWABORT,(meUByte *)"[Bad keyboard map]");
+            if((ii /= 5) == 0)
             {
-                if((charKeyboardMap == NULL) &&
-                   ((charKeyboardMap = (meUByte *) meMalloc(256)) == NULL))
-                    return meABORT;
-                /* reset the map */
-                memset(charKeyboardMap,0,256);
-                while((c1=*ss++) != '\0')
+                if(charKeyboardMap != NULL)
                 {
-                    if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
-                        c1 = 0 ;
-                    c1 = toDisplayCharset(c1);
-                    if((c2=*ss++) == '\0')
-                        break ;
-                    if((c2 == meCHAR_LEADER) && ((c2=*ss++) == meCHAR_TRAIL_NULL))
-                        c2 = 0 ;
-                    charKeyboardMap[c1] = c2;
+                    meFree(charKeyboardMap);
+                    charKeyboardMap = NULL;
                 }
+                return meTRUE;
             }
-            /* reset completely */
-            else if(charKeyboardMap != NULL)
+            if((charKeyboardMap == NULL) &&
+               ((charKeyboardMap = (meUByte *) meMalloc(256)) == NULL))
+                return meABORT;
+            memset(charKeyboardMap,0,256);
+            for( ; ii>0 ; ii--, ss+=5)
             {
-                meFree(charKeyboardMap);
-                charKeyboardMap = NULL;
+                if(((c1 = setCharMaskHex(ss)) < 0x80) || (ss[4] <= ' ') || (ss[4] >= 0x7f))
+                    return mlwrite(MWABORT,(meUByte *)"[Bad keyboard map]");
+                for(jj=127 ; jj>=0 ; jj--)
+                    if(charToUnicode[jj] == (meUShort) c1)
+                        break;
+                if(jj >= 0)
+                    charKeyboardMap[toDisplayCharset(jj+128)] = ss[4];
             }
             return meTRUE ;
         }

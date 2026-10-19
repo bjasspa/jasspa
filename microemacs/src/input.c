@@ -828,19 +828,21 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
             lp = cwp->buffer->baseLine->next;
             while(--row >= 0)
                 lp = meLineGetNext(lp);
-            if((lp->flag & meLINE_NOEOL) && (col >= cwp->markOffset))
-                ii = cwp->markOffset;
-            else
-                ii = 0;
-            if((ii == 0) && (lp->flag & meLINE_NOEOL))
+            /* a line of 2 completions has the second at column markOffset, after the first's padding */
+            ii = 0;
+            jj = meLineGetLength(lp);
+            if(lp->flag & meLINE_NOEOL)
             {
-                jj = 1;
-                while((meLineGetChar(lp,jj) != ' ') || (meLineGetChar(lp,jj+1) != ' '))
-                    jj++;
+                ii = (cwp->markOffset < jj) ? cwp->markOffset:jj;
+                if(col < cwp->markOffset)
+                {
+                    jj = ii;
+                    while((jj > 0) && (meLineGetChar(lp,jj-1) == ' '))
+                        jj--;
+                    ii = 0;
+                }
             }
-            else
-                jj = meLineGetLength(lp);
-            if(jj > col)
+            if((jj - ii + ((ii) ? cwp->markOffset:0)) > col)
             {
                 cwp->dotLine = lp;
                 cwp->dotOffset = ii;

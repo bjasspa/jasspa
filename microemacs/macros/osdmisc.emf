@@ -72,7 +72,7 @@ osd .osd.symbol 3 ""
     ; the chars of the buffer's code page, else the current one's, a char with no glyph is a '.'
     0 set-char-mask "C"
     set-variable #l2 $result
-    !iif &len $buffer-code-page  set-char-mask "C" $buffer-code-page
+    !iif &not &seq &lef $buffer-encoding 3 "utf"  set-char-mask "C" $buffer-encoding
   !endif
   set-variable #l0 255
   !repeat
