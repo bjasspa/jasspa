@@ -1,0 +1,8 @@
+# -*- coding: iso-8859-7 -*-
+Καλώς ήρθατε! Αυτό είναι ένα αρχείο δοκιμής σε κωδικοποίηση ISO-8859-7.
+Με αυτό το αρχείο μπορείτε να ελέγξετε τα ελληνικά γράμματα:
+ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ αβγδεζηθικλμνξοπρστυφχψω.
+Λορεμ ιψουμ ντολορ σιτ αμετ, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ουτ ενιμ αντ μινιμ
+βενιαμ, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Ντουις αουτε ιρουρε.
