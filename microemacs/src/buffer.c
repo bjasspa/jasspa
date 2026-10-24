@@ -192,7 +192,7 @@ setBufferContext(meBuffer *bp)
 {
     meLine *lp, *tlp;
     meMajorMode *mm=NULL;
-    int ii, ml=0;
+    int ii, ms=0, ml=0;
     
 #if MEOPT_COLOR
     /* First setup the global scheme - this can be missed by buffers loaded with -c */
@@ -205,7 +205,7 @@ setBufferContext(meBuffer *bp)
         ((ii = fileCidCount) > 0))
     {
         meUByte *pp, cc;
-        int nn, si, ll;
+        int nn, gg, si, ll;
         
         /* search for the first non-blank line */
         lp = meLineGetNext(bp->baseLine);
@@ -227,21 +227,30 @@ setBufferContext(meBuffer *bp)
                             if(meRegexMatch(&meRegexStrCmp,meLineGetText(tlp),meLineGetLength(tlp),0,meLineGetLength(tlp),0))
                             {
                                 if(((mm = fileCidMjrMd[ii]) == NULL) &&
-                                   ((nn=(fileCidFlags[ii] & 0x00f00) >> 8),((si=meRegexStrCmp.group[nn].start) >= 0)) &&
-                                   ((ll = meRegexStrCmp.group[nn].end - si) > 0) && (ll < meMAJORMODE_ID_SIZE))
+                                   ((gg=(fileCidFlags[ii] & 0x00f00) >> 8),((si=meRegexStrCmp.group[gg].start) >= 0)) &&
+                                   ((ll = meRegexStrCmp.group[gg].end - si) > 0) && (ll < meMAJORMODE_ID_SIZE))
                                 {
                                     meIFuncSSI cmpF=(fileCidFlags[ii] & 0x08000) ? meStrnicmp:(meIFuncSSI) memcmp;
-                                    if(nn)
+                                    if(gg)
                                         si += meRegexStrCmp.group[0].start;
                                     pp = meLineGetText(tlp) + si;
                                     mm = majorModeHead;
                                     while((mm != NULL) && ((mm->cidLabelLen != ll) || cmpF((mm->cidLabel != NULL) ? mm->cidLabel:mm->id,pp,ll)))
                                         mm = mm->next;
                                 }
-                                if((mm != NULL) && (assignMajorMode(bp,mm,0) == 0))
+                                if(mm != NULL)
                                 {
-                                    ml = meRegexStrCmp.group[0].end - meRegexStrCmp.group[0].start;
-                                    ii = 0;
+                                    /* loading the mode can run macros which reuse meRegexStrCmp, so on failure move on to the next magic string */
+                                    si = meRegexStrCmp.group[0].start;
+                                    ll = meRegexStrCmp.group[0].end - si;
+                                    if(assignMajorMode(bp,mm,0) == 0)
+                                    {
+                                        ms = si;
+                                        ml = ll;
+                                        ii = 0;
+                                    }
+                                    else
+                                        mm = NULL;
                                     break;
                                 }
                             }
@@ -336,7 +345,7 @@ setBufferContext(meBuffer *bp)
         {
             if(ml >= meBUF_SIZE_MAX)
                 ml = meBUF_SIZE_MAX - 1;
-            memcpy(meRegCurr->next->val[9],meLineGetText(tlp)+meRegexStrCmp.group[0].start,ml);
+            memcpy(meRegCurr->next->val[9],meLineGetText(tlp)+ms,ml);
             ii |= 2;
         }
         meRegCurr->next->val[9][ml] = '\0';
