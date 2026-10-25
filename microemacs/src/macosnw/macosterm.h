@@ -261,7 +261,7 @@ extern MESKeyTable meSKeys;
 /* -------------------------------------------------------------------------
  * Charset - Char -> Unicode mapping, read by Swift.
  * ---------------------------------------------------------------------- */
-extern uint16_t charToUnicode[128];
+extern uint16_t *charToUnicode;
 
 /* -------------------------------------------------------------------------
  * Colour palette - written by TTaddColor (C side), read by Swift.
