@@ -1,4 +1,4 @@
-name: OpenIndiana Automated Build
+name: Build openindiana intel 64
 
 on:
   push:
