@@ -1,0 +1,65 @@
+name: Build Debian 10 binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: Branch, tag, or commit SHA to build
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    name: Debian 10 buster (x86_64)
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.refToBuild || github.ref }}
+
+      - name: Build in Debian 10
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/src" \
+            --workdir /src \
+            debian:10 \
+            sh -euc '
+              # Buster is end-of-life, packages only live on the archive
+              printf "deb http://archive.debian.org/debian buster main\n" > /etc/apt/sources.list
+              printf "Acquire::Check-Valid-Until \"false\";\n" > /etc/apt/apt.conf.d/99archive
+              apt-get update
+              apt-get install -y --no-install-recommends build-essential \
+                libncurses-dev libssl-dev zlib1g-dev pkg-config \
+                libx11-dev libxft-dev libxpm-dev zip
+              echo "== Debian: $(cat /etc/debian_version)"
+              echo "== glibc: $(ldd --version | head -n 1)"
+              echo "== Compiler: $(gcc --version | head -n 1)"
+
+              cd microemacs/src
+              bash build.sh -t c
+              bash build.sh -t w
+
+              build_dir="../bin/linux$(uname -r | cut -d. -f1)-intel64-gcc$(gcc -dumpversion)"
+              test -x "$build_dir/mec"
+              test -x "$build_dir/mew"
+              test -x "$build_dir/tfs"
+              "$build_dir/mec" -V
+              "$build_dir/mew" -V
+
+              output="/src/debian10-build/Debian-10-x86_64"
+              mkdir -p "$output"
+              cp "$build_dir/mec" "$build_dir/mew" "$build_dir/tfs" "$output/"
+              cp ../LICENSE "$output/"
+              cp ../release_readme.txt "$output/readme.txt"
+            '
+          sudo chown -R "$(id -u):$(id -g)" debian10-build microemacs/bin
+
+      - name: Upload Debian 10 binaries
+        uses: actions/upload-artifact@v6
+        with:
+          name: Debian-10-x86_64
+          path: debian10-build/Debian-10-x86_64
