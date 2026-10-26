@@ -29,7 +29,12 @@ jobs:
             debian:10 \
             sh -euc '
               # Buster is end-of-life, packages only live on the archive
-              printf "deb http://archive.debian.org/debian buster main\n" > /etc/apt/sources.list
+              # security and updates suites are required to match the image packages
+              printf "%s\n" \
+                "deb http://archive.debian.org/debian buster main" \
+                "deb http://archive.debian.org/debian buster-updates main" \
+                "deb http://archive.debian.org/debian-security buster/updates main" \
+                > /etc/apt/sources.list
               printf "Acquire::Check-Valid-Until \"false\";\n" > /etc/apt/apt.conf.d/99archive
               apt-get update
               apt-get install -y --no-install-recommends build-essential \
