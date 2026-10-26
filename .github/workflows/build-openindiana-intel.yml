@@ -1,0 +1,54 @@
+name: OpenIndiana Automated Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-oi:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Build Jasspa via OpenIndiana VM
+      uses: vmactions/openindiana-vm@v1
+      with:
+        prepare: |
+          # 1. Enable developer facets and install the build toolchain
+          pkg change-facet facet.devel=True
+          pkg install developer/gcc-11 developer/build/gnu-make system/header git
+          
+          # 2. Install Jasspa-specific C dependencies (Ncurses, X11, Xt, Xft, and SSL)
+          pkg install library/ncurses \
+                      x11/library/libxt \
+                      x11/library/libxft \
+                      library/security/openssl
+        run: |
+          echo INFO: uname -a
+          uname -a
+
+          mkdir downloads
+          mkdir packages
+
+          # Navigate to Jasspa's source directory
+          cd microemacs/src
+          
+          # Compile the Console version (mec)
+          bash build.sh -t c
+          
+          # Compile the X11 Window version (mew)
+          bash build.sh -t w
+          
+          # Stage the compiled binaries in a workspace folder for exporting
+          mkdir -p ../../oi-binaries
+          cp ../bin/*-gcc*/mec ../../oi-binaries/
+          cp ../bin/*-gcc*/mew ../../oi-binaries/
+
+    - name: Upload Binaries to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: jasspa-openindiana-binaries
+        path: oi-binaries/
