@@ -1,10 +1,19 @@
 name: Build openindiana intel 64
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: 'Branch, tag or commit SHA1 to build'
+        default: ''
+        required: false
+        type: string
+
+      refToHelpAsset:
+        description: 'Run-ID of build with help-ehf asset (not used)'
+        default: ''
+        required: false
+        type: string
 
 jobs:
   build-oi:
@@ -21,9 +30,8 @@ jobs:
           pkg change-facet facet.devel=True
           pkg install developer/gcc-11 developer/build/gnu-make system/header git
           
-          # 2. Install Jasspa-specific C dependencies (Ncurses, X11, Xt, Xft, and SSL)
+          # 2. Install Jasspa-specific C dependencies (Ncurses, X11, Xft, and SSL)
           pkg install library/ncurses \
-                      x11/library/libxt \
                       x11/library/libxft \
                       library/security/openssl
         run: |
