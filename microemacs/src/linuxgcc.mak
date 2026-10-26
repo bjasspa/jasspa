@@ -197,6 +197,11 @@ ifneq (w,$(BTYP))
 #
 ifeq (0,$(shell $(PKG_CONFIG) --exists ncurses; echo $$? ))
 CONSOLE_LIBS  = $(shell $(PKG_CONFIG) --libs ncurses)
+# Avoid embedding ncurses symbol-version requirements in binaries built for
+# systems whose libtinfo exports the same ABI without symbol versioning.
+ifeq (0,$(shell test -f "$(shell $(CC) -print-file-name=libtinfo.a)"; echo $$? ))
+CONSOLE_LIBS := $(shell $(PKG_CONFIG) --libs ncurses | sed 's/-ltinfo/-Wl,-Bstatic -ltinfo -Wl,-Bdynamic/')
+endif
 CONSOLE_DEFS  = -D_USE_NCURSES
 else ifeq (0,$(shell printf '$(HASH)include <stdio.h>\nint main(){return 0;}\n' | $(LD) -x c $(LDDEFS) $(LDFLAGS) -o /dev/null -lncurses > /dev/null 2> /dev/null - ; echo $$? ))
 CONSOLE_LIBS  = -lncurses
