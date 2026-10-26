@@ -1,0 +1,71 @@
+name: Build Alpine Linux binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      refToBuild:
+        description: Branch, tag, or commit SHA to build
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        alpine: ['3.23', '3.24']
+        arch: [x86_64, aarch64]
+    runs-on: ${{ matrix.arch == 'aarch64' && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
+    timeout-minutes: 45
+    name: Alpine ${{ matrix.alpine }} (${{ matrix.arch }})
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.refToBuild || github.ref }}
+
+      - name: Build in Alpine
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/src" \
+            --workdir /src \
+            "alpine:${{ matrix.alpine }}" \
+            sh -euc '
+              apk add --no-cache build-base ncurses-dev openssl-dev zlib-dev \
+                pkgconf libx11-dev libxft-dev libxpm-dev zip
+              echo "== Alpine: $(cat /etc/alpine-release)"
+              echo "== Architecture: $(uname -m)"
+              echo "== Compiler: $(gcc --version | head -n 1)"
+              test "$(uname -m)" = "${{ matrix.arch }}"
+
+              cd microemacs/src
+              ./build.sh -t c
+              ./build.sh -t w
+
+              case "$(uname -m)" in
+                x86_64)  arch_tag=intel64 ;;
+                aarch64) arch_tag=aarch64 ;;
+                *) echo "Unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+              esac
+              build_dir="../bin/linux$(uname -r | cut -d. -f1)-${arch_tag}-gcc$(gcc -dumpversion)"
+              test -x "$build_dir/mec"
+              test -x "$build_dir/mew"
+              test -x "$build_dir/tfs"
+              "$build_dir/mec" -V
+              "$build_dir/mew" -V
+
+              output="/src/alpine-build/Alpine-${{ matrix.alpine }}-${{ matrix.arch }}"
+              mkdir -p "$output"
+              cp "$build_dir/mec" "$build_dir/mew" "$build_dir/tfs" "$output/"
+              cp ../LICENSE "$output/"
+              cp ../release_readme.txt "$output/readme.txt"
+            '
+          sudo chown -R "$(id -u):$(id -g)" alpine-build microemacs/bin
+
+      - name: Upload Alpine binaries
+        uses: actions/upload-artifact@v6
+        with:
+          name: Alpine-${{ matrix.alpine }}-${{ matrix.arch }}
+          path: alpine-build/Alpine-${{ matrix.alpine }}-${{ matrix.arch }}
