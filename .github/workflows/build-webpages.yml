@@ -20,6 +20,7 @@ jobs:
         continue-on-error: true
         run: |
            echo INSTALL: TexLive
+           sudo apt update
            sudo apt install -y texlive
            sudo apt install -y texlive-latex-extra
            which pdflatex
