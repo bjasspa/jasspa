@@ -176,6 +176,12 @@ static int TTcursorVisible = 1;     /* Cursor is visible */
 static int TTaMarginsDisabled = 0;  /* Automatic margins disabled */
 static meUByte TTspecChar = 0;
 static meUByte TTutf8Char = 255;
+#if MEOPT_MOUSE && (defined _USE_NCURSES)
+static char *TTmouseX10Str=NULL;    /* kmous string when X10 protocol, its 3 trailing bytes are raw */
+static meUByte TTmouseX10Mtch=0;    /* No. of kmous chars matched */
+static meUByte TTmouseX10Raw=0;     /* No. of raw X10 bytes still to come */
+static meUByte TTmouseBtnEvt=0;     /* XM lacks drag reporting so add button-event (1002) */
+#endif
 #ifndef _USE_NCURSES
 static char tcapbuf[TCAPSLEN];
 #endif
@@ -3116,15 +3122,22 @@ TCAPstart(void)
     /* For mouse support we need a valid kmous entry, if the XM entry is missing then use a default IIF the last char of kmous is M or < */
     if(tcapSpecKeyStrs[SKEY_mouse_move] == NULL)
         tcaptab[TCAPxm].code.str = NULL;
-    else if((tcaptab[TCAPxm].code.str == NULL) && ((ss=meTCAPgetstr(tcapSpecKeyStrs[SKEY_mouse_move],&p)) != NULL) &&
+    else if(((ss=meTCAPgetstr(tcapSpecKeyStrs[SKEY_mouse_move],&p)) != NULL) &&
             (ss != (char *)-1) && ((ii=strlen(ss)) > 1))
     {
         char cc;
         if((cc=ss[ii-1]) == 'M')
-           tcaptab[TCAPxm].code.str = "\033[?1000%?%p1%{1}%=%th%el%;";
-        else if(cc == '<')
+        {
+            TTmouseX10Str = ss;
+            if(tcaptab[TCAPxm].code.str == NULL)
+                tcaptab[TCAPxm].code.str = "\033[?1000%?%p1%{1}%=%th%el%;";
+        }
+        else if((cc == '<') && (tcaptab[TCAPxm].code.str == NULL))
             tcaptab[TCAPxm].code.str = "\033[?1006;1000%?%p1%{1}%=%th%el%;";
     }
+    if((tcaptab[TCAPxm].code.str != NULL) && (strstr(tcaptab[TCAPxm].code.str,"1002") == NULL) &&
+       (strstr(tcaptab[TCAPxm].code.str,"1003") == NULL))
+        TTmouseBtnEvt = 1;
 #endif
 #endif
     /* Switch off the vertical window scroll bar */
@@ -3638,31 +3651,43 @@ TTinitMouse(meInt nCfg)
 #endif /* _ME_WINDOW */
     {
 #ifdef _USE_NCURSES
+        int oo, nn;
+        
         if(tcaptab[TCAPxm].code.str == NULL)
             return;
         
-        if(cCfg & meMOUSE_ENBLE)
-        {
-            putpad(meTCAPParm(tcaptab[TCAPxm].code.str,((nCfg & meMOUSE_ENBLE) ? 1:0)));
-            /* terminfo XM entries often enable click reporting only. */
-            putpad((nCfg & meMOUSE_ENBLE) ? "\033[?1002h":"\033[?1002l");
-        }
-        if(cCfg & meMOUSE_FORCEALL)
+        if((cCfg & nCfg & meMOUSE_FORCEALL) && !(nCfg & meMOUSE_ENBLE))
+            nCfg ^= meMOUSE_FORCEALL;
+        /* tracking level 0 = off, 1 = XM + drags, 2 = all motion. Terminals usually treat 1000, 1002 & 1003
+         * as one setting where a reset of any switches tracking off, so 2 -> 1 must resend XM */
+        oo = (meMouseCfg & meMOUSE_ENBLE) ? ((meMouseCfg & meMOUSE_FORCEALL) ? 2:1):0;
+        nn = (nCfg & meMOUSE_ENBLE) ? ((nCfg & meMOUSE_FORCEALL) ? 2:1):0;
+        if(oo != nn)
         {
             /* ideally a well configured terminal will include the following in the XM code, but they often
              * don't, e.g. xterm-256color and xterm-1003 does not have good color support! The following
              * should work if the base mouse works in the terminal. Use TERM xterm-x11mouse to test base
              *  X10 mouse messages */
-            if(meMouseCfg & meMOUSE_FORCEALL)
-            {
+            if(oo == 2)
                 putpad("\033[?1003l");
-                if(nCfg & meMOUSE_ENBLE)
-                    putpad("\033[?1002h");
+            if(nn == 0)
+            {
+                if(TTmouseBtnEvt)
+                    putpad("\033[?1002l");
+                putpad(meTCAPParm(tcaptab[TCAPxm].code.str,0));
             }
-            else if(nCfg & meMOUSE_ENBLE)
-                putpad("\033[?1003h");
             else
-                nCfg ^= meMOUSE_FORCEALL;
+            {
+                if(oo != 1)
+                {
+                    putpad(meTCAPParm(tcaptab[TCAPxm].code.str,1));
+                    if(TTmouseBtnEvt)
+                        putpad("\033[?1002h");
+                }
+                if(nn == 2)
+                    putpad("\033[?1003h");
+            }
+            TTmouseX10Mtch = TTmouseX10Raw = 0;
         }
 #else
         return;
@@ -5141,8 +5166,6 @@ TTahead(void)
 #endif /* _ME_WINDOW */
 #ifdef _ME_CONSOLE
     {
-        static int x10MouseState = 0;
-        static int x10MouseBytes = 0;
 #ifdef _USEPOLL
         struct pollfd pfds [1];
         
@@ -5178,28 +5201,25 @@ TTahead(void)
             /* There is some data present. Read it */
             if(read(meStdin,&cc,1) > 0)
             {
-                if(x10MouseBytes > 0)
+#if MEOPT_MOUSE && (defined _USE_NCURSES)
+                if(TTmouseX10Raw)
                 {
-                    /* X10 mouse coordinates are raw bytes, not UTF-8. */
+                    /* X10 mouse button & coordinates are raw bytes (32+value) so must not be decoded */
+                    TTmouseX10Raw--;
                     addKeyToBuffer(cc);
-                    x10MouseBytes--;
                     continue;
                 }
-                if(x10MouseState == 0)
-                    x10MouseState = (cc == '\033') ? 1:0;
-                else if(x10MouseState == 1)
-                    x10MouseState = (cc == '[') ? 2:((cc == '\033') ? 1:0);
-                else
+                if((TTmouseX10Str != NULL) && (meMouseCfg & meMOUSE_ENBLE))
                 {
-                    if(cc == 'M')
+                    if(cc != TTmouseX10Str[TTmouseX10Mtch])
+                        TTmouseX10Mtch = (cc == TTmouseX10Str[0]) ? 1:0;
+                    else if(TTmouseX10Str[++TTmouseX10Mtch] == '\0')
                     {
-                        x10MouseState = 0;
-                        x10MouseBytes = 3;
+                        TTmouseX10Mtch = 0;
+                        TTmouseX10Raw = 3;
                     }
-                    else
-                        x10MouseState = (cc == '\033') ? 1:0;
                 }
-
+#endif
                 /* C-Space is returned as "\x00" (or ^@) or nul. This is a
                  * horrible character to translate so we do it here before we
                  * enter the system. There is not an easy way to add this
