@@ -5133,6 +5133,8 @@ TTahead(void)
 #endif /* _ME_WINDOW */
 #ifdef _ME_CONSOLE
     {
+        static int x10MouseState = 0;
+        static int x10MouseBytes = 0;
 #ifdef _USEPOLL
         struct pollfd pfds [1];
         
@@ -5168,6 +5170,28 @@ TTahead(void)
             /* There is some data present. Read it */
             if(read(meStdin,&cc,1) > 0)
             {
+                if(x10MouseBytes > 0)
+                {
+                    /* X10 mouse coordinates are raw bytes, not UTF-8. */
+                    addKeyToBuffer(cc);
+                    x10MouseBytes--;
+                    continue;
+                }
+                if(x10MouseState == 0)
+                    x10MouseState = (cc == '\033') ? 1:0;
+                else if(x10MouseState == 1)
+                    x10MouseState = (cc == '[') ? 2:((cc == '\033') ? 1:0);
+                else
+                {
+                    if(cc == 'M')
+                    {
+                        x10MouseState = 0;
+                        x10MouseBytes = 3;
+                    }
+                    else
+                        x10MouseState = (cc == '\033') ? 1:0;
+                }
+
                 /* C-Space is returned as "\x00" (or ^@) or nul. This is a
                  * horrible character to translate so we do it here before we
                  * enter the system. There is not an easy way to add this
