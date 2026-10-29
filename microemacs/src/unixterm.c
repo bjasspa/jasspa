@@ -3642,7 +3642,11 @@ TTinitMouse(meInt nCfg)
             return;
         
         if(cCfg & meMOUSE_ENBLE)
+        {
             putpad(meTCAPParm(tcaptab[TCAPxm].code.str,((nCfg & meMOUSE_ENBLE) ? 1:0)));
+            /* terminfo XM entries often enable click reporting only. */
+            putpad((nCfg & meMOUSE_ENBLE) ? "\033[?1002h":"\033[?1002l");
+        }
         if(cCfg & meMOUSE_FORCEALL)
         {
             /* ideally a well configured terminal will include the following in the XM code, but they often
@@ -3650,7 +3654,11 @@ TTinitMouse(meInt nCfg)
              * should work if the base mouse works in the terminal. Use TERM xterm-x11mouse to test base
              *  X10 mouse messages */
             if(meMouseCfg & meMOUSE_FORCEALL)
+            {
                 putpad("\033[?1003l");
+                if(nCfg & meMOUSE_ENBLE)
+                    putpad("\033[?1002h");
+            }
             else if(nCfg & meMOUSE_ENBLE)
                 putpad("\033[?1003h");
             else
