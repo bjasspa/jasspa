@@ -71,6 +71,9 @@ DEFSKEY ("find",         NULL,    NULL, NULL,      SKEY_find )
 #if MEOPT_CALLBACK
 DEFSKEY ("find-file",    NULL,    NULL, NULL,      SKEY_find_file )
 #endif
+/* focus-in/out: dropped and not documented as only generated on Unix terminal with focus reporting (1004) */
+DEFSKEY ("focus-in",     "kxIN",  NULL, "\033[I",  SKEY_focus_in )
+DEFSKEY ("focus-out",    "kxOUT", NULL, "\033[O",  SKEY_focus_out )
 DEFSKEY ("help",         NULL,    NULL, NULL,      SKEY_help )
 DEFSKEY ("home",         "khome", "kh", "\033[1~", SKEY_home )
 #if MEOPT_CALLBACK
