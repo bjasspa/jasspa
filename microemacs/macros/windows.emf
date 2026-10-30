@@ -82,7 +82,16 @@
     !iif &sin "/mecw" #l0  set-variable #l0 &cat #l0 " -n"
     set-variable .mcmd #l0
   !endif
-  ipipe-shell-command &spr "%s %s %s" .mcmd &con &ban @# 2 "-P" "-p" @1 @mna
+  !if &not &ban @# 1
+    !force set-variable #l3 @2 
+    !iif &not $status  set-variable #l3 @ml02 "Buffer: "
+  !endif
+  set-variable #l1 &spr "%s %s %s" .mcmd &con &ban @# 0x20 "-P" "-p" @1
+  !if &ban @# 4
+    &ban @# 3 pipe-shell-command #l1 #l3
+  !else
+    &ban @# 3 ipipe-shell-command #l1 #l3
+  !endif
 !emacro
 ; Add A-f4 as an exit binding
 global-bind-key save-buffers-exit-emacs "A-f4"
