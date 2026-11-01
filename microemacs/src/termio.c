@@ -869,6 +869,7 @@ meUShort
 TTgetc(void)
 {
     meTRANSKEY *tt, *tk;
+    meUInt arg;
     int ci, ki, ll, kk, kl;
 #ifdef _USE_NCURSES
     int bp=0;
@@ -1087,7 +1088,9 @@ TTgetc(void)
                 else
 #endif /* MEOPT_MOUSE */
 #endif /* _USE_NCURSES */
-                    if(tk->map != ME_DELETE_KEY)
+                    if((tk->map != ME_DELETE_KEY) &&
+                       (((tk->map != (ME_SPECIAL|SKEY_focus_in)) && (tk->map != (ME_SPECIAL|SKEY_focus_out))) ||
+                        (decode_key(tk->map,&arg) != -1)))
                 {
                     if(!ki)
                         ki = KEYBUFSIZ;
