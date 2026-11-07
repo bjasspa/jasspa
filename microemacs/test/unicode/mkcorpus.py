@@ -74,7 +74,7 @@ def main():
           b'\xff\xfe' + 'lone['.encode('utf-16-le') + b'\x00\xd8' + ']\n'.encode('utf-16-le'))
 
     # NUL bytes (F20) and the control characters translate-buffer had to escape
-    write(outDir, 'nul.txt', b'NUL[\x00] two[\x00\x00]\n\x00leading\ntrailing\x00\n')
+    write(outDir, 'nul_ascii.txt', b'NUL[\x00] two[\x00\x00]\n\x00leading\ntrailing\x00\n')
     write(outDir, 'nul_utf8.txt', MULTI.replace(' ', '\x00', 3).encode('utf-8'))
     write(outDir, 'control_chars.txt', b'SOH[\x01] STX[\x02] BEL[\x07] ESC[\x1b] DEL[\x7f]\n')
 

@@ -16,7 +16,7 @@ import tempfile
 LATIN1_TABLE = ''.join('%04X' % cc for cc in range(0x80, 0x100))
 
 DETECT = {
-    'ascii.txt': 1, 'control_chars.txt': 1, 'nul.txt': 1, 'nul_utf8.txt': 1,
+    'ascii.txt': 1, 'control_chars.txt': 1, 'nul_ascii.txt': 1, 'nul_utf8.txt': 1,
     'eol_bare_cr.txt': 1, 'eol_ctrlz.txt': 1, 'eol_mixed_cr.txt': 1, 'eol_mixed_crlf.txt': 1,
     'eol_mixed_lf.txt': 1, 'utf8.txt': 1, 'utf8_bom.txt': 9, 'utf8_cjk.txt': 1, 'utf8_cr.txt': 1,
     'utf8_crlf.txt': 1, 'utf8_late_invalid.txt': 1, 'utf8_long_line.txt': 1, 'utf8_noeol.txt': 1,
@@ -109,8 +109,8 @@ def main():
     save('utf8.tolatin1', 0)
     expected['utf8.tolatin1'] = utf8.encode('latin-1', errors='replace')
     # NUL survives conversion
-    nul = open(os.path.join(corpus, 'nul.txt'), 'rb').read().decode('utf-8')
-    load('nul.txt')
+    nul = open(os.path.join(corpus, 'nul_ascii.txt'), 'rb').read().decode('utf-8')
+    load('nul_ascii.txt')
     save('nul.to16', 2)
     expected['nul.to16'] = nul.encode('utf-16-le')
     # a NUL before a line's first non-ASCII byte does not stop the UTF-8 detection

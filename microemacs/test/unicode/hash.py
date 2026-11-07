@@ -45,7 +45,7 @@ def main():
         'utf8.txt': 'café €\n'.encode(),
         'invalid.txt': b'caf\xc3\xa9 \xff\n',
         'latin1.txt': b'caf\xe9\n',
-        'nul.txt': b'a\x00b\n',
+        'nul_ascii.txt': b'a\x00b\n',
         'long.txt': LONG,
         'region.txt': b'abc\r\ndef\r\nghi\r\n',
         'rbin.txt': b'\x00\x01\xff\r\nz',
@@ -94,7 +94,7 @@ def main():
     buffer('b.invalid', 'invalid.txt', sha(files['invalid.txt']))
     buffer('b.long', 'long.txt', sha(LONG))
     buffer('b.latin1', 'latin1.txt', sha('café\n'.encode()), uni=True)
-    buffer('b.nul', 'nul.txt', sha(files['nul.txt']), uni=True)
+    buffer('b.nul', 'nul_ascii.txt', sha(files['nul_ascii.txt']), uni=True)
     # regions, from line 1 col 1 to line 3 col 2, and within line 2
     buffer('r.lines', 'region.txt', sha(b'bc\ndef\ngh'), n=0,
            pre=('beginning-of-buffer', 'forward-char', 'set-mark', '3 goto-line', '2 forward-char'))

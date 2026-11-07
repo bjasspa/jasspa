@@ -106,7 +106,7 @@ def main():
     shutil.rmtree(tdir, ignore_errors=True)
 
     # D6 - NUL, control chars and invalid bytes
-    mm, home = run(mec, macros, [os.path.join(CORPUS, 'nul.txt')])
+    mm, home = run(mec, macros, [os.path.join(CORPUS, 'nul_ascii.txt')])
     check('D6 NUL shown as ^@', rowText(mm, 1).startswith('NUL[^@] two[^@^@]'), repr(rowText(mm, 1)))
     finish(mm, home)
     mm, home = run(mec, macros, [os.path.join(CORPUS, 'control_chars.txt')])
@@ -167,7 +167,7 @@ def main():
 
     # F27 - the load message lists the conditions found
     expect = {
-        'nul.txt': r'\[Read \d+ lines? - %d NULs\]' % open(os.path.join(CORPUS, 'nul.txt'), 'rb').read().count(b'\0'),
+        'nul_ascii.txt': r'\[Read \d+ lines? - %d NULs\]' % open(os.path.join(CORPUS, 'nul_ascii.txt'), 'rb').read().count(b'\0'),
         'eol_mixed_lf.txt': r'\[Read \d+ lines - mixed line endings\]',
         'utf8_noeol.txt': r'\[Read \d+ lines - no final newline\]',
         'utf8_late_invalid.txt': r'\[Read \d+ lines - 1 invalid byte\]',

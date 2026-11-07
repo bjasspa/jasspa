@@ -35,7 +35,7 @@ def main():
     os.mkdir(inp)
     os.mkdir(out)
     files = {
-        'nul.txt': b'a[\x00]b[\x00\x00]\n',
+        'nul_ascii.txt': b'a[\x00]b[\x00\x00]\n',
         'mixed.txt': MIXED,
         'noeol.txt': b'first\nlast',
         'invalid.txt': b'caf\xc3\xa9 and caf\xe9\n',
@@ -83,8 +83,8 @@ def main():
         expected[tag] = want
 
     # check 1 - NULs
-    case('nul.p', 'nul.txt', ['p'], files['nul.txt'])
-    case('nul.s', 'nul.txt', ['s'], b'a[]b[]\n')
+    case('nul.p', 'nul_ascii.txt', ['p'], files['nul_ascii.txt'])
+    case('nul.s', 'nul_ascii.txt', ['s'], b'a[]b[]\n')
     # check 2 - line endings
     case('eol.p', 'mixed.txt', ['p'], MIXED)
     case('eol.u', 'mixed.txt', ['u'], MIXED.replace(b'\r\n', b'\n'))
@@ -137,12 +137,12 @@ def main():
             '  !force 0 delete-buffer $buffer-bname']
     expected['lack.skip'] = b'caf\xe9??\n'
     # stripping NULs is undoable, after a save that needs $system's keep undo bit (0x8000)
-    case('undo', 'nul.txt', ['s'], b'a[]b[]\n', pre=['set-variable $system &bor $system 0x8000'],
+    case('undo', 'nul_ascii.txt', ['s'], b'a[]b[]\n', pre=['set-variable $system &bor $system 0x8000'],
          post=['undo', '!force 0 write-buffer "%s"' % os.path.join(out, 'undo2')])
-    expected['undo2'] = files['nul.txt']
+    expected['undo2'] = files['nul_ascii.txt']
 
     # a NUL makes the buffer binary ($buffer-fmod 0x20000) until they are stripped
-    mac += ['  !force find-file "%s"' % os.path.join(inp, 'nul.txt'),
+    mac += ['  !force find-file "%s"' % os.path.join(inp, 'nul_ascii.txt'),
             '  -2 ml-write &cat "fmod:nul.load=" &band $buffer-fmod 0x20000',
             '  !force write-buffer "%s" "s"' % os.path.join(out, 'nul.s2'),
             '  -2 ml-write &cat "fmod:nul.strip=" &band $buffer-fmod 0x20000',
@@ -164,7 +164,7 @@ def main():
     # the buffer's own odd endings are kept, mixed.txt is a tie so LF
     insert('ins.own', 'mixed.txt', 'dos.txt', b'one\nl1\nl2\ntwo\r\nthree\nfour\r\n')
     # a binary buffer or file keeps the inserted endings, the file makes the buffer binary
-    insert('ins.bin', 'nul.txt', 'dos.txt', files['nul.txt'] + files['dos.txt'], fmod='131072')
+    insert('ins.bin', 'nul_ascii.txt', 'dos.txt', files['nul_ascii.txt'] + files['dos.txt'], fmod='131072')
     insert('ins.binfile', 'dos.txt', 'binu.txt', b'l1\r\nn1\nn\x00y\nl2\r\n', fmod='131072')
     insert('ins.text', 'dos.txt', 'unix.txt', b'l1\r\nt1\r\nt2\r\nl2\r\n', fmod='0')
     # an inserted last line with no newline gets one unless it is the buffer's last line or binary
