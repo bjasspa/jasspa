@@ -20,7 +20,7 @@
 # Options (command line overrides):
 #   TARGET=c|w         c (default) runs the console build, w the window build
 #   BIN=<path>         binary under test, default per TARGET
-#                      src/.linux*-release-mec/mec resp. .../mew
+#                      src/.linux*-release[-utf8]-mec/mec resp. .../mew
 #   MAXWALL=<seconds>  fail the report when the run exceeds this wall time
 #   MAXRSS=<kbytes>    fail the report when the run exceeds this peak RSS
 #   TIMEOUT=<seconds>  hard kill for a hung run (default 120)
@@ -83,12 +83,12 @@ ifeq ($(TARGET),w)
 TGT     := mew
 SUF     := -mew
 BTYPE   := -t w
-BIN     ?= $(firstword $(wildcard $(ROOT)/src/.linux*-release-mew/mew $(ROOT)/bin/*/mew))
+BIN     ?= $(firstword $(wildcard $(ROOT)/src/.linux*-release-utf8-mew/mew $(ROOT)/src/.linux*-release-mew/mew $(ROOT)/bin/*/mew))
 else ifeq ($(TARGET),c)
 TGT     := mec
 SUF     :=
 BTYPE   := -t c
-BIN     ?= $(firstword $(wildcard $(ROOT)/src/.linux*-release-mec/mec $(ROOT)/bin/*/mec))
+BIN     ?= $(firstword $(wildcard $(ROOT)/src/.linux*-release-utf8-mec/mec $(ROOT)/src/.linux*-release-mec/mec $(ROOT)/bin/*/mec))
 else
 $(error TARGET must be c or w (got "$(TARGET)"))
 endif

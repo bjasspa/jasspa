@@ -12,6 +12,7 @@ set MEDEBUG=
 set MELSTT=
 set MEPROF=
 set METYPE=
+set MENCODE=
 set MAKEFILE=
 set OPTIONS=
 :build_option
@@ -21,6 +22,8 @@ if "%1" == "-64"    set  BITSIZE= BIT_SIZE=64
 if "%1" == "-C"     set  OPTIONS= clean
 if "%1" == "-d"     set  MEDEBUG= BCFG=debug
 if "%1" == "-dasan" set  MEDASAN= DASAN=1
+if "%1" == "-ec"    set  MENCODE= BENC=c
+if "%1" == "-eu"    set  MENCODE= BENC=u
 if "%1" == "-h"     goto build_help
 if "%1" == "-l"     goto build_logf
 if "%1" == "-la"    goto build_logfa
@@ -59,7 +62,7 @@ goto build_option
 
 :build_cont
 
-set OPTIONS=%MECORE%%MEDASAN%%MEDEBUG%%METYPE%%MEPROF%%MELSTT%%BITSIZE%%OPTIONS%
+set OPTIONS=%MECORE%%MEDASAN%%MEDEBUG%%METYPE%%MENCODE%%MEPROF%%MELSTT%%BITSIZE%%OPTIONS%
 
 if NOT "%MAKEFILE%." == "." goto build_got_makefile
 if NOT "%VisualStudioVersion%." == "." set MAKEFILE=winmsvc.mak & goto build_got_makefile
@@ -114,6 +117,8 @@ echo     -C   : Build clean.
 echo     -d   : For debug build (output is med* or ned*)
 echo     -dasan
 echo          : Build with Address Sanitizer debugging (MSVC only).
+echo     -ec  : For 8-bit code-page based build.
+echo     -eu  : For unicode utf8 based build (default).
 echo     -h   : For this help page
 echo     -l {logfile}
 echo          : Set the compile log file
@@ -130,7 +135,7 @@ echo     -S   : Build clean spotless.
 echo     -t {type}
 echo          : Sets build type:
 echo               c   Console support only
-echo               w   Wondow support only (default)
+echo               w   Window support only (default)
 echo               cw  Console and window support
 echo.
 

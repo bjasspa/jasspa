@@ -63,7 +63,7 @@ meUndoCreateNode(size_t size)
 
 
 void
-meUndoAddInsChar(void)
+meUndoAddInsChar(int len)
 {
     meWindow *cwp=frameCur->windowCur;
     meBuffer *cbp=cwp->buffer;
@@ -77,22 +77,30 @@ meUndoAddInsChar(void)
 
         if(((nn = cbp->undoHead) != NULL) && (nn->type == type) &&
            (nn->udata.dotp == cwp->dotLineNo) &&
-           (nn->doto+1 == cwp->dotOffset))
+           (nn->doto+len == cwp->dotOffset))
         {
-            nn->doto++ ;
-            nn->count++ ;
+            nn->doto += len ;
+            nn->count += len ;
             cbp->undoContFlag = undoContFlag ;
         }
         else if((nn = meUndoCreateNode(sizeof(meUndoNode))) != NULL)
         {
             nn->type |= meUNDO_SINGLE|meUNDO_INSERT ;
-            nn->count = 1 ;
+            nn->count = len ;
         }
     }
 }
 
+#if MEOPT_UNICODE
+/* a single char delete node only holds whole chars */
+#define meUndoIsOneChar(nn) (meUtf8Prev((nn)->str,(nn)->count) == 0)
+#else
+#define meUndoIsOneChar(nn) ((nn)->count == 1)
+#endif
+
+/* len is the length of the char at dot, a delete node's string grows in 16 byte steps */
 void
-meUndoAddDelChar(void)
+meUndoAddDelChar(int len)
 {
     meWindow *cwp=frameCur->windowCur;
     meBuffer *cbp=cwp->buffer;
@@ -100,17 +108,36 @@ meUndoAddDelChar(void)
     {
         meUByte type=meUNDO_SINGLE|meUNDO_DELETE;
         meUndoNode *nn;
-        meUByte   cc;
+        meUByte   *ss;
+#if MEOPT_UNICODE
+        meUInt uc;
+#endif
 
-        if((cc = cwp->dotLine->text[cwp->dotOffset]) == '\0')
+        ss = cwp->dotLine->text+cwp->dotOffset;
+        if(*ss == '\0')
         {
             if((cwp->dotLineNo == cbp->lineCount-1) && (cwp->dotOffset))
                 /* This is trying to just remove the end line when the line
                  * before is not empty, this will fail so don't store it
                  */
                 return;
-            cc = meCHAR_NL;
+            if(cwp->dotLine->flag & meUNDO_EOL_FLAGS)
+            {
+                /* the line's ending is kept by a multi char node */
+                meUndoAddDelChars(1);
+                return;
+            }
+            ss = (meUByte *) "\n";
+            len = 1;
         }
+#if MEOPT_UNICODE
+        else if((len == 1) ? (*ss & 0x80):(meUtf8Decode(ss,len,&uc) != len))
+        {
+            /* part of a char, the chars in a single node are found by decoding */
+            meUndoAddDelChars(len);
+            return;
+        }
+#endif
         if(cbp->undoContFlag == undoContFlag)
             type |= meUNDO_CONTINUE;
 
@@ -120,24 +147,25 @@ meUndoAddDelChar(void)
         {
             if(!(nn->type & meUNDO_FORWARD) && (nn->doto == cwp->dotOffset))
                 ;
-            else if(((nn->doto-1) == cwp->dotOffset) &&
-                    (((nn->type & meUNDO_FORWARD) != 0) || (nn->count == 1)))
+            else if(((nn->doto-len) == cwp->dotOffset) &&
+                    (((nn->type & meUNDO_FORWARD) != 0) || meUndoIsOneChar(nn)))
             {
-                nn->doto--;
+                nn->doto -= len;
                 nn->type |= meUNDO_FORWARD;
             }
             else
                 goto meUndoAddDelCharNew;
-            if(!(nn->count & 0x0f))
+            if(((nn->count+len-1) & ~0x0f) != ((nn->count-1) & ~0x0f))
             {
                 meUndoNode *tn;
-                if((tn = meRealloc(nn,sizeof(meUndoNode)+nn->count+18)) == NULL)
+                if((tn = meRealloc(nn,sizeof(meUndoNode)+((nn->count+len-1) & ~0x0f)+18)) == NULL)
                     return;
                 nn = tn;
                 cbp->undoHead = nn ;
             }
-            nn->str[nn->count++] = cc ;
-            nn->str[nn->count]   = '\0' ;
+            memcpy(nn->str+nn->count,ss,len);
+            nn->count += len;
+            nn->str[nn->count] = '\0' ;
             cbp->undoContFlag = undoContFlag ;
         }
         else
@@ -146,9 +174,9 @@ meUndoAddDelCharNew:
             if((nn = meUndoCreateNode(sizeof(meUndoNode)+18)) != NULL)
             {
                 nn->type |= meUNDO_DELETE|meUNDO_SINGLE ;
-                nn->count = 1 ;
-                nn->str[0] = cc ;
-                nn->str[1] = '\0' ;
+                nn->count = len ;
+                memcpy(nn->str,ss,len);
+                nn->str[len] = '\0' ;
             }
         }
     }
@@ -161,7 +189,9 @@ meUndoAddRepChar(void)
     meBuffer *cbp=cwp->buffer;
     if(meModeTest(cbp->mode,MDUNDO))
     {
-        meUByte type=meUNDO_SINGLE|meUNDO_INSERT|meUNDO_DELETE|meUNDO_FORWARD ;
+        /* a replace from the next command at the next byte joins the node, as typing does; one
+         * within the same command has meUNDO_CONTINUE so is a node of its own, undone with it */
+        meUByte type=meUNDO_SINGLE|meUNDO_INSERT|meUNDO_DELETE ;
         meUndoNode *nn;
         meUByte   cc;
 
@@ -212,24 +242,84 @@ meUndoAddInsChars(meInt numChars)
     }
 }
 
+/* A line's ending as a state char of a delete node, never 0 */
+#define meUndoEolState(lp) \
+    (0x40 | (((lp)->flag & meLINE_EOLCR) ? 1:0) | (((lp)->flag & meLINE_EOLLF) ? 2:0) | (((lp)->flag & meLINE_NOEOL) ? 4:0))
+
+/* Returns the number of line ends in the numChars from dot and sets *flags to their states or'ed */
+static int
+meUndoCountEols(meWindow *cwp, meInt numChars, meLineFlag *flags)
+{
+    meLine *ll=cwp->dotLine, *bl=cwp->buffer->baseLine;
+    int len, nn=0;
+
+    *flags = 0;
+    if((len = meLineGetLength(ll) - cwp->dotOffset) < numChars)
+    {
+        for(;;)
+        {
+            numChars -= len+1;
+            *flags |= ll->flag & meUNDO_EOL_FLAGS;
+            nn++;
+            ll = meLineGetNext(ll);
+            if(((numChars == 0) && (ll == bl)) || (numChars <= (len=meLineGetLength(ll))))
+                break;
+        }
+    }
+    return nn;
+}
+
+/* After the text ss of a delete node has been inserted before dot, gives the lines it ended back
+ * their endings; a state more than the text's '\n's is the ending of dot's line */
+static void
+meUndoRestoreEols(meWindow *cwp, meUByte *ss)
+{
+    meLine *lp=cwp->dotLine, *bl=cwp->buffer->baseLine;
+    meUByte *ee=ss, cc;
+
+    while((cc=*ee++) != '\0')
+        if(cc == meCHAR_NL)
+            lp = meLineGetPrev(lp);
+    for(; ((cc=*ee) != '\0') && (lp != bl) ; ee++, lp=meLineGetNext(lp))
+    {
+        lp->flag &= ~meUNDO_EOL_FLAGS;
+        if(cc & 1)
+            lp->flag |= meLINE_EOLCR;
+        if(cc & 2)
+            lp->flag |= meLINE_EOLLF;
+        if(cc & 4)
+            lp->flag |= meLINE_NOEOL;
+    }
+}
+
 void
 meUndoAddDelChars(meInt numChars)
 {
     meWindow *cwp=frameCur->windowCur;
     meBuffer *cbp=cwp->buffer;
     meUndoNode *nn ;
+    meLineFlag eolFlags;
+    int eols;
 
     if(numChars < 0)
         numChars = 0 ;
-    if(meModeTest(cbp->mode,MDUNDO) &&
-       ((nn = meUndoCreateNode(sizeof(meUndoNode)+numChars)) != NULL))
+    /* the line ends are only kept when one is not the buffer style */
+    if(!meModeTest(cbp->mode,MDUNDO))
+        return;
+    if(((eols = meUndoCountEols(cwp,numChars,&eolFlags)) > 0) && !eolFlags)
+        eols = 0;
+    if((nn = meUndoCreateNode(sizeof(meUndoNode)+numChars+((eols) ? eols+1:0))) != NULL)
     {
         meLine   *ll = cwp->dotLine ;
         int     len ;
-        meUByte  *dd=nn->str, *ss=ll->text+cwp->dotOffset ;
+        meUByte  *dd=nn->str, *ss=ll->text+cwp->dotOffset, *ee ;
 
         nn->type |= meUNDO_DELETE ;
+        if(eols)
+            nn->type |= meUNDO_EOLS;
         nn->count = 0;
+        /* the states follow the text's '\0', which is at most numChars in */
+        ee = nn->str+numChars+1;
         if((len = meLineGetLength(ll) - cwp->dotOffset) < numChars)
         {
             for(;;)
@@ -237,6 +327,8 @@ meUndoAddDelChars(meInt numChars)
                 numChars-=len+1 ;
                 for(; len ; len--)
                     *dd++ = *ss++ ;
+                if(eols)
+                    *ee++ = meUndoEolState(ll);
                 ll = meLineGetNext(ll) ;
                 ss = ll->text ;
                 /* A bit of a bodge here to cope with the bogus last line
@@ -257,6 +349,14 @@ meUndoAddDelChars(meInt numChars)
         for(; numChars ; numChars--)
             *dd++ = *ss++ ;
         *dd = '\0' ;
+        if(eols)
+        {
+            /* the text can be a byte short (the last line's end), move the states to follow it */
+            *ee = '\0';
+            ee -= eols;
+            if(ee != dd+1)
+                memmove(dd+1,ee,eols+1);
+        }
     }
 }
 
@@ -268,7 +368,8 @@ meUndoAddReplaceBgn(meLine *elinep, meUShort elineo)
     if(meModeTest(cbp->mode,MDUNDO))
     {
         meUndoNode *nn ;
-        int     len ;
+        meLineFlag eolFlags=0;
+        int     len, eols=0 ;
 
         if(elinep == cbp->baseLine)
         {
@@ -281,15 +382,34 @@ meUndoAddReplaceBgn(meLine *elinep, meUShort elineo)
         {
             meLine *ll = cwp->dotLine ;
             len = meLineGetLength(ll) - cwp->dotOffset + elineo+1 ;
+            eolFlags = ll->flag;
+            eols = 1;
             while((ll = meLineGetNext(ll)) != elinep)
+            {
                 len += meLineGetLength(ll)+1 ;
+                eolFlags |= ll->flag;
+                eols++;
+            }
+            /* the line ends are only kept when one is not the buffer style */
+            if(!(eolFlags & meUNDO_EOL_FLAGS))
+                eols = 0;
         }
-        if((nn = meUndoCreateNode(sizeof(meUndoNode)+len)) != NULL)
+        if((nn = meUndoCreateNode(sizeof(meUndoNode)+len+((eols) ? eols+1:0))) != NULL)
         {
             meLine  *ll = cwp->dotLine ;
             meUByte *dd=nn->str, *ss=ll->text+cwp->dotOffset ;
 
             nn->type |= meUNDO_DELETE ;
+            if(eols)
+            {
+                meLine *el=ll;
+                meUByte *ee=nn->str+len+1;
+                nn->type |= meUNDO_EOLS;
+                do
+                    *ee++ = meUndoEolState(el);
+                while((el = meLineGetNext(el)) != elinep);
+                *ee = '\0';
+            }
             /* This should be zero because added on the end call. */
             nn->count = 0;
             if(elinep == cwp->dotLine)
@@ -640,16 +760,27 @@ meUndo(int f, int n)
             }
             if(cun->type & meUNDO_SINGLE)
             {
-                ccount--;
                 count = 1;
+#if MEOPT_UNICODE
+                /* undo a whole char, a multi-byte replace is a node per byte */
+                if(!(cun->type & meUNDO_INSERT))
+                    count = ccount - meUtf8Prev(cun->str,ccount);
+                else if(!(cun->type & meUNDO_DELETE) && cdoto)
+                {
+                    count = cdoto - meUtf8Prev(cwp->dotLine->text,cdoto);
+                    if(count > ccount)
+                        count = ccount;
+                }
+#endif
+                ccount -= count;
             }
             else
                 count = ccount;
             if(cun->type & meUNDO_INSERT)
             {
-                meWindowBackwardChar(cwp,count);
-                if(count == 1)
-                    meUndoAddDelChar();
+                meWindowBackwardBytes(cwp,count);
+                if((count == 1) || (cun->type & meUNDO_SINGLE))
+                    meUndoAddDelChar(count);
                 else
                     meUndoAddDelChars(count);
                 mldelete(count,NULL);
@@ -670,16 +801,20 @@ meUndo(int f, int n)
                 if(cun->type & meUNDO_SINGLE)
                 {
                     ss += ccount ;
-                    if((cc = *ss++) == meCHAR_NL)
+                    if((cc = *ss) == meCHAR_NL)
                         lineInsertNewline(meBUFINSFLAG_UNDOCALL);
+                    else if(count > 1)
+                        lineInsertString(count,ss);
                     else if (cc != '\0')
                         lineInsertChar(1, cc);
-                    meUndoAddInsChar() ;
+                    meUndoAddInsChar(count) ;
                 }
                 else
                 {
                     /* Deal with a multiple character undo. */
                     count = bufferInsertText(ss,meBUFINSFLAG_UNDOCALL) ;
+                    if(cun->type & meUNDO_EOLS)
+                        meUndoRestoreEols(cwp,ss);
                     if(count > 0)
                         meUndoAddInsChars(count) ;
                 }
@@ -687,9 +822,9 @@ meUndo(int f, int n)
             if((cun->type & meUNDO_SINGLE) && (ccount > 0))
             {
                 if(cun->type & meUNDO_FORWARD)
-                    cdoto++ ;
+                    cdoto += count ;
                 else if(cun->type & meUNDO_INSERT)
-                    cdoto-- ;
+                    cdoto -= count ;
             }
             else if(cun->type & meUNDO_REPLACE)
             {

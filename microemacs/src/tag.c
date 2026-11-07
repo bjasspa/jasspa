@@ -350,19 +350,25 @@ findTag(int f, int n)
     }
     else
     {
-        ss = cwp->dotLine->text;
+        meLine *lp=cwp->dotLine;
+        int nn;
+        
+        ss = lp->text;
         offs = cwp->dotOffset;
         
 	/* Go to the start of the word. */
-        while((--offs >= 0) && isWord(ss[offs]))
-            ;
-        offs++;
+        while((offs > 0) && meLineInWord(lp,(nn=meLinePrevChar(lp,offs))))
+            offs = nn;
         
-	/* Get the word required. */
+	/* Get the word required, a char at a time. */
         len = 0;
         do
-            tag[len++] = ss[offs++];
-        while((len < meBUF_SIZE_MAX-1) && isWord(ss[offs]));
+        {
+            if((len + (nn=meLineNextChar(lp,offs)) - offs) >= meBUF_SIZE_MAX)
+                break;
+            while(offs < nn)
+                tag[len++] = ss[offs++];
+        } while(meLineInWord(lp,offs));
         tag[len] = 0;
     }
     

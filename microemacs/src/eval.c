@@ -118,7 +118,7 @@ regexStrCmp(meUByte *str, meUByte *rgx, int flags)
     else
         rg = &meRegexStrCmp;
     
-    if(meRegexComp(rg,rgx,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
+    if(meRegexCompCache(rg,rgx,(flags & meRSTRCMP_ICASE)) != meREGEX_OKAY)
         return -1;
     
     ii = (int) meStrlen(str);
@@ -144,6 +144,34 @@ regexStrCmp(meUByte *str, meUByte *rgx, int flags)
     return rr;
 }
 #endif
+
+/* meStrToNum - meAtoi, strtol with base 0 but for speed a plain decimal number is done here */
+long
+meStrToNum(meUByte *ss)
+{
+    meUByte cc, *dd=ss;
+    long nn;
+    int ii;
+    
+    if((cc = *dd) == '-')
+        cc = *++dd;
+    if((cc > '0') && (cc <= '9'))
+    {
+        /* 9 digits cannot overflow */
+        nn = cc - '0';
+        ii = 8;
+        while(((cc = *++dd) >= '0') && (cc <= '9'))
+        {
+            if(--ii < 0)
+                return strtol((char *) ss,NULL,0);
+            nn = (nn * 10) + (cc - '0');
+        }
+        return (*ss == '-') ? -nn:nn;
+    }
+    if((cc == '0') && (dd == ss) && (dd[1] == '\0'))
+        return 0;
+    return strtol((char *) ss,NULL,0);
+}
 
 /* meItoa
  * integer to ascii string..........
@@ -172,12 +200,12 @@ meItoa(int i)
     
     if (sign != 0)          /* and fix the sign */
         *(--sp) = '-';          /* and install the minus sign */
-    
+
     return sp;
 }
 
-/* Writes char cc to dd as a macro string, 0 and the leader become a leader pair. Returns the
- * length written */
+/* Writes char cc to dd as a macro string, 0 and the leader become a leader pair, in a Unicode
+ * build cc is a code point. Returns the length written */
 int
 meMacroPutChar(meUByte *dd, meUInt cc)
 {
@@ -187,21 +215,54 @@ meMacroPutChar(meUByte *dd, meUInt cc)
         dd[1] = (cc) ? meCHAR_TRAIL_LEADER:meCHAR_TRAIL_NULL;
         return 2;
     }
+#if MEOPT_UNICODE
+    if(cc >= 0x80)
+        return meUtf8Encode(dd,cc);
+#endif
     dd[0] = (meUByte) cc;
     return 1;
 }
 
-/* The macro string functions work a char at a time, a char is a leader pair or one char of
- * text. Returns the length of the char at ss, 0 at the end */
+/* The macro string functions work a char at a time, a char is a leader pair or (Unicode build)
+ * one char of internal text. Returns the length of the char at ss, 0 at the end */
 static int
 macStrCharLen(const meUByte *ss)
 {
     meUByte cc=*ss;
     if(cc == meCHAR_LEADER)
         return (ss[1] == '\0') ? 1:2;
+#if MEOPT_UNICODE
+    if(cc >= 0x80)
+    {
+        meUInt uc;
+        return meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+    }
+#endif
     return (cc != '\0');
 }
 
+#if MEOPT_UNICODE
+static meUByte *
+macStrSkip(meUByte *ss, int nn)
+{
+    int ll;
+    while((--nn >= 0) && ((ll = macStrCharLen(ss)) > 0))
+        ss += ll;
+    return ss;
+}
+
+static int
+macStrCharCount(const meUByte *ss)
+{
+    int ll, nn=0;
+    while((ll = macStrCharLen(ss)) > 0)
+    {
+        ss += ll;
+        nn++;
+    }
+    return nn;
+}
+#else
 /* Returns ss moved on nn chars, or to its end. These and macStrCharCount use the library's fast
  * string scans, each byte up to the next leader is a char */
 static meUByte *
@@ -240,20 +301,129 @@ macStrCharCount(const meUByte *ss)
     }
     return nn;
 }
+#endif
 
 #if MEOPT_EXTENDED
-/* Returns the value of the first char of ss */
+/* Returns the value of the first char of ss, a code point in a Unicode build (0x110000 + the
+ * byte for a raw byte) */
 static meUInt
 macStrGetChar(const meUByte *ss)
 {
     meUInt uc=*ss;
     if(uc == meCHAR_LEADER)
         return (ss[1] == meCHAR_TRAIL_NULL) ? 0:meCHAR_LEADER;
+#if MEOPT_UNICODE
+    if(uc >= 0x80)
+        meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+#endif
     return uc;
 }
 
-/* Writes the bytes of macro string ss to dd, dd may be ss. Returns the count */
+#if MEOPT_UNICODE
+#define macCharFold(uc) (((uc) < 0x80) ? ((meUInt) toLower(uc)):meUniFold(uc))
+
+/* Returns the length of ss matched by pp ignoring case, -1 if not matched */
 static int
+macStrFoldMatch(const meUByte *pp, const meUByte *ss)
+{
+    const meUByte *s0=ss;
+    meUInt pc, sc;
+    while(*pp != '\0')
+    {
+        if(*ss == '\0')
+            return -1;
+        pp += meUtf8Decode(pp,meUTF8_LEN_MAX,&pc);
+        ss += meUtf8Decode(ss,meUTF8_LEN_MAX,&sc);
+        if((pc != sc) && (macCharFold(pc) != macCharFold(sc)))
+            return -1;
+    }
+    return (int) (ss - s0);
+}
+#endif
+
+/* Returns the length of ss matched by pp (pl bytes long), -1 if not matched */
+static int
+macStrMatch(const meUByte *pp, int pl, const meUByte *ss, int icase)
+{
+    if(!icase)
+        return (strncmp((const char *) pp,(const char *) ss,pl)) ? -1:pl;
+#if MEOPT_UNICODE
+    return macStrFoldMatch(pp,ss);
+#else
+    return (meStrnicmp(pp,ss,pl)) ? -1:pl;
+#endif
+}
+#endif
+
+#if MEOPT_UNICODE
+/* Returns the number of bytes the char at ss (ll long) is in a UTF-8 file */
+static int
+macStrCharBytes(const meUByte *ss, int ll)
+{
+    meUInt uc;
+    if(*ss < 0x80)
+        return 1;
+    meUtf8Decode(ss,ll,&uc);
+    return (meUniIsRaw(uc) || (uc == 0)) ? 1:ll;
+}
+
+#if MEOPT_EXTENDED
+/* Sets evalResult to a Unicode info list |flags|code-point|char|utf8-len|utf8|, the separator
+ * is a no-break space when nbsp is set as an ASCII char could be a | */
+static meUByte *
+macUniInfoSet(int flags, meUInt uc, const meUByte *cs, int cl, int un, const meUByte *us, int ul, int nbsp)
+{
+    const meUByte *sep=(const meUByte *) ((nbsp) ? "\xc2\xa0":"|");
+    meUByte *dd=evalResult;
+    int sl=(nbsp) ? 2:1;
+    memcpy(dd,sep,sl);
+    dd += sl;
+    dd += sprintf((char *) dd,"%d",flags);
+    memcpy(dd,sep,sl);
+    dd += sl;
+    dd += sprintf((char *) dd,"0x%06x",(int) uc);
+    memcpy(dd,sep,sl);
+    dd += sl;
+    memcpy(dd,cs,cl);
+    dd += cl;
+    memcpy(dd,sep,sl);
+    dd += sl;
+    dd += sprintf((char *) dd,"%d",un);
+    memcpy(dd,sep,sl);
+    dd += sl;
+    memcpy(dd,us,ul);
+    dd += ul;
+    memcpy(dd,sep,sl);
+    dd[sl] = '\0';
+    return evalResult;
+}
+
+/* The &uni info of code point ii, the utf8 string holds its bytes as raw bytes */
+static meUByte *
+macUniInfo(int ii)
+{
+    meUByte cb[meUTF8_LEN_MAX], eb[meUTF8_LEN_MAX], ub[meUTF8_LEN_MAX*2];
+    int cl, el, ul=0, jj;
+    if(ii == 0)
+    {
+        meStrcpy(evalResult,"|3|0x000000||1||");
+        return evalResult;
+    }
+    if((ii < 0) || (ii > meUNI_MAX))
+        return macUniInfoSet(0,0,(meUByte *) "\x07",1,3,(meUByte *) "\xc1\xaf\xc1\xbf\xc1\xbd",6,0);
+    cl = meMacroPutChar(cb,(meUInt) ii);
+    el = meUtf8Encode(eb,(meUInt) ii);
+    for(jj=0 ; jj<el ; jj++)
+        ul += (eb[jj] < 0x80) ? meMacroPutChar(ub+ul,eb[jj]):meUtf8Encode(ub+ul,meUNI_RAW_BASE+eb[jj]);
+    return macUniInfoSet(3,(meUInt) ii,cb,cl,el,ub,ul,(ii < 0x80));
+}
+#endif
+#endif
+
+#if MEOPT_EXTENDED
+/* Writes the bytes of macro string ss to dd, in a Unicode build the bytes a UTF-8 file would
+ * hold (a raw byte is its byte). dd may be ss. Returns the count */
+int
 macStrToBytes(meUByte *dd, const meUByte *ss)
 {
     meUByte *d0=dd;
@@ -262,6 +432,22 @@ macStrToBytes(meUByte *dd, const meUByte *ss)
     {
         if(*ss == meCHAR_LEADER)
             *dd++ = (meUByte) macStrGetChar(ss);
+#if MEOPT_UNICODE
+        else if(*ss >= 0x80)
+        {
+            meUInt uc;
+            meUtf8Decode(ss,ll,&uc);
+            if(meUniIsRaw(uc))
+                *dd++ = meUniRawByte(uc);
+            else if(uc == 0)
+                *dd++ = 0;
+            else
+            {
+                memmove(dd,ss,ll);
+                dd += ll;
+            }
+        }
+#endif
         else
             *dd++ = *ss;
         ss += ll;
@@ -269,14 +455,60 @@ macStrToBytes(meUByte *dd, const meUByte *ss)
     return (int) (dd - d0);
 }
 
-/* Converts len bytes to a macro string in dd (meBUF_SIZE_MAX) */
+/* Converts len bytes to a macro string in dd (meBUF_SIZE_MAX), in a Unicode build bytes which are
+ * not valid UTF-8 become raw bytes and a 0 byte the NUL char */
 static void
 macBytesToStr(meUByte *dd, const meUByte *ss, int len)
 {
-    meUByte *de=dd+meBUF_SIZE_MAX-4;
-    while((--len >= 0) && (dd < de))
-        dd += meMacroPutChar(dd,*ss++);
+    meUByte *de=dd+meBUF_SIZE_MAX-4, cc;
+    int ll;
+    while((len > 0) && (dd < de))
+    {
+        cc = *ss;
+        ll = 1;
+#if MEOPT_UNICODE
+        if(cc == 0)
+            dd += meUtf8Encode(dd,0);
+        else if(cc < 0x80)
+            dd += meMacroPutChar(dd,cc);
+        else if((ll = meUtf8SeqLen(ss,len)) > 0)
+        {
+            memcpy(dd,ss,ll);
+            dd += ll;
+        }
+        else
+        {
+            dd += meUtf8Encode(dd,meUNI_RAW_BASE+cc);
+            ll = 1;
+        }
+#else
+        dd += meMacroPutChar(dd,cc);
+#endif
+        ss += ll;
+        len -= ll;
+    }
     *dd = '\0';
+}
+
+#if MEOPT_UNICODE
+#define macListSepLen(ls) (((ls)[0] < 0x80) ? 1:macStrCharLen(ls))
+#else
+#define macListSepLen(ls) 1
+#endif
+
+/* Returns the start of the separator of list ls after s1 (sl bytes long), NULL if none */
+static meUByte *
+macListNext(meUByte *s1, const meUByte *ls, int sl)
+{
+    if(sl == 1)
+        return meStrchr(s1,*ls);
+    while((s1 = meStrchr(s1,*ls)) != NULL)
+    {
+        if(!memcmp(s1,ls,sl))
+            return s1;
+        s1++;
+    }
+    return NULL;
 }
 #endif
 
@@ -443,14 +675,15 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             }
             else
             {
+                meUInt cc;
                 if (cwp->dotOffset >= cwp->dotLine->length)
                     return mlwrite(MWABORT,(meUByte *)"[Cannot set @wc here]");
-                
-                lineSetChanged(WFMAIN);
-#if MEOPT_UNDO
-                meUndoAddRepChar();
+#if MEOPT_UNICODE
+                meUtf8Decode(vvalue,meUTF8_LEN_MAX,&cc);
+#else
+                cc = vvalue[0];
 #endif
-                meLineSetChar(cwp->dotLine,cwp->dotOffset,vvalue[0]);
+                return lineReplaceChar(cc);
             }
         }
         else if(*nn == 'c')
@@ -458,17 +691,21 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             int ii;
             if(nn[2] == 'k')
             {
-                meUByte *saves, savcle;
+                meUByte *saves, savcle, cbuf[meBUF_SIZE_MAX], *cl;
                 
                 /* use the macro string to key evaluator to get the value,
                  * must set this up carefully and restore state */
+                if((cl = macroCompileLine(vvalue,cbuf,meBUF_SIZE_MAX,&ii)) == NULL)
+                    return meFALSE;
                 savcle = clexec;        /* save execution mode */
                 clexec = meTRUE;      /* get the argument */
                 saves = execstr;
-                execstr = vvalue;
+                execstr = cl;
                 ii = meGetKey(meGETKEY_SILENT);
                 execstr = saves;
                 clexec = savcle;        /* restore execution mode */
+                if(cl != cbuf)
+                    free(cl);
                 if(ii != 0)
                 {
                     if(nn[1] == 'c')
@@ -592,6 +829,9 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             break;
         case EVFSPROMPT:
             fileSizePrompt = (meUInt) meAtoi(vvalue);
+            break;
+        case EVFILECHECKS:
+            fileChecks = (meUShort) meAtoi(vvalue);
             break;
         case EVKEPTVERS:
             if(!(meSystemCfg & meSYSTEM_DOSFNAMES) && 
@@ -752,14 +992,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
         case EVABSLINE:
             return meWindowGotoAbsLine(frameCur->windowCur,meAtoi(vvalue));
         case EVWMRKCOL:
+            /* a char index, stored as is until the buffer is loaded */
             if((status=meAtoi(vvalue)) < 0)
             {
                 frameCur->windowCur->markOffset = 0;
                 return meFALSE;
             }
-            else if(status && ((frameCur->windowCur->buffer->intFlag & BIFNACT) == 0) &&
-                    (frameCur->windowCur->markLine != NULL) &&
-                    (status > meLineGetLength(frameCur->windowCur->markLine)))
+            if(((frameCur->windowCur->buffer->intFlag & BIFNACT) == 0) && (frameCur->windowCur->markLine != NULL) &&
+               ((status = meLineCharOffset(frameCur->windowCur->markLine,status)) < 0))
             {
                 frameCur->windowCur->markOffset = meLineGetLength(frameCur->windowCur->markLine);
                 return meFALSE;
@@ -799,13 +1039,14 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             return meTRUE;
 #endif
         case EVCURCOL:
+            /* a char index, stored as is until the buffer is loaded */
             if((status=meAtoi(vvalue)) < 0)
             {
                 frameCur->windowCur->dotOffset = 0;
                 return meFALSE;
             }
-            else if(status && ((frameCur->windowCur->buffer->intFlag & BIFNACT) == 0) &&
-                    (status > meLineGetLength(frameCur->windowCur->dotLine)))
+            if(((frameCur->windowCur->buffer->intFlag & BIFNACT) == 0) &&
+               ((status = meLineCharOffset(frameCur->windowCur->dotLine,status)) < 0))
             {
                 frameCur->windowCur->dotOffset = meLineGetLength(frameCur->windowCur->dotLine);
                 return meFALSE;
@@ -951,15 +1192,29 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             fileNameSetHome(vvalue);
             break;
 #if MEOPT_EXTENDED
-        case EVBUFXLATE:
-            frameCur->windowCur->buffer->xlateFlag = (meByte) meAtoi(vvalue);
-            break;
         case EVBUFENC:
             {
+                /* a code page, or in a Unicode build a UTF form, which a re-read then uses */
+                meBuffer *bp=frameCur->windowCur->buffer;
                 meCodePage *cp=NULL;
+#if MEOPT_UNICODE
+                int enc;
+                if((enc = meEncodingFromId(vvalue)) < 0)
+                {
+                    if((cp = meCodePageFind(vvalue,0)) == NULL)
+                        return mlwrite(MWABORT,(meUByte *)"[Unknown encoding %s]",vvalue);
+                    enc = meENCODING_LEGACY;
+                }
+                if((((enc ^ bp->encoding) & (meENCODING_USER & ~meENCODING_FORCE)) || (cp != bp->codePage)) &&
+                   (bp->fileName != NULL))
+                    /* the file content will change on save */
+                    bufferSetEdit();
+                bp->encoding = (meUByte) (enc | meENCODING_FORCE);
+#else
                 if((vvalue[0] != '\0') && ((cp = meCodePageFind(vvalue,0)) == NULL))
                     return mlwrite(MWABORT,(meUByte *)"[Unknown encoding %s]",vvalue);
-                frameCur->windowCur->buffer->codePage = cp;
+#endif
+                bp->codePage = cp;
                 break;
             }
         case EVSHWMDS:
@@ -987,6 +1242,13 @@ setVar(meUByte *vname, meUByte *vvalue, meRegister *regs)
             if((cursorBlink = meAtoi(vvalue)) > 0)
                 /* kick off the timer */
                 TThandleBlink(1);
+            else if(!blinkState)
+            {
+                /* stopped in the off phase, the cursor would stay hidden */
+                blinkState = 1;
+                if(cursorVisible)
+                    TTshowCur();
+            }
             break;
 #if MEOPT_COLOR
         case EVCURSORCOL:
@@ -1412,6 +1674,7 @@ gtenv(meUByte *vname)   /* vname   name of environment variable to retrieve */
 #if MEOPT_EXTENDED
     case EVPAUSETIME:   return meItoa(pauseTime);
     case EVFSPROMPT:    return meItoa(fileSizePrompt);
+    case EVFILECHECKS:  return meItoa(fileChecks);
     case EVKEPTVERS:    return meItoa(keptVersions);
     case EVMOUSE:       return meItoa(meMouseCfg);
     case EVMOUSEPOS:    return meItoa(mouse_pos);
@@ -1471,7 +1734,7 @@ handle_namesvar:
     case EVRECENTKEYS:
         {
             int jj, kk;
-            meUShort cc;
+            meKey cc;
             for(ii=100,jj=TTnextKeyIdx,kk=0 ; --ii>0 ; )
             {
                 if(((cc=TTkeyBuf[jj++]) == 0) ||
@@ -1577,12 +1840,18 @@ handle_namesvar:
 #endif
     case EVFRMWDTH:     return meItoa(frameCur->width);
     case EVABSCOL:      return meItoa(getcwcol(frameCur->windowCur));
-    case EVCURCOL:      return meItoa(frameCur->windowCur->dotOffset);
+    case EVCURCOL:
+        if(frameCur->windowCur->buffer->intFlag & BIFNACT)
+            return meItoa(frameCur->windowCur->dotOffset);
+        return meItoa(meLineCharIndex(frameCur->windowCur->dotLine,frameCur->windowCur->dotOffset));
     case EVCURLINE:     return meItoa(frameCur->windowCur->dotLineNo+1);
 #if MEOPT_EXTENDED
     case EVABSLINE:     return meItoa(meWindowGotoAbsLine(frameCur->windowCur,-1)+1);
     case EVEOBLINE:     return meItoa(frameCur->windowCur->buffer->lineCount+1);
-    case EVWMRKCOL:     return meItoa(frameCur->windowCur->markOffset);
+    case EVWMRKCOL:
+        if((frameCur->windowCur->buffer->intFlag & BIFNACT) || (frameCur->windowCur->markLine == NULL))
+            return meItoa(frameCur->windowCur->markOffset);
+        return meItoa(meLineCharIndex(frameCur->windowCur->markLine,frameCur->windowCur->markOffset));
     case EVWMRKLINE:    return meItoa((frameCur->windowCur->markLine == NULL) ? 0:frameCur->windowCur->markLineNo+1);
     case EVBMDLINE:
         if((ret=frameCur->windowCur->buffer->modeLineStr) != NULL)
@@ -1611,9 +1880,6 @@ handle_namesvar:
 #endif
         return evalResult;
     case EVCBUFNAME:    return frameCur->windowCur->buffer->name;
-#if MEOPT_EXTENDED
-    case EVBUFENC:      return (frameCur->windowCur->buffer->codePage == NULL) ? emptym:frameCur->windowCur->buffer->codePage->name;
-#endif
     case EVBUFFMOD:     return meItoa((((meInt) frameCur->windowCur->buffer->fileFlag) << 16) | ((meInt) frameCur->windowCur->buffer->stats.stmode));
     case EVGLOBFMOD:    return meItoa(meUmask);
     case EVCFNAME:      return mePtos(frameCur->windowCur->buffer->fileName);
@@ -1631,7 +1897,7 @@ handle_namesvar:
     case EVSRCHPATH:    return mePtos(searchPath);
     case EVHOMEDIR:     return mePtos(homedir);
 #if MEOPT_EXTENDED
-    case EVBUFXLATE:    return meItoa(frameCur->windowCur->buffer->xlateFlag);
+    case EVBUFENC:      return meEncodingName(frameCur->windowCur->buffer,evalResult);
     case EVMODECHRS:    return modeCode;
     case EVSHWMDS:
         {
@@ -1825,7 +2091,7 @@ getMacroArg(int index)
     svr = gmaLocalRegPtr;
     if(index == 1)
     {
-        execstr = token(ss,evalResult);
+        execstr = macroNextToken(ss,evalResult);
         ss = getval(evalResult);
         crp->nextArg = 1;
     }
@@ -1841,7 +2107,7 @@ getMacroArg(int index)
         do
         {
             gmaLocalRegPtr = svr;
-            execstr = token(execstr,evalResult);
+            execstr = macroNextToken(execstr,evalResult);
             ss = getval(evalResult);
         } while(--index > 0);
     }
@@ -1851,6 +2117,21 @@ getMacroArg(int index)
     return ss;
 }
 
+/* Sets evalResult to the char of char key cc */
+static meUByte *
+evalKeyChar(meKey cc)
+{
+#if MEOPT_UNICODE
+    if(cc >= 0x80)
+    {
+        evalResult[meUtf8Encode(evalResult,cc)] = '\0';
+        return evalResult;
+    }
+#endif
+    evalResult[0] = (meUByte) cc;
+    evalResult[1] = '\0';
+    return evalResult;
+}
 
 static meUByte *
 gtarg(meUByte *tkn)
@@ -1871,7 +2152,7 @@ gtarg(meUByte *tkn)
         
     case 'c':
         {
-            meUShort key;
+            meKey key;
             int kk, index;
             
             kk = (tkn[3] == 'k');
@@ -1879,14 +2160,14 @@ gtarg(meUByte *tkn)
             {
                 if(alarmState & meALARM_VARIABLE)
                     return tkn;
-                key = (meUShort) thisCommand;
+                key = (meKey) thisCommand;
                 index = thisIndex;
             }
             else if(tkn[2] == 'l')
             {
                 if(alarmState & meALARM_VARIABLE)
                     return tkn;
-                key = (meUShort) lastCommand;
+                key = (meKey) lastCommand;
                 index = lastIndex;
             }
             else
@@ -1898,23 +2179,15 @@ gtarg(meUByte *tkn)
                     key = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE);
                     if(tkn[3] == 's')
                     {
-                        if(key <= 255)
-                        {
-                            evalResult[0] = (meUByte) key;
-                            evalResult[1] = '\0';
-                            return evalResult;
-                        }
+                        if(meKeyIsChar(key))
+                            return evalKeyChar(key);
                         kk = 1;
                     }
                     else if((cc=quoteKeyToChar(key)) > 0)
                     {
                         if(tkn[3] == 'k')
-                        {
-                            evalResult[0] = cc;
-                            evalResult[1] = '\0';
-                            return evalResult;
-                        }
-                        key = cc;
+                            return evalKeyChar((meKey) cc);
+                        key = (meKey) cc;
                     }
                 }
                 else
@@ -1929,10 +2202,9 @@ gtarg(meUByte *tkn)
                 meGetStringFromKey(key,evalResult);
             else if(index < 0)
             {
-                if(key > 0xff)
+                if(!meKeyIsChar(key))
                     return errorm;
-                evalResult[0] = (meUByte) key;
-                evalResult[1] = '\0';
+                evalKeyChar(key);
             }
             else
                 meStrcpy(evalResult,getCommandName(index));
@@ -1954,8 +2226,22 @@ gtarg(meUByte *tkn)
                 return meItoa((frameCur->store[row].scheme[col] & meSCHEME_STYLE)/meSCHEME_STYLES);
             else
             {
+#if MEOPT_UNICODE
+                meFrameChar fc=frameCur->store[row].text[col];
+                if(fc == meFRAMECHAR_CONT)
+                    /* second cell of a wide char */
+                    evalResult[0] = 0;
+                else if(fc < 0x80)
+                {
+                    evalResult[0] = (meUByte) fc;
+                    evalResult[1] = 0;
+                }
+                else
+                    evalResult[meUtf8Encode(evalResult,fc)] = 0;
+#else
                 evalResult[0] = frameCur->store[row].text[col];
                 evalResult[1] = 0;
+#endif
             }
             return evalResult;
         }
@@ -2272,6 +2558,17 @@ gtarg(meUByte *tkn)
         else
         {
             /* Current Buffer character fetch */
+#if MEOPT_UNICODE
+            meWindow *cwp=frameCur->windowCur;
+            int ll;
+            if((cwp->dotLine != cwp->buffer->baseLine) && (cwp->dotOffset < cwp->dotLine->length))
+            {
+                ll = meLineNextChar(cwp->dotLine,cwp->dotOffset) - cwp->dotOffset;
+                memcpy(evalResult,cwp->dotLine->text+cwp->dotOffset,ll);
+                evalResult[ll] = '\0';
+                return evalResult;
+            }
+#endif
             evalResult[0] = meWindowGetChar(frameCur->windowCur);
             evalResult[1] = '\0';
             return evalResult;
@@ -2337,14 +2634,6 @@ meUByte *
 getval(meUByte *tkn)   /* find the value of a token */
 {
     meUByte cc=*tkn;
-#if MEOPT_BYTECOMP
-    if(cc & BCLEAD)
-    {
-        if(cc == BCFUN)
-            return gtfun((tkn[1])-'0',NULL);
-        return abortm;
-    }
-#endif
     switch (getMacroType(cc)) 
     {
     case TKARG:
@@ -2473,6 +2762,34 @@ meGetDayOfYear(meInt year, meInt month, meInt day)
 }
 #endif
 
+/* funcLookup - the index of the function fname (the name after the '&'), -1 if none */
+int
+funcLookup(meUByte *fname)
+{
+    int ii;
+    if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 0))
+    {
+        int fn, fnam = (((int) fname[0]) << 16) | (((int) fname[1]) << 8) | ((int) fname[2]);
+        if((fn=funcHashs[ii]) == fnam)
+            return ii;
+        else if(fn < fnam)
+        {
+            while((fn=funcHashs[++ii]) < fnam)
+                ;
+            if(fn == fnam)
+                return ii;
+        }
+        else
+        {
+            while((fn=funcHashs[--ii]) > fnam)
+                ;
+            if(fn == fnam)
+                return ii;
+        }
+    }
+    return -1;
+}
+
 meUByte *
 gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of function */
 {
@@ -2484,33 +2801,10 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     meUByte arg3[meBUF_SIZE_MAX];      /* value of third argument */
     meUByte *varVal;
     int ii;
-    if(fnum < 0)
+    if((fnum < 0) && ((fnum = funcLookup(fname)) < 0))
     {
-        if(((ii = fname[0] - 'a') >= 0) && (ii < 26) && ((ii = funcOffst[ii]) != 0))
-        {
-            int fn, fnam = (((int) fname[0]) << 16) | (((int) fname[1]) << 8) | ((int) fname[2]);
-            if((fn=funcHashs[ii]) == fnam)
-                fnum = ii;
-            else if(fn < fnam)
-            {
-                while((fn=funcHashs[++ii]) < fnam)
-                    ;
-                if(fn == fnam)
-                    fnum = ii;
-            }
-            else
-            {
-                while((fn=funcHashs[--ii]) > fnam)
-                    ;
-                if(fn == fnam)
-                    fnum = ii;
-            }
-        }
-        if(fnum < 0)
-        {
-            mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
-            return abortm;
-        }
+        mlwrite(MWABORT|MWWAIT,(meUByte *)"[Unknown function &%s]",fname);
+        return abortm;
     }
 #if MEOPT_EXTENDED
     if((fnum == UFCBIND) || (fnum == UFNBIND))
@@ -2612,7 +2906,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         {
             meUInt narg;
             int ii, idx;
-            meUShort code=ME_INVALID_KEY;
+            meKey code=ME_INVALID_KEY;
             
             if((idx = decode_fncname(arg2,0)) < 0)
                 return abortm;
@@ -2686,6 +2980,14 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFITOA:
         {
             int ii = meAtoi(arg1);
+#if MEOPT_UNICODE
+            /* a code point, 0 is the NUL char as @wc gives */
+            if(ii == 0)
+                ii = meUtf8Encode(evalResult,0);
+            else
+                ii = meMacroPutChar(evalResult,(meUInt) ii);
+            evalResult[ii] = '\0';
+#else
             evalResult[0] = (meUByte) ii;
             if(ii == meCHAR_LEADER)
             {
@@ -2694,6 +2996,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             }
             else
                 evalResult[1] = '\0';
+#endif
             return evalResult;
         }
     case UFBLEN:
@@ -2835,25 +3138,37 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFLEN:        return meItoa(macStrCharCount(arg1));
 #if MEOPT_EXTENDED
     case UFSLOWER:
-        {
-            meUByte cc, *dd, *ss;
-            dd = evalResult;
-            ss = arg1;
-            do {
-                cc = *ss++;
-                *dd++ = toLower(cc);
-            } while(cc);
-            return evalResult;
-        }
     case UFSUPPER:
         {
             meUByte cc, *dd, *ss;
             dd = evalResult;
             ss = arg1;
+#if MEOPT_UNICODE
+            {
+                /* a char may change length */
+                meUByte *de=evalResult+meBUF_SIZE_MAX-meUTF8_LEN_MAX;
+                meUInt uc;
+                while(((cc = *ss) != '\0') && (dd < de))
+                {
+                    if(cc < 0x80)
+                    {
+                        *dd++ = (fnum == UFSLOWER) ? toLower(cc):toUpper(cc);
+                        ss++;
+                    }
+                    else
+                    {
+                        ss += meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+                        dd += meUtf8Encode(dd,(fnum == UFSLOWER) ? meUniToLower(uc):meUniToUpper(uc));
+                    }
+                }
+                *dd = '\0';
+            }
+#else
             do {
                 cc = *ss++;
-                *dd++ = toUpper(cc);
+                *dd++ = (fnum == UFSLOWER) ? toLower(cc):toUpper(cc);
             } while(cc);
+#endif
             return evalResult;
         }
     case UFSIN:
@@ -2861,71 +3176,52 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFISIN:
     case UFRISIN:
         {
-            meIFuncSSI cmpIFunc;
-            meUByte cc, *ss=arg2, *lss=NULL;
-            int len, off=0;
+            meUByte *ss=arg2;
+            int len, ll, idx=1, fidx=0, icase=((fnum == UFISIN) || (fnum == UFRISIN));
             len = (int) meStrlen(arg1);
-            if((fnum == UFSIN) || (fnum == UFRSIN))
-                cmpIFunc = (meIFuncSSI) strncmp;
-            else
-                cmpIFunc = meStrnicmp;
-            
-            do
+            for(;;)
             {
-                if(!cmpIFunc(arg1,ss,len))
+                if(macStrMatch(arg1,len,ss,icase) >= 0)
                 {
-                    lss = ss;
+                    fidx = idx;
                     if((fnum == UFSIN) || (fnum == UFISIN))
                         break;
                 }
-                if((cc=*ss++) == meCHAR_LEADER)
-                {
-                    cc = *ss++;
-                    off++;
-                }
-            } while(cc != '\0');
-            
-            if(lss != NULL)
-                return meItoa((int) (lss-arg2-off+1));
-            return meLtoa(0);
+                if((ll = macStrCharLen(ss)) == 0)
+                    break;
+                ss += ll;
+                idx++;
+            }
+            return meItoa(fidx);
         }
     case UFREP:
     case UFIREP:
         {
-            meIFuncSSI cmpIFunc;
-            meUByte cc, *ss=arg1;
-            int mlen, dlen=0, rlen, ii;
+            meUByte *ss=arg1;
+            int mlen, dlen=0, rlen, ml, ll;
             mlen = (int) meStrlen(arg2);
             rlen = (int) meStrlen(arg3);
-            if(fnum == UFREP)
-                cmpIFunc = (meIFuncSSI) strncmp;
-            else
-                cmpIFunc = meStrnicmp;
             
             for(;;)
             {
-                ii = cmpIFunc(arg2,ss,mlen);
-                if(!ii)
+                if((ml = macStrMatch(arg2,mlen,ss,(fnum == UFIREP))) >= 0)
                 {
                     if((dlen+rlen) >= meBUF_SIZE_MAX)
                         break;
                     meStrcpy(evalResult+dlen,arg3);
                     dlen += rlen;
-                    ss += mlen;
+                    ss += ml;
                 }
-                if((cc=*ss) == '\0')
+                if(*ss == '\0')
                     break;
-                if(ii || (mlen == 0))
+                if((ml < 0) || (mlen == 0))
                 {
-                    if(dlen >= meBUF_SIZE_MAX-2)
+                    ll = macStrCharLen(ss);
+                    if((dlen+ll) > meBUF_SIZE_MAX-2)
                         break;
-                    ss++;
-                    if(cc == meCHAR_LEADER)
-                    {
-                        evalResult[dlen++] = meCHAR_LEADER;
-                        cc = *ss++;
-                    }
-                    evalResult[dlen++] = cc;
+                    memcpy(evalResult+dlen,ss,ll);
+                    dlen += ll;
+                    ss += ll;
                 }
             }
             evalResult[dlen] = '\0';
@@ -2937,7 +3233,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             meUByte cc, *rr;
             int slen, soff=0, mlen, dlen=0, ii;
             
-            if(meRegexComp(&meRegexStrCmp,arg2,(fnum == UFXREP) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
+            if(meRegexCompCache(&meRegexStrCmp,arg2,(fnum == UFXREP) ? 0:meREGEX_ICASE) != meREGEX_OKAY)
                 return abortm;
             
             slen = (int) meStrlen(arg1);
@@ -2979,6 +3275,28 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                                         soff += meRegexStrCmp.group[0].start;
                                     if(changeCase)
                                     {
+#if MEOPT_UNICODE
+                                        /* a char at a time, its length can change */
+                                        meUInt uc;
+                                        int cl;
+                                        while(mlen > 0)
+                                        {
+                                            cl = meUtf8Decode(arg1+soff,mlen,&uc);
+                                            soff += cl;
+                                            mlen -= cl;
+                                            if(changeCase > 0)
+                                            {
+                                                uc = meUniCharToUpper(uc);
+                                                if(changeCase == 'c')
+                                                    changeCase = -1;
+                                            }
+                                            else
+                                                uc = meUniCharToLower(uc);
+                                            if((dlen+meUTF8_LEN_MAX) >= meBUF_SIZE_MAX)
+                                                break;
+                                            dlen += meUtf8Encode(evalResult+dlen,uc);
+                                        }
+#else
                                         while(--mlen >= 0)
                                         {
                                             cc = arg1[soff++];
@@ -2991,6 +3309,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                                             else
                                                 evalResult[dlen++] = toLower(cc);
                                         } 
+#endif
                                     }
                                     else
                                     {
@@ -3041,7 +3360,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 return abortm;
             return queryMode(arg2,bp->mode);
         }
-    case UFINWORD:     return(meLtoa(isWord(arg1[0])));
+    case UFINWORD:     return(meLtoa(meUniIsWord(macStrGetChar(arg1))));
 #endif
     case UFBMODE:      return queryMode(arg1,frameCur->windowCur->buffer->mode);
     case UFGMODE:      return queryMode(arg1,globMode);
@@ -3064,15 +3383,16 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
     case UFXISEQ:      return meLtoa(regexStrCmp(arg1,arg2,meRSTRCMP_ICASE|meRSTRCMP_WHOLE|meRSTRCMP_USEMAIN) > 0);
     case UFLDEL:
         {
-            int  index=meAtoi(arg2);
-            meUByte cc, *s1, *s2=arg1;
-            if((cc = *s2) == '\0')
+            int  index=meAtoi(arg2), sl;
+            meUByte *s1, *s2=arg1;
+            if(*s2 == '\0')
                 return abortm;
+            sl = macListSepLen(arg1);
             if(index > 0)
             {
                 do {
-                    s1 = s2+1;
-                    if((s2 = meStrchr(s1,cc)) == NULL)
+                    s1 = s2+sl;
+                    if((s2 = macListNext(s1,arg1,sl)) == NULL)
                         break;
                 } while(--index > 0);
             }
@@ -3084,21 +3404,22 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             {
                 index = (int) (s1 - arg1);
                 meStrncpy(evalResult,arg1,index);
-                meStrcpy(evalResult+index,s2+1);
+                meStrcpy(evalResult+index,s2+sl);
             }
             return evalResult;
         }
     case UFLFIND:
         {
-            int  index;
-            meUByte cc, *s1, *s2;
+            int  index, sl;
+            meUByte *s1, *s2;
             s2 = arg1;
-            if((cc = *s2) == '\0')
+            if(*s2 == '\0')
                 return abortm;
+            sl = macListSepLen(arg1);
             for(index=1 ; ; index++)
             {
-                s1 = s2+1;
-                if((s2 = meStrchr(s1,cc)) == NULL)
+                s1 = s2+sl;
+                if((s2 = macListNext(s1,arg1,sl)) == NULL)
                     return meLtoa(0);
                 *s2 = '\0';
                 if(!meStrcmp(s1,arg2))
@@ -3107,16 +3428,17 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         }
     case UFLGET:
         {
-            int  index;
-            meUByte cc, *s1, *s2;
+            int  index, sl;
+            meUByte *s1, *s2;
             s2 = arg1;
-            if((cc = *s2) == '\0')
+            if(*s2 == '\0')
                 return abortm;
             if((index=meAtoi(arg2)) <= 0)
                 return emptym;
+            sl = macListSepLen(arg1);
             do {
-                s1 = s2+1;
-                if((s2 = meStrchr(s1,cc)) == NULL)
+                s1 = s2+sl;
+                if((s2 = macListNext(s1,arg1,sl)) == NULL)
                     return emptym;
             } while(--index > 0);
             index = (int) (s2 - s1);
@@ -3126,32 +3448,34 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
         }
     case UFLLEN:
         {
-            int ll=0;
-            meUByte cc, *s1;
+            int ll=0, sl;
+            meUByte *s1;
             s1 = arg1;
-            if((cc=*s1) == '\0')
+            if(*s1 == '\0')
                 return abortm;
-            while((s1 = meStrchr(s1+1,cc)) != NULL)
+            sl = macListSepLen(arg1);
+            while((s1 = macListNext(s1+sl,arg1,sl)) != NULL)
                 ll++;
             return meItoa(ll);
         }
     case UFLINS:
     case UFLSET:
         {
-            int  index, ii;
+            int  index, ii, sl;
             meUByte cc, *s1, *s2;
             s2 = arg1;
             if((cc = *s2) == '\0')
                 return abortm;
+            sl = macListSepLen(arg1);
             if((index=meAtoi(arg2)) == 0)
-                s1 = s2+1;
+                s1 = s2+sl;
             else if(index > 0)
             {
                 do {
-                    s1 = s2+1;
-                    if((s2 = meStrchr(s1,cc)) == NULL)
+                    s1 = s2+sl;
+                    if((s2 = macListNext(s1,arg1,sl)) == NULL)
                     {
-                        s2 = s1-1;
+                        s2 = s1-sl;
                         break;
                     }
                 } while(--index > 0);
@@ -3160,10 +3484,10 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             {
                 do
                 {
-                    s1 = s2+1;
-                    if((s2 = meStrchr(s1,cc)) == NULL)
+                    s1 = s2+sl;
+                    if((s2 = macListNext(s1,arg1,sl)) == NULL)
                     {
-                        s2 = s1-1;
+                        s2 = s1-sl;
                         break;
                     }
                     *s2 = '\0';
@@ -3173,13 +3497,13 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                         ii = (meStricmp(s1,arg3) < 0);
                     *s2 = cc;
                 } while(ii);
-                s2 = s1-1;
+                s2 = s1-sl;
             }
             else
             {
                 ii = (int) meStrlen(s2);
                 s1 = s2+ii;
-                s2 += ii-1;
+                s2 += ii-sl;
             }
             index = (int) (s1 - arg1);
             memcpy(evalResult,arg1,index);
@@ -3189,7 +3513,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
                 memcpy(evalResult+index,arg3,ii);
                 index += ii;
                 if(fnum == UFLINS)
-                    s2 = s1-1;
+                    s2 = s1-sl;
                 ii = (int) meStrlen(s2);
                 if(ii+index < meBUF_SIZE_MAX)
                 {
@@ -3292,6 +3616,39 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             evalResult[ii] = '\0';
             return evalResult;
         }
+#if MEOPT_UNICODE
+    case UFUNINFO:
+        return macUniInfo(meAtoi(arg1));
+    case UFUCINFO:
+        {
+            /* a raw byte is a code page char */
+            meUInt uc=macStrGetChar(arg1);
+            if(meUniIsRaw(uc) && ((uc = meUniRawByte(uc)) >= 0x80) && ((uc = charToUnicode[uc-128]) == 0))
+                return macUniInfoSet(2,0,arg1,macStrCharLen(arg1),3,(meUByte *) "\xc1\xaf\xc1\xbf\xc1\xbd",6,0);
+            return macUniInfo((int) uc);
+        }
+    case UFUFINFO:
+        {
+            /* decodes the UTF-8 bytes of the string, a raw byte is its byte */
+            meUByte cb[meUTF8_LEN_MAX], *ss;
+            meUInt uc;
+            int nn, ll, cl, bl;
+            if(((nn = macStrToBytes(arg2,arg1)) == 0) || (arg2[0] == 0))
+                return macUniInfo(0);
+            if((ll = meUtf8SeqLen(arg2,nn)) <= 0)
+                return macUniInfoSet(0,0,(meUByte *) "\x07",1,1,arg1,macStrCharLen(arg1),0);
+            meUtf8Decode(arg2,ll,&uc);
+            /* the sequence is a whole number of the string's chars */
+            for(ss=arg1, cl=0, bl=0 ; bl<ll ; cl++)
+            {
+                nn = macStrCharLen(ss);
+                bl += macStrCharBytes(ss,nn);
+                ss += nn;
+            }
+            nn = meMacroPutChar(cb,uc);
+            return macUniInfoSet(3,uc,cb,nn,cl,arg1,(int) (ss-arg1),(uc < 0x80));
+        }
+#else
     case UFUCINFO:
         {
             meUByte cc=arg1[0];
@@ -3467,6 +3824,7 @@ gtfun(register int fnum, meUByte *fname)  /* evaluate a function given name of f
             }
             return evalResult;
         }
+#endif
     case UFSET:
         if(setVar(arg1,arg2,regs) <= 0)
             return abortm;
@@ -3611,6 +3969,50 @@ get_flag:
                             memcpy(arg3+index,arg2,nn);
                             index += nn;
                         }
+#if MEOPT_UNICODE
+                        else
+                        {
+                            /* width and precision are in cells, a char is never split */
+                            meUByte *ff=p+1;
+                            int left=0, width=0, prec=-1, cells=0, cw, cl, ll, pad;
+                            while((*ff == '-') || (*ff == '+') || (*ff == ' ') || (*ff == '#') || (*ff == '0'))
+                            {
+                                if(*ff++ == '-')
+                                    left = 1;
+                            }
+                            while(isDigit(*ff))
+                                width = (width * 10) + *ff++ - '0';
+                            if(*ff++ == '.')
+                            {
+                                prec = 0;
+                                while(isDigit(*ff))
+                                    prec = (prec * 10) + *ff++ - '0';
+                            }
+                            for(ll=0 ; ll<nn ; ll+=cl)
+                            {
+                                cw = meStrCharCells(arg2+ll,nn-ll,&cl);
+                                if((prec >= 0) && ((cells+cw) > prec))
+                                    break;
+                                cells += cw;
+                            }
+                            if((pad = width - cells) < 0)
+                                pad = 0;
+                            if((index+ll+pad) > (meBUF_SIZE_MAX-1))
+                                break;
+                            if(!left)
+                            {
+                                memset(arg3+index,' ',pad);
+                                index += pad;
+                            }
+                            memcpy(arg3+index,arg2,ll);
+                            index += ll;
+                            if(left)
+                            {
+                                memset(arg3+index,' ',pad);
+                                index += pad;
+                            }
+                        }
+#else
                         else
                         {
                             c = *s;
@@ -3619,6 +4021,7 @@ get_flag:
                                 index = meBUF_SIZE_MAX-1;
                             *s = c;
                         }
+#endif
                         break;
                     case 'X':                   /* Hexadecimal */
                     case 'x':                   /* Hexadecimal */

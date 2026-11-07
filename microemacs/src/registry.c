@@ -231,6 +231,33 @@ rnodeFind (meRegNode *np, meUByte *name)
 /*
  * Parse the file and import into the registry.
  */
+#if MEOPT_UNICODE
+/* A registry file from an 8-bit build holds bytes from 0x80 as \xNN escapes or code page bytes:
+ * a run which is valid UTF-8 (e.g. a file name) is kept, any other byte is a code page char,
+ * Latin-1 if the code page is not set yet */
+static void
+regDecodeOldBytes(meUByte *ss)
+{
+    meUByte buf[meTOKENBUF_SIZE_MAX], *dd=buf, *sp=ss, bb;
+    meUInt uc;
+    int ll;
+    while((*sp != '\0') && (dd < (buf+meBUF_SIZE_MAX-meUTF8_LEN_MAX)))
+    {
+        ll = meUtf8Decode(sp,meUTF8_LEN_MAX,&uc);
+        if(meUniIsRaw(uc) && ((bb = meUniRawByte(uc)) >= 0x80))
+            dd += meUtf8Encode(dd,(charToUnicode[bb-128] != 0) ? charToUnicode[bb-128]:bb);
+        else
+        {
+            memcpy(dd,sp,ll);
+            dd += ll;
+        }
+        sp += ll;
+    }
+    *dd = '\0';
+    meStrcpy(ss,buf);
+}
+#endif
+
 static void
 parseFile(meRegNode *rnp, meLine *hlp)
 {
@@ -251,7 +278,15 @@ parseFile(meRegNode *rnp, meLine *hlp)
     /* Read in the file until all processed. */
     while (lp != hlp)
     {
+#if MEOPT_UNICODE
+        tokenRawEscape = 1;
         lsp = token(lsp,buf) ;
+        tokenRawEscape = 0;
+        if(buf[0] == '"')
+            regDecodeOldBytes(buf+1);
+#else
+        lsp = token(lsp,buf) ;
+#endif
         switch (buf[0])
         {
         case '\0':

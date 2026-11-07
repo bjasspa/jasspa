@@ -1696,6 +1696,63 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 #define meFINDFILESINGLE_GFS_OPT (gfsERRON_ILLEGAL_NAME|gfsERRON_BAD_FILE|gfsERRON_DIR)
 #endif
 
+/* Reports the lines read and any condition needing the user's attention */
+static void
+readinMessage(meBuffer *bp)
+{
+    meUByte buf[200], *ss;
+    meLine *lp;
+    char *sep=" - ";
+    
+    ss = buf + sprintf((char *) buf,"[Read %d line%s",bp->lineCount,(bp->lineCount==1) ? "":"s");
+#if MEOPT_UNICODE
+    if(meior.nulCount)
+    {
+        ss += sprintf((char *) ss,"%s%d NUL%s",sep,meior.nulCount,(meior.nulCount == 1) ? "":"s");
+        sep = ", ";
+    }
+#else
+    if(bp->fileFlag & meBFFLAG_BINARY)
+    {
+        ss += sprintf((char *) ss,"%sbinary characters removed",sep);
+        sep = ", ";
+    }
+#endif
+    if(bp->fileFlag & meBFFLAG_LTDIFF)
+    {
+        ss += sprintf((char *) ss,"%smixed line endings",sep);
+        sep = ", ";
+    }
+    lp = meLineGetPrev(bp->baseLine);
+    if((lp != bp->baseLine) && (lp->flag & meLINE_NOEOL) && meLineGetLength(lp))
+    {
+        ss += sprintf((char *) ss,"%sno final newline",sep);
+        sep = ", ";
+    }
+#if MEOPT_UNICODE
+    if(meior.rawCount)
+    {
+        ss += sprintf((char *) ss,"%s%d invalid byte%s",sep,meior.rawCount,(meior.rawCount == 1) ? "":"s");
+        sep = ", ";
+    }
+#endif
+    if(meior.longCount)
+    {
+        ss += sprintf((char *) ss,"%s%d long line%s split",sep,meior.longCount,(meior.longCount == 1) ? "":"s");
+        sep = ", ";
+    }
+#if MEOPT_UNICODE
+    if((bp->encoding & (meENCODING_TYPE|meENCODING_BOM)) != meENCODING_UTF8)
+    {
+        meUByte encb[16];
+        ss += sprintf((char *) ss,"%s%.24s",sep,meEncodingName(bp,encb));
+    }
+#endif
+    *ss++ = ']';
+    *ss = '\0';
+    mlwrite(0,(meUByte *)"%s",buf);
+}
+
 /*
  * Read file "fname" into the current
  * buffer, blowing away any text found there. Called
@@ -1714,11 +1771,27 @@ readDirectory(meUByte *fname, meBuffer *bp, meLine *blp, meUInt flags)
 /* fname     name of file to read */
 /* lockfl    check for file locks? */
 /* frompipe  input coming from pipe. Dont open file */
+#if MEOPT_UNICODE
+/* a forced encoding and code page carried by read-file to the buffer which re-reads the file */
+static meUByte     rereadEncoding;
+static meCodePage *rereadCodePage;
+#endif
+
 int
 readin(register meBuffer *bp, meUByte *fname)
 {
-    int   ss=meABORT ;
+    int   ss=meABORT, msg=(!clexec || (bp->intFlag & BIFREADMSG));
     meUByte lfn[meBUF_SIZE_MAX], afn[meBUF_SIZE_MAX], *fn=fname;
+    
+    bp->intFlag &= ~BIFREADMSG;
+#if MEOPT_UNICODE
+    if(rereadEncoding)
+    {
+        bp->encoding = rereadEncoding;
+        bp->codePage = rereadCodePage;
+        rereadEncoding = 0;
+    }
+#endif
 
 #if MEOPT_CRYPT
     if(meCryptBufferInit(bp) <= 0)
@@ -1879,7 +1952,8 @@ readin(register meBuffer *bp, meUByte *fname)
     */
     if(ss != meABORT)
     {
-        mlwrite(MWCLEXEC,(meUByte *)"[Read %d line%s]",bp->lineCount,(bp->lineCount==1) ? "":"s");
+        if(msg)
+            readinMessage(bp);
         if(fn == afn)
             /* this is a recovered file so flag the buffer as changed */
             meModeSet(bp->mode,MDEDIT);
@@ -2279,6 +2353,8 @@ findSwapFileList(meUByte *fname, int bflag, meInt lineno, meUShort colno)
     for(bp=bheadp ; bp->histNo!=bufHistNo ; bp=bp->next)
         ;
     bufHistNo -= 2;
+    if((bflag & BFND_READMSG) && meModeTest(bp->mode,MDNACT))
+        bp->intFlag |= BIFREADMSG;
     ret = swbuffer(frameCur->windowCur,bp);  /* make buffer BP current */
     bufHistNo++;
     return ret;
@@ -2317,7 +2393,7 @@ findFile(int f, int n)
     *ss   = '\0';
     if(inputFileName(prompt,fname,0) <= 0)
         return meABORT;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM | ((n & 0x40) ? BFND_READMSG:0);
     return findSwapFileList(fname,n,0,0);
 }
 
@@ -2354,9 +2430,25 @@ readFile(int f, int n)
         return meABORT;
     if(n & 0x20)
 	frameCur->windowCur->buffer->intFlag |= BIFBLOW;
-    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM;
+    n = (n & (BFND_CREAT|BFND_BINARY|BFND_CRYPT|BFND_RBIN|BFND_NOHOOK)) | BFND_MKNAM | ((n & 0x40) ? BFND_READMSG:0);
+#if MEOPT_UNICODE
+    {
+        /* re-reading the buffer's own file keeps a forced encoding and code page */
+        meBuffer *bp=frameCur->windowCur->buffer;
+        meUByte cfn[meBUF_SIZE_MAX];
+        if((bp->encoding & meENCODING_FORCE) && (bp->fileName != NULL) &&
+           (fileNameCorrect(fname,cfn,NULL),!fnamecmp(bp->fileName,cfn)))
+        {
+            rereadEncoding = bp->encoding;
+            rereadCodePage = bp->codePage;
+        }
+    }
+#endif
     if((s=zotbuf(frameCur->windowCur->buffer,clexec)) > 0)
         s = findSwapFileList(fname,n,0,0);
+#if MEOPT_UNICODE
+    rereadEncoding = 0;
+#endif
     return s;
 }
 
@@ -2445,7 +2537,12 @@ writeFileChecks(meUByte *dfname, meUByte *sfname, meUByte *lfname, int flags)
                                                                                                        |meIOTYPE_FTP|meIOTYPE_FTPE
 #endif
                                                                                                        )) == 0)
+    {
+        /* a name joined to a URL buffer's path, e.g. http://host//tmp/f from a macro, would otherwise fail silently */
+        if(ffUrlTypeIsNotFile(s))
+            mlwrite(MWABORT,(meUByte *)"Cannot write to: %s",dfname);
         return NULL;
+    }
     fn = (lfname[0] == '\0') ? dfname:lfname;
     if(flags & meWRITECHECK_CHECK)
     {
@@ -2682,9 +2779,9 @@ autowriteout(register meBuffer *bp)
         if(lname[0] != '\0')
             ff = lname;
 #endif
-        if(!createBackupName(fn,ff,'#',1) &&
-           ((blp = translateBufferBack(bp,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE)) != NULL))
+        if(!createBackupName(fn,ff,'#',1))
         {
+            blp = bp->baseLine;
 
             if(ffWriteFileOpen(&meiow,fn,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) > 0)
             {
@@ -2694,7 +2791,7 @@ autowriteout(register meBuffer *bp)
 #if MEOPT_EXTENDED
                        (lp->flag & meLINE_MARKUP) ||
 #endif
-                       (ffWriteFileWrite(&meiow,meLineGetLength(lp),meLineGetText(lp),!(lp->flag & meLINE_NOEOL)) > 0)))
+                       (ffWriteFileWrite(&meiow,meLineGetLength(lp),meLineGetText(lp),meLineGetEolFlag(bp,lp)) > 0)))
                 {
                     if(TTbreakTest(1))
                     {
@@ -2706,8 +2803,6 @@ autowriteout(register meBuffer *bp)
                 if(ffWriteFileClose(&meiow,meRWFLAG_WRITE|meRWFLAG_AUTOSAVE,bp) <= 0)
                     lp = NULL;
             }
-            if(blp != bp->baseLine)
-                meLineLoopFree(blp,1);
             if(lp != NULL)
             {
                 mlerase(MWCLEXEC);
@@ -2807,8 +2902,256 @@ writeOut(register meBuffer *bp, meUInt flags, meUByte *fn)
     return meTRUE;
 }
 
+#if !MEOPT_UNICODE
 static meUByte fileHasBinary[]="File had binary characters which will be lost, write" ;
-static meUByte fileHasInLnEn[]="File had inconsistent line endings which will be corrected, write" ;
+#endif
+
+/* Gets the reply for file check 'check' (0-4), $file-checks can make it always preserve (the
+ * first valid char) or always fix (fixc) */
+static int
+writeCheckReply(int check, int fixc, meUByte *prompt, meUByte *valid, meUByte *help)
+{
+    int act=(fileChecks >> (check << 1)) & 3;
+    if(act == 1)
+        return valid[0];
+    if(act == 2)
+        return fixc;
+    return mlCharReply(prompt,mlCR_LOWER_CASE,valid,help);
+}
+
+#if MEOPT_UNICODE
+/* Fixes every NUL (type 0, deleted) or raw byte (type 1 converted with the code page, type 2
+ * replaced by U+FFFD) in bp using undoable replaces, returns the number fixed */
+static int
+writeFixText(meBuffer *bp, int type)
+{
+    meWindow *cwp=frameCur->windowCur;
+    meBuffer *cbp=cwp->buffer;
+    meLine *lp;
+    meUByte *ss, dstr[meUTF8_INT_LEN_MAX+4], rstr[meUTF8_LEN_MAX];
+    meUInt uc;
+    meInt lno, olno;
+    int off, ooff, ll, rl, count=0;
+    
+    if(bp != cbp)
+    {
+        storeWindBSet(cbp,cwp);
+        swbuffer(cwp,bp);
+    }
+    olno = cwp->dotLineNo;
+    ooff = cwp->dotOffset;
+    for(lp=meLineGetNext(bp->baseLine), lno=0 ; lp != bp->baseLine ; lp=meLineGetNext(lp), lno++)
+    {
+        off = 0;
+        while(off < meLineGetLength(lp))
+        {
+            ss = meLineGetText(lp) + off;
+            if(*ss < 0x80)
+            {
+                off++;
+                continue;
+            }
+            ll = meUtf8Decode(ss,meLineGetLength(lp)-off,&uc);
+            if((type == 0) ? (uc != 0):!meUniIsRaw(uc))
+            {
+                off += ll;
+                continue;
+            }
+            rl = 0;
+            if(type)
+            {
+                uc = (type == 2) ? meUNI_REPLACE:meUniRawByte(uc);
+                if((uc >= 0x80) && (uc < 0x100))
+                    uc = (charToUnicode[uc-128] >= 0x80) ? charToUnicode[uc-128]:meUNI_REPLACE;
+                else if((uc < 0x20) || (uc == 0x7f))
+                    uc = meUNI_REPLACE;
+                rl = meUtf8Encode(rstr,uc);
+            }
+            cwp->dotLine = lp;
+            cwp->dotOffset = (meUShort) off;
+            cwp->dotLineNo = lno;
+            mldelete(ll,dstr);
+            if(rl)
+                lineInsertString(rl,rstr);
+#if MEOPT_UNDO
+            meUndoAddReplace(dstr,rl);
+#endif
+            lp = cwp->dotLine;
+            off = cwp->dotOffset;
+            count++;
+        }
+    }
+    for(lp=meLineGetNext(bp->baseLine), lno=0 ; (lno < olno) && (lp != bp->baseLine) ; lp=meLineGetNext(lp), lno++)
+        ;
+    cwp->dotLine = lp;
+    cwp->dotLineNo = lno;
+    if(ooff > meLineGetLength(lp))
+        ooff = meLineGetLength(lp);
+    while((ooff > 0) && ((meLineGetText(lp)[ooff] & 0xc0) == 0x80))
+        ooff--;
+    cwp->dotOffset = (meUShort) ooff;
+    if(count)
+    {
+        meModeSet(bp->mode,MDEDIT);
+        meBufferAddModeToWindows(bp,WFMODE);
+    }
+    if(bp != cbp)
+    {
+        swbuffer(cwp,cbp);
+        restoreWindBSet(cwp,cbp);
+    }
+    return count;
+}
+#endif
+
+/* Interactive checks of the conditions which need the user's attention before writing a buffer,
+ * see the file checks in unicode_design.md, returns meTRUE to go ahead */
+static int
+writeContentChecks(meBuffer *bp)
+{
+    meLine *lp;
+    int ii;
+#if MEOPT_UNICODE
+    meUByte prompt[160], *ss, *se;
+    meUInt uc;
+    int nul=0, raw=0;
+    
+    if(((bp->encoding & meENCODING_TYPE) == meENCODING_LEGACY) && !meModeTest(bp->mode,MDBINARY) && !meModeTest(bp->mode,MDRBIN))
+    {
+        /* check 5, asked first as the text is lost: chars the code page does not have are written
+         * as '?', never remembered so chars added later are asked about again */
+        meCodePage *cp=(bp->codePage != NULL) ? bp->codePage:codePageCur;
+        int lack=0;
+        for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp=meLineGetNext(lp))
+        {
+#if MEOPT_EXTENDED
+            if(lp->flag & meLINE_MARKUP)
+                continue;
+#endif
+            ss = meLineGetText(lp);
+            se = ss + meLineGetLength(lp);
+            while(ss < se)
+            {
+                if(*ss < 0x80)
+                    ss++;
+                else
+                {
+                    ss += meUtf8Decode(ss,(int) (se-ss),&uc);
+                    if(!meUniIsRaw(uc) && (ffCharFromUnicode(cp,uc) < 0))
+                        lack++;
+                }
+            }
+        }
+        if(lack)
+        {
+            meUByte encb[16];
+            sprintf((char *) prompt,"WARNING - %d char%s not in %.24s, convert to (u)tf-8, (r)eplace with '?' ? ",lack,(lack == 1) ? "":"s",meEncodingName(bp,encb));
+            if((ii = writeCheckReply(4,'u',prompt,(meUByte *) "ru",(meUByte *) "Convert the file to (U)TF-8, (R)eplace the characters with '?', (C-g)Abort ? ")) < 0)
+                return ctrlg(meFALSE,1);
+            if(ii == 'u')
+            {
+                bp->encoding = (meUByte) ((bp->encoding & ~(meENCODING_TYPE|meENCODING_BE|meENCODING_BOM)) | meENCODING_UTF8 | meENCODING_FORCE);
+                bp->codePage = NULL;
+                meBufferAddModeToWindows(bp,WFMODE);
+            }
+        }
+    }
+    if((bp->fileKeep & (meFILEKEEP_NUL|meFILEKEEP_RAW)) != (meFILEKEEP_NUL|meFILEKEEP_RAW))
+    {
+        for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp=meLineGetNext(lp))
+        {
+#if MEOPT_EXTENDED
+            if(lp->flag & meLINE_MARKUP)
+                continue;
+#endif
+            ss = meLineGetText(lp);
+            se = ss + meLineGetLength(lp);
+            while(ss < se)
+            {
+                if(*ss < 0x80)
+                    ss++;
+                else
+                {
+                    ss += meUtf8Decode(ss,(int) (se-ss),&uc);
+                    if(uc == 0)
+                        nul++;
+                    else if(meUniIsRaw(uc))
+                        raw++;
+                }
+            }
+        }
+    }
+    if(nul && !(bp->fileKeep & meFILEKEEP_NUL))
+    {
+        sprintf((char *) prompt,"WARNING - binary file with %d NUL character%s, (p)reserve, (s)trip NULs ? ",nul,(nul == 1) ? "":"s");
+        if((ii = writeCheckReply(0,'s',prompt,(meUByte *) "ps",(meUByte *) "(P)reserve the NULs, (S)trip them from the buffer, (C-g)Abort ? ")) < 0)
+            return ctrlg(meFALSE,1);
+        if(ii == 'p')
+            bp->fileKeep |= meFILEKEEP_NUL;
+        else
+        {
+            writeFixText(bp,0);
+            bp->fileFlag &= ~meBFFLAG_BINARY;
+        }
+    }
+#else
+    if((bp->fileFlag & meBFFLAG_BINARY) && (mlyesno(fileHasBinary) <= 0))
+        return ctrlg(meFALSE,1);
+    bp->fileFlag &= ~meBFFLAG_BINARY;
+#endif
+    if(!(bp->fileKeep & meFILEKEEP_EOL) && meBufferEolCheck(bp))
+    {
+        if((ii = writeCheckReply(1,'b',(meUByte *) "Inconsistent line endings - (p)reserve, (u)nix LF, (w)indows CRLF ? ",(meUByte *) "puw",
+                                 (meUByte *) "(P)reserve, standardise to (U)nix LF or (W)indows CRLF, (C-g)Abort ? ")) < 0)
+            return ctrlg(meFALSE,1);
+        if(ii == 'p')
+            bp->fileKeep |= meFILEKEEP_EOL;
+        else
+        {
+            if(ii == 'u')
+            {
+                meModeClear(bp->mode,MDCR);
+                meModeSet(bp->mode,MDLF);
+            }
+            else if(ii == 'w')
+            {
+                meModeSet(bp->mode,MDCR);
+                meModeSet(bp->mode,MDLF);
+            }
+            meBufferEolNormalise(bp);
+            meBufferAddModeToWindows(bp,WFMODE);
+        }
+    }
+    lp = meLineGetPrev(bp->baseLine);
+#if MEOPT_EXTENDED
+    while((lp != bp->baseLine) && (lp->flag & meLINE_MARKUP))
+        lp = meLineGetPrev(lp);
+#endif
+    if((lp != bp->baseLine) && (lp->flag & meLINE_NOEOL) && meLineGetLength(lp) && !(bp->fileKeep & meFILEKEEP_NOEOL))
+    {
+        if((ii = writeCheckReply(2,'a',(meUByte *) "No newline at end of file - (a)dd newline, (p)reserve ? ",(meUByte *) "pa",
+                                 (meUByte *) "(A)dd a newline to the last line, (P)reserve, (C-g)Abort ? ")) < 0)
+            return ctrlg(meFALSE,1);
+        if(ii == 'p')
+            bp->fileKeep |= meFILEKEEP_NOEOL;
+        else
+            lp->flag &= ~(meLINE_NOEOL|meLINE_EOL_MASK);
+    }
+#if MEOPT_UNICODE
+    if(raw && !(bp->fileKeep & meFILEKEEP_RAW) && ((bp->encoding & meENCODING_TYPE) != meENCODING_LEGACY))
+    {
+        sprintf((char *) prompt,"%d invalid byte%s - (p)reserve, (c)onvert with code page, (r)eplace with U+FFFD ? ",raw,(raw == 1) ? "":"s");
+        if((ii = writeCheckReply(3,'c',prompt,(meUByte *) "pcr",
+                                 (meUByte *) "(P)reserve, (C)onvert using the code page, (R)eplace with U+FFFD, (C-g)Abort ? ")) < 0)
+            return ctrlg(meFALSE,1);
+        if(ii == 'p')
+            bp->fileKeep |= meFILEKEEP_RAW;
+        else
+            writeFixText(bp,(ii == 'c') ? 1:2);
+    }
+#endif
+    return meTRUE;
+}
 /*
  * This function performs the details of file writing. Uses the file
  * management routines in the "fileio.c" package. The number of lines written
@@ -2843,12 +3186,8 @@ writeout(register meBuffer *bp, int flags)
                 if(mlyesno(prompt) <= 0)
                     return ctrlg(meFALSE,1) ;
             }
-            if(bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF))
-            {
-                if(mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0)
-                    return ctrlg(meFALSE,1) ;
-                bp->fileFlag &= ~(meBFFLAG_BINARY|meBFFLAG_LTDIFF) ;
-            }
+            if(writeContentChecks(bp) <= 0)
+                return meABORT;
         }
         fn = (lname[0] == '\0') ? bp->fileName:lname;
         /* Quick check on the file write condition */
@@ -2899,9 +3238,8 @@ writeBuffer(int f, int n)
     else
         fn = NULL ;
 
-    if((n & 0x01) && (bp->fileFlag & (meBFFLAG_BINARY|meBFFLAG_LTDIFF)) &&
-       (mlyesno((bp->fileFlag & meBFFLAG_BINARY) ? fileHasBinary:fileHasInLnEn) <= 0))
-        return ctrlg(meFALSE,1);
+    if((n & 0x01) && (writeContentChecks(bp) <= 0))
+        return meABORT;
     if((fn=writeFileChecks(fname,fn,lname,(n & 0x01)|meWRITECHECK_BUFFER)) == NULL)
         return meABORT ;
 

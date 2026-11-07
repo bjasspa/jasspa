@@ -527,6 +527,25 @@ When matching a group with multiple  alternatives the matcher will match/use the
 this means you should order the alternative  forms in preference,  typically  longest first. For example, if trying to
 match '\fCok\fR' or '\fCokay\fR' the pattern should be '\fC\\(okay\\|ok\\)\fR' and not '\fC\\(ok\\|okay\\)\fR' as this
 will only ever match the 'ok' in an 'okay'.
+.PP
+A character set may also contain the named classes "\fC[:alpha:]\fR", "\fC[:alnum:]\fR", "\fC[:blank:]\fR",
+"\fC[:cntrl:]\fR", "\fC[:digit:]\fR", "\fC[:graph:]\fR", "\fC[:lower:]\fR", "\fC[:print:]\fR",
+"\fC[:punct:]\fR", "\fC[:space:]\fR", "\fC[:upper:]\fR" and "\fC[:xdigit:]\fR", e.g. "\fC[[:alpha:]_]\fR". A
+character may be given by its value as "\fC\\x\fIhh\fR".
+.PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) every item matches a whole character, so '\fC.\fR', a character set and a qualifier apply to a
+character however many bytes it is stored in. A character from 0x80 is classified by its Unicode properties, so
+"\fC\\w\fR", "\fC\\a\fR", "\fC\\l\fR", "\fC\\u\fR", "\fC\\m\fR", "\fC\\s\fR", their inverses and the named
+classes include the letters, digits etc. of every language, while "\fC\\d\fR", "\fC\\h\fR", "\fC[:digit:]\fR" and
+"\fC[:xdigit:]\fR" only match \s-1ASCII\s0 characters. "\fC\\x\fIhh\fR" is the character U+00\fIhh\fR, so
+"\fC[\\xa0-\\xff]\fR" matches the characters U+00A0 to U+00FF. A raw byte (a byte that was not valid in the file's
+encoding, see
+.Ht $buffer-encoding 5 )
+is only matched by the named class "\fC[:raw:]\fR", e.g. "\fC[[:raw:]]\fR" finds the next one. Case is ignored using
+Unicode case folding, a character matching only a character with the same fold (e.g. '\fCk\fR', '\fCK\fR' and the
+Kelvin sign) and never two characters (so the German sharp s does not match "\fCss\fR").
 .SH HISTORY
 As of March 2005 then the existing Emacs search string syntax of "\fC\\s?\fR" and "\fC\\S?\fR" has been discarded in
 favor of Perl's simpler syntax of "\fC\\s\fR" and "\fC\\S\fR" for a whitespace character class. Added new character

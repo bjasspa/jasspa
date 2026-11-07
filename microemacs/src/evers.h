@@ -54,8 +54,8 @@
 #define meVERSION_MINOR meMONTH
 /* Version information - Version as a numeric date code */
 #define meVERSION_CODE  meCENTURY meYEAR meMONTH meDAY 
-/* Version information - String as shown in about & -V */
-#define meVERSION_INFO  ME_FULLNAME " " meVERSION " - Date " meCENTURY meDATE " - " meSYSTEM_NAME "\n"
+/* Version information - String as shown in about & -V, meBUILD_NAME is in emain.h */
+#define meVERSION_INFO  ME_FULLNAME " " meVERSION " - Date " meCENTURY meDATE " - " meBUILD_NAME "\n"
 
 /* The program names - these values are also used in the rc files */
 #define ME_MICROEMACS_FULLNAME  "MicroEmacs"

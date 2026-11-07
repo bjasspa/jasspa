@@ -54,6 +54,7 @@ extern  meUByte    orgModeLineStr[] ;   /* original modeline line format*/
 extern  meUByte   *modeLineStr ;        /* current modeline format      */
 extern  meUByte    modeLineFlags ;      /* current modeline flags       */
 extern  meUInt     fileSizePrompt;      /* size at which to start prompt*/
+extern  meUShort   fileChecks;          /* save file check actions      */
 extern  meInt      keptVersions;        /* No. of kept backup versions  */
 #if MEOPT_EXTENDED
 extern  meInt      nextFrameId;         /* frame-id of the next create  */
@@ -170,11 +171,7 @@ extern meUByte *extRegLst[extRegCnt];
 extern meUByte *extDictLst[extDictCnt];
 #define extAbrevCnt 1
 extern meUByte *extAbrevLst[extAbrevCnt];
-#if MEOPT_BYTECOMP
-#define extMacroCnt 2
-#else
 #define extMacroCnt 1
-#endif
 extern meUByte *extMacroLst[extMacroCnt];
 #if (defined _WIN32) || (defined _DOS)
 #define extExecCnt 4
@@ -207,7 +204,7 @@ extern  meShort mouse_Y;                /* mouse X pos at last event    */
 #define MOUSE_STATE_BUTTONS      (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)
 #endif
 extern  meInt mouseState;               /* State of the mouse. */
-extern  meUShort mouseKeyState;         /* State of keyboard ACS on Unix*/
+extern  meKey    mouseKeyState;         /* State of keyboard ACS on Unix*/
 extern  meShort mouse_dX;               /* mouse delta X last event pos */
 extern  meShort mouse_dY;               /* mouse delta X last event pos */
 #endif
@@ -269,10 +266,10 @@ extern  meTime    startTime;            /* me start time. used as offset*/
 extern  meInt     meGetKeyFirst;        /* initial command, set by respawn() */
 extern  meLine   *lpStore;              /* line off which to store macro*/
 extern  meBuffer *lpStoreBp ;           /* help is stored in a buffer   */
-extern  meUShort  thiskey;              /* the current key              */
-extern  meUShort  prefixc[];            /* prefix chars           */
-extern  meUShort  reptc;                /* current universal repeat char*/
-extern  meUShort  breakc;               /* current abort-command char*/
+extern  meKey     thiskey;              /* the current key              */
+extern  meKey     prefixc[];            /* prefix chars           */
+extern  meKey     reptc;                /* current universal repeat char*/
+extern  meKey     breakc;               /* current abort-command char*/
 #ifdef _CLIPBRD
 /* When implementing the clipboard it is best if the clipboard is only
  * attempted to be got or set once per command. This is because of other
@@ -429,7 +426,7 @@ extern meFrame *frameFocus ;
 #endif
 extern meFrame *frameCur ;
 
-extern meUByte *disLineBuff ;           /* interal display buffer array */
+extern meFrameChar *disLineBuff ;       /* interal display buffer array */
 extern int      disLineSize ;           /* interal display buffer size  */
 
 /* uninitialized global external declarations */
@@ -453,7 +450,12 @@ extern meUShort  *charToUnicode;             /* the current code page's table */
 extern meCodePage  codePageDefault;
 extern meCodePage *codePageCur;
 extern meCodePage *codePageSpell;
-extern meUByte   *charKeyboardMap;
+#if MEOPT_UNICODE
+extern meUInt    *charKeyboardMap;            /* a non-Latin keyboard's keys, (code point << 8) | Latin char, sorted */
+extern int        charKeyboardMapLen;
+#else
+extern meUByte   *charKeyboardMap;            /* a non-Latin keyboard's code page chars' Latin chars */
+#endif
 extern meUByte    isWordMask;
 
 /* the following are global variables but not defined in this file */
@@ -527,7 +529,7 @@ meSchemeSet *hilBlock;                  /* Hilighting style change      */
 meUByte   cursorVisible=1;              /* Current visibility of cursor */
 meUByte  *meProgName=NULL;              /* the program name (argv[0])   */
 #if MEOPT_EXTENDED
-meUByte   orgModeLineStr[]="%s%r%u%K %b %l of %n - %Y%-%m%-%d %H:%M (%O) - (%f) ";
+meUByte   orgModeLineStr[]="%s%r%u%K %b %l of %n - %Y%-%m%-%d %H:%M (%O %- %e) - (%f) ";
 #else
 meUByte   orgModeLineStr[]="%s%r%u " ME_SHORTNAME " (%O) - %l %b (%f) ";
 #endif
@@ -542,6 +544,7 @@ meUByte   filleoslen=1;                 /* Fill E-O-S ' ' insert len    */
 meUByte   fillignore[16]=">_@";         /* Fill Ignore character class  */
 meUByte   fillmode='B';                 /* Justification mode           */
 #endif
+meUShort  fileChecks=0;                 /* save file check actions      */
 #if MEOPT_EXTENDED
 meUInt    fileSizePrompt=1024;          /* size at which to start prompt*/
 meInt     keptVersions=0 ;              /* No. of kept backup versions  */
@@ -574,7 +577,7 @@ int       thisIndex = -1 ;              /* The cur. user executed comm  */
 
 meIo      meior;                        /* The current I/O Read op      */
 meIo      meiow;                        /* The current I/O Write op     */
-meUShort  thiskey ;                     /* the current key              */
+meKey     thiskey ;                     /* the current key              */
 meUByte   hexdigits[]="0123456789ABCDEF";
 meUInt    cursorBlink=0;                /* cursor-blink blink time      */
 int       blinkState=1;                 /* cursor blink state           */
@@ -691,23 +694,14 @@ meUInt    meSystemCfg=                  /* ME system config variable    */
 (meSYSTEM_RGBCOLOR|meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_UNIXSYSTEM|meSYSTEM_IPIPES|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1) ;
 #endif
 #ifdef _WIN32
-meUInt    meSYSTEM_MASK=                /* ME system mask - dependant on win32 flavour */
-(meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_CTCHASPC|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK|meSYSTEM_NOCLIPBRD
-#if !defined (_WIN32s)
- |meSYSTEM_CLNTSRVR
-#endif
-);
+meUInt   meSYSTEM_MASK=(meSYSTEM_FONTS|meSYSTEM_OSDCURSOR|meSYSTEM_TABINDANY|meSYSTEM_ALTMENU|meSYSTEM_ALTPRFX1|meSYSTEM_KEEPUNDO|meSYSTEM_CTCHASPC|meSYSTEM_SHOWWHITE|meSYSTEM_HIDEBCKUP|meSYSTEM_TABINDFST|meSYSTEM_NOEMPTYANK|meSYSTEM_NOCLIPBRD|meSYSTEM_CLNTSRVR);
 meUByte *meProgData=NULL;               /* the program data path - AppData */
 #endif
 
 meUByte *extRegLst[extRegCnt] = {(meUByte *) ".erf"};
 meUByte *extDictLst[extDictCnt] = {(meUByte *) ".edf"};
 meUByte *extAbrevLst[extAbrevCnt] = {(meUByte *) ".eaf"};
-#if MEOPT_BYTECOMP
-meUByte *extMacroLst[extMacroCnt] = {(meUByte *) ".emb",(meUByte *) ".emf"};
-#else
 meUByte *extMacroLst[extMacroCnt] = {(meUByte *) ".emf"};
-#endif
 #if (defined _WIN32) || (defined _DOS)
 meUByte *extExecLst[extExecCnt] = {(meUByte *) ".com",(meUByte *) ".exe",(meUByte *) ".bat",(meUByte *) ".cmd"};
 #endif
@@ -776,7 +770,7 @@ int       osdRow=0;                     /* The osd current row          */
 #endif
 meLine     *lpStore = NULL;             /* line off which to store macro*/
 meBuffer   *lpStoreBp = NULL;           /* help is stored in a buffer   */
-meUShort  prefixc[ME_PREFIX_NUM+1]=
+meKey     prefixc[ME_PREFIX_NUM+1]=
 {   ME_INVALID_KEY,                     /* unused 0th value             */
     ME_SPECIAL|SKEY_esc,                /* prefix1 = Escape             */
     'X'-'@',                            /* prefix2 = ^X                 */
@@ -789,8 +783,8 @@ meUShort  prefixc[ME_PREFIX_NUM+1]=
     ME_INVALID_KEY, ME_INVALID_KEY,
     ME_INVALID_KEY
 };
-meUShort  reptc    = 'U'-'@';           /* current universal repeat char*/
-meUShort  breakc   = 'G'-'@';           /* current abort-command char   */
+meKey     reptc    = 'U'-'@';           /* current universal repeat char*/
+meKey     breakc   = 'G'-'@';           /* current abort-command char   */
 
 meKill    *klhead  = NULL;              /* klist header pointer         */
 meUByte   lkbdptr[meBUF_SIZE_MAX];      /* Holds last keybd macro data  */
@@ -898,7 +892,7 @@ meFrame *frameFocus=NULL ;
 #endif
 meFrame *frameCur=NULL ;
 
-meUByte   *disLineBuff=NULL ;           /* interal display buffer array */
+meFrameChar *disLineBuff=NULL ;         /* interal display buffer array */
 int        disLineSize=512 ;            /* interal display buffer size  */
 
 int       curgoal;                      /* Goal for C-P, C-N            */

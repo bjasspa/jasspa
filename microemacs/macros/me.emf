@@ -35,7 +35,7 @@ define-macro-file vcs vcs vcs-id vcs-add vcs-annotate vcs-blame vcs-cat-file vcs
 define-macro-file git git git-add git-blame git-cat-file git-commit git-diff git-fetch git-gdiff git-info git-log-commit git-log-file git-move git-pull git-push git-remove git-revert git-setup git-status git-switch git-unstage
 define-macro-file svn svn svn-add svn-blame svn-cat-file svn-checkout svn-commit svn-copy svn-delete svn-diff svn-gdiff svn-ignore svn-info svn-log-commit svn-log-file svn-move svn-revert svn-setup svn-status svn-update
 define-macro-file format clean sort-lines-ignore-case transpose-region-line normal-tab tabs-to-spaces paragraph-to-line delete-indentation restyle-region restyle-buffer ifill-paragraph indent-increase indent-decrease
-define-macro-file tools change-company compile keep-buffer which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile find-hfile find-lfile find-ufile reread-file reread-all save-kbd-macro
+define-macro-file tools change-company compile keep-buffer which diff rdiff xdiff diff-changes execute-tool uniq find-bfile find-cfile find-hfile reread-file reread-all save-kbd-macro
 define-macro-file cvs cvs cvs-add cvs-annotate cvs-cat-file cvs-checkout cvs-commit cvs-diff cvs-file-status cvs-gdiff cvs-log-file cvs-remove cvs-resolve cvs-setup cvs-status cvs-tag cvs-update
 define-macro-file misc save-all set-title encase open-line get-next-indent-change check-line-length number-items time compare-windows-exact display-whitespaces write-region execute-region
 define-macro-file cc cc-add cc-add-view cc-annotate cc-checkin cc-checkout cc-delete cc-describe cc-diff cc-explorer cc-merge cc-move cc-setup cc-status cc-uncheckout cc-update cc-vtree
@@ -54,12 +54,6 @@ define-macro-file narrow narrow-search-forward narrow-search-backward
 define-macro-file jsonview json-format json-compact json-context json-validate
 define-macro-file notes notes notes-file notes-instant notes-context
 define-macro-file encodutl buffer-is-utf8 change-buffer-encoding describe-char
-; UNICODE: the Unicode builds have no translate-buffer, the macros calling it are marked UNICODE:
-!if &not &exi translate-buffer
-  0 define-macro translate-buffer
-    -8 ml-write "[translate-buffer is not supported by this build]"
-  !emacro
-!endif
 define-macro-file zfile find-zfile zfile-setup zfile-reset
 define-macro-file itemlist item-list item-list-close occur
 define-macro-file hktools file-exec file-format file-lint

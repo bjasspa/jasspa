@@ -84,11 +84,11 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
         else
         {
             meUByte *ss = execstr;
-            execstr = token(execstr,buff);
+            execstr = macroNextToken(execstr,buff);
             if((buff[0] == '@') && (buff[1] == 'm') && (buff[2] == 'x'))
             {
                 cc = buff[3];
-                execstr = token(execstr, buff);
+                execstr = macroNextToken(execstr,buff);
                 if(cc == 'a')
                     execstr = ss;
                 meStrcpy(resultStr,prompt);
@@ -115,34 +115,57 @@ mlCharReply(meUByte *prompt, int mask, meUByte *validList, meUByte *helpStr)
                     inpType = 1;
                     continue;
                 }
+#if MEOPT_UNICODE
+                {
+                    meUInt uc;
+                    meUtf8Decode(res,meUTF8_LEN_MAX,&uc);
+                    cc = (int) uc;
+                }
+#else
                 cc = *res;
+#endif
             }
         }
         
         if((mask & mlCR_QUOTE_CHAR) &&
-           ((cc = quoteKeyToChar((meUShort) cc)) < 0))
+           ((cc = quoteKeyToChar((meKey) cc)) < 0))
         {
             if(validList == NULL)
                 return -1;
         }
         else
         {
-            if((mask & mlCR_LOWER_CASE) && ((cc & 0xff00) == 0))
-                cc = toLower(cc);
-            
+            if((mask & mlCR_LOWER_CASE) && meKeyIsChar(cc))
+                cc = meUniCharToLower(cc);
+#if MEOPT_EXTENDED
+            /* a non-Latin keyboard's key which is not a valid answer gives its Latin key's char */
+            if((validList != NULL) && (charKeyboardMap != NULL) && meKeyIsChar(cc) &&
+#if MEOPT_UNICODE
+               ((cc >= 0x80) || (meStrchr(validList,cc) == NULL)))
+#else
+               (meStrchr(validList,cc) == NULL))
+#endif
+            {
+                int mc;
+                if((mc = meKeyboardMapChar(cc)) != 0)
+                    cc = mc;
+            }
+#endif
             if((cc == '?') && (helpStr != NULL))
                 pp = (lp == helpStr) ? prompt:helpStr;
-            else if((cc != '\0') &&
+            else if(((cc != '\0') || (mask & mlCR_QUOTE_CHAR)) &&
+#if MEOPT_UNICODE
+                    /* the valid list is ASCII */
+                    (!(mask & mlCR_ALPHANUM_CHAR) || ((cc < 0x80) && isAlphaNum(cc))) &&
+                    ((validList == NULL) || ((cc < 0x80) && (meStrchr(validList,cc) != NULL))))
+#else
                     (!(mask & mlCR_ALPHANUM_CHAR) || isAlphaNum(cc)) &&
-                    ((validList == NULL) || (((cc & 0xff00) == 0) && 
-                                             ((meStrchr(validList,cc) != NULL) ||
-                                              ((charKeyboardMap != NULL) &&
-                                               ((cc=charKeyboardMap[cc]) != '\0') &&
-                                               (meStrchr(validList,cc) != NULL))))))
+                    ((validList == NULL) || (((cc & 0xff00) == 0) && (meStrchr(validList,cc) != NULL))))
+#endif
             {
                 if (inpType == 2)
                 {
-                    meGetStringFromKey((meUShort) cc,buff);
+                    meGetStringFromKey((meKey) cc,buff);
                     mlwrite(MWCURSOR,(meUByte *)"%s%s",prompt,buff);
                 }
                 return cc;
@@ -171,13 +194,60 @@ mlyesno(meUByte *prompt)
     return meTRUE;
 }
 
+/* Writes key cc into a key string (keyboard macros, execute-string), returns its length, at
+ * most meKEYSTR_LEN_MAX. A char key is the char itself, a key with modifiers, a prefix or a
+ * special key is the leader, the special trail, the modifier & prefix byte and the char or
+ * special key code. Nul and the leader char are escaped */
+int
+meKeyToStr(meUByte *dd, meKey cc)
+{
+    meUInt ch=cc & ME_KEY_CHAR;
+    int ll=0;
+    
+    if(!meKeyIsChar(cc))
+    {
+        dd[ll++] = meCHAR_LEADER;
+        dd[ll++] = meCHAR_TRAIL_SPECIAL;
+        dd[ll++] = (meUByte) (cc >> ME_KEY_HIGH_SHIFT);
+    }
+#if MEOPT_UNICODE
+    if((ch >= 0x80) && !(cc & ME_SPECIAL))
+        return ll + meUtf8Encode(dd+ll,ch);
+#endif
+    if(ch == meCHAR_LEADER)
+    {
+        dd[ll++] = meCHAR_LEADER;
+        dd[ll++] = meCHAR_TRAIL_LEADER;
+    }
+    else if(ch == 0)
+    {
+        dd[ll++] = meCHAR_LEADER;
+        dd[ll++] = meCHAR_TRAIL_NULL;
+    }
+    else
+        dd[ll++] = (meUByte) ch;
+    return ll;
+}
+
+/* Returns the length of the key following a leader & special trail in a key string */
+int
+meKeyStrSpecialLen(meUByte *ss)
+{
+#if MEOPT_UNICODE
+    meUInt uc;
+    if((ss[1] >= 0x80) && !(ss[0] & (ME_SPECIAL >> ME_KEY_HIGH_SHIFT)))
+        return 1 + meUtf8Decode(ss+1,meUTF8_LEN_MAX,&uc);
+#endif
+    return (ss[1] == meCHAR_LEADER) ? 3:2;
+}
+
 /*    tgetc:    Get a key from the terminal driver, resolve any keyboard
  *              macro action
  */
-static meUShort
+static meKey
 tgetc(void)
 {
-    meUShort cc ;    /* fetched character */
+    meKey cc ;    /* fetched character */
 
     /* if we are playing a keyboard macro back, */
     if (kbdmode == mePLAY)
@@ -186,14 +256,23 @@ kbd_rep:
         /* if there is some left... */
         if(kbdoff < kbdlen)
         {
-            cc = (meUShort) kbdptr[kbdoff++];
+            cc = (meKey) kbdptr[kbdoff++];
             if(cc == meCHAR_LEADER)
             {
                 cc = kbdptr[kbdoff++];
                 if(cc == meCHAR_TRAIL_SPECIAL)
                 {
                     meUByte dd ;    /* fetched character */
-                    cc = ((meUShort) kbdptr[kbdoff++]) << 8;
+                    cc = ((meKey) kbdptr[kbdoff++]) << ME_KEY_HIGH_SHIFT;
+#if MEOPT_UNICODE
+                    if((kbdptr[kbdoff] >= 0x80) && !(cc & ME_SPECIAL))
+                    {
+                        meUInt uc;
+                        kbdoff += meUtf8Decode(kbdptr+kbdoff,kbdlen-kbdoff,&uc);
+                        cc |= uc;
+                    }
+                    else
+#endif
                     if(((dd = kbdptr[kbdoff++]) != meCHAR_LEADER) ||
                        ((dd = kbdptr[kbdoff++]) != meCHAR_TRAIL_NULL))
                         cc |= dd;
@@ -204,6 +283,14 @@ kbd_rep:
                     /* special '\?' key (e.g. OSD hot key) - ignore, a leader pair is the leader char */
                     goto kbd_rep;
             }
+#if MEOPT_UNICODE
+            else if(cc >= 0x80)
+            {
+                meUInt uc;
+                kbdoff += meUtf8Decode(kbdptr+kbdoff-1,kbdlen-kbdoff+1,&uc) - 1;
+                cc = uc;
+            }
+#endif
             return cc;
         }
         /* at the end of last repitition? */
@@ -229,45 +316,19 @@ kbd_rep:
         do {
             /* fetch a character from the terminal driver */
             cc = TTgetc();
-        } while(((cc & (ME_SPECIAL|0x00ff)) >= (ME_SPECIAL|SKEY_mouse_drop_1))  &&
-                ((cc & (ME_SPECIAL|0x00ff)) <= (ME_SPECIAL|SKEY_mouse_time_3)));
+        } while(((cc & (ME_SPECIAL|ME_KEY_CHAR)) >= (ME_SPECIAL|SKEY_mouse_drop_1))  &&
+                ((cc & (ME_SPECIAL|ME_KEY_CHAR)) <= (ME_SPECIAL|SKEY_mouse_time_3)));
 #else
         cc = TTgetc();
 #endif
-        /* Each 'key' could take 5 chars to store - if we haven't got room
-         * stop so we don't overrun the buffer */
-        if(kbdlen > meBUF_SIZE_MAX - 5)
+        /* if we haven't got room for the key stop so we don't overrun the buffer */
+        if(kbdlen > meBUF_SIZE_MAX - meKEYSTR_LEN_MAX)
         {
             kbdmode = meSTOP;
             TTbell();
         }
         else
-        {
-            meUByte dd;
-            /* must store 0xaabb as ff,2,aa,bb
-             * also must store 0x00ff as ff,ff & 0x0000 as 0xff01
-             * Also 0x??00 stored as ff,2,??,ff,01
-             */
-            if(cc > 0xff)
-            {
-                kbdptr[kbdlen++] = meCHAR_LEADER;
-                kbdptr[kbdlen++] = meCHAR_TRAIL_SPECIAL;
-                kbdptr[kbdlen++] = cc >> 8;
-            }
-            dd = (cc & 0xff);
-            if(dd == meCHAR_LEADER)
-            {
-                kbdptr[kbdlen++] = meCHAR_LEADER;
-                kbdptr[kbdlen++] = meCHAR_TRAIL_LEADER;
-            }
-            else if(dd == 0x0)
-            {
-                kbdptr[kbdlen++] = meCHAR_LEADER;
-                kbdptr[kbdlen++] = meCHAR_TRAIL_NULL;
-            }
-            else
-                kbdptr[kbdlen++] = dd;
-        }
+            kbdlen += meKeyToStr(kbdptr+kbdlen,cc);
     }
     else
         cc = TTgetc();
@@ -285,7 +346,7 @@ getprefixchar(int f, int n, int ctlc, int flag)
 
     if(!(flag & meGETKEY_SILENT))
     {
-        buf[meGetStringFromChar((meUShort) ctlc,buf)] = '\0';
+        buf[meGetStringFromChar((meKey) ctlc,buf)] = '\0';
         if(f == meTRUE)
             mlwrite(MWCURSOR,(meUByte *)"Arg %d: %s", n, buf);
         else
@@ -300,10 +361,10 @@ getprefixchar(int f, int n, int ctlc, int flag)
 /* meGetKeyFromUser
  *   Get a command from the keyboard. Process all applicable prefix keys
  */
-meUShort
+meKey
 meGetKeyFromUser(int f, int n, int flag)
 {
-    meUShort cc ;        /* fetched keystroke */
+    meKey cc ;        /* fetched keystroke */
     int ii;
     
     /* Get a key or mouse event, if meGetKeyFirst is not < 0 then we already
@@ -312,7 +373,7 @@ meGetKeyFromUser(int f, int n, int flag)
      * macro, otherwise wait for an event from the user */
     if(meGetKeyFirst >= 0)
     {
-        cc = (meUShort) meGetKeyFirst;
+        cc = (meKey) meGetKeyFirst;
         meGetKeyFirst = -1;
         return cc;
     }
@@ -368,6 +429,35 @@ static int mlInputFlags;
 static meIFuncSSI curCmpIFunc;
 static meIFuncSS  curCmpFunc;
 
+#if MEOPT_UNICODE
+/* the input buffer holds internal UTF-8, positions step whole chars */
+#define mlNextChar(buf,pos,len) meUtf8Next((buf),(pos),(len))
+#define mlPrevChar(buf,pos)     meUtf8Prev((buf),(pos))
+
+static int
+mlIsAlphaNum(meUByte *buf, int pos)
+{
+    meUInt uc=buf[pos];
+    if(uc < 0x80)
+        return isAlphaNum(uc);
+    meUtf8Decode(buf+pos,meUTF8_LEN_MAX,&uc);
+    return meUniPropIsWord(meUniProps(uc));
+}
+
+#define mlForwardToNextSpace(buff,curPos,curLen) \
+for(; (curPos < curLen) && mlIsAlphaNum(buff,curPos) ; curPos=meUtf8Next(buff,curPos,curLen))
+#define mlBackwardToNextSpace(buff,curPos) \
+for(; (curPos > 0) && mlIsAlphaNum(buff,meUtf8Prev(buff,curPos)) ; curPos=meUtf8Prev(buff,curPos))
+
+#define mlForwardToNextWord(buff,curPos,curLen) \
+for(; (curPos < curLen) && !mlIsAlphaNum(buff,curPos) ; curPos=meUtf8Next(buff,curPos,curLen))
+#define mlBackwardToNextWord(buff,curPos) \
+for(; (curPos > 0) && !mlIsAlphaNum(buff,meUtf8Prev(buff,curPos)) ; curPos=meUtf8Prev(buff,curPos))
+#else
+#define mlNextChar(buf,pos,len) ((pos)+1)
+#define mlPrevChar(buf,pos)     ((pos)-1)
+#define mlIsAlphaNum(buf,pos)   isAlphaNum((buf)[pos])
+
 #define mlForwardToNextSpace(buff,curPos,curLen) \
 for(; (curPos < curLen) && isAlphaNum(buff[curPos]) ; curPos++)
 #define mlBackwardToNextSpace(buff,curPos) \
@@ -377,6 +467,7 @@ for(; (curPos > 0) && isAlphaNum(buff[curPos-1]) ; curPos--)
 for(; (curPos < curLen) && !isAlphaNum(buff[curPos]) ; curPos++)
 #define mlBackwardToNextWord(buff,curPos) \
 for(; (curPos > 0) && !isAlphaNum(buff[curPos-1]) ; curPos--)
+#endif
 
 static int
 mlInsertChar(meUByte cc, meUByte *buf, int *pos, int *len, int max)
@@ -421,6 +512,56 @@ mlInsertChar(meUByte cc, meUByte *buf, int *pos, int *len, int max)
         (*pos)++;
     }
     return meTRUE;
+}
+
+/* Inserts the char of key cc */
+static int
+mlInsertKeyChar(int cc, meUByte *buf, int *pos, int *len, int max)
+{
+#if MEOPT_UNICODE
+    /* a NUL is inserted in its internal form, a 0 byte would end the string */
+    if((cc >= 0x80) || (cc == 0))
+    {
+        meUByte bb[meUTF8_LEN_MAX];
+        int ii, ll=meUtf8Encode(bb,(meUInt) cc);
+        if(((int) meStrlen(buf) + ll) >= max)
+            return meFALSE;
+        for(ii=0 ; ii<ll ; ii++)
+            mlInsertChar(bb[ii],buf,pos,len,max);
+        return meTRUE;
+    }
+#endif
+    return mlInsertChar((meUByte) cc,buf,pos,len,max);
+}
+
+/* Changes the case of the char at pos, to upper if up, returns the position after it */
+static int
+mlCharCase(meUByte *buf, int pos, int *len, int max, int up)
+{
+#if MEOPT_UNICODE
+    meUByte bb[meUTF8_LEN_MAX];
+    meUInt uc, nc;
+    int ol, nl;
+    
+    ol = meUtf8Decode(buf+pos,*len-pos,&uc);
+    nc = (up) ? meUniCharToUpper(uc):meUniCharToLower(uc);
+    if(nc == uc)
+        return pos+ol;
+    nl = meUtf8Encode(bb,nc);
+    if(nl != ol)
+    {
+        /* the char changes length */
+        if((*len + nl - ol) >= max)
+            return pos+ol;
+        memmove(buf+pos+nl,buf+pos+ol,*len-pos-ol+1);
+        *len += nl - ol;
+    }
+    memcpy(buf+pos,bb,nl);
+    return pos+nl;
+#else
+    buf[pos] = (up) ? toUpper(buf[pos]):toLower(buf[pos]);
+    return pos+1;
+#endif
 }
 
 static int
@@ -507,6 +648,63 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
     /* switch off the status cause we are replacing it */
     frameCur->mlStatus &= MLSTATUS_CURMASK;
     maxCol = frameCur->width;
+#if MEOPT_UNICODE
+    {
+        /* the same layout in cells, wide chars cut by the start or end become spaces */
+        meUByte full[meMLDISP_SIZE_MAX+meBUF_SIZE_MAX], out[meMLDISP_SIZE_MAX+meBUF_SIZE_MAX], *ss, *dd;
+        int flen, ll, ww, cc, lim;
+        
+        promsiz = (int) meStrlen(prompt);
+        if(promsiz > meBUF_SIZE_MAX-1)
+            promsiz = meBUF_SIZE_MAX-1;
+        memcpy(full,prompt,promsiz);
+        memcpy(full+promsiz,expbuf,len+1);
+        flen = promsiz + len;
+        cc = meStrCells(prompt,promsiz);
+        col = cc + meStrCells((meUByte *) expbuf,col);
+        len = cc + meStrCells((meUByte *) expbuf,len);
+        if(col > maxCol - 1)
+        {
+            int div = maxCol >> 1;
+            
+            start = (((col - (div >> 1)) / div) * div);
+            len -= start;
+            col -= start-1;
+            maxCol--;
+        }
+        else
+            start = 0;
+        dd = out;
+        if(start)
+            *dd++ = '$';
+        lim = (len > maxCol) ? maxCol-1:maxCol;
+        ss = full;
+        for(cc=0 ; flen > 0 ; ss+=ll, flen-=ll, cc+=ww)
+        {
+            ww = meStrCharCells(ss,flen,&ll);
+            if((cc+ww) <= start)
+                continue;
+            if((cc+ww-start) > lim)
+                break;
+            if(cc < start)
+                *dd++ = ' ';
+            else
+            {
+                memcpy(dd,ss,ll);
+                dd += ll;
+            }
+        }
+        if(len > maxCol)
+        {
+            for(cc=meStrCells(out,(int) (dd-out))-((start) ? 1:0) ; cc<lim ; cc++)
+                *dd++ = ' ';
+            *dd++ = '$';
+        }
+        *dd = '\0';
+        frameCur->mlColumn = col;
+        mlwrite(MWUSEMLCOL|MWCURSOR|MWSPEC,out);
+    }
+#else
     promsiz = (int) meStrlen(prompt);
     col += promsiz;
     len += promsiz;
@@ -546,6 +744,7 @@ mlDisp(meUByte *prompt, meUByte *buf, meUByte *cont, int cpos)
         mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s",(start) ? "$":"",expbuf+start-promsiz);
     else
         mlwrite(MWUSEMLCOL|MWCURSOR,(meUByte *)"%s%s%s",(start) ? "$":"",prompt+start,expbuf);
+#endif
     
     /* switch on the status so we save it */
     frameCur->mlStatus = (frameCur->mlStatus & MLSTATUS_CURMASK)|MLSTATUS_KEEP|MLSTATUS_POSML;
@@ -581,6 +780,121 @@ isFileIgnored(meUByte *fileName)
         }
     }
     return meFALSE;
+}
+#endif
+
+#if MEOPT_UNICODE
+/* the display width of a completion */
+#define mlCompCells(ss) meStrCells((ss),(int) meStrlen(ss))
+#else
+#define mlCompCells(ss) ((int) meStrlen(ss))
+#endif
+
+#if MEOPT_UNICODE
+#define mlFoldChar(cc) (((cc) < 0x80) ? (meUInt) toLower(cc):meUniFold(cc))
+
+/* Compares the nn bytes of str1 with the start of str2 a char at a time ignoring case, as
+ * meStridif orders the completion list; the matching start of str2 can be a different length */
+static int
+mlStrnifold(const meUByte *str1, const meUByte *str2, size_t nn)
+{
+    const meUByte *ee=str1+nn;
+    meUInt cc, dd, fc, fd;
+
+    while(str1 < ee)
+    {
+        str1 += meUtf8Decode(str1,(int) (ee-str1),&cc);
+        str2 += meUtf8Decode(str2,meUTF8_LEN_MAX,&dd);
+        if(cc != dd)
+        {
+            fc = mlFoldChar(cc);
+            fd = mlFoldChar(dd);
+            if(fc != fd)
+                return (fc < fd) ? -1:1;
+        }
+        if((dd == 0) && (str2[-1] == 0))
+            return 1;
+    }
+    return 0;
+}
+
+/* Returns the byte offset of the char after the first nc chars of ss */
+static int
+mlCharsToBytes(const meUByte *ss, int nc)
+{
+    meUInt uc;
+    int off=0;
+
+    while((--nc >= 0) && (ss[off] != '\0'))
+        off += meUtf8Decode(ss+off,meUTF8_LEN_MAX,&uc);
+    return off;
+}
+
+/* Returns the number of chars in the len bytes of ss */
+static int
+mlBytesToChars(const meUByte *ss, int len)
+{
+    meUInt uc;
+    int off=0, nc=0;
+
+    while(off < len)
+    {
+        off += meUtf8Decode(ss+off,len-off,&uc);
+        nc++;
+    }
+    return nc;
+}
+
+/* Tests whether any of the completions strs[fst..lst] has the ASCII char cc after the input's
+ * nc chars */
+static int
+mlCompleteHasChar(meUByte **strs, int fst, int lst, int nc, int cc)
+{
+    for( ; fst<=lst ; fst++)
+        if(strs[fst][mlCharsToBytes(strs[fst],nc)] == cc)
+            return 1;
+    return 0;
+}
+
+/* Extends the input buf (len bytes, nc chars of it the completion's) with the chars every
+ * completion strs[fst..lst] has next, taken from strs[lst]. Ignoring case the completions can
+ * hold the same chars in different lengths, so each keeps its own offset. Returns the new length */
+static int
+mlCompleteCommon(meUByte *buf, int len, int nbuf, meUByte **strs, int fst, int lst, int nc,
+                 int insens)
+{
+    meUByte *ss;
+    meUInt ch, dd;
+    int *offs, ii, rl, nn=lst-fst+1;
+
+    if((offs = (int *) meMalloc(nn*sizeof(int))) == NULL)
+        return len;
+    for(ii=0 ; ii<nn ; ii++)
+        offs[ii] = mlCharsToBytes(strs[fst+ii],nc);
+    for(;;)
+    {
+        ss = strs[lst]+offs[nn-1];
+        if(*ss == '\0')
+            break;
+        rl = meUtf8Decode(ss,meUTF8_LEN_MAX,&ch);
+        if((len+rl) >= nbuf)
+            break;
+        for(ii=0 ; ii<nn-1 ; ii++)
+        {
+            if(strs[fst+ii][offs[ii]] == '\0')
+                break;
+            offs[ii] += meUtf8Decode(strs[fst+ii]+offs[ii],meUTF8_LEN_MAX,&dd);
+            if((dd != ch) && (!insens || (mlFoldChar(dd) != mlFoldChar(ch))))
+                break;
+        }
+        if(ii != nn-1)
+            break;
+        memcpy(buf+len,ss,rl);
+        len += rl;
+        offs[nn-1] += rl;
+    }
+    meFree(offs);
+    return len;
 }
 #endif
 
@@ -821,20 +1135,27 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
         else
         {
             meLine *lp;
-            int ii, jj, lineNo;
+            int ii, jj, lineNo, sc, ss, ll;
             
             row += cwp->vertScroll;
             lineNo = row;
             lp = cwp->buffer->baseLine->next;
             while(--row >= 0)
                 lp = meLineGetNext(lp);
-            /* a line of 2 completions has the second at column markOffset, after the first's padding */
-            ii = 0;
+            /* a line of 2 completions has the second at cell markOffset, after the first's padding */
+            ii = sc = 0;
             jj = meLineGetLength(lp);
             if(lp->flag & meLINE_NOEOL)
             {
-                ii = (cwp->markOffset < jj) ? cwp->markOffset:jj;
-                if(col < cwp->markOffset)
+                for(ss=0 ; (ss < cwp->markOffset) && (ii < jj) ; ii+=ll)
+#if MEOPT_UNICODE
+                    ss += meStrCharCells(meLineGetText(lp)+ii,jj-ii,&ll);
+#else
+                    ss++, ll=1;
+#endif
+                if(col >= cwp->markOffset)
+                    sc = cwp->markOffset;
+                else
                 {
                     jj = ii;
                     while((jj > 0) && (meLineGetChar(lp,jj-1) == ' '))
@@ -842,7 +1163,11 @@ mlHandleMouse(meUByte *inpBuf, int inpBufSz, int compOff)
                     ii = 0;
                 }
             }
-            if((jj - ii + ((ii) ? cwp->markOffset:0)) > col)
+#if MEOPT_UNICODE
+            if((sc + meStrCells(meLineGetText(lp)+ii,jj-ii)) > col)
+#else
+            if((sc + jj - ii) > col)
+#endif
             {
                 cwp->dotLine = lp;
                 cwp->dotOffset = ii;
@@ -912,7 +1237,10 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     meUByte onHist, numHist, *numPtr;
     meUByte *defaultStr;
     meUByte prom[meBUF_SIZE_MAX], storeBuf[meBUF_SIZE_MAX];
-    meUByte ch, **strList;
+    meUByte **strList;
+#if !MEOPT_UNICODE
+    meUByte ch;
+#endif
     meUByte *contstr=NULL;
     int     gotPos=1, fstPos, lstPos, mrkPos=0, noStrs;
     int     changed=1, compOff=0;
@@ -927,7 +1255,11 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
     if(option & MLINSENSCASE)
     {
         curCmpFunc  = meStridif;
+#if MEOPT_UNICODE
+        curCmpIFunc = (meIFuncSSI) mlStrnifold;
+#else
         curCmpIFunc = meStrnicmp;
+#endif
     }
     else
     {
@@ -1025,11 +1357,19 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         if(option & MLHIDEVAL)
         {
             meUByte hbuf[meBUF_SIZE_MAX];
+            int hpos=ipos;
+#if MEOPT_UNICODE
+            /* a star for each char */
+            for(ff=0, ii=0, hpos=0 ; buf[ii] != '\0' ; ff++, ii=meUtf8Next(buf,ii,meBUF_SIZE_MAX))
+                if(ii < ipos)
+                    hpos++;
+#else
             ff = (int) meStrlen(buf);
+#endif
             meAssert(ff < meBUF_SIZE_MAX);
             memset(hbuf,'*',ff);
             hbuf[ff] = '\0';
-            mlgsDisp(prom,hbuf,contstr,ipos);
+            mlgsDisp(prom,hbuf,contstr,hpos);
         }
         else
             mlgsDisp(prom,buf,contstr,ipos);
@@ -1037,7 +1377,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
         mlInputFlags >>= 4;
 
         cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT);
-        idx = decode_key((meUShort) cc,&arg);
+        idx = decode_key((meKey) cc,&arg);
         if(arg)
         {
             ff = 1;
@@ -1066,13 +1406,16 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             
         case CK_BAKCHR:    /* ^B : Backwards char */
             while(ipos && ii--)
-                ipos--;
+                ipos = mlPrevChar(buf,ipos);
             break;
             
         case CK_DELFOR:    /* ^D : Delete the character under the cursor */
             if((ipos < ilen) & ii)
             {
-                ilen = mlForwardDelete(buf,ipos,ilen,ii,1);
+                ff = ipos;
+                while((ff < ilen) && (ii-- > 0))
+                    ff = mlNextChar(buf,ff,ilen);
+                ilen = mlForwardDelete(buf,ipos,ilen,ff-ipos,1);
                 changed=1;
             }
             break;
@@ -1093,7 +1436,7 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             
         case CK_FORCHR:    /* ^F : Move forward one character */
             while((ipos < ilen) && ii--)
-                ipos++;
+                ipos = mlNextChar(buf,ipos,ilen);
             break;
             
         case CK_ABTCMD: /* ^G : Abort input and return */
@@ -1101,14 +1444,12 @@ meGetStringFromUser(meUByte *prompt, int option, int defnum, meUByte *buf, int n
             break;
             
         case CK_DELBAK:    /* ^H : backwards delete. */
-            if(ipos && (ii > 0))
+            if(ipos && ii)
             {
-                if((ipos -= ii) < 0)
-                {
-                    ii += ipos;
-                    ipos = 0;
-                }
-                ilen = mlForwardDelete(buf,ipos,ilen,ii,1);
+                ff = ipos;
+                while((ipos > 0) && (ii-- > 0))
+                    ipos = mlPrevChar(buf,ipos);
+                ilen = mlForwardDelete(buf,ipos,ilen,ff-ipos,1);
                 changed=1;
             }
             break;
@@ -1225,6 +1566,12 @@ input_expand:
                 }
                 else
                 {
+#if MEOPT_UNICODE
+                    ii = mlBytesToChars(buf+compOff,ilen-compOff);
+                    if(mlCompleteHasChar(strList,fstPos,lstPos,ii,cc))
+                        goto input_addexpand;
+                    ilen = mlCompleteCommon(buf,ilen,nbuf,strList,fstPos,lstPos,ii,option & MLINSENSCASE);
+#else
                     for(ii=fstPos ; ii<=lstPos ; ii++)
                         if(strList[ii][ilen-compOff] == cc)
                             goto input_addexpand;
@@ -1242,6 +1589,7 @@ input_expand:
                             break;
                         buf[ilen++] = ch;
                     }
+#endif
                     buf[ilen] = '\0';
                 }
                 ipos = ilen;
@@ -1254,8 +1602,13 @@ input_expand:
             {
                 meWindow *cwp;
                 meBuffer *cbp, **br;
+#if MEOPT_UNICODE
+                /* a column is up to 75 cells and a cell can take 4 bytes */
+                meUByte line[4*150+1];
+#else
                 meUByte line[150];
-                int jj, last, len, lwidth;
+#endif
+                int jj, last, len, lwidth, ww;
                 
                 for(ii=fstPos ; ii<=lstPos ; ii++)
                     if(strList[ii][ilen-compOff] == cc)
@@ -1298,12 +1651,13 @@ input_expand:
                         {
                             if(last >= 0)
                             {
-                                if(((len=(int) meStrlen(strList[last])) < lwidth) && 
-                                   ((int) meStrlen(strList[ii]) < lwidth))
+                                if(((ww=mlCompCells(strList[last])) < lwidth) && 
+                                   (mlCompCells(strList[ii]) < lwidth))
                                 {
+                                    len = (int) meStrlen(strList[last]);
                                     meStrcpy(line,strList[last]);
-                                    memset(line+len,' ',lwidth-len);
-                                    meStrcpy(line+lwidth,strList[ii]);
+                                    memset(line+len,' ',lwidth-ww);
+                                    meStrcpy(line+len+lwidth-ww,strList[ii]);
                                     addLineToEob(cbp,line);
                                     cbp->baseLine->prev->flag |= meLINE_NOEOL;
                                     last = -1;
@@ -1314,7 +1668,7 @@ input_expand:
                                     last = ii;
                                 }
                             }
-                            else if((int) meStrlen(strList[ii]) < lwidth)
+                            else if(mlCompCells(strList[ii]) < lwidth)
                             {
                                 line[0] = '\0';
                                 last = ii;
@@ -1567,9 +1921,18 @@ input_expand:
              */
             if(ipos && ipos < ilen)
             {
+#if MEOPT_UNICODE
+                meUByte bb[meUTF8_LEN_MAX*2];
+                int lo=meUtf8Prev(buf,ipos), eo=meUtf8Next(buf,ipos,ilen);
+                memcpy(bb,buf+ipos,eo-ipos);
+                memcpy(bb+eo-ipos,buf+lo,ipos-lo);
+                memcpy(buf+lo,bb,eo-lo);
+                ipos = lo+eo-ipos;
+#else
                 cc = buf[ipos - 1];
                 buf[ipos - 1] = buf[ipos];
                 buf[ipos] = cc;
+#endif
                 changed=1;
             }
             break;
@@ -1615,13 +1978,36 @@ input_expand:
             break;
         
         case CK_QUOTE:    /* ^Q - quote the next character */
+            if(ii < 0)
+            {
+                /* bound with a -ve argument, the char is given by its code and inserted -n times */
+                meUByte cb[meCHAR_LEN_MAX];
+                int cl, jj;
+                if((cl = meGetCharCode(NULL,cb)) < 0)
+                {
+                    cont_flag = 5;
+                    break;
+                }
+                for(ii=-ii ; (cl > 0) && (ii > 0) ; ii--)
+                {
+                    if(((int) meStrlen(buf) + cl) >= nbuf)
+                    {
+                        TTbell();
+                        break;
+                    }
+                    for(jj=0 ; jj<cl ; jj++)
+                        mlInsertChar(cb[jj],buf,&ipos,&ilen,nbuf);
+                }
+                changed=1;
+                break;
+            }
             if((cc = quoteKeyToChar(tgetc())) < 0)
             {
                 TTbell();
                 break;
             }
             while(ii--)
-                if(mlInsertChar((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
+                if(mlInsertKeyChar(cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                     TTbell();
             changed=1;
             break;
@@ -1718,11 +2104,9 @@ ml_yank:
             {
                 mlForwardToNextWord(buf,ipos,ilen);
                 if(ipos < ilen)
-                {
-                    buf[ipos] = toUpper(buf[ipos]);
-                    for(ipos++ ; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                        buf[ipos] = toLower(buf[ipos]);
-                }
+                    ipos = mlCharCase(buf,ipos,&ilen,nbuf,1);
+                while((ipos<ilen) && mlIsAlphaNum(buf,ipos))
+                    ipos = mlCharCase(buf,ipos,&ilen,nbuf,0);
                 changed=1;
             }
             break;
@@ -1732,8 +2116,8 @@ ml_yank:
             while(ii--)
             {
                 mlForwardToNextWord(buf,ipos,ilen);
-                for(; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                    buf[ipos] = toUpper(buf[ipos]);
+                while((ipos<ilen) && mlIsAlphaNum(buf,ipos))
+                    ipos = mlCharCase(buf,ipos,&ilen,nbuf,1);
                 changed=1;
             }
             break;
@@ -1743,8 +2127,8 @@ ml_yank:
             while(ii--)
             {
                 mlForwardToNextWord(buf,ipos,ilen);
-                for(; (ipos<ilen) && isAlphaNum(buf[ipos]) ; ipos++)
-                    buf[ipos] = toLower(buf[ipos]);
+                while((ipos<ilen) && mlIsAlphaNum(buf,ipos))
+                    ipos = mlCharCase(buf,ipos,&ilen,nbuf,0);
                 changed=1;
             }
             break;
@@ -1832,12 +2216,12 @@ ml_yank:
             break;
             
         case -1:
-            if(cc & 0xff00)    /* if control, meta or prefix then scrap */
+            if(!meKeyIsChar(cc))    /* if control, meta or prefix then scrap */
             {
 #if MEOPT_MOUSE
                 /* ignore mouse move events - these are sometimes generated
                  * when executing a command from osd */
-                if((cc & 0x00ff) != SKEY_mouse_move)
+                if((cc & ME_KEY_CHAR) != SKEY_mouse_move)
 #endif                
                     TTbell();
                 break;
@@ -1863,7 +2247,7 @@ input_addexpand:
             /*
              * And insert it ....
              */
-            if(mlInsertChar((meUByte) cc, buf, &ipos, &ilen, nbuf) == meFALSE)
+            if(mlInsertKeyChar(cc, buf, &ipos, &ilen, nbuf) == meFALSE)
                 TTbell();
             changed=1;
             break;

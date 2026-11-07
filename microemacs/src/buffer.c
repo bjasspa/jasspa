@@ -589,7 +589,7 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
     meBuffer *tbp ;
     meInt     dotLineNo=0, markLineNo ;
     meUShort  dotCol, markCol ;
-    int       reload=0 ;
+    int       reload=0, ii ;
     
     if(meModeTest(bp->mode,MDNACT) && ((bp->intFlag & BIFNACT) == 0))
     {   
@@ -693,21 +693,22 @@ swbuffer(meWindow *wp, meBuffer *bp)        /* make buffer BP current */
                 meWindowGotoLine(wp,markLineNo);
                 wp->markLine = wp->dotLine;
                 wp->markLineNo = wp->dotLineNo;
+                /* the columns are char indexes */
                 if(markCol > 0)
                 {
-                    if(markCol > meLineGetLength(wp->markLine))
+                    if((ii = meLineCharOffset(wp->markLine,markCol)) < 0)
                         wp->markOffset = meLineGetLength(wp->markLine);
                     else
-                        wp->markOffset = markCol;
+                        wp->markOffset = (meUShort) ii;
                 }
             }
             meWindowGotoLine(wp,dotLineNo);
             if(dotCol > 0)
             {
-                if(dotCol > meLineGetLength(wp->dotLine))
+                if((ii = meLineCharOffset(wp->dotLine,dotCol)) < 0)
                     wp->dotOffset = meLineGetLength(wp->dotLine);
                 else
-                    wp->dotOffset = dotCol;
+                    wp->dotOffset = (meUShort) ii;
             }
         }
         /* on a reload reset all other windows displaying this buffer to the tob */
@@ -1765,6 +1766,9 @@ createBuffer(register meUByte *bname)
     bp->inputFunc = -1 ;
     bp->isWordMask = CHRMSK_DEFWORDMSK ;
 #endif
+#if MEOPT_UNICODE
+    bp->encoding = meENCODING_UTF8 ;
+#endif
 #if MEOPT_MAJORMODE
     bp->fhook = -1 ;
     bp->bhook = -1 ;
@@ -2028,6 +2032,9 @@ invalid_global:
         meModeCopy(globMode,mode) ;
     else
     {
+        if(((nn == MDCR) || (nn == MDLF)) && (meModeTest(mode,nn) != meModeTest(bp->mode,nn)))
+            /* changing the line ending style normalises every line to it */
+            meBufferEolNormalise(bp) ;
         meModeCopy(bp->mode,mode) ;
         /* update  mode line in all buffer windows */
         meBufferAddModeToWindows(bp,WFMODE) ;

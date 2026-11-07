@@ -99,6 +99,11 @@ as \fC"/usr/local/bin/me"\fR the path can be obtained using
 and the file name by using
 .C "set-variable %file &rig %pathfile &rsin"
 \fC"/" %pathfile\fR
+.SH NOTES
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) the position returned is a character position and \fB&isin\fR and \fB&risin\fR ignore case using
+Unicode case folding.
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,

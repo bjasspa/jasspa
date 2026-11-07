@@ -57,33 +57,33 @@ jobs:
           rm ./.gitignore
           cd ..
           mv release_readme.txt readme.txt
-          export MEVER=`./bin/linux6-aarch64/mec -p @contribs/ver.emf`
+          export MEVER=`./bin/linux6-aarch64/mec -p @dev/ver.emf`
           zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_linux_aarch_binaries bin LICENSE readme.txt
 
       - name: Create linux-aarch mesc
         run: |
-          export MEVER=`./microemacs/bin/linux6-aarch64/mec -p @microemacs/contribs/ver.emf`
-          cd ./microemacs/mesingle
+          export MEVER=`./microemacs/bin/linux6-aarch64/mec -p @microemacs/dev/ver.emf`
+          cd ./microemacs/dev/mesingle
           rm -rf bin
           mkdir -p bin/linux6-aarch64
-          ../bin/linux6-aarch64/mec -p "@./mesgen" -f -p ../bin/linux6-aarch64/mec -t ../bin/linux6-aarch64/tfs -o bin/linux6-aarch64/mesc
-          cp ../LICENSE ./
-          cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_aarch_mesc bin LICENSE readme.txt
+          ../../bin/linux6-aarch64/mec -p "@./mesgen" -f -p ../../bin/linux6-aarch64/mec -t ../../bin/linux6-aarch64/tfs -o bin/linux6-aarch64/mesc
+          cp ../../LICENSE ./
+          cp ../../readme.txt ./
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_aarch_mesc bin LICENSE readme.txt
 
       - name: Create linux-aarch mesw
         run: |
-          export MEVER=`./microemacs/bin/linux6-aarch64/mec -p @microemacs/contribs/ver.emf`
-          cd ./microemacs/mesingle
+          export MEVER=`./microemacs/bin/linux6-aarch64/mec -p @microemacs/dev/ver.emf`
+          cd ./microemacs/dev/mesingle
           rm -rf bin
           mkdir -p bin/linux6-aarch64
-          ../bin/linux6-aarch64/mec -p "@./mesgen" -f -p ../bin/linux6-aarch64/mew -t ../bin/linux6-aarch64/tfs -o bin/linux6-aarch64/mesw
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_aarch_mesw bin LICENSE readme.txt
+          ../../bin/linux6-aarch64/mec -p "@./mesgen" -f -p ../../bin/linux6-aarch64/mew -t ../../bin/linux6-aarch64/tfs -o bin/linux6-aarch64/mesw
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_linux_aarch_mesw bin LICENSE readme.txt
 
       - name: Create linux-aarch OpenSSL download
         run: |
           cd ./microemacs/
-          export MEVER=`./bin/linux6-aarch64/mec -p @contribs/ver.emf`
+          export MEVER=`./bin/linux6-aarch64/mec -p @dev/ver.emf`
           rm -rf tfs
           mkdir -p tfs/bin/linux6-aarch64
           cd tfs/bin/linux6-aarch64

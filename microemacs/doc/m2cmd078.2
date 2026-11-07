@@ -59,6 +59,11 @@ Back up to the last match (possibly deleting the last character on the search st
 Insert the next word into the search string.
 .IP \fB\*cg\fR
 Abort the search, return to start.
+.IP \fB\*cq\fR
+Quote the next key, adding it to the search string even if it is a control character.
+.IP "\fB\*e\*cq\fR"
+Add a character given by its code to the search string, see
+.Ht quote-char 2 .
 .IP "\fB\*e\fR or \fB\*cm\fR"
 End the search, stay here
 .LP

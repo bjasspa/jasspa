@@ -252,6 +252,58 @@ copy_region_exit:
     return ret;
 }
 
+/* Chars may change length, so dot is restored from the region start or left at its end */
+static int
+regionChangeCase(int upper)
+{
+    meWindow *cwp;
+    meRegion region;
+    meUInt cc, nc;
+    meInt size;
+    int s, dotStart;
+    
+    if((s=getregion(&region)) <= 0)
+        return s;
+    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
+        return s;
+    cwp = frameCur->windowCur;
+    dotStart = ((cwp->dotLine == region.line) && (cwp->dotOffset == region.offset));
+    cwp->dotLine = region.line;
+    cwp->dotOffset = region.offset;
+    cwp->dotLineNo = region.lineNo;
+    size = region.size;
+    while(size > 0)
+    {
+        if(cwp->dotOffset >= meLineGetLength(cwp->dotLine))
+        {
+            cwp->dotLine = meLineGetNext(cwp->dotLine);
+            cwp->dotOffset = 0;
+            cwp->dotLineNo++;
+            size--;
+        }
+        else
+        {
+            cc = meLineGetUni(cwp->dotLine,cwp->dotOffset);
+            size -= meLineNextChar(cwp->dotLine,cwp->dotOffset) - cwp->dotOffset;
+            nc = (upper) ? meUniCharToUpper(cc):meUniCharToLower(cc);
+            if((nc != cc) && (lineReplaceChar(nc) <= 0))
+                return meFALSE;
+            cwp->dotOffset = meLineNextChar(cwp->dotLine,cwp->dotOffset);
+        }
+    }
+    if(dotStart)
+    {
+        while(cwp->dotLineNo > region.lineNo)
+        {
+            cwp->dotLine = meLineGetPrev(cwp->dotLine);
+            cwp->dotLineNo--;
+        }
+        cwp->dotOffset = region.offset;
+    }
+    cwp->updateFlags |= WFMOVEL;
+    return meTRUE;
+}
+
 /*
  * Lower case region. Zap all of the upper
  * case characters in the region to lower case. Use
@@ -263,51 +315,7 @@ copy_region_exit:
 int
 lowerRegion(int f, int n)
 {
-    meWindow *cwp;
-    meLine *line;
-    int loffs;
-    meInt lline;
-    register meUByte c;
-    register int s;
-    meRegion  region;
-    
-    if((s=getregion(&region)) <= 0)
-        return (s);
-    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return s;
-    cwp = frameCur->windowCur;
-    line = cwp->dotLine;
-    loffs = cwp->dotOffset;
-    lline = cwp->dotLineNo;
-    cwp->dotLine = region.line;
-    cwp->dotOffset = region.offset;
-    cwp->dotLineNo = region.lineNo;
-    while (region.size--)
-    {
-        if((c = meLineGetChar(cwp->dotLine, cwp->dotOffset)) == '\0')
-        {
-            cwp->dotLine = meLineGetNext(cwp->dotLine);
-            cwp->dotOffset = 0;
-            cwp->dotLineNo++ ;
-        }
-        else
-        {
-            if(isUpper(c))
-            {
-                lineSetChanged(WFMAIN);
-#if MEOPT_UNDO
-                meUndoAddRepChar() ;
-#endif
-                c = toggleCase(c) ;
-                meLineSetChar(cwp->dotLine, cwp->dotOffset, c);
-            }
-            (cwp->dotOffset)++ ;
-        }
-    }
-    cwp->dotLine = line ;
-    cwp->dotOffset = loffs ;
-    cwp->dotLineNo = lline ;
-    return meTRUE ;
+    return regionChangeCase(0);
 }
 
 /*
@@ -321,51 +329,7 @@ lowerRegion(int f, int n)
 int
 upperRegion(int f, int n)
 {
-    meWindow *cwp;
-    meLine *line;
-    int loffs;
-    long lline;
-    register char c;
-    register int s;
-    meRegion region;
-    
-    if((s=getregion(&region)) <= 0)
-        return (s);
-    if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
-        return s;
-    cwp = frameCur->windowCur;
-    line = cwp->dotLine ;
-    loffs = cwp->dotOffset ;
-    lline = cwp->dotLineNo ;
-    cwp->dotLine = region.line ;
-    cwp->dotOffset = region.offset ;
-    cwp->dotLineNo = region.lineNo ;
-    while (region.size--)
-    {
-        if((c = meLineGetChar(cwp->dotLine, cwp->dotOffset)) == '\0')
-        {
-            cwp->dotLine = meLineGetNext(cwp->dotLine);
-            cwp->dotOffset = 0;
-            cwp->dotLineNo++ ;
-        }
-        else
-        {
-            if(isLower(c))
-            {
-                lineSetChanged(WFMAIN);
-#if MEOPT_UNDO
-                meUndoAddRepChar() ;
-#endif
-                c = toggleCase(c) ;
-                meLineSetChar(cwp->dotLine, cwp->dotOffset, c);
-            }
-            (cwp->dotOffset)++ ;
-        }
-    }
-    cwp->dotLine = line ;
-    cwp->dotOffset = loffs ;
-    cwp->dotLineNo = lline ;
-    return meTRUE ;
+    return regionChangeCase(1);
 }
 
 #if MEOPT_EXTENDED
@@ -404,8 +368,13 @@ killRectangle(int f, int n)
             
     slno = cwp->dotLineNo;
     elno = cwp->markLineNo;
-    /* calculate the maximum length */
+    /* calculate the maximum length, a column can take a 4 byte char and a char before the start
+     * column can be included */
+#if MEOPT_UNICODE
+    size = (elno - slno + 1) * ((llen + 1) * meUTF8_LEN_MAX + 1);
+#else
     size = (elno - slno + 1) * (llen + 1);
+#endif
     
     /* sort out the kill buffer */
     killInit((lastflag == meCFKILL) || (thisflag == meCFKILL));
@@ -415,8 +384,9 @@ killRectangle(int f, int n)
     for(;;)
     {
         meUByte *off, cc;
-        int lspc=0, ii, jj, kk, ll;
+        int lspc=0, ii, jj, kk, ll, nn, pp;
         
+        /* the offset table may hold a char's width against any of its bytes */
         off = windCurLineOffsetEval(cwp);
         coff = 0;
         ii = 0;
@@ -425,7 +395,13 @@ killRectangle(int f, int n)
         {
             if(coff == soff)
                 break;
-            if((coff+off[ii]) > soff)
+            nn = meLineNextChar(cwp->dotLine,ii);
+            ll = 0;
+            pp = ii;
+            do
+                ll += off[pp];
+            while(++pp < nn);
+            if((coff+ll) > soff)
             {
                 lspc = soff - coff;
                 /* as we can convert tabs to spaces, adjust the offset */
@@ -434,7 +410,8 @@ killRectangle(int f, int n)
                 coff = soff;
                 break;
             }
-            coff += off[ii++];
+            coff += ll;
+            ii = nn;
         }
         jj = ii;
         if(coff < soff)
@@ -450,7 +427,13 @@ killRectangle(int f, int n)
             {
                 if(coff == eoff)
                     break;
-                if((ll = off[jj]) != 0)
+                nn = meLineNextChar(cwp->dotLine,jj);
+                ll = 0;
+                pp = jj;
+                do
+                    ll += off[pp];
+                while(++pp < nn);
+                if(ll != 0)
                 {
                     cc = meLineGetChar(cwp->dotLine,jj);
                     if((coff+ll) > eoff)
@@ -472,9 +455,14 @@ killRectangle(int f, int n)
                         while(--ll > 0);
                     }
                     else
-                        *kstr++ = cc;
+                    {
+                        do
+                            *kstr++ = meLineGetChar(cwp->dotLine,jj);
+                        while(++jj < nn);
+                        continue;
+                    }
                 }
-                jj++;
+                jj = nn;
             }
             if(coff < eoff)
             {
@@ -550,7 +538,7 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
 {
     meWindow *cwp=frameCur->windowCur;
     meUByte *off, *ss, *tt, *dd=NULL, cc ;
-    int ii, jj, kk, lsspc, lespc, ldel, linsc, coff ;
+    int ii, jj, kk, nn, pp, ww, lsspc, lespc, ldel, linsc, coff ;
     meKillNode *killp ;
     
     killp = pklist->kill;
@@ -572,7 +560,14 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
             {
                 if(coff == soff)
                     break ;
-                if((coff+off[jj]) > soff)
+                /* the offset table may hold a char's width against any of its bytes */
+                nn = meLineNextChar(cwp->dotLine,jj);
+                ww = 0;
+                pp = jj;
+                do
+                    ww += off[pp];
+                while(++pp < nn);
+                if((coff+ww) > soff)
                 {
                     /* if its a tab we can remove the tab and replace with spaces */
                     if(meLineGetChar(cwp->dotLine,jj) == meCHAR_TAB)
@@ -582,7 +577,8 @@ yankRectangleKill(struct meKill *pklist, int soff, int notLast)
                     }
                     break ;
                 }
-                coff += off[jj++] ;
+                coff += ww;
+                jj = nn;
             }
             lsspc = soff - coff ;
             linsc = ii + lsspc + lespc - ldel ;

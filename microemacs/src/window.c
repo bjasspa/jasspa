@@ -793,7 +793,7 @@ windowScrollRight (int f, int n)
             }
             if(cwp->dotOffset != doto)
             {
-                cwp->dotOffset = doto;
+                cwp->dotOffset = meLineCharStart(cwp->dotLine,doto);
                 cwp->updateFlags |= WFMOVEC;
             }
         }
@@ -1381,7 +1381,7 @@ windowSplitDepth(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",frameCur->windowCount);
     /* make modeline 10 bytes longer so small values can be splat into modeline string without risk of overrun */
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
-       ((lp=meLineMalloc(frameCur->widthMax+10,0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
+       ((lp=meLineMalloc(meModeLineAllocSize(frameCur->widthMax),0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
     {
         meNullFree(wp);                /* Destruct created window */
         return meFALSE;                /* Fail */
@@ -1482,7 +1482,7 @@ windowSplitWidth(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"Cannot create more than %d windows",frameCur->windowCount);
     /* make modeline 10 bytes longer so small values can be splat into modeline string without risk of overrun */
     if(((wp = (meWindow *) meMalloc(sizeof(meWindow))) == NULL) ||
-       ((lp=meLineMalloc(frameCur->widthMax+10,0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
+       ((lp=meLineMalloc(meModeLineAllocSize(frameCur->widthMax),0)) == NULL) || ((off=meLineMalloc(frameCur->widthMax,0)) == NULL))
     {
         meNullFree(wp);                   /* Destruct window */
         return meFALSE;                   /* and Fail */

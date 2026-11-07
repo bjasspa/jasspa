@@ -78,6 +78,38 @@ message and ring the bell as the error needs  handling (e.g. missing  argument
 in a  \fB!if\fR  statement).  However  if the  macro  has been  called  with a
 \fB!force\fR  the execution will not be aborted so tracing this issue could be
 difficult without this setting.
+.SS "Compiled Macros"
+Every macro is compiled as it is defined, and only a macro defined while \fB$debug\fR is not \fC0\fR keeps its
+source: its lines, and the file and line number of each. Only such a macro can be debugged; the bits above apply to it
+as described, an error location (\fC0x01\fR) is given as the file and its line, and
+.Ht insert-macro 2
+can insert it. A macro defined while \fB$debug\fR is \fC0\fR runs the same way and at the same speed but has no
+source, so it is never shown by the debugger:
+.BS
+Stepping (\fC0x02\fR) into it runs it as one step, the debugger continues at the next line with source, in the
+calling macro or in a macro it calls.
+.BU
+A break by \fCC-g\fR (\fC0x10\fR) or the bell (\fC0x20\fR) stops at once and shows the current macro's name and
+that it is compiled, "\fCname: compiled ?\fR"; any key other than the debugger's commands runs on to the first line
+with source, so a loop in compiled code can still be stopped.
+.BU
+.Ht insert-macro 2
+fails, saying the macro is compiled. A macro made by
+.Ht name-kbd-macro 2
+always keeps its source.
+.BE 0
+.PP
+\fB$debug\fR is \fC0\fR at start-up, so macros loaded at start-up, including the idle and callback macros, are not
+debugged. To debug a macro, set \fB$debug\fR before it is defined, i.e. before its file is executed (most macro files
+are loaded when one of their commands is first used); a macro already defined keeps its state until its file is
+executed again. To make every macro debuggable start \*(mS with the \fB-v\fR option:
+.Me $emf-scheme
+.CS
+me -v $debug=1
+.CE
+.Me $ehf-scheme
+Note that the line number given for a macro with source is the line in its file when it was defined, so it is wrong
+if the file has since been edited and not executed again.
 .SH "SEE ALSO"
 .na
 .Ht execute-file 2 .

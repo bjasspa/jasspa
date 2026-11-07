@@ -46,6 +46,30 @@ count_key_table(void)
     keyTableSize = (meUShort) ii ;
 }
 
+/* Returns the Latin char a non-Latin keyboard's key cc maps to, 0 if none; the map never holds an
+ * ASCII key */
+meUByte
+meKeyboardMapChar(meUInt cc)
+{
+#if MEOPT_UNICODE
+    int lo=0, hi=charKeyboardMapLen-1, mid;
+    meUInt uc;
+    while(lo <= hi)
+    {
+        mid = (lo + hi) >> 1;
+        if((uc = (charKeyboardMap[mid] >> 8)) == cc)
+            return (meUByte) charKeyboardMap[mid];
+        if(uc < cc)
+            lo = mid + 1;
+        else
+            hi = mid - 1;
+    }
+    return 0;
+#else
+    return (cc < 256) ? charKeyboardMap[cc]:0;
+#endif
+}
+
 /*****************************************************************************
 *								x.
 *	Function Title:	decode_key ()
@@ -71,18 +95,18 @@ count_key_table(void)
  */
 
 int
-decode_key(meUShort ocode, meUInt *arg)
+decode_key(meKey ocode, meUInt *arg)
 {
     register meBind  *ktp;			/* Keyboard character array */
     register int      low;			/* Lowest index in table. */
     register int      hi;			/* Hightest index in table. */
     register int      mid;			/* Mid value. */
     register int      status;			/* Status of comparison. */
-    register meUShort code=ocode;
+    register meKey code=ocode;
     /* If no modifier or prefix the code could be a uppercase letter, but
      * only lowercase bindings are allowed so lowercase the letter */  
-    if((code & 0xff00) == 0)
-        code = toLower(code);
+    if(meKeyIsChar(code))
+        code = meUniCharToLower(code);
 try_again:
 #if MEOPT_LOCALBIND
     if(useMlBinds)
@@ -134,7 +158,11 @@ try_again:
 #if MEOPT_OSD
         if((meSystemCfg & meSYSTEM_ALTMENU) &&
            ((code & (ME_SPECIAL|ME_PREFIX_MASK)) == 0) &&
-           ((status = osdMainMenuCheckKey(code & 0x0ff)) != 0))
+#if MEOPT_UNICODE
+           /* menu hot keys are still bytes (phase 7) */
+           ((code & ME_KEY_CHAR) < 0x80) &&
+#endif
+           ((status = osdMainMenuCheckKey(code & ME_KEY_CHAR)) != 0))
         {
             /* Found - return index */
             *arg = (meUInt) (status+0x80000000);
@@ -148,16 +176,13 @@ try_again:
             goto try_again;
         }
     }
+#if MEOPT_EXTENDED
+    /* a non-Latin keyboard's key with no binding runs its Latin key's; that is ASCII, which the
+     * map never holds, so this does not recurse again */
     if((charKeyboardMap != NULL) && ((code & ME_SPECIAL) == 0) &&
-       (charKeyboardMap[code & 0x0ff] != 0))
-    {
-        meUByte *ckm=charKeyboardMap;
-        code = (ocode & 0xff00) | charKeyboardMap[code & 0x0ff];
-        charKeyboardMap = NULL;
-        status = decode_key(code,arg);
-        charKeyboardMap = ckm;
-        return status;
-    }
+       ((status = meKeyboardMapChar(code & ME_KEY_CHAR)) != 0))
+        return decode_key((ocode & ~ME_KEY_CHAR) | status,arg);
+#endif
     *arg = 0;
     return -1;				/* Not found - return error */
 }
@@ -183,7 +208,7 @@ try_again:
 *****************************************************************************/
 
 int
-delete_key(register meUShort code)
+delete_key(register meKey code)
 {
     register meBind *ktp;		/* Keyboard character array */
     register int ii;			/* Index counter */
@@ -235,7 +260,7 @@ delete_key(register meUShort code)
 *****************************************************************************/
 
 int
-insert_key(register meUShort code, meUShort index, meUInt arg)
+insert_key(register meKey code, meUShort index, meUInt arg)
 /*  code - Code to add to key table. */
 /* index - Index for the code. */
 {

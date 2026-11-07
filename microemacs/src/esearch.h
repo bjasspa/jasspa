@@ -56,6 +56,13 @@ typedef struct meRegexItem {
         int group;                /* group number and state */
         meRegexClass cclass;      /* Class bit mask */
     } data;
+#if MEOPT_UNICODE
+    /* chars from 0x80: the UCHAR or UFOLD char, a CLASS's property tests and ranges */
+    meUInt uc;
+    meUInt *urange;               /* first & last char pairs */
+    unsigned short urangeNo;
+    unsigned char uflag;          /* meREGEXITEM_UFLAG_* */
+#endif
     unsigned char flag;           /* item type */
     unsigned char type;           /* item type */
 } meRegexItem;     
@@ -86,6 +93,11 @@ typedef struct meRegex {
     meRegexItem  *lnext;          /* the next free item */
     meRegexItem  *head;           /* pointer to the regex first item */
     meRegexClass  start;          /* first character class bit mask */
+    meRegexClass  start2;         /* second byte bit mask of a multi-byte first char */
+    int           startByte;      /* the only byte in start, else -1 */
+    int           start2Byte;     /* the only byte in start2, else -1 */
+    int           start2No;       /* the number of bytes in start2 when all starts are multi-byte, else 0 */
+    unsigned char start2Bytes[4]; /* those bytes */
 } meRegex;
 
 /* meRegexComp return values */
@@ -120,6 +132,7 @@ typedef struct meRegex {
 #define meREGEX_MAYENDBUFF      0x10
 #define meREGEX_CLASSCHANGE     0x20
 #define meREGEX_CLASSUSED       0x40
+#define meREGEX_START2          0x80    /* start2 limits the byte after a lead byte */
 
 /* meRegexMatch flags */
 #define meREGEX_BACKWARD        0x01
@@ -129,6 +142,12 @@ typedef struct meRegex {
 
 int
 meRegexComp(meRegex *regex, unsigned char *regStr, int flags);
+int
+meRegexCompCache(meRegex *regex, unsigned char *regStr, int flags);
+void
+meRegexCacheClassChanged(void);
+void
+meRegexCacheFree(void);
 int
 meRegexMatch(meRegex *regex, unsigned char *string, int len, 
              int offsetS, int offsetE, int flags);
@@ -145,7 +164,7 @@ extern meUByte *mereNewlBuf;
 extern int      srchLastMagic;      /* last search was a magic        */
 
 #define mereRegexInvalidate()   (mereRegex.flags = 0)
-#define mereRegexClassChanged() (mereRegex.flags |= meREGEX_CLASSCHANGE)
+#define mereRegexClassChanged() (mereRegex.flags |= meREGEX_CLASSCHANGE,meRegexStrCmp.flags |= meREGEX_CLASSCHANGE,meRegexCacheClassChanged())
 #define mereRegexGroupRegexStart(n) (mereRegex.group[(n)].regexStart)
 #define mereRegexGroupStart(n)  (mereRegex.group[(n)].start)
 #define mereRegexGroupEnd(n)    (mereRegex.group[(n)].end)

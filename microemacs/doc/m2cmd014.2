@@ -29,12 +29,35 @@ The output of the command is displayed on the message line e.g.
 Line 1845/3955 Col 0/0 Char 78267/167172 (46%) Win Line 99/48 ACol 0/0 char 10 (0x0a)
 .CE 0
 .PP
+At the end of a line the line's own line ending is given, e.g. "\fCchar 13, 10 (0D, 0A - CRLF)\fR",
+"\fCchar 10 (0A - LF)\fR" or "\fCno char (no line end)\fR", and "\fCno char (end of buffer)\fR" at the end of the
+buffer. In a version of \*(mS without Unicode support a character from 0x80 is also given with its Unicode value
+in the buffer's code page (see
+.Ht $buffer-encoding 5 ),
+e.g. "\fCchar 228 (0xe4 U+0434)\fR" in a CP-1251 file, when the code page has one.
+.PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) the column and character counts are in characters and a byte count is added, and the character
+under the cursor is given with its Unicode code point, e.g.:
+.CS
+Line 1/3 Col 3/6 Char 3/12 Byte 3/13 (23%) Win Line 0/21 ACol 3/6 char 233 (U+00E9)
+.CE 0
+.PP
+In a file read with a code page (see
+.Ht $buffer-encoding 5 )
+the byte is given first, e.g. "\fCchar 233 (E9, U+00E9)\fR", and a character the code page does not have is given as
+"\fCchar U+20AC (not in iso8859-1)\fR". A raw byte (a byte which is not valid in the file's encoding) is given as
+"\fCraw byte (0xFF)\fR".
+.PP
 .Ht $result 5
 is set to the same output  string  unless a numeric  value of zero is given to
 the command in which case the values are given in a
 .Hl "\*(mS list" &lset 4
 format and not printed to the message line; this  information can be useful in
-macros.
+macros. The column, line length and character counts of the list are in bytes, a version of \*(mS with Unicode
+support appends 4 more values: the column, the line length, the characters before the cursor and the total characters,
+all counted in characters.
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,

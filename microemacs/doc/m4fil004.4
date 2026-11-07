@@ -113,6 +113,11 @@ It is the callers responsibility to ensure that the correct number of arguments 
 formatting string. The results are undefined if an incorrect number of arguments are supplied.
 .PP
 An error will be thrown if the \fB%\fR command is not one of the supported ones listed above.
+.PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) a field width and a precision are measured in display cells, a wide character taking two, and a
+string is never cut part way through a character.
 .SH COMPATIBILITY
 Prior to August 2026 the \fBs\fR command treated \fIn\fR as a repeat count rather than a field width, so
 "\fC%13s\fR" inserted the string thirteen times. Macros written against the older behaviour must be changed to use the

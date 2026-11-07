@@ -86,7 +86,7 @@ meWindowBackwardChar(register meWindow *wp, register int n)
         }
         else
         {
-            wp->dotOffset--;
+            wp->dotOffset = meLinePrevChar(wp->dotLine,wp->dotOffset);
             wp->updateFlags |= WFMOVEC;
         }
     }
@@ -109,11 +109,83 @@ meWindowForwardChar(register meWindow *wp, register int n)
         } 
         else
         {
-            wp->dotOffset++;
+            wp->dotOffset = meLineNextChar(wp->dotLine,wp->dotOffset);
             wp->updateFlags |= WFMOVEC;
         }
     }
     return meTRUE;
+}
+
+#if MEOPT_UNICODE
+/* moves by a byte count, a line end counts as one */
+int
+meWindowBackwardBytes(meWindow *wp, int n)
+{
+    meLine *lp;
+    
+    while(n > wp->dotOffset)
+    {
+        if((lp=meLineGetPrev(wp->dotLine)) == wp->buffer->baseLine)
+        {
+            wp->dotOffset = 0;
+            wp->updateFlags |= WFMOVEC;
+            return meFALSE;
+        }
+        n -= wp->dotOffset + 1;
+        wp->dotLineNo--;
+        wp->dotLine = lp;
+        wp->dotOffset = meLineGetLength(lp);
+        wp->updateFlags |= WFMOVEL;
+    }
+    wp->dotOffset -= n;
+    wp->updateFlags |= WFMOVEC;
+    return meTRUE;
+}
+
+/* Returns the number of bytes in the n chars from dot, any beyond the end of the buffer count as one */
+meInt
+meWindowCharsToBytes(meWindow *wp, meInt n)
+{
+    meLine *lp=wp->dotLine;
+    int off=wp->dotOffset, ii;
+    meInt nb=0;
+    
+    for(; n>0 ; n--)
+    {
+        if(off < meLineGetLength(lp))
+        {
+            ii = meLineNextChar(lp,off);
+            nb += ii - off;
+            off = ii;
+        }
+        else if(lp == wp->buffer->baseLine)
+            return nb + n;
+        else
+        {
+            lp = meLineGetNext(lp);
+            off = 0;
+            nb++;
+        }
+    }
+    return nb;
+}
+#endif
+
+/* Returns the number of bytes from dot to lp, off, which must not be before dot, a line end
+ * counts as one */
+meInt
+meWindowBytesTo(meWindow *wp, meLine *lp, int off)
+{
+    meLine *dlp=wp->dotLine;
+    meInt nn;
+    
+    nn = off - wp->dotOffset;
+    while(dlp != lp)
+    {
+        nn += meLineGetLength(dlp) + 1;
+        dlp = meLineGetNext(dlp);
+    }
+    return nn;
 }
 
 /*
@@ -162,6 +234,18 @@ meWindowGetChar(register meWindow *wp)
         cc = wp->dotLine->text[wp->dotOffset];
     return cc;
 }
+
+#if MEOPT_UNICODE
+meUInt
+meWindowGetUni(meWindow *wp)
+{
+    if(wp->buffer->baseLine == wp->dotLine)
+        return 0;
+    if(wp->dotOffset >= wp->dotLine->length)
+        return meCHAR_NL;
+    return meLineGetUni(wp->dotLine,wp->dotOffset);
+}
+#endif
 
 
 /*

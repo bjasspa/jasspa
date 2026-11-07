@@ -71,28 +71,28 @@ jobs:
       run: |
         cd microemacs/src
         bash build.sh -t c -m winmingwucrt.mak
-        ls -la .${OUTTAG}-release-mec/
-        ./.${OUTTAG}-release-mec/mec.exe -V
+        ls -la .${OUTTAG}-release-utf8-mec/
+        ./.${OUTTAG}-release-utf8-mec/mec.exe -V
 
     - name: Build mew window executable
       run: |
         cd microemacs/src
         bash build.sh -t w -m winmingwucrt.mak
-        ls -la .${OUTTAG}-release-mew/
+        ls -la .${OUTTAG}-release-utf8-mew/
 
     - name: Build single executable mesc and mesw
       run: |
         export PATH="$GITHUB_WORKSPACE/microemacs/bin/${OUTTAG}:$PATH"
-        cd microemacs/mesingle
-        bash mesgen.sh -d -o mesc.exe -p ../src/.${OUTTAG}-release-mec/mec.exe -t ../3rdparty/tfs/.${OUTTAG}-release/tfs.exe
-        bash mesgen.sh -d -o mesw.exe -p ../src/.${OUTTAG}-release-mew/mew.exe -t ../3rdparty/tfs/.${OUTTAG}-release/tfs.exe
+        cd microemacs/dev/mesingle
+        bash mesgen.sh -d -o mesc.exe -p ../../src/.${OUTTAG}-release-utf8-mec/mec.exe -t ../../3rdparty/tfs/.${OUTTAG}-release/tfs.exe
+        bash mesgen.sh -d -o mesw.exe -p ../../src/.${OUTTAG}-release-utf8-mew/mew.exe -t ../../3rdparty/tfs/.${OUTTAG}-release/tfs.exe
         ls -la mesc.exe mesw.exe
 
     - name: Package mingwwin binaries
       run: |
         mkdir -p package/${OUTTAG}
         cp microemacs/bin/${OUTTAG}/* package/${OUTTAG}/
-        cp microemacs/mesingle/mesc.exe microemacs/mesingle/mesw.exe package/${OUTTAG}/
+        cp microemacs/dev/mesingle/mesc.exe microemacs/dev/mesingle/mesw.exe package/${OUTTAG}/
         cp microemacs/LICENSE package/${OUTTAG}/
         ls -la package/${OUTTAG}/
 

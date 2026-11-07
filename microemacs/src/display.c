@@ -343,6 +343,62 @@ showRegion(int f, int n)
 }
 #endif
 
+#if MEOPT_UNICODE
+/* Display rules for a non-ASCII char, raw byte or internal NUL: invisible chars (zero width,
+ * controls, surrogates & line/paragraph separators) are shown as \uXXXX or \UXXXXXX, raw bytes as
+ * \xXX and NUL as ^@. Returns the number of cells, which are written to dd if not NULL */
+int
+renderUniChar(meFrameChar *dd, meUInt uc)
+{
+    meUByte pp, gc;
+    int ww, nn;
+    
+    if(meUniIsRaw(uc))
+    {
+        if(dd != NULL)
+        {
+            uc = meUniRawByte(uc);
+            dd[0] = '\\';
+            dd[1] = 'x';
+            dd[2] = hexdigits[uc >> 4];
+            dd[3] = hexdigits[uc & 0x0f];
+        }
+        return 4;
+    }
+    if(uc == 0)
+    {
+        if(dd != NULL)
+        {
+            dd[0] = '^';
+            dd[1] = '@';
+        }
+        return 2;
+    }
+    pp = meUniProps(uc);
+    gc = meUniPropGC(pp);
+    if(((ww = meUniPropWidth(pp)) == meUNIWIDTH_ZERO) || (gc == meUNIGC_Cc) || (gc == meUNIGC_Cs) ||
+       (gc == meUNIGC_Zl) || (gc == meUNIGC_Zp))
+    {
+        nn = (uc > 0xffff) ? 6:4;
+        if(dd != NULL)
+        {
+            dd[0] = '\\';
+            dd[1] = (nn == 4) ? 'u':'U';
+            for(ww=nn+1 ; ww>1 ; ww--, uc >>= 4)
+                dd[ww] = hexdigits[uc & 0x0f];
+        }
+        return nn+2;
+    }
+    if(dd != NULL)
+    {
+        dd[0] = uc;
+        if(ww == meUNIWIDTH_WIDE)
+            dd[1] = meFRAMECHAR_CONT;
+    }
+    return (ww == meUNIWIDTH_WIDE) ? 2:1;
+}
+#endif
+
 meUByte *
 windCurLineOffsetEval(meWindow *wp)
 {
@@ -379,6 +435,41 @@ windCurLineOffsetEval(meWindow *wp)
 #endif
         while((cc=*ss++) != 0)
         {
+#if MEOPT_UNICODE
+            if(cc & 0x80)
+            {
+                /* the char's width is held against its first byte, the others hold 0 (written out
+                 * as a loop becomes a memset call per char) */
+                meUInt uc;
+                int ll;
+                if((cc >= 0xc2) && (cc < 0xe0) && ((*ss & 0xc0) == 0x80))
+                {
+                    uc = (((meUInt) (cc & 0x1f)) << 6) | (*ss & 0x3f);
+                    ll = 2;
+                }
+                else
+                    ll = meUtf8Decode(ss-1,(int) (wp->dotLine->text + wp->dotLine->length - ss) + 1,&uc);
+                ii = renderUniChar(NULL,uc);
+                *off++ = (meUByte) ii;
+                pos += ii;
+                if(ll > 1)
+                {
+                    *off++ = 0;
+                    ss++;
+                    if(ll > 2)
+                    {
+                        *off++ = 0;
+                        ss++;
+                        if(ll > 3)
+                        {
+                            *off++ = 0;
+                            ss++;
+                        }
+                    }
+                }
+                continue;
+            }
+#endif
             if(isDisplayable(cc))
                 ii = 1;
             else if(cc == meCHAR_TAB)
@@ -486,7 +577,7 @@ updCursor(register meWindow *wp)
             do
                 disLineSize += 512;
             while(disLineSize < ((int) jj));
-            if((disLineBuff = meRealloc(disLineBuff,disLineSize+32)) == NULL)
+            if((disLineBuff = meRealloc(disLineBuff,(disLineSize+32)*sizeof(meFrameChar))) == NULL)
                 meDie();
         }
     }
@@ -533,7 +624,7 @@ int
 renderLine (meUByte *s1, int len, int wid, meBuffer *bp)
 {
     register meUByte cc;
-    register meUByte *s2;
+    register meFrameChar *s2;
 
     s2 = disLineBuff + wid;
     while(len-- > 0)
@@ -542,11 +633,24 @@ renderLine (meUByte *s1, int len, int wid, meBuffer *bp)
         if (wid >= disLineSize)
         {
             disLineSize += 512 ;
-            if((disLineBuff = meRealloc(disLineBuff,disLineSize+32)) == NULL)
+            if((disLineBuff = meRealloc(disLineBuff,(disLineSize+32)*sizeof(meFrameChar))) == NULL)
                 meDie();
             s2 = disLineBuff + wid ;
         }
         cc = *s1++ ;
+#if MEOPT_UNICODE
+        if(cc & 0x80)
+        {
+            meUInt uc;
+            int ll = meUtf8Decode(s1-1,len+1,&uc), ii;
+            s1 += ll-1;
+            len -= ll-1;
+            ii = renderUniChar(s2,uc);
+            s2 += ii;
+            wid += ii;
+            continue;
+        }
+#endif
         if(isDisplayable(cc))
         {
             wid++ ;
@@ -585,21 +689,58 @@ renderLine (meUByte *s1, int len, int wid, meBuffer *bp)
     return wid;
 }
 
+/* Renders a mode, message or menu line's text into disLineBuff, returns the number of cells
+ * which is limited to ncol. Chars below 0x20 are special display chars and are copied */
+static int
+renderTextLine(meUByte *ss, int len, int ncol)
+{
+    meFrameChar *dd;
+    int nn=0;
+    
+    if(ncol >= disLineSize)
+    {
+        disLineSize = ncol + 512;
+        if((disLineBuff = meRealloc(disLineBuff,(disLineSize+32)*sizeof(meFrameChar))) == NULL)
+            meDie();
+    }
+    dd = disLineBuff;
+    while((len > 0) && (nn < ncol))
+    {
+#if MEOPT_UNICODE
+        if(*ss & 0x80)
+        {
+            meUInt uc;
+            int ll = meUtf8Decode(ss,len,&uc);
+            if((nn + renderUniChar(NULL,uc)) > ncol)
+                break;
+            nn += renderUniChar(dd+nn,uc);
+            ss += ll;
+            len -= ll;
+            continue;
+        }
+#endif
+        dd[nn++] = *ss++;
+        len--;
+    }
+    return nn;
+}
+
 /* row of screen to update, virtual screen image */
 static int
 updateline(register int row, register meVideoLine *vp1, meWindow *window)
 {
-    register meUByte *s1;       /* Text line pointer */
+    meUByte *ltext;             /* Text line pointer */
+    register meFrameChar *s1;   /* Rendered line pointer */
     register meUShort flag ;    /* Video line flag */
     meSchemeSet *blkp;          /* Style change list */
     meScheme *fssp;             /* Frame store - colour pointer */
-    meUByte *fstp;              /* Frame store - text pointer */
+    meFrameChar *fstp;          /* Frame store - text pointer */
     meUShort noColChng;         /* Number of colour changes */
     meUShort scol;              /* Lines starting column */
     meUShort ncol;              /* Lines number of columns */
 
     /* Get column size/offset */
-    s1 = vp1->line->text;
+    ltext = vp1->line->text;
     if(window != NULL)
     {
         scol = window->frameColumn ;
@@ -673,7 +814,7 @@ hideLineJump:
                 if (flag & VFSHALL)
                 {
                     if(lineLen > 0)
-                        blkp[0].column = renderLine(s1,lineLen,0,bp) ;
+                        blkp[0].column = renderLine(ltext,lineLen,0,bp) ;
                     else
                         blkp[0].column = 0 ;
                     blkp[0].scheme = scheme + meSCHEME_SELECT;
@@ -687,7 +828,7 @@ hideLineJump:
                     if((flag & VFSHBEG) && (selhilight.soff > 0))
                     {
                         len = selhilight.soff;
-                        wid = renderLine(s1,len,0,bp);
+                        wid = renderLine(ltext,len,0,bp);
                         blkp[0].scheme = scheme;
                         blkp[0].column = wid;
                         noColChng = 1;
@@ -705,7 +846,7 @@ hideLineJump:
                         if (selhilight.eoff > len)
                         {
                             /* Set up the colour change */
-                            wid = renderLine(s1+len,selhilight.eoff-len,wid,bp);
+                            wid = renderLine(ltext+len,selhilight.eoff-len,wid,bp);
                             blkp[noColChng].scheme = scheme + meSCHEME_SELECT;
                             blkp[noColChng++].column = wid;
                             len = selhilight.eoff;
@@ -718,7 +859,7 @@ hideLineJump:
 
                     /* Render the rest of the line in the standard colour */
                     if (lineLen > len)
-                        wid = renderLine(s1+len, lineLen-len,wid,bp) ;
+                        wid = renderLine(ltext+len, lineLen-len,wid,bp) ;
                     blkp[noColChng].column = wid;
                     noColChng += 1;
                 }
@@ -727,7 +868,7 @@ hideLineJump:
             {
                 /* Render the rest of the line in the standard colour */
                 if (lineLen > 0)
-                    blkp[0].column = renderLine(s1,lineLen,0,bp);
+                    blkp[0].column = renderLine(ltext,lineLen,0,bp);
                 else
                     blkp[0].column = 0;
                 blkp[0].scheme = scheme;
@@ -777,6 +918,16 @@ hideLineJump:
                     *s1 = windowChars[WCDISPTXTLFT];
                     blkp--;
                     blkp[0].column = 1;
+#if MEOPT_UNICODE
+                    if(s1[1] == meFRAMECHAR_CONT)
+                    {
+                        /* the '$' replaced the first half of a wide char, the second half is a '$' too */
+                        s1[1] = windowChars[WCDISPTXTLFT];
+                        blkp[0].column = 2;
+                        for(ii=1 ; (ii < noColChng+1) && (blkp[ii].column < 2) ; ii++)
+                            blkp[ii].column = 2;
+                    }
+#endif
                     blkp[0].scheme = scheme | (blkp[1].scheme & (meSCHEME_CURRENT|meSCHEME_SELECT));
                     noColChng++;
                 }
@@ -784,9 +935,18 @@ hideLineJump:
         }
         if(blkp[noColChng-1].column >= ncol)
         {
-            while((noColChng > 1) && (blkp[noColChng-2].column >= (ncol-1)))
+            meInt mcol=ncol-1;
+#if MEOPT_UNICODE
+            if((ncol > 1) && (s1[ncol-1] == meFRAMECHAR_CONT))
+            {
+                /* the '$' replaces the second half of a wide char, the first half is a '$' too */
+                mcol--;
+                s1[mcol] = windowChars[WCDISPTXTRIG];
+            }
+#endif
+            while((noColChng > 1) && (blkp[noColChng-2].column >= mcol))
                 noColChng--;
-            blkp[noColChng-1].column = ncol-1;
+            blkp[noColChng-1].column = mcol;
             /* set the last char to the truncate '$' and set the scheme */
             if(meSchemeTestStyleHasFont(scheme))
             {
@@ -831,7 +991,8 @@ hideLineJump:
     else
     {
         blkp = hilBlock ;
-        blkp->column = vp1->line->length ;
+        blkp->column = renderTextLine(ltext,vp1->line->length,ncol) ;
+        s1 = disLineBuff;
         noColChng = 1 ;
         if(flag & VFMODEL)
             blkp->scheme = mdLnScheme + ((flag & VFCURRL) ? meSCHEME_CURRENT:meSCHEME_NORMAL);
@@ -860,7 +1021,7 @@ hideLineJump:
          ********************************************************************/
         meScheme scheme;
         meInt ii, col, cno;
-        meUByte cc;
+        meFrameChar cc;
 
         TCAPmove(row,scol);	/* Go to start of line. */
 
@@ -918,7 +1079,9 @@ hideLineJump:
 #if MEOPT_XFT
         if(meXftUsed())
         {
+#if !MEOPT_UNICODE
             meUShort wb[meFRAME_WIDTH_MAX];
+#endif
             meSchemeSet *bb=blkp;          /* Style change list */
             meScheme scheme;
             meUByte cc, lc;
@@ -967,6 +1130,18 @@ hideLineJump:
                 scheme = blkp->scheme;
                 meFrameXTermSetScheme(frameCur,scheme);
                 ii = blkp->column;
+#if MEOPT_UNICODE
+                if((len = ii-col) > 0)
+                {
+                    for(ll=0 ; ll<len ; ll++)
+                    {
+                        *fstp++ = s1[col+ll];
+                        *fssp++ = scheme;
+                    }
+                    meFrameXDrawCells(frameCur,scol+col,row,s1+col,len);
+                    col += len;
+                }
+#else
                 if((len = ii-col) > 0)
                 {
                     /* Maintain the frame store and copy the string into the frame store with the
@@ -996,6 +1171,7 @@ hideLineJump:
                     meFrameXftDrawWString(frameCur,colToClient(scol+col),row,wb,ll);
                     col += ll;
                 }
+#endif
                 blkp++;
             } while(++cno < noColChng);
             vp1->endp = col;
@@ -1005,12 +1181,26 @@ hideLineJump:
         {
             meInt ii, len, col=0, cno=0;
             meScheme scheme;
+#if !MEOPT_UNICODE
             meUByte cc, *sfstp=fstp;
+#endif
             
             row = rowToClient(row);
             do {
                 scheme = blkp->scheme;
                 meFrameXTermSetScheme(frameCur,scheme);
+#if MEOPT_UNICODE
+                if((ii = blkp->column - col) > 0)
+                {
+                    for(len=0 ; len<ii ; len++)
+                    {
+                        *fssp++ = scheme;
+                        *fstp++ = s1[col+len];
+                    }
+                    meFrameXDrawCells(frameCur,scol+col,row,s1+col,ii);
+                    col += ii;
+                }
+#else
                 if((ii = blkp->column - col) > 0)
                 {
                     meInt spFlag=0, ccol=col;
@@ -1038,6 +1228,7 @@ hideLineJump:
                         ccol++;
                     }
                 }
+#endif
                 blkp++;
             } while(++cno < noColChng);
             if(meStyleCmpBColor(meSchemeGetStyle(vp1->eolScheme),meSchemeGetStyle(scheme)))
@@ -1051,14 +1242,13 @@ hideLineJump:
             
             if(ii > col)
             {
-                char buff[meFRAME_WIDTH_MAX];
+                char buff[meFRAME_WIDTH_MAX], *bb=buff;
                 
                 ii -= col;
                 cno = ii;
-                s1 = (meUByte *) buff;
                 do
                 {
-                    *s1++ = ' ';           /* End fill with spaces */
+                    *bb++ = ' ';           /* End fill with spaces */
                     *fstp++ = ' ';         /* Frame store space fill */
                     *fssp++ = scheme;      /* Frame store colour fill */
                 }
@@ -1429,6 +1619,76 @@ assessModeLine(meUByte *ml)
  * change the modeline format by hacking at this routine. Called by "update"
  * any time there is a dirty window.
  */
+#if MEOPT_UNICODE
+/* Copies len bytes of UTF-8 text into the mode line at cp, counting display cells against
+ * lineLen and never splitting a char, returns the new cp */
+static meUByte *
+modeLineCopy(meUByte *cp, meUByte *ss, int len, int *lineLen)
+{
+    meUInt uc;
+    int ll, ww;
+    while((len > 0) && (*lineLen > 0))
+    {
+        if(*ss < 0x80)
+            ll = ww = 1;
+        else
+        {
+            ll = meUtf8Decode(ss,len,&uc);
+            if((ww = renderUniChar(NULL,uc)) > *lineLen)
+                break;
+        }
+        memcpy(cp,ss,ll);
+        cp += ll;
+        ss += ll;
+        len -= ll;
+        *lineLen -= ww;
+    }
+    return cp;
+}
+
+/* Returns the number of display cells of UTF-8 text */
+/* Returns the cells taken by the char at ss on a message, mode or menu line and sets *ll to its
+ * length */
+int
+meStrCharCells(meUByte *ss, int len, int *ll)
+{
+    meUInt uc;
+    if(*ss < 0x80)
+    {
+        *ll = 1;
+        return 1;
+    }
+    *ll = meUtf8Decode(ss,len,&uc);
+    return renderUniChar(NULL,uc);
+}
+
+int
+meStrCells(meUByte *ss, int len)
+{
+    int ll, ww=0;
+    while(len > 0)
+    {
+        ww += meStrCharCells(ss,len,&ll);
+        ss += ll;
+        len -= ll;
+    }
+    return ww;
+}
+
+/* Returns the offset of the end of ss which fits in ncol cells and mlen bytes */
+static int
+meStrTailOffset(meUByte *ss, int len, int ncol, int mlen)
+{
+    int off=0, ll, ww=meStrCells(ss,len);
+    while(((ww > ncol) || ((len-off) > mlen)) && (off < len))
+    {
+        ww -= meStrCharCells(ss+off,len-off,&ll);
+        off += ll;
+    }
+    return off;
+}
+#endif
+
 static void
 updateModeLine(meWindow *wp)
 {
@@ -1439,7 +1699,10 @@ updateModeLine(meWindow *wp)
     register meUByte  cc, lchar;
     register meBuffer *bp;
     register int ii;	                   /* loop index */
-    register int lineLen;                  /* Max length of the line */
+    int lineLen;                           /* Max length of the line */
+#if MEOPT_UNICODE
+    int ll;
+#endif
 
     /* See if there's anything to do first */
     bp = wp->buffer;
@@ -1541,23 +1804,80 @@ updateModeLine(meWindow *wp)
                 goto model_copyi;
 
             case 'c':
+#if MEOPT_UNICODE
+                {
+                    /* the column in chars, not bytes */
+                    int ii=0, nn=0;
+                    while(ii < wp->dotOffset)
+                    {
+                        ii = meLineNextChar(wp->dotLine,ii);
+                        nn++;
+                    }
+                    ss = meItoa(nn);
+                }
+#else
                 ss = meItoa(wp->dotOffset);
+#endif
                 goto model_copyi;
 
             case 'b':
                 ss = bp->name;
+#if MEOPT_UNICODE
+                cp = modeLineCopy(cp,ss,(int) meStrlen(ss),&lineLen);
+#else
                 while((cc = *ss++) != '\0')
                 {
                     *cp++ = cc ;
                     if (--lineLen == 0)
                         break;
                 }
+#endif
                 break ;
+
+#if MEOPT_EXTENDED
+            case 'e':
+                {
+                    meUByte encb[16];
+                    ss = meEncodingName(bp,encb);
+#if MEOPT_UNICODE
+                    cp = modeLineCopy(cp,ss,(int) meStrlen(ss),&lineLen);
+#else
+                    while((cc = *ss++) != '\0')
+                    {
+                        *cp++ = cc ;
+                        if (--lineLen == 0)
+                            break;
+                    }
+#endif
+                }
+                break ;
+#endif
 
             case 'f':
                 if((bp->name[0] == '*') || (bp->fileName == NULL))
                     break ;
                 ss = bp->fileName;
+#if MEOPT_UNICODE
+                ii = (int) meStrlen(ss);
+                if(meStrCells(ss,ii) > lineLen)
+                {
+                    /* show the end of the name, starting on a char boundary */
+                    *cp++ = windowChars[WCDISPTXTLFT];
+                    if(--lineLen > 0)
+                    {
+                        while(meStrCells(ss,ii) > lineLen)
+                        {
+                            ll = meUtf8Next(ss,0,ii);
+                            ss += ll;
+                            ii -= ll;
+                        }
+                        cp = modeLineCopy(cp,ss,ii,&lineLen);
+                    }
+                }
+                else
+                    cp = modeLineCopy(cp,ss,ii,&lineLen);
+                break;
+#endif
                 if((ii=(int) meStrlen(ss)) > lineLen)
                 {
                     *cp++ = windowChars[WCDISPTXTLFT];
@@ -1658,6 +1978,10 @@ model_copy2di:
     /* Pad to full width. */
     while(--lineLen >= 0)
         *cp++ = lchar;
+#if MEOPT_UNICODE
+    /* UTF-8 text takes more bytes than cells */
+    wp->modeLine->length = (meUShort) (cp - wp->modeLine->text);
+#endif
 
     /* Determine the video line position and determine the video block that
      * is being used. */
@@ -1855,7 +2179,7 @@ updateScrollBar(meWindow *wp)
             /* Update the frame store with the character and scheme
              * information - this is nearly the same for all platforms
              */
-            meUByte    *fstp ;      /* Frame store text pointer */
+            meFrameChar *fstp ;   /* Frame store text pointer */
             meScheme *fssp ;      /* Frame store scheme pointer */
 
             fstp = frameCur->store[row].text + col ;
@@ -1866,16 +2190,6 @@ updateScrollBar(meWindow *wp)
              * MS-Windows                                                   *
              ****************************************************************/
 
-#ifdef _ME_CONSOLE
-#ifdef _ME_WINDOW
-            if (meSystemCfg & meSYSTEM_CONSOLE)
-#endif /* _ME_WINDOW */
-            {
-                WORD cc ;
-                cc = (WORD) TTschemeSet(scheme) ;
-                ConsoleDrawString(wbase,cc,col,row,len) ;
-            }
-#endif /* _ME_CONSOLE */
             fssp[0] = scheme;         /* Assign the scheme */
             fstp[0] = wbase[0];       /* Assign the text */
             if(len > 1)
@@ -1883,6 +2197,17 @@ updateScrollBar(meWindow *wp)
                 fssp[1] = scheme;     /* Assign the scheme */
                 fstp[1] = wbase[1];   /* Assign the text */
             }
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+            if (meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
+            {
+                WORD cc ;
+                cc = (WORD) TTschemeSet(scheme) ;
+                /* drawn from the frame store as its cells are meFrameChars */
+                ConsoleDrawString(fstp,cc,col,row,len) ;
+            }
+#endif /* _ME_CONSOLE */
 #endif /* _WIN32 */
 
 #ifdef _UNIX
@@ -1895,7 +2220,7 @@ updateScrollBar(meWindow *wp)
                 /************************************************************
                  * TERMCAP                                                  *
                  ************************************************************/
-                meUByte cc;
+                meFrameChar cc;
 
                 TCAPmove(row, col);    /* Go to correct place. */
                 TCAPschemeSet(scheme);
@@ -1925,6 +2250,22 @@ updateScrollBar(meWindow *wp)
                  * X-WINDOWS                                                *
                  ************************************************************/
                 int cl=colToClient(col), rw=rowToClient(row);
+#if MEOPT_UNICODE
+                meFrameChar fc[2];
+                meFrameXTermSetScheme(frameCur,scheme);
+                fc[0] = fstp[0] = wbase[0];
+                fssp[0] = scheme;
+                if(len > 1)
+                {
+                    fc[1] = fstp[1] = wbase[1];
+                    fssp[1] = scheme;
+                }
+#if MEOPT_XFT
+                if(meXftUsed())
+                    meFrameXftDrawBackground(frameCur,cl,rw,len);
+#endif
+                meFrameXDrawCells(frameCur,col,rw,fc,len);
+#else
 #if MEOPT_XFT
                 if(meXftUsed())
                 {
@@ -1986,6 +2327,7 @@ updateScrollBar(meWindow *wp)
                         fstp[1] = c1;     /* Assign the text */
                     }
                 }
+#endif /* MEOPT_UNICODE */
 #endif /* _XTERM */
             }
 #endif /* _ME_WINDOW */
@@ -2444,6 +2786,207 @@ update(int flag)    /* force=meTRUE update past type ahead? */
 #define _ME_POKE_REDRAW_CURSOR
 #endif /* _ME_WINDOW */
 #endif /* _WIN32 */
+#if MEOPT_UNICODE
+/* The string is UTF-8, a wide char takes 2 cells and a char which has no glyph is shown as a
+ * '.'. With POKE_COLORS the scheme string has a char for each char of the string */
+void
+pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
+{
+    meFrameChar cells[meFRAME_WIDTH_MAX], rb[8], *fstp;
+    meScheme schms[meFRAME_WIDTH_MAX], *fssp;
+    meUInt uc;
+    int len, ii, jj, cw, schm, off, scol, ecol;
+#ifdef _ME_POKE_REDRAW_CURSOR
+    int drawCursor;
+#endif
+
+    if((row < 0) || (row > frameCur->depth) || (*str == '\0') || (col >= frameCur->width))
+        return;
+    off = (flags >> 4) & 0x07;
+    schm = *scheme;
+    if((schm == meCHAR_LEADER) && (scheme[1] == meCHAR_TRAIL_NULL))
+        schm = 0;
+    else
+        schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+    schm += off;
+    
+    scol = ecol = (col < 0) ? 0:col;
+    ii = col;
+    while((*str != '\0') && (ii < frameCur->width))
+    {
+        if((uc = *str) < 0x80)
+        {
+            str++;
+            if(!isPokable(uc))
+                uc = '.';
+            cw = 1;
+        }
+        else
+        {
+            str += meUtf8Decode(str,meUTF8_LEN_MAX,&uc);
+            if(((cw = renderUniChar(rb,uc)) > 2) || (rb[0] != uc))
+            {
+                uc = '.';
+                cw = 1;
+            }
+        }
+#if MEOPT_EXTENDED
+        if(flags & POKE_COLORS)
+        {
+            /* a scheme is a char value, a leader pair for 0 */
+            meUInt sc;
+            int nul=0;
+            if((sc = *scheme) == '\0')
+                ;
+            else if(sc == meCHAR_LEADER)
+            {
+                if((sc = scheme[1]) == '\0')
+                    scheme++;
+                else
+                {
+                    scheme += 2;
+                    nul = (sc == meCHAR_TRAIL_NULL);
+                }
+            }
+            else if(sc < 0x80)
+                scheme++;
+            else
+                scheme += meUtf8Decode(scheme,meUTF8_LEN_MAX,&sc);
+            schm = ((nul) ? 0:(meSchemeCheck((int) sc)*meSCHEME_STYLES)) + off;
+        }
+#endif
+        for(jj=0 ; jj<cw ; jj++, ii++)
+        {
+            if((ii >= 0) && (ii < frameCur->width))
+            {
+                /* half a wide char cut by an edge is a space */
+                if(jj)
+                    cells[ii] = (ii) ? meFRAMECHAR_CONT:' ';
+                else
+                    cells[ii] = (cw == 2) && (ii == frameCur->width-1) ? ' ':uc;
+                schms[ii] = (meScheme) schm;
+                ecol = ii+1;
+            }
+        }
+    }
+    if((len = ecol - scol) <= 0)
+        return;
+    col = scol;
+    /* a wide char on screen cut by either end of the poke is blanked, as a terminal does */
+    fstp = frameCur->store[row].text;
+    fssp = frameCur->store[row].scheme;
+    if((col > 0) && (fstp[col] == meFRAMECHAR_CONT))
+    {
+        col--;
+        len++;
+        cells[col] = ' ';
+        schms[col] = fssp[col];
+    }
+    if(((ii = col+len) < frameCur->width) && (fstp[ii] == meFRAMECHAR_CONT))
+    {
+        len++;
+        cells[ii] = ' ';
+        schms[ii] = fssp[ii];
+    }
+
+    /* Sort out the poke flags. Just keep the minimal and maximal extents
+     * of the change. We will sort out what needs to be updated on the
+     * next update() call. */
+    if((flags & POKE_NOMARK) == 0)
+    {
+        frameCur->pokeFlag |= 1;
+        if (row < frameCur->pokeRowMin)
+            frameCur->pokeRowMin = row;
+        if (row > frameCur->pokeRowMax)
+            frameCur->pokeRowMax = row;
+        if (col < frameCur->pokeColumnMin)
+            frameCur->pokeColumnMin = col;
+        if ((col+len) > frameCur->pokeColumnMax)
+            frameCur->pokeColumnMax = col+len;
+    }
+
+    fstp = frameCur->store[row].text + col;
+    fssp = frameCur->store[row].scheme + col;
+    for(ii=0 ; ii<len ; ii++)
+    {
+        fstp[ii] = cells[col+ii];
+        fssp[ii] = schms[col+ii];
+    }
+
+#ifdef _ME_POKE_REDRAW_CURSOR
+    /* Must redraw the cursor if we have zapped it */
+    drawCursor = (cursorVisible && blinkState &&
+                  _ME_POKE_REDRAW_CURSOR
+                  (row == frameCur->cursorRow) &&
+                  (col <= frameCur->cursorColumn) && ((col+len) > frameCur->cursorColumn)) ;
+#endif /* _ME_POKE_REDRAW_CURSOR */
+
+#ifdef _ME_CONSOLE
+#ifdef _ME_WINDOW
+    if(meSystemCfg & meSYSTEM_CONSOLE)
+#endif /* _ME_WINDOW */
+    {
+#ifdef _TCAP
+        TCAPmove(row,col);
+        for(ii=0 ; ii<len ; ii++)
+        {
+            if(!ii || (fssp[ii] != fssp[ii-1]))
+                TCAPschemeSet(fssp[ii]);
+            TCAPdrawChar(fstp[ii]);
+        }
+        TCAPschemeReset();
+        if(cursorVisible && blinkState)
+            TTshowCur();
+        else
+            TThideCur();
+#endif /* _TCAP */
+#ifdef _WIN32
+        for(ii=0 ; ii<len ; ii+=jj)
+        {
+            jj = 1;
+            while(((ii+jj) < len) && (fssp[ii+jj] == fssp[ii]))
+                jj++;
+            ConsoleDrawString(fstp+ii,(WORD) TTschemeSet(fssp[ii]),col+ii,row,jj);
+        }
+#endif /* _WIN32 */
+    }
+#ifdef _ME_WINDOW
+    else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+    {
+#if defined(_WIN32) || defined(_ME_MACOSNW)
+        TTputs(row,col,len);
+#endif /* _WIN32 || _ME_MACOSNW */
+#ifdef _XTERM
+        /* a run of cells with one scheme, never starting on the second half of a wide char */
+        int rw=rowToClient(row);
+        for(ii=0 ; ii<len ; ii+=jj)
+        {
+            jj = 1;
+            while(((ii+jj) < len) && ((fssp[ii+jj] == fssp[ii]) || (fstp[ii+jj] == meFRAMECHAR_CONT)))
+                jj++;
+            meFrameXTermSetScheme(frameCur,fssp[ii]);
+#if MEOPT_XFT
+            if(meXftUsed())
+                meFrameXftDrawBackground(frameCur,colToClient(col+ii),rw,jj);
+#endif
+            meFrameXDrawCells(frameCur,col+ii,rw,fstp+ii,jj);
+        }
+#endif /* _XTERM */
+    }
+#endif /* _ME_WINDOW */
+
+#ifdef _ME_POKE_REDRAW_CURSOR
+    if(drawCursor)
+        TTshowCur() ;
+#endif
+
+    if((flags & POKE_NOFLUSH) == 0)
+        TTflush() ;                         /* Force update of screen */
+}
+#else
 void
 pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
 {
@@ -2501,7 +3044,11 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
 
     /* Write the text to the frame store. Note that the colour still
      * needs to be updated. */
-    memcpy(frameCur->store[row].text+col,str,len) ;      /* Write text in */
+    {
+        meFrameChar *fstp=frameCur->store[row].text+col;
+        for(off=0 ; off<len ; off++)
+            fstp[off] = str[off];
+    }
     fssp = frameCur->store[row].scheme + col ;           /* Get the scheme pointer */
     off  = (flags >> 4) & 0x07 ;
 
@@ -2565,6 +3112,28 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
             /****************************************************************
              * X-WINDOWS                                                    *
              ****************************************************************/
+#if MEOPT_UNICODE
+            {
+                meFrameChar *fc=frameCur->store[row].text+col;
+                int rw=rowToClient(row), ii;
+                for(ii=0 ; ii<len ; ii++)
+                {
+                    schm = *scheme++;
+                    if((schm == meCHAR_LEADER) && ((schm = *scheme++) == meCHAR_TRAIL_NULL))
+                        schm = 0;
+                    else
+                        schm = meSchemeCheck(schm)*meSCHEME_STYLES;
+                    schm += off;
+                    fssp[ii] = schm;
+                    meFrameXTermSetScheme(frameCur,schm);
+#if MEOPT_XFT
+                    if(meXftUsed())
+                        meFrameXftDrawBackground(frameCur,colToClient(col+ii),rw,1);
+#endif
+                    meFrameXDrawCells(frameCur,col+ii,rw,fc+ii,1);
+                }
+            }
+#else
 #if MEOPT_XFT
             if(meXftUsed())
             {
@@ -2626,6 +3195,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
                     col += mecm.fwidth;
                 }
             }
+#endif /* MEOPT_UNICODE */
 #endif /* _XTERM */
         }
 #endif /* _ME_WINDOW */
@@ -2731,6 +3301,18 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
              * X-WINDOWS                                                    *
              ****************************************************************/
             meFrameXTermSetScheme(frameCur,schm);
+#if MEOPT_UNICODE
+            {
+                int rw=rowToClient(row);
+                for(off=0 ; off<len ; off++)
+                    fssp[off] = schm;
+#if MEOPT_XFT
+                if(meXftUsed())
+                    meFrameXftDrawBackground(frameCur,colToClient(col),rw,len);
+#endif
+                meFrameXDrawCells(frameCur,col,rw,frameCur->store[row].text+col,len);
+            }
+#else
 #if MEOPT_XFT
             if(meXftUsed())
             {
@@ -2792,6 +3374,7 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
                     ii++ ;
                 }
             }
+#endif /* MEOPT_UNICODE */
 #endif /* _XTERM */
         }
 #endif /* _ME_WINDOW */
@@ -2843,6 +3426,8 @@ pokeScreen(int flags, int row, int col, meUByte *scheme, meUByte *str)
     if((flags & POKE_NOFLUSH) == 0)
         TTflush() ;                         /* Force update of screen */
 }
+
+#endif /* MEOPT_UNICODE */
 
 #if MEOPT_EXTENDED
 /*
@@ -2936,6 +3521,9 @@ mlwrite(int flags, meUByte *fmt, int arg)
     meUByte  mlw[meBUF_SIZE_MAX];		/* what we want to be there	*/
     meUByte *mlwant;		/* what we want to be there	*/
     meUByte *s1 ;
+#if MEOPT_UNICODE
+    int      ii ;
+#endif
 
     /* If this is a termination request then exit immediately as the output
      * terminal window may have been destroyed so there is no canvas onto
@@ -3063,12 +3651,21 @@ mlwrite(int flags, meUByte *fmt, int arg)
 #endif
                     /* catch a string which is too long */
                     offset = (int) meStrlen(s1) ;
+#if MEOPT_UNICODE
+                    if((ii = meStrTailOffset(s1,offset,frameCur->width,meBUF_SIZE_MAX/2)) > 0)
+                    {
+                        mlwant = mlw ;
+                        s1 += ii ;
+                        offset -= ii ;
+                    }
+#else
                     if(offset > frameCur->width)
                     {
                         mlwant = mlw ;
                         s1 += offset - frameCur->width ;
                         offset = frameCur->width ;
                     }
+#endif
                     meStrcpy(mlwant,s1) ;
                     mlwant += offset ;
                     break;
@@ -3111,6 +3708,18 @@ mlwrite(int flags, meUByte *fmt, int arg)
      * 2) The latter part is usually the more important, i.e. where the
      *    prompt is
      */
+#if MEOPT_UNICODE
+    /* the line is measured in cells, it can hold 4 bytes a cell */
+    if((ii = meStrTailOffset(mlwant,offset,frameCur->width,frameCur->width*4)) > 0)
+    {
+        mlwant += ii ;
+        offset -= ii ;
+        if(!(flags & MWUSEMLCOL))
+            frameCur->mlColumn = frameCur->width-1 ;
+    }
+    else if(!(flags & MWUSEMLCOL))
+        frameCur->mlColumn = meStrCells(mlwant,offset) ;
+#else
     if(offset > frameCur->width)
     {
         mlwant += offset-frameCur->width ;
@@ -3120,6 +3729,7 @@ mlwrite(int flags, meUByte *fmt, int arg)
     }
     else if(!(flags & MWUSEMLCOL))
         frameCur->mlColumn = offset ;
+#endif
     s1 = frameCur->mlLine->text ;
     while((*s1++ = *mlwant++))
         ;

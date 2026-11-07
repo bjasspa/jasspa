@@ -53,9 +53,16 @@ is 0x00 (the Nul character) the \fIutf8\fP  string is "" (the empty string and 0
 .PP
 \fIutf8\fR is the UTF-8  equivalent  of the input or the  character string 0xEF 0xBF 0xBD (U+FFFD - replacement  char)
 if the input to \fB&uni\fP or \fB&uci\fP cannot be mapped to a valid Unicode character.
+.PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) \fIchar\fR is the character itself, \fIutf8\fR is its UTF-8 bytes held as raw bytes (so the
+length of \fIutf8\fR is \fIutf8-len\fR) and bit 2 of \fIflags\fR is always set. \fB&uci\fR maps a raw byte through
+the current code page, and in the case of \fB&ufi\fR, \fIutf8-len\fR is the number of characters of \fIstring\fR
+used.
 .SH EXAMPLE
-The  following  macro code can be used to convert the UTF-8  encode  character  string at the current  location to the
-current display code page equivalent:
+In a version of \*(mS without Unicode support the following macro code can be used to convert the UTF-8 encoded
+character string at the current location to the current display code page equivalent:
 .Me $emf-scheme
 .CS
 set-variable #l0 &ufi &mid @wl $window-col 4

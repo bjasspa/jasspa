@@ -631,10 +631,14 @@ osd 21 130  ""  "T\Hyping"     f Typing
 
 0 define-macro-file mepinst me-pinstall
 0 define-macro osd-pinstall
-  set-variable #l1 @1
+  !iif &exi &ind &cat ".no-" &set #l1 @1  !abort
   set-variable #l3 &spr "  Install MicroEmacs %s package?  " &set #l2 @2
-  3 osd-xdialog "Package Installer" #l3 1 10 6 "  \HYes  " "  \HNo  "
-  !iif &sub $result 1  !abort
+  !force 3 osd-xdialog "Package Installer" #l3 1 10 6 "  \HYes  " "  \HNo  "
+  !iif &not $status  set-variable $result 2
+  !if &sub $result 1
+    set-variable &ind &cat ".no-" #l1 1
+    !abort
+  !endif
   !if &sin "tfs://" $user-path
     3 osd-xdialog "Package Installer" "  User session and storage required.  \n\n  Run init-session now?" 1 10 6 "  \HYes  " "  \HNo  "
     !iif &sub $result 1  !abort

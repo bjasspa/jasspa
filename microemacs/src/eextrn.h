@@ -50,6 +50,16 @@ extern	int	meWindowForwardChar(register meWindow *wp, register int n);
 extern	int	windowBackwardChar(int f, int n);
 extern	int	windowForwardChar(int f, int n);
 extern	meUByte meWindowGetChar(register meWindow *wp);
+#if MEOPT_UNICODE
+extern	int	meWindowBackwardBytes(meWindow *wp, int n);
+extern	meUInt  meWindowGetUni(meWindow *wp);
+extern	meInt   meWindowCharsToBytes(meWindow *wp, meInt n);
+#else
+#define meWindowBackwardBytes meWindowBackwardChar
+#define meWindowGetUni meWindowGetChar
+#define meWindowCharsToBytes(wp,n) (n)
+#endif
+extern	meInt   meWindowBytesTo(meWindow *wp, meLine *lp, int off);
 extern	int	meWindowGotoLine(register meWindow *wp,meInt line);
 #if MEOPT_EXTENDED || MEOPT_NARROW
 extern	int	meWindowGotoAbsLine(register meWindow *wp,meInt line);
@@ -86,10 +96,10 @@ do {                                                                         \
     hsh = ihh;                                                               \
 } while(0)
 
-extern  meUShort  meGetKeyFromString(meUByte **tp);
-extern  meUShort  meGetKey(int flag);
-extern  int     meGetStringFromChar(meUShort cc, meUByte *d);
-extern	void	meGetStringFromKey(meUShort cc, meUByte *seq);
+extern  meKey   meGetKeyFromString(meUByte **tp);
+extern  meKey   meGetKey(int flag);
+extern  int     meGetStringFromChar(meKey cc, meUByte *d);
+extern	void	meGetStringFromKey(meKey cc, meUByte *seq);
 extern	int     decode_fncname(meUByte *fname, int silent);
 extern	int	bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds,
                         meBind **lclBinds);
@@ -165,6 +175,7 @@ extern  meBuffer *createBuffer(register meUByte *bname);
 #define BFND_NOHOOK 0x10
 #define BFND_MKNAM  0x20
 #define BFND_CLEAR  0x40
+#define BFND_READMSG 0x80                       /* Show the read message, even in a macro */
 
 extern	meBuffer *bfind(meUByte *bname, int cflag);
 extern	void    resetBufferWindows(meBuffer *bp);
@@ -233,6 +244,11 @@ extern	int	screenPoke(int f, int n);
 extern  void    menuline(int flag);
 
 extern  int     renderLine(meUByte *s1, int len, int wid, meBuffer *bp);
+#if MEOPT_UNICODE
+extern  int     renderUniChar(meFrameChar *dd, meUInt uc);
+extern  int     meStrCharCells(meUByte *ss, int len, int *ll);
+extern  int     meStrCells(meUByte *ss, int len);
+#endif
 
 /* Virtual video interfaces */
 extern  int     meVideoAttach(meVideo *vvptr, meWindow *wp);
@@ -282,6 +298,9 @@ extern	int	setVar(meUByte *vname, meUByte *vvalue, meRegister *regs);
 extern	int	setVariable(int f, int n);
 extern	meUByte *meItoa(int i);
 extern  int     meMacroPutChar(meUByte *dd, meUInt cc);
+#if MEOPT_EXTENDED
+extern  int     macStrToBytes(meUByte *dd, const meUByte *ss);
+#endif
 #define mePtos(pp) (((pp) == NULL) ? emptym:(pp))
 extern	meUByte *getval(meUByte *token);
 extern	int	descVariable(int f, int n);
@@ -298,6 +317,9 @@ extern  meCodePage *meCodePageFind(meUByte *name, int create);
 extern  void    meCodePageFreeAll(void);
 
 /* exec.c externals */
+#if MEOPT_UNICODE
+extern  meUByte tokenRawEscape;
+#endif
 #define biChopFindString(str,tbl,tblSz,retIx)                                \
 do {                                                                         \
     register int ll=0,mm,hh=tblSz,cd;                                        \
@@ -326,12 +348,21 @@ extern  int     execBufferFunc(meBuffer *bp, int index, int flags, int n);
 extern  int     lineExec(int f, int n, meUByte *cmdstr);
 /* Note  tok (the destination token string) must be meTOKENBUF_SIZE_MAX in size, 
  * returning a string no bigger than meBUF_SIZE_MAX with the \0 */
-extern	meUByte *token(meUByte *src, meUByte *tok);
-extern	int	macarg(meUByte *tok);
+extern  meUByte *token(meUByte *src, meUByte *tok);
+extern  int     funcLookup(meUByte *fname);
+extern  meUByte *macroCompileLine(meUByte *ss, meUByte *buf, int bufSz, int *len);
+extern  meUByte *macroNextToken(meUByte *ss, meUByte *tkn);
+extern  int     macroSetSource(meMacro *mac);
+extern  meUByte *macroLineSource(meLine *lp);
+extern  int     macroStoreText(meUByte *text);
+extern  int     macarg(meUByte *tok);
 extern  int     meGetString(meUByte *prompt, int option, int defnum,
                             meUByte *buffer, int size);
 extern	int	storemac(int f, int n);
 extern	int	execFile(meUByte *fname, int f, int n);
+#if MEOPT_UNICODE
+extern	int	execFileCodePage(meUByte *fname, meCodePage *cp);
+#endif
 extern	int	executeNamedCommand(int f, int n);
 extern	int	executeLine(int f, int n);
 extern	int	executeBuffer(int f, int n);
@@ -475,6 +506,10 @@ void ffReadFileClose(meIo *io, meUInt flags);
 #define meRWFLAG_STAT       0x20000
 #define meRWFLAG_PRESRVTS   0x40000
 #define meRWFLAG_PRESRVFMOD 0x80000
+#if MEOPT_UNICODE
+/* read as single byte in io->codePage, set by the caller */
+#define meRWFLAG_CODEPAGE   0x100000
+#endif
 
 extern int      ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                            meUInt uoffset, meUInt loffset, meInt length);
@@ -487,15 +522,25 @@ extern int      ffWriteFileClose(meIo *io, meUInt flags, meBuffer *bp);
 extern int      ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp);
 #if MEOPT_EXTENDED
 extern int      ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode);
-extern int      translateBuffer(int f, int n);
-extern meLine * translateBufferBack(meBuffer *bp, meUInt flags);
+#if !MEOPT_UNICODE
 extern meUByte  utf8ToMeChar(meUInt uc);
 extern void     meBufferDecodeUtf8(meBuffer *bp);
+#endif
 #else
 #define ffFileOp(s,d,f,m) 0
-#define translateBuffer notAvailable
-#define translateBufferBack(bp,i)  (bp)->baseLine
 #endif
+#define meBufferEolStyle(bp) ((meLineFlag) ((meModeTest((bp)->mode,MDCR) ? meLINE_EOLCR:0) | (meModeTest((bp)->mode,MDLF) ? meLINE_EOLLF:0)))
+extern int      meLineGetEolFlag(meBuffer *bp, meLine *lp);
+#if MEOPT_EXTENDED
+extern meUByte *meEncodingName(meBuffer *bp, meUByte *buf);
+#endif
+#if MEOPT_UNICODE
+extern int      meEncodingFromId(meUByte *ss);
+extern int      ffCharFromUnicode(meCodePage *cp, meUInt uc);
+#endif
+extern void     meBufferEolNormalise(meBuffer *bp);
+extern int      meBufferEolCheck(meBuffer *bp);
+
 
 /* frame.c externals */
 extern	int     meFrameChangeWidth(meFrame *frame, int ww);
@@ -580,7 +625,9 @@ extern	int	getexecCommand(void);
 #define meGETKEY_SILENT     0x01
 #define meGETKEY_SINGLE     0x02
 #define meGETKEY_COMMAND    0x04
-extern	meUShort  meGetKeyFromUser(int f, int n, int flag);
+extern	meKey   meGetKeyFromUser(int f, int n, int flag);
+extern  int     meKeyToStr(meUByte *dd, meKey cc);
+extern  int     meKeyStrSpecialLen(meUByte *ss);
 extern  int     createBuffList(meUByte ***listPtr, int noHidden);
 extern  int     createCommList(meUByte ***listPtr, int noHidden);
 #if MEOPT_MAJORMODE
@@ -647,9 +694,12 @@ extern	int	isearchForw(int f, int n);
 
 /* key.c externals */
 extern  void    count_key_table(void);
-extern  int     decode_key(register meUShort code, meUInt *arg);
-extern  int     delete_key(register meUShort code);
-extern  int	insert_key(register meUShort code, meUShort index, meUInt arg);
+extern  int     decode_key(register meKey code, meUInt *arg);
+extern  meUByte meKeyboardMapChar(meUInt cc);
+/* the Latin char a non-Latin keyboard's key cc maps to (set-char-mask "k"), 0 if none */
+#define meKeyboardMap(cc) ((charKeyboardMap == NULL) ? 0:meKeyboardMapChar(cc))
+extern  int     delete_key(register meKey code);
+extern  int     insert_key(register meKey code, meUShort index, meUInt arg);
 
 /* line.c externals */
 extern  meLine *meLineMalloc(int length, int editLine);
@@ -668,6 +718,18 @@ extern	void	lineSetChanged(int flag);
 extern  meUByte *lineMakeSpace(int n);
 extern	int	lineInsertChar(int n, int c);
 extern	int	lineInsertString(int n, meUByte *cp);
+#if MEOPT_UNICODE
+extern	meUInt	meLineGetUniHigh(meLine *lp, int off);
+extern	int	meLineIsWord(meLine *lp, int off);
+extern	int	meLineCharStart(meLine *lp, int off);
+extern	int	meLineCharIndex(meLine *lp, int off);
+extern	int	meLineCharOffset(meLine *lp, int nn);
+#else
+#define meLineCharStart(lp,off) (off)
+#define meLineCharIndex(lp,off) (off)
+#define meLineCharOffset(lp,nn) (((nn) > (lp)->length) ? -1:(nn))
+#endif
+extern	int	lineReplaceChar(meUInt cc);
 #define meBUFINSFLAG_UNDOCALL   0x01
 #define meBUFINSFLAG_LITERAL    0x02
 extern	int	lineInsertNewline(meInt flags);
@@ -853,7 +915,8 @@ extern	int	getiwcol(meWindow *wp,register int off);
 extern	int	setcwcol(meWindow *wp,register int pos);
 extern	int	transChars(int f, int n);
 extern	int	transLines(int f, int n);
-extern	int	quoteKeyToChar(meUShort c);
+extern  int     quoteKeyToChar(meKey c);
+extern  int     meGetCharCode(meUByte *prompt, meUByte *buf);
 extern	int	quote(int f, int n);
 extern	int	meTab(int f, int n);
 #if MEOPT_EXTENDED
@@ -1118,10 +1181,10 @@ extern	int	findTag(int f, int n);
 /* termio.c externals */
 extern	void    TTdoBell(int);
 extern	void    TTbell(void);
-extern  int     charListToShorts(meUShort *sl, meUByte *cl);
-extern  int     keyListToShorts(meUShort *sl, meUByte *kl);
+extern  int     charListToShorts(meKey *sl, meUByte *cl);
+extern  int     keyListToShorts(meKey *sl, meUByte *kl);
 extern  void    translateKeyAdd(meTRANSKEY *tcapKeys, int count, int time,
-                                meUShort *key, meUShort map);
+                                meKey *key, meKey map);
 extern	int	translateKey(int f, int n);
 extern  char   *meTParm(char *str, ...);
 
@@ -1131,8 +1194,8 @@ extern	int	set_timestamp(meBuffer *bp);
 /* undo.c externals */
 #if MEOPT_UNDO
 extern  meUndoNode *meUndoCreateNode(size_t size);
-extern	void	meUndoAddInsChar(void);
-extern	void	meUndoAddDelChar(void);
+extern	void	meUndoAddInsChar(int len);
+extern	void	meUndoAddDelChar(int len);
 extern  void    meUndoAddRepChar(void);
 extern	void	meUndoAddInsChars(meInt numChars);
 extern	void	meUndoAddDelChars(meInt numChars);
@@ -1518,8 +1581,32 @@ extern int      putenv(const char *s);
 #define isPrint(c)       (charMaskTbl1[((meUByte) (c))] & CHRMSK_PRINTABLE)
 #define isSpace(c)       (charMaskTbl1[((meUByte) (c))] & CHRMSK_SPACE)
 
-#define meWindowInWord(wp)  (isWord(meLineGetChar((wp)->dotLine,(wp)->dotOffset)))
 #define meWindowInPWord(wp) ((meLineGetChar((wp)->dotLine,(wp)->dotOffset)) > ' ')
+
+#if MEOPT_UNICODE
+/* Chars from 0x80 are classified by their Unicode properties, the set-char-mask tables only
+ * cover ASCII */
+#define meCHAR_LEN_MAX          meUTF8_LEN_MAX
+#define meLineNextChar(lp,off)  meUtf8NextFast((lp)->text,(off),(lp)->length)
+#define meLinePrevChar(lp,off)  meUtf8Prev((lp)->text,(off))
+#define meLineGetUni(lp,off)    (((lp)->text[(off)] < 0x80) ? ((meUInt) (lp)->text[(off)]):meLineGetUniHigh((lp),(off)))
+#define meUniIsWord(uc)         (((uc) < 0x80) ? isWord(uc):meUniPropIsWord(meUniProps(uc)))
+#define meUniIsSpace(uc)        (((uc) < 0x80) && isSpace(uc))
+#define meUniCharToUpper(uc)    (((uc) < 0x80) ? ((meUInt) toUpper(uc)):meUniToUpper(uc))
+#define meUniCharToLower(uc)    (((uc) < 0x80) ? ((meUInt) toLower(uc)):meUniToLower(uc))
+#define meLineInWord(lp,off)    meLineIsWord((lp),(off))
+#else
+#define meCHAR_LEN_MAX          1
+#define meLineNextChar(lp,off)  ((off)+1)
+#define meLinePrevChar(lp,off)  ((off)-1)
+#define meLineGetUni(lp,off)    meLineGetChar(lp,off)
+#define meUniIsWord(cc)         isWord(cc)
+#define meUniIsSpace(cc)        isSpace(cc)
+#define meUniCharToUpper(cc)    toUpper(cc)
+#define meUniCharToLower(cc)    toLower(cc)
+#define meLineInWord(lp,off)    (isWord(meLineGetChar((lp),(off))))
+#endif
+#define meWindowInWord(wp)      meLineInWord((wp)->dotLine,(wp)->dotOffset)
 
 #if MEOPT_EXTENDED
 /* with extended option enable set-char-mask can be used to configure the char sets */
@@ -1574,19 +1661,24 @@ extern int      putenv(const char *s);
 #define TKLVR	0x0B			/* Local variable 		*/
 #define TKCVR	0x0C			/* Command variable 		*/
 
-#if MEOPT_BYTECOMP
+/* A compiled macro line (macroCompileLine) is a list of the tokens token() gives, each a kind,
+ * a 2 byte value, a 2 byte length (little-endian) then the token and a '\0', ended by a meCL_END;
+ * a label line keeps its text. The executor takes the tokens as it took them from the text. */
+#define meCL_END     0x00
+#define meCL_TOK     0x01                       /* any other token, value 1 more than its function's index */
+#define meCL_CMD     0x02                       /* a bare word, value its command index once looked up */
+#define meCL_DIR     0x03                       /* a directive, value its number    */
+#define meCL_TEXT    0x04                       /* define-help text in a macro, the text follows */
+#define meCL_HDR     5
+#define meCL_UNKNOWN 0xffff                     /* an unknown directive or a command not looked up */
+#define meCLGetValue(ss)  ((ss)[1] | ((ss)[2] << 8))
+#define meCLSetValue(ss,vv) ((ss)[1] = (meUByte) (vv), (ss)[2] = (meUByte) ((vv) >> 8))
+#define meCLGetLen(ss)    ((ss)[3] | ((ss)[4] << 8))
+#define meCLGetTok(ss)    ((ss)+meCL_HDR)
+#define meCLNext(ss)      ((ss)+meCL_HDR+meCLGetLen(ss)+1)
 
-#define BCLEAD  0x80
-#define BCSTRF  0x40
-#define BCSTRT  0x20
-#define BCSLLM  0x1f
-
-#define BCDIR   (BCLEAD|TKDIR)
-#define BCFUN   (BCLEAD|TKFUN)
-
-#endif
-
-#define meAtoi(s) strtol((char *)(s),(char **)NULL,0)
+extern long meStrToNum(meUByte *ss);
+#define meAtoi(s) meStrToNum((meUByte *)(s))
 #define meAtol(s) (meAtoi(s) != 0)
 #define meLtoa(s) ((s) ? truem:falsem)
 

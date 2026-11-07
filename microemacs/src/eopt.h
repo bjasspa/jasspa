@@ -42,6 +42,8 @@ meUByte meOptionList[]=
 #if MEOPT_CLIENTSERVER
     "cli\n"
 #endif
+    /* macros are compiled as defined, there are no byte compiled files */
+    "cmc\n"
 #if MEOPT_COLOR
     "col\n"
 #endif
@@ -140,6 +142,9 @@ meUByte meOptionList[]=
 #endif
 #if MEOPT_UNDO
     "und\n"
+#endif
+#if MEOPT_UNICODE
+    "uni\n"
 #endif
 #if MEOPT_WORDPRO
     "wor\n"

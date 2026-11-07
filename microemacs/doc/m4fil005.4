@@ -54,10 +54,14 @@ The functions may all be abbreviated to their three letter  abbreviation (i.e.
 argument is completely evaluated before the second argument.
 .IP "\fB&atoi\fR \fIchar\fR"
 Converts the given character  \fIchar\fR to it's \s-1ASCII\s0  number which is
-returned. (see \fB&itoa\fR). Abbreviated command is \fB&ato\fR.
+returned. (see \fB&itoa\fR). Abbreviated command is \fB&ato\fR. In a version of \*(mS with Unicode support the
+character's Unicode code point is returned, a raw byte (see
+.Ht $buffer-encoding 5 )
+giving \fC0x110000\fR plus the byte.
 .IP "\fB&itoa\fR \fInum\fR"
 Converts an integer \fInum\fR to it's ASCII character  representation which is
-returned to the caller. Abbreviated command is \fB&ito\fR.
+returned to the caller. Abbreviated command is \fB&ito\fR. In a version of \*(mS with Unicode support \fInum\fR
+is a Unicode code point, an invalid value giving the replacement character U+FFFD.
 .IP "\fB&gmode\fR \fImode\fR"
 Returns \fC1\fR if the given mode  \fImode\fR is globally enabled. Allows
 macros to test the global mode state (see
@@ -73,7 +77,9 @@ Abbreviated command is \fB&nbm\fR.
 .IP "\fB&inword\fR \fIchar\fR"
 \fCTRUE\fR. If the given character \fIchar\fR is a 'word' character, see
 .Ht forward-word 2
-for a description of a 'word' character. Abbreviated command is \fB&inw\fR.
+for a description of a 'word' character. Abbreviated command is \fB&inw\fR. In a version of \*(mS with Unicode
+support a character from 0x80 is a word character when it is a letter, mark, decimal digit, letter number or connector
+punctuation.
 .IP "\fB&indirect\fR \fIstr\fR"
 Evaluate  \fIstr\fR as a variable.  The  \fIstr\fR  argument is evaluated  and
 takes  the  resulting  string,  and then  uses it as a  variable  name. i.e. a

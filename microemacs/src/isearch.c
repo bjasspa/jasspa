@@ -234,6 +234,8 @@ isearch(int flags)
     meUInt        arg;          /* argument */
     int           cpos;         /* character number in search string */
     int           c;            /* current input character */
+    meUByte       cbuf[meCHAR_LEN_MAX]; /* the char being added */
+    int           clen;
     meLine       *tmpline;      /* Tempory storage for wrap searching*/
     int           tmpoff;
     meInt         tmplno;
@@ -279,7 +281,7 @@ isearch(int flags)
 get_another_key:
     /* Get the first character   */
     c = meGetKey(meGETKEY_SILENT|meGETKEY_COMMAND);
-    switch(decode_key((meUShort) c,&arg))
+    switch(decode_key((meKey) c,&arg))
     {
     case CK_NEWLIN:                     /* ^M : New line. do other search */
         restoreUseMlBinds();
@@ -337,7 +339,7 @@ get_another_key:
 
     for(;;)
     {
-        switch(decode_key((meUShort) c,&arg))
+        switch(decode_key((meKey) c,&arg))
         {
         case CK_ABTCMD: /* ^G : Abort input and return */
 #if MEOPT_IPIPES
@@ -416,6 +418,24 @@ find_next:
             break;                              /* Go continue with the srch */
 
         case CK_QUOTE:                          /* ^Q - quote next character */
+            if(arg && (((int) (arg + 0x80000000)) < 0))
+            {
+                /* bound with a -ve argument, the char is given by its code */
+                if((clen = meGetCharCode(NULL,cbuf)) > 0)
+                    goto isAddBytes;
+                if(clen == 0)
+                    break;
+#if MEOPT_IPIPES
+                if(!(flags & ISCANNER_PIPE))
+#endif
+                {
+                    cwp->dotLine = histPos[0].endline;
+                    cwp->dotOffset = histPos[0].endoffset;
+                    cwp->dotLineNo = histPos[0].endline_no;
+                    cwp->updateFlags |= WFMOVEL;
+                }
+                goto quit_finish;
+            }
             if((c = quoteKeyToChar(meGetKey(meGETKEY_SILENT|meGETKEY_SINGLE))) < 0)
             {
                 TTbell();
@@ -431,6 +451,9 @@ find_next:
             if(status == meTRUE)
             {
                 int tt;
+#if MEOPT_UNICODE
+                int ll;
+#endif
                 
                 if(flags & ISCANNER_BACKW)
                     isearchGotoEnd(srchPat,flags,histNo,histLen,histPos);
@@ -447,6 +470,20 @@ find_next:
                        ((c == '[') || (c == '.') || (c == '+') || (c == '*') || (c == '^') || (c == '$') || (c == '?') || (c == '\\')))
                         srchPat[cpos++] = '\\';
                     srchPat[cpos++] = c;
+#if MEOPT_UNICODE
+                    if(c != meCHAR_NL)
+                    {
+                        /* copy the rest of the char, if it fits */
+                        ll = meLineNextChar(cwp->dotLine,cwp->dotOffset) - cwp->dotOffset - 1;
+                        if((cpos + ll) >= meBUF_SIZE_MAX)
+                        {
+                            cpos--;
+                            break;
+                        }
+                        memcpy(srchPat+cpos,cwp->dotLine->text+cwp->dotOffset+1,ll);
+                        cpos += ll;
+                    }
+#endif
                     if(meWindowForwardChar(cwp, 1) == meFALSE)
                         break;
                 }
@@ -549,7 +586,7 @@ is_redraw:
             break;
             
         default:                                /* All other chars           */
-            if((c < 0x20) || (c > 0xff))        /* Is it printable?          */
+            if((c < 0x20) || !meKeyIsChar(c))   /* Is it printable?          */
             {
 #if MEOPT_CALLBACK
                 /* must ignore [SCA]-pick and [SCA]-drop */
@@ -560,13 +597,25 @@ is_redraw:
                 goto good_finish;               /* Nope. - Finish processing */
             }
 isAddChar:
-            srchPat[cpos++] = c;                /* put the char in the buffer*/
-            if(cpos >= meBUF_SIZE_MAX)                    /* too many chars in string? */
+#if MEOPT_UNICODE
+            /* a char is added as one step so a backspace removes it all, a NUL in its internal form */
+            if((c >= 0x80) || (c == 0))
+                clen = meUtf8Encode(cbuf,c);
+            else
+#endif
+            {
+                cbuf[0] = (meUByte) c;
+                clen = 1;
+            }
+isAddBytes:
+            if((cpos + clen) >= meBUF_SIZE_MAX)           /* too many chars in string? */
             {                                   /* Yup.  Complain about it   */
                 addHistory(MLSEARCH,srchPat,meFALSE);
                 mlwrite(MWABORT,(meUByte *)"[Search string too long!]");
                 goto quit_finish;
             }
+            memcpy(srchPat+cpos,cbuf,clen);     /* put the char in the buffer*/
+            cpos += clen;
             srchPat[cpos] = 0;                  /* null terminate the buffer */
             if(status != meFALSE)               /* If not lost last time     */
             {

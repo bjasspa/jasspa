@@ -293,13 +293,16 @@ with the given font name. e.g.
 .IP
 On systems which support FreeType fonts, if the font name does not start with a '\fC-\fR' then a FreeType font is assumed 
 (including the default "" empty string), otherwise the font is assumed to be an X11 core font.
-.IP "\fCDisplay Code Page\fR"
-Selects the display code page being used by the system to render the \*(mS
-window,  dependent  on the  \fBFont\fR  being used. The setting of this option
-effects the configuration of \*(mS's internal character maps (using command
+.IP "\fC8-bit Code Page\fR"
+Selects the 8-bit (single byte) code page \*(mS uses for text which is not Unicode. A file which is not
+UTF-8, UTF-16 or UTF-32 encoded is read with this code page (see
+.Ht $buffer-encoding 5 ),
+and a terminal which does not use UTF-8 is taken to use it. In a version of \*(mS without Unicode
+support it is also the code page used to render the window, dependent on the \fBFont\fR being used,
+and its setting configures \*(mS's internal character maps (using command
 .Ht set-char-mask 2 )
-enabling the code pages of foreign languages to be correctly supported. It
-also changes the definition of variables
+so the letters of foreign languages are correctly supported. It also changes the definition of
+variables
 .Ht $box-chars 5
 and
 .Ht $window-chars 5
@@ -419,14 +422,8 @@ dialog.
 .SS "Platform - UNIX Console Setup"
 Only  present on UNIX  platforms  when using the  termcap  interface,  all the
 Console platform settings are kept independent of the X interface settings.
-.IP "\fCDisplay Code Page\fR"
+.IP "\fC8-bit Code Page\fR"
 See \fBPlatform UNIX Setup\fR above.
-.IP "\fCUTF-8 encode term I/O\fR"
-Enable this option if your terminal is using UTF-8 encoding. This can usually be determined by disabling the option 
-then executing
-.Ht insert-symbol 3 ,
-if many of the characters in the second half of the table are drawn as a question mark within a diamond (\fC<?>\fR) 
-the terminal is using UTF-8 encoding and the option should be enabled.
 .IP "\fCExtend Char Set\fR"
 When enabled \*(mS replaces the display of characters \fC0x00\fR to \fC0x1f\fR with specific Unicode characters,
 typically not available in the current code page, which are useful for variables
@@ -495,7 +492,7 @@ dimensions  to be  specified,  generally  used to achieve a precise  font size
 requirement.
 .IP "\fCUse Font Styles\fR"
 See \fBPlatform UNIX Setup\fR above.
-.IP "\fCDisplay Code Page\fR"
+.IP "\fC8-bit Code Page\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCChoose Font\fR"
 Opens a windows  dialog  allowing the user to select a font, the  selection is
@@ -536,7 +533,7 @@ See \fBPlatform UNIX Setup\fR above.
 .SS "Platform - Win32 Console Setup"
 Only  present on Windows  platforms  when using the console  interface,  all the Console  platform  settings  are kept
 independent of the Window interface settings.
-.IP "\fCDisplay Code Page\fR"
+.IP "\fC8-bit Code Page\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDraw White Spaces\fR"
 See \fBPlatform UNIX Setup\fR above.
@@ -569,7 +566,7 @@ Sets the DOS graphics  mode number and whether the number of text lines can be
 doubled. This indirectly executes
 .Ht change-font 2
 with the given font name.
-.IP "\fCDisplay Code Page\fR"
+.IP "\fC8-bit Code Page\fR"
 See \fBPlatform UNIX Setup\fR above.
 .IP "\fCDouble Lines\fR"
 In some  graphic  modes  the  number of text  lines can be  doubled  via a dos

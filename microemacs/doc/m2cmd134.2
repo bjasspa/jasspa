@@ -169,6 +169,7 @@ operation of commands like
 Many different file types operate better with a different word character set, e.g. it is preferable to include the
 \&'\fC_\fR' character when editing C files. See variable
 .Ht $buffer-mask 5 .
+In a Unicode build only \s-1ASCII\s0 characters can be added, see NOTES below.
 .IP "\fBk\fR"
 Keyboard character map. This flag is used to configure a mapping from a foreign non-latin keyboard (such as Greek or
 Russian) to Latin characters, setting the mapping correctly can greatly improve usability in \*(mS as changing keyboards is
@@ -291,6 +292,14 @@ solution is used, a further mapping of \fBA\fR to \fBa\fR is given to correct th
 set-char-mask "a" "\\xC0\\xE0\\xC1\\xE1Aa"
 .CE 0
 .Me "$ehf-scheme"
+.SH NOTES
+In a Unicode build the character tables only cover \s-1ASCII\s0. Characters from 0x80 in the "\fIvalue\fR" of a
+character set flag (e.g. \fBa\fR, \fBs\fR or \fB1\fR to \fB4\fR) are ignored, and an argument of \fC0\fR only
+returns \s-1ASCII\s0 characters. A character from 0x80 is classified by its Unicode properties instead: a letter,
+mark, decimal digit, letter number (e.g. a Roman numeral) or connector punctuation character is always a word
+character and any other is never one, whatever
+.Ht $buffer-mask 5
+is set to, and its case is changed using the Unicode simple case mappings.
 .SH "SEE ALSO"
 .na
 .Ht forward-word 2 ,

@@ -57,32 +57,32 @@ jobs:
           rm ./.gitignore
           cd ..
           mv release_readme.txt readme.txt
-          export MEVER=`./bin/macos26-apple64/mec -p @contribs/ver.emf`
+          export MEVER=`./bin/macos26-apple64/mec -p @dev/ver.emf`
           zip -r ../downloads/Jasspa_MicroEmacs_${MEVER}_bin_macos_apple_binaries bin LICENSE readme.txt
 
       - name: Create macos-apple mesc
         run: |
-          export MEVER=`./microemacs/bin/macos26-apple64/mec -p @microemacs/contribs/ver.emf`
-          cd ./microemacs/mesingle
+          export MEVER=`./microemacs/bin/macos26-apple64/mec -p @microemacs/dev/ver.emf`
+          cd ./microemacs/dev/mesingle
           rm -rf bin
           mkdir -p bin/macos26-apple64
-          ../bin/macos26-apple64/mec -p "@./mesgen" -f -p ../bin/macos26-apple64/mec -t ../bin/macos26-apple64/tfs -o bin/macos26-apple64/mesc
-          cp ../LICENSE ./
-          cp ../readme.txt ./
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesc bin LICENSE readme.txt
+          ../../bin/macos26-apple64/mec -p "@./mesgen" -f -p ../../bin/macos26-apple64/mec -t ../../bin/macos26-apple64/tfs -o bin/macos26-apple64/mesc
+          cp ../../LICENSE ./
+          cp ../../readme.txt ./
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesc bin LICENSE readme.txt
 
       - name: Create macos-apple mesw
         run: |
-          export MEVER=`./microemacs/bin/macos26-apple64/mec -p @microemacs/contribs/ver.emf`
-          cd ./microemacs/mesingle
+          export MEVER=`./microemacs/bin/macos26-apple64/mec -p @microemacs/dev/ver.emf`
+          cd ./microemacs/dev/mesingle
           rm -rf bin
           mkdir -p bin/macos26-apple64
-          ../bin/macos26-apple64/mec -p "@./mesgen" -f -p ../bin/macos26-apple64/mew -t ../bin/macos26-apple64/tfs -o bin/macos26-apple64/mesw
-          zip -r ../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin LICENSE readme.txt
+          ../../bin/macos26-apple64/mec -p "@./mesgen" -f -p ../../bin/macos26-apple64/mew -t ../../bin/macos26-apple64/tfs -o bin/macos26-apple64/mesw
+          zip -r ../../../downloads/Jasspa_MicroEmacs_${MEVER}_abin_macos_apple_mesw bin LICENSE readme.txt
 
       - name: Compile macos-apple MicroEmacs.app
         run: |
-          export MEVER=`./microemacs/bin/macos26-apple64/mec -p @microemacs/contribs/ver.emf`
+          export MEVER=`./microemacs/bin/macos26-apple64/mec -p @microemacs/dev/ver.emf`
           cd ./microemacs/src
           ./build.sh -t nw -a apple
           cd ../bin/macos26-apple64-*
@@ -93,7 +93,7 @@ jobs:
       - name: Create macos-apple OpenSSL download
         run: |
           cd ./microemacs/
-          export MEVER=`./bin/macos26-apple64/mec -p @contribs/ver.emf`
+          export MEVER=`./bin/macos26-apple64/mec -p @dev/ver.emf`
           rm -rf tfs
           mkdir -p tfs/bin/macos26-apple64
           cd tfs/bin/macos26-apple64
@@ -119,7 +119,7 @@ jobs:
       - name: Create macos iconset package
         run: |
           cd ./microemacs/
-          export MEVER=`./bin/macos26-apple64/mec -p @contribs/ver.emf`
+          export MEVER=`./bin/macos26-apple64/mec -p @dev/ver.emf`
           cd icons/logo/
           mkdir MicroEmacs.iconset
           cp me_logo_512_32.png MicroEmacs.iconset/icon_512.png

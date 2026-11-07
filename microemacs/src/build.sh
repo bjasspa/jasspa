@@ -10,6 +10,7 @@ MEARCH=
 MECORE=
 MEPROF=
 METYPE=
+MENCODE=
 MEDEBUG=
 MAKEFILE=
 MAKECDEFS=
@@ -33,6 +34,8 @@ do
         echo "   -dmalloc"
         echo "        : Build with debug malloc (see https://dmalloc.com/), the dmalloc"
         echo "          library must be installed or in ../3rdparty/."
+        echo "   -ec  : For 8-bit code-page based build."
+        echo "   -eu  : For unicode utf8 based build (default)."
         echo "   -h   : For this help page."
         echo "   -l <logfile>"
         echo "        : Set the compile log file"
@@ -41,7 +44,7 @@ do
         echo "   -m <makefile>"
         echo "        : Sets the makefile to use where <makefile> can be"
         echo "            linuxgcc.mak, macoscc.mak etc."
-        echo "   -ne  : for NanoEmacs build (output is ne)."
+        echo "   -ne  : For NanoEmacs build (output is ne)."
         echo "   -P   : Build with profiling instructions."
         echo "   -p <search-path>"
         echo "        : Sets the default system search path to <search-path>,"
@@ -73,6 +76,10 @@ do
         OPTIONS=" $OPTIONS DMALLOC=1"
     elif [ $1 = "-d" ] ; then
         MEDEBUG=" BCFG=debug"
+    elif [ $1 = "-ec" ] ; then
+        MENCODE=" BENC=c"
+    elif [ $1 = "-eu" ] ; then
+        MENCODE=" BENC=u"
     elif [ $1 = "-l" ] ; then
         shift
         LOGFILE="$1"
@@ -232,7 +239,7 @@ if [ "$MAKEFILE" = "winmingw.mak" ] ; then
       fi
     fi
 fi
-OPTIONS="$MEARCH$MECORE$MEDEBUG$METYPE$MEPROF$BITSIZE$OPTIONS"
+OPTIONS="$MEARCH$MECORE$MEDEBUG$METYPE$MENCODE$MEPROF$BITSIZE$OPTIONS"
 MAKECDEFS="MAKECDEFS=$MAKECDEFS"
 if [ -r $MAKEFILE ] ; then
     if [ -n "$LOGFILE" ] ; then

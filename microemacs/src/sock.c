@@ -56,8 +56,8 @@
 #ifdef _WIN32
 #define meBadSocket        INVALID_SOCKET
 #define meSockLibGetFunc   GetProcAddress
-#define meSockGetError     GetLastError
-#define meSocketGetError   WSAGetLastError
+#define meSockGetError()   ((int) GetLastError())
+#define meSocketGetError() ((int) WSAGetLastError())
 #define meSocketOpen       socket
 #define meSocketConnect    connect
 #define meSocketClose      closesocket
@@ -82,8 +82,8 @@
 #include <sys/un.h>
 #define meBadSocket        -1
 #define meSockLibGetFunc   dlsym
-#define meSockGetError()   (errno)
-#define meSocketGetError() (errno)
+#define meSockGetError()   ((int) (errno))
+#define meSocketGetError() ((int) (errno))
 #define meSocketOpen       socket
 #define meSocketConnect    connect
 #define meSocketClose      close
@@ -1221,6 +1221,8 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
     meInt pfs, ret, err, ll;
     FILE *pfp=NULL;
     meSOCKET sck;
+    meCookie *ocookie=cookie;
+    int reused=0;
 #if MEOPT_OPENSSL
     SSL *ssl;
 #endif
@@ -1236,33 +1238,33 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
            strcmp((char *) io->urlHst,(char *) host) ||
            strcmp((char *) io->urlUsr,((user == NULL) ? "":(char *) user)))
             meSockClose(io,1);
-#ifdef _WIN32
         else
         {
-            /* On windows writing to a sever shutdown (half-open) socket does not fail so poll to see if there is anything to read.
-             * This works because when the server sends a FIN an attempt to read will succeed with a length of 0 indicating the end, if there
-             * actually is something to read we still want to close the socket as things must have gone horribly out of sync!
-             * On UNIX this test does not appear to work, however the initial send fails with an EPIPE error - see below. */
+            /* Writing to a socket the server has shut down (half-open) does not fail on Windows, nor the first write on UNIX, so
+             * poll to see if there is anything to read. This works because when the server sends a FIN an attempt to read will
+             * succeed with a length of 0 indicating the end, if there actually is something to read we still want to close the
+             * socket as things must have gone horribly out of sync! Windows ignores select's first argument, UNIX needs sck+1. */
             fd_set rfds;
-            TIMEVAL tv;
+            struct timeval tv;
             tv.tv_sec = 0;
             tv.tv_usec = 0;
             FD_ZERO(&rfds);
             FD_SET(sck,&rfds);
-            if((select(1,&rfds,NULL,NULL,&tv) == 1) && FD_ISSET(sck,&rfds))
+            if((select((int) sck+1,&rfds,NULL,NULL,&tv) == 1) && FD_ISSET(sck,&rfds))
             {
                 if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
                     ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "meSock Info: Closing connection as server shutdown");
                 meSockClose(io,1);
             }
         }
-#endif
     }
     io->urlLen = -1;
     io->chkLen = 0;
     io->timeout = meSOCKET_TIMEOUT;
     if(meSockIsInUse(io))
     {
+        /* the server may still close a kept connection before reading the request, a request without data is then sent again */
+        reused = (fdLen <= 0);
         io->urlFlags = (io->urlFlags & meSOCKFLG_CTRL_SHUTDOWN) | flags;
 #if MEOPT_OPENSSL
         ssl = io->ssl;
@@ -1663,7 +1665,7 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                     fclose(pfp);
                     fdLen = 0;
                 }
-                return meSockHttpOpen(io,flags,host,port,user,pass,file,cookie,hdr,fdLen,frmData,postFName,rbuff);
+                return meSockHttpOpen(io,flags,host,port,user,pass,file,ocookie,hdr,fdLen,frmData,postFName,rbuff);
             }
 #endif
             if(io->urlOpts & meSOCKOPT_LOG_ERROR)
@@ -1807,9 +1809,17 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
         meUByte cc;
         if(meSockReadLine(io,ffbuf) < 0)
         {
+            if(reused)
+            {
+                if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
+                    ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,(meUByte *) "meSock Info: Reconnecting as server closed the connection");
+                meSockClose(io,1);
+                return meSockHttpOpen(io,flags,host,port,user,pass,file,ocookie,hdr,fdLen,frmData,postFName,rbuff);
+            }
             err = -25;
             break;
         }
+        reused = 0;
         if(io->urlOpts & meSOCKOPT_LOG_DETAILS)
             ffSUrlLogger(io,meSOCKOPT_LOG_DETAILS,ffbuf);
         if(ffbuf[0] == '\0')
@@ -1838,6 +1848,9 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
             if(((ffbuf[1]|0x20) == 't') && ((ffbuf[2]|0x20) == 't') && ((ffbuf[3]|0x20) == 'p') &&
                (ffbuf[4] == '/') && (ffbuf[5] >= '1') && (ffbuf[5] <= '9'))
             {
+                if((ffbuf[5] == '1') && (ffbuf[6] == '.') && (ffbuf[7] == '0'))
+                    /* HTTP/1.0 closes the connection after its reply */
+                    io->urlFlags |= meSOCKFLG_CLOSE;
                 ss = ffbuf+5;
                 while(((cc=*++ss) != '\0') && (cc != ' ') && (cc != '\t'))
                     ;
@@ -1853,9 +1866,9 @@ meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *use
                    ((ffbuf[9]|0x20) == 'e') && ((ffbuf[10]|0x20) == 'n') && ((ffbuf[11]|0x20) == 'g') && ((ffbuf[12]|0x20) == 't') && ((ffbuf[13]|0x20) == 'h') && (ffbuf[14] == ':'))
                     io->urlLen = atoi((char *) ffbuf+15);
                 else if(((ffbuf[3]|0x20) == 'n') && ((ffbuf[4]|0x20) == 'e') && ((ffbuf[5]|0x20) == 'c') && ((ffbuf[6]|0x20) == 't') && ((ffbuf[7]|0x20) == 'i') &&
-                        ((ffbuf[9]|0x20) == 'o') && ((ffbuf[10]|0x20) == 'n') && (ffbuf[11] == ':'))
+                        ((ffbuf[8]|0x20) == 'o') && ((ffbuf[9]|0x20) == 'n') && (ffbuf[10] == ':'))
                 {
-                    ss = ffbuf+12;
+                    ss = ffbuf+11;
                     while(((cc=*ss++) == ' ') || (cc == '\t'))
                         ;
                     if((cc|0x20) == 'c')

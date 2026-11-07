@@ -37,6 +37,8 @@ Callback and idle event handling (see
 .IP "cli - MEOPT_CLIENTSERVER"
 Client/server support (see
 .Hl Client-Server Client-Server 2 ).
+.IP "cmc"
+Macros are compiled when they are defined, so there are no byte compiled macro files (\fC.emb\fR), always present.
 .IP "col - MEOPT_COLOR"
 All color support (making hilighting redundent etc, see
 .Ht add-color 2 ).
@@ -148,6 +150,10 @@ Input detect or 'type-ahead' for background processing support.
 .IP "und - MEOPT_UNDO"
 Undo support (see
 .Ht undo 2 ).
+.IP "uni - MEOPT_UNICODE"
+Unicode support, text is held as Unicode and files may be UTF-8, UTF-16 or UTF-32 encoded (see
+.Hl "Locale Support" localeSupport 2 ).
+A version without it supports a single byte code page.
 .IP "wor - MEOPT_WORDPRO"
 Word-processor style commands like
 .Ht fill-paragraph 2

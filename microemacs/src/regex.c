@@ -89,6 +89,11 @@ typedef struct meRegex {
     meRegexItem  *lnext;          /* the next free item */
     meRegexItem  *head;           /* pointer to the regex first item */
     meRegexClass  start;          /* first character class bit mask */
+    meRegexClass  start2;         /* second byte bit mask of a multi-byte first char */
+    int           startByte;      /* the only byte in start, else -1 */
+    int           start2Byte;     /* the only byte in start2, else -1 */
+    int           start2No;       /* the number of bytes in start2 when all starts are multi-byte, else 0 */
+    unsigned char start2Bytes[4];  /* those bytes */
 } meRegex;
 
 /* meRegexComp return values */
@@ -123,6 +128,7 @@ typedef struct meRegex {
 #define meREGEX_MAYENDBUFF      0x10
 #define meREGEX_CLASSCHANGE     0x20
 #define meREGEX_CLASSUSED       0x40
+#define meREGEX_START2          0x80    /* start2 limits the byte after a lead byte */
 
 #define meRegexInvalidate(regex)   (regex->flags = 0)
 #define meRegexClassChanged(regex) (regex->flags |= meREGEX_CLASSCHANGE)
@@ -200,6 +206,8 @@ enum {
     meREGEXITEM_BACKREF,
     meREGEXITEM_SINGLE,
     meREGEXITEM_DOUBLE,
+    meREGEXITEM_UCHAR,
+    meREGEXITEM_UFOLD,
     meREGEXITEM_CLASS,
     meREGEXITEM_ANYCHR,
     meREGEXITEM_ALPHACHR,
@@ -282,10 +290,146 @@ meRegexClassMergeAll(meRegexClass dclss, meRegexClass sclss)
         dclss[ii] |= sclss[ii];
 }
 
+#if MEOPT_UNICODE
+/* Text is internal UTF-8, items match a whole char. Chars below 0x80 use the byte tests and class
+ * bit mask, chars from 0x80 the Unicode properties: UCHAR is a char, UFOLD a case folded char, a
+ * CLASS adds ranges and property tests (bit n for the nth of the \a\d\h\l\m\s\u\w classes,
+ * n+8 for its inverse, then print, graph, punct, cntrl & raw) */
+#define meREGEXITEM_UFLAG_INVERT  0x01
+#define meREGEXITEM_UFLAG_ICASE   0x02
+#define meREGEXUPROP_PRINT        16
+#define meREGEXUPROP_GRAPH        17
+#define meREGEXUPROP_PUNCT        18
+#define meREGEXUPROP_CNTRL        19
+#define meREGEXUPROP_RAW          20
+
+#define meRegexClassSetHigh(clss)  (memset((clss)+16,0xff,16))
+/* the next char start, continuation bytes never start a char in internal text */
+static int
+meRegexNextOff(unsigned char *ss, int off, int len)
+{
+    while((++off < len) && ((ss[off] & 0xc0) == 0x80))
+        ;
+    return off;
+}
+#define meRegexIsContByte(cc)      (((cc) & 0xc0) == 0x80)
+
+static int
+meRegexUniProp(meUInt uc, int prop)
+{
+    meUByte pp=meUniProps(uc), gc=meUniPropGC(pp);
+    switch(prop)
+    {
+    case 0:
+        return meUniPropIsAlpha(pp);
+    case 3:
+        return meUniPropIsLower(pp);
+    case 4:
+        return meUniPropIsAlpha(pp) || (gc == meUNIGC_Nd);
+    case 5:
+        return meUniPropIsSpace(pp);
+    case 6:
+        return meUniPropIsUpper(pp);
+    case 7:
+        return meUniPropIsWord(pp);
+    case meREGEXUPROP_PRINT:
+    case meREGEXUPROP_GRAPH:
+        if((gc == meUNIGC_Cn) || (gc == meUNIGC_Cc) || (gc == meUNIGC_Cs) || (gc == meUNIGC_Zl) || (gc == meUNIGC_Zp))
+            return 0;
+        return (prop == meREGEXUPROP_PRINT) || !meUniPropIsSpace(pp);
+    case meREGEXUPROP_PUNCT:
+        return ((gc >= meUNIGC_Pc) && (gc <= meUNIGC_So));
+    case meREGEXUPROP_CNTRL:
+        return (gc == meUNIGC_Cc);
+    case meREGEXUPROP_RAW:
+        return meUniIsRaw(uc);
+    }
+    /* digits & hex digits are ASCII only */
+    return 0;
+}
+
+static int
+meRegexClassUniTest(meRegexItem *item, meUInt uc)
+{
+    meUInt cs[3], *rr;
+    int nc=1, ii, jj;
+    
+    cs[0] = uc;
+    if(item->uflag & meREGEXITEM_UFLAG_ICASE)
+    {
+        cs[nc++] = meUniToLower(uc);
+        cs[nc++] = meUniToUpper(uc);
+    }
+    for(jj=0 ; jj<nc ; jj++)
+        for(ii=item->urangeNo, rr=item->urange ; ii>0 ; ii--, rr+=2)
+            if((cs[jj] >= rr[0]) && (cs[jj] <= rr[1]))
+                return !(item->uflag & meREGEXITEM_UFLAG_INVERT);
+    for(ii=0 ; ii<=meREGEXUPROP_RAW ; ii++)
+    {
+        if(((item->uc >> ii) & 1) &&
+           (((ii < 8) || (ii >= 16)) ? meRegexUniProp(uc,ii):!meRegexUniProp(uc,ii-8)))
+            return !(item->uflag & meREGEXITEM_UFLAG_INVERT);
+    }
+    return (item->uflag & meREGEXITEM_UFLAG_INVERT);
+}
+
+/* Returns the offset after the char at offset if it matches item, else -1. Used for UCHAR, UFOLD
+ * and for other char items when the char is from 0x80 */
+static int
+meRegexUniMatch(meRegexItem *item, unsigned char *string, int len, int offset)
+{
+    meUInt uc;
+    int ll, rr;
+    
+    if(offset >= len)
+        return -1;
+    ll = meUtf8Decode(string+offset,len-offset,&uc);
+    if(item->type == meREGEXITEM_UCHAR)
+        rr = (uc == item->uc);
+    else if(item->type == meREGEXITEM_UFOLD)
+        rr = (meUniFold(uc) == item->uc);
+    else if(item->type == meREGEXITEM_CLASS)
+        rr = meRegexClassUniTest(item,uc);
+    else if(item->type == meREGEXITEM_ANYCHR)
+        rr = 1;
+    else
+    {
+        /* the property items are in pairs, the second the inverse */
+        int pp = item->type - meREGEXITEM_ALPHACHR;
+        rr = meRegexUniProp(uc,pp >> 1) ^ (pp & 1);
+    }
+    return (rr) ? offset+ll:-1;
+}
+
+static int
+meRegexUniWord(unsigned char *string, int len, int offset)
+{
+    meUInt uc;
+    if((offset >= len) || ((uc=string[offset]) < 0x80))
+        return isWord(string[offset]);
+    meUtf8Decode(string+offset,len-offset,&uc);
+    return meUniPropIsWord(meUniProps(uc));
+}
+#define meRegexWordAt(ss,len,off)     meRegexUniWord((ss),(len),(off))
+#define meRegexWordBefore(ss,len,off) meRegexUniWord((ss),(len),meUtf8Prev((ss),(off)))
+#define meRegexUniItemMatch(item,string,len,offset,retOffset)               \
+    if((item->type >= meREGEXITEM_UCHAR) && (item->type <= meREGEXITEM_NWORDCHR) && \
+       ((item->type <= meREGEXITEM_UFOLD) || (string[offset] & 0x80)))       \
+        retOffset = meRegexUniMatch(item,string,len,offset);                 \
+    else
+#else
+#define meRegexNextOff(ss,off,len)    ((off)+1)
+#define meRegexIsContByte(cc)         0
+#define meRegexWordAt(ss,len,off)     isWord((ss)[off])
+#define meRegexWordBefore(ss,len,off) isWord((ss)[(off)-1])
+#define meRegexUniItemMatch(item,string,len,offset,retOffset)
+#endif
+
 
 #define meRegexItemMatch(regex,item,string,len,offset,retOffset) \
 do { \
     retOffset = -1; \
+    meRegexUniItemMatch(item,string,len,offset,retOffset) \
     switch(item->type) \
     { \
     case meREGEXITEM_NOOP: \
@@ -427,29 +571,29 @@ do { \
             retOffset = offset; \
         break; \
     case meREGEXITEM_BEGWORD: \
-        if(((offset == 0) || !isWord(string[offset-1])) && isWord(string[offset])) \
+        if(((offset == 0) || !meRegexWordBefore(string,len,offset)) && meRegexWordAt(string,len,offset)) \
             retOffset = offset; \
         break; \
     case meREGEXITEM_ENDWORD: \
-        if((offset != 0) && !isWord(string[offset]) && isWord(string[offset-1])) \
+        if((offset != 0) && !meRegexWordAt(string,len,offset) && meRegexWordBefore(string,len,offset)) \
             retOffset = offset; \
         break; \
     case meREGEXITEM_WORDBND: \
         if(offset != 0) \
         { \
-            if((isWord(string[offset]) == 0) != (isWord(string[offset-1]) == 0)) \
+            if((meRegexWordAt(string,len,offset) == 0) != (meRegexWordBefore(string,len,offset) == 0)) \
                 retOffset = offset; \
         } \
-        else if(isWord(string[offset])) \
+        else if(meRegexWordAt(string,len,offset)) \
             retOffset = offset; \
         break; \
     case meREGEXITEM_NWORDBND: \
         if(offset != 0) \
         { \
-            if((isWord(string[offset]) == 0) == (isWord(string[offset-1]) == 0)) \
+            if((meRegexWordAt(string,len,offset) == 0) == (meRegexWordBefore(string,len,offset) == 0)) \
                 retOffset = offset; \
         } \
-        else if(!isWord(string[offset])) \
+        else if(!meRegexWordAt(string,len,offset)) \
             retOffset = offset; \
         break; \
     } \
@@ -703,6 +847,17 @@ move_on:
  *
  * returns 1 if matched at current location, else 0. offset* is ignored if meREGEX_MATCHWHOLE is used.
  */
+#if MEOPT_UNICODE
+/* Tests whether a match may start at off: its byte is in the start mask and, after a lead byte,
+ * the next byte is in the second mask when that is set */
+#define meRegexStartTest(regex,ss,off,len)                                   \
+    (meRegexClassTest((regex)->start,(ss)[off]) &&                           \
+     (!((regex)->flags & meREGEX_START2) || ((ss)[off] < 0xc0) ||            \
+      (((off)+1 < (len)) && meRegexClassTest((regex)->start2,(ss)[(off)+1]))))
+#else
+#define meRegexStartTest(regex,ss,off,len) meRegexClassTest((regex)->start,(ss)[off])
+#endif
+
 int
 meRegexMatch(meRegex *regex, unsigned char *string, int len,
              int offsetS, int offsetE, int flags)
@@ -719,7 +874,7 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
             if((regex->flags & meREGEX_MAYBEEMPTY) && meRegexGroupMatch(regex,string,len,0))
                 return 1;
         }
-        else if(meRegexClassTest(regex->start,string[0]) && meRegexGroupMatch(regex,string,len,0) && (regex->group[0].end == len))
+        else if(meRegexStartTest(regex,string,0,len) && meRegexGroupMatch(regex,string,len,0) && (regex->group[0].end == len))
             return 1;
         return 0;
     }
@@ -733,15 +888,18 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
             return 0;
         if(regex->flags & meREGEX_MAYBEEMPTY)
             return meRegexGroupMatch(regex,string,len,0);
-        if((len > 0) && meRegexClassTest(regex->start,string[0]) && meRegexGroupMatch(regex,string,len,0))
+        if((len > 0) && meRegexStartTest(regex,string,0,len) && meRegexGroupMatch(regex,string,len,0))
             return 1;
     }
+    /* a match can only start on a char, the offsets given must be on one. Stepping a byte at a
+     * time is quicker, a continuation byte never starts a char so is skipped */
     else if(flags & meREGEX_BACKWARD)
     {
         if(regex->flags & meREGEX_MAYBEEMPTY)
             return meRegexGroupMatch(regex,string,len,offsetE);
         do
-            if(meRegexClassTest(regex->start,string[offsetE]) && meRegexGroupMatch(regex,string,len,offsetE))
+            if(meRegexStartTest(regex,string,offsetE,len) && !meRegexIsContByte(string[offsetE]) &&
+               meRegexGroupMatch(regex,string,len,offsetE))
                 return 1;
         while(--offsetE >= offsetS);
     }
@@ -750,12 +908,72 @@ meRegexMatch(meRegex *regex, unsigned char *string, int len,
         do
             if(meRegexGroupMatch(regex,string,len,offsetS))
                 return 1;
-        while(++offsetS <= offsetE);
+        while((offsetS = meRegexNextOff(string,offsetS,len)) <= offsetE);
     }
+    else if((regex->startByte >= 0) && !((regex->startByte >= 0xc0) && (regex->start2Byte < 0) &&
+                                         (regex->flags & meREGEX_START2)))
+    {
+        /* a single first byte, or a single lead and second byte (found by the second, rarer one) */
+        unsigned char *pp;
+        int sb, ll, ee;
+        if((regex->startByte >= 0xc0) && (regex->flags & meREGEX_START2))
+        {
+            sb = regex->start2Byte;
+            ll = 1;
+        }
+        else
+        {
+            sb = regex->startByte;
+            ll = 0;
+        }
+        /* the last byte looked at, a second byte is never past the end */
+        ee = offsetE + ll;
+        if(ll && (ee >= len))
+            ee = len - 1;
+        while(((offsetS+ll) <= ee) &&
+              ((pp = (unsigned char *) memchr(string+offsetS+ll,sb,ee-offsetS-ll+1)) != NULL))
+        {
+            offsetS = (int) (pp - string) - ll;
+            if((!ll || (string[offsetS] == regex->startByte)) && !meRegexIsContByte(string[offsetS]) &&
+               meRegexGroupMatch(regex,string,len,offsetS))
+                return 1;
+            if(++offsetS > offsetE)
+                break;
+        }
+    }
+#if MEOPT_UNICODE
+    else if(regex->start2No > 0)
+    {
+        /* a match starts on a lead byte before one of start2No second bytes: keep the next of each
+         * second byte and try the nearest */
+        unsigned char *nx[4], *pp, *es;
+        int ii, nn=regex->start2No;
+        es = string + ((offsetE+1 < len) ? offsetE+1:len-1);
+        for(ii=0 ; ii<nn ; ii++)
+            nx[ii] = ((offsetS+1) <= (es-string)) ?
+                  (unsigned char *) memchr(string+offsetS+1,regex->start2Bytes[ii],es-string-offsetS):NULL;
+        for(;;)
+        {
+            pp = NULL;
+            for(ii=0 ; ii<nn ; ii++)
+                if((nx[ii] != NULL) && ((pp == NULL) || (nx[ii] < pp)))
+                    pp = nx[ii];
+            if(pp == NULL)
+                break;
+            offsetS = (int) (pp - string) - 1;
+            if(meRegexClassTest(regex->start,string[offsetS]) && meRegexGroupMatch(regex,string,len,offsetS))
+                return 1;
+            for(ii=0 ; ii<nn ; ii++)
+                if(nx[ii] == pp)
+                    nx[ii] = (pp < es) ? (unsigned char *) memchr(pp+1,regex->start2Bytes[ii],es-pp):NULL;
+        }
+    }
+#endif
     else
     {
         do
-            if(meRegexClassTest(regex->start,string[offsetS]) && meRegexGroupMatch(regex,string,len,offsetS))
+            if(meRegexStartTest(regex,string,offsetS,len) && !meRegexIsContByte(string[offsetS]) &&
+               meRegexGroupMatch(regex,string,len,offsetS))
                 return 1;
         while(++offsetS <= offsetE);
     }
@@ -771,6 +989,9 @@ meRegexItemCreate(meRegex *regex)
     {
         if((item=(meRegexItem *)meMalloc(sizeof(meRegexItem))) == NULL)
             return NULL;
+#if MEOPT_UNICODE
+        item->urange = NULL;
+#endif
         item->lnext = regex->lhead;
         regex->lhead = item;
     }
@@ -782,6 +1003,16 @@ meRegexItemCreate(meRegex *regex)
     item->matchMin = 1;
     item->matchMax = 1;
     item->flag = 0;
+#if MEOPT_UNICODE
+    if(item->urange != NULL)
+    {
+        free(item->urange);
+        item->urange = NULL;
+    }
+    item->urangeNo = 0;
+    item->uflag = 0;
+    item->uc = 0;
+#endif
     return item;
 }
 
@@ -825,6 +1056,266 @@ do {                                                                         \
         return meREGEX_ERROR_BKSSH_CHAR;                                     \
     }                                                                        \
 } while(0)
+
+#if MEOPT_UNICODE
+/* Makes item match uc, a char from 0x80, folding its case if ICASE, which includes a char with no
+ * mapping of its own which another char folds to (ß from ẞ) */
+static void
+meRegexItemSetUni(meRegex *regex, meRegexItem *item, meUInt uc)
+{
+    meUInt cs[2];
+    if((regex->flags & meREGEX_ICASE) &&
+       ((meUniFold(uc) != uc) || (meUniToUpper(uc) != uc) || (meUniFoldSources(uc,cs,2) > 1)))
+    {
+        item->type = meREGEXITEM_UFOLD;
+        item->uc = meUniFold(uc);
+    }
+    else
+    {
+        item->type = meREGEXITEM_UCHAR;
+        item->uc = uc;
+    }
+}
+
+/* Gets the char after a \ in the regex at *rs (dd is the char after the \) as a code point, \xNN
+ * is U+00NN; returns minus the error on an error */
+static meInt
+meRegexGetEscChar(unsigned char **rsp, unsigned char dd)
+{
+    unsigned char *rs=*rsp;
+    meUInt uc;
+    
+    if(dd >= 0x80)
+    {
+        rs += meUtf8DecodePat(rs-1,meUTF8_LEN_MAX,&uc) - 1;
+        *rsp = rs;
+        return (meInt) uc;
+    }
+    switch(dd)
+    {
+    case 'e':   dd = 0x1b; break;
+    case 'f':   dd = 0x0c; break;
+    case 'g':   dd = 0x07; break;
+    case 'n':   dd = 0x0a; break;
+    case 'r':   dd = 0x0d; break;
+    case 't':   dd = 0x09; break;
+    case 'v':   dd = 0x0b; break;
+    case 'x':
+        dd = *rs;
+        if(isXDigit(dd))
+        {
+            unsigned char c1 = *++rs;
+            if(isXDigit(c1))
+            {
+                dd = (hexToNum(dd) << 4) | hexToNum(c1);
+                rs++;
+            }
+            else
+                dd = 0;
+        }
+        else
+            dd = 0;
+        break;
+    }
+    if(dd == '\0')
+        return (*rs == '\0') ? -meREGEX_ERROR_TRAIL_BKSSH:-meREGEX_ERROR_BKSSH_CHAR;
+    *rsp = rs;
+    return (meInt) dd;
+}
+
+/* Adds the chars lc to hc to a class, ASCII in the bit mask, the rest as a range */
+static int
+meRegexClassAddRange(meRegex *regex, meRegexItem *item, meUInt lc, meUInt hc)
+{
+    meUInt cc;
+    for(cc=lc ; (cc <= hc) && (cc < 0x80) ; cc++)
+    {
+        meRegexClassSet(item->data.cclass,cc);
+        if((regex->flags & meREGEX_ICASE) && isAlpha(cc))
+        {
+            unsigned char ee=toggleCase(cc);
+            meRegexClassSet(item->data.cclass,ee);
+        }
+    }
+    if(hc >= 0x80)
+    {
+        meUInt *rr;
+        if((rr=(meUInt *)realloc(item->urange,(item->urangeNo+1)*2*sizeof(meUInt))) == NULL)
+            return meREGEX_ERROR_MALLOC;
+        item->urange = rr;
+        rr += item->urangeNo++ << 1;
+        rr[0] = (lc < 0x80) ? 0x80:lc;
+        rr[1] = hc;
+    }
+    return meREGEX_OKAY;
+}
+
+/* Compiles a [...] class, *rsp is after the [ */
+static int
+meRegexClassCompUni(meRegex *regex, meRegexItem *item, unsigned char **rsp)
+{
+    static char *classChar="aAdDhHlLmMsSuUwW";
+    unsigned char *rs=*rsp, cc, dd;
+    meInt lc, hc;
+    int inv, ii, jj, kk, invert;
+    char *ss;
+    
+    item->type = meREGEXITEM_CLASS;
+    meRegexClassClearAll(item->data.cclass);
+    if(regex->flags & meREGEX_ICASE)
+        item->uflag |= meREGEXITEM_UFLAG_ICASE;
+    if((inv = (*rs == '^')))
+        rs++;
+    cc = *rs++;
+    do
+    {
+        if(cc == '\0')
+            return meREGEX_ERROR_OCLASS;
+        if(cc == '\\')
+        {
+            cc = *rs++;
+            if((cc != '\0') && ((ss=strchr(classChar,cc)) != NULL))
+            {
+                ii = (int) (((size_t) ss) - ((size_t) classChar));
+                invert = ii & 1;
+                ii >>= 1;
+                jj = 127;
+                do
+                {
+                    if(ii == 0)
+                        kk = isAlpha(jj);
+                    else if(ii == 1)
+                        kk = isDigit(jj);
+                    else if(ii == 2)
+                        kk = isXDigit(jj);
+                    else if(ii == 3)
+                        kk = isLower(jj);
+                    else if(ii == 4)
+                        kk = isAlphaNum(jj);
+                    else if(ii == 5)
+                        kk = isSpace(jj);
+                    else if(ii == 6)
+                        kk = isUpper(jj);
+                    else
+                        kk = isWord(jj);
+                    if((kk != 0) ^ invert)
+                        meRegexClassSet(item->data.cclass,jj);
+                } while(--jj > 0);
+                item->uc |= 1 << (ii + ((invert) ? 8:0));
+                continue;
+            }
+            if((lc = meRegexGetEscChar(&rs,cc)) < 0)
+                return (int) -lc;
+        }
+        else if(cc >= 0x80)
+        {
+            meUInt uc;
+            rs += meUtf8DecodePat(rs-1,meUTF8_LEN_MAX,&uc) - 1;
+            lc = (meInt) uc;
+        }
+        else if((cc == '[') && (*rs == ':'))
+        {
+            /* a [:name:], else a [ */
+            unsigned char *s1=rs+1, *s2;
+            int nn=0, pp;
+            s2 = s1;
+            while((dd=*s2++) != '\0')
+            {
+                if((dd == ':') && (*s2 == ']'))
+                    break;
+                nn++;
+            }
+            pp = -1;
+            if(dd == '\0')
+                ;
+            else if((nn == 5) && (!strncmp((char *) s1,"space",5) || !strncmp((char *) s1,"blank",5)))
+                pp = 5;
+            else if((nn == 5) && !strncmp((char *) s1,"digit",5))
+                pp = 1;
+            else if((nn == 6) && !strncmp((char *) s1,"xdigit",6))
+                pp = 2;
+            else if((nn == 5) && !strncmp((char *) s1,"upper",5))
+                pp = 6;
+            else if((nn == 5) && !strncmp((char *) s1,"lower",5))
+                pp = 3;
+            else if((nn == 5) && !strncmp((char *) s1,"alpha",5))
+                pp = 0;
+            else if((nn == 5) && !strncmp((char *) s1,"alnum",5))
+                pp = 4;
+            else if((nn == 5) && !strncmp((char *) s1,"print",5))
+                pp = meREGEXUPROP_PRINT;
+            else if((nn == 5) && !strncmp((char *) s1,"punct",5))
+                pp = meREGEXUPROP_PUNCT;
+            else if((nn == 5) && !strncmp((char *) s1,"graph",5))
+                pp = meREGEXUPROP_GRAPH;
+            else if((nn == 5) && !strncmp((char *) s1,"cntrl",5))
+                pp = meREGEXUPROP_CNTRL;
+            else if((nn == 3) && !strncmp((char *) s1,"raw",3))
+                pp = meREGEXUPROP_RAW;
+            if(pp >= 0)
+            {
+                jj = 127;
+                do
+                {
+                    if(((pp == 5) && isSpace(jj)) ||
+                       ((pp == 1) && isDigit(jj)) ||
+                       ((pp == 2) && isXDigit(jj)) ||
+                       ((pp == 6) && isUpper(jj)) ||
+                       ((pp == 3) && isLower(jj)) ||
+                       ((pp == 0) && isAlpha(jj)) ||
+                       ((pp == 4) && isAlphaNum(jj)) ||
+                       ((pp == meREGEXUPROP_PRINT) && isPrint(jj)) ||
+                       ((pp == meREGEXUPROP_PUNCT) && isPunct(jj)) ||
+                       ((pp == meREGEXUPROP_GRAPH) && isGraph(jj)) ||
+                       ((pp == meREGEXUPROP_CNTRL) && isCntrl(jj)))
+                        meRegexClassSet(item->data.cclass,jj);
+                } while(--jj > 0);
+                item->uc |= 1 << pp;
+                rs = s2+1;
+                continue;
+            }
+            lc = '[';
+        }
+        else
+            lc = cc;
+        if((*rs == '-') && ((dd=rs[1]) != ']'))
+        {
+            rs += 2;
+            if(dd == '\\')
+            {
+                dd = *rs++;
+                if((dd == '\0') || (strchr(classChar,dd) != NULL))
+                    return meREGEX_ERROR_CLASS;
+                if((hc = meRegexGetEscChar(&rs,dd)) < 0)
+                    return (int) -hc;
+            }
+            else if(dd >= 0x80)
+            {
+                meUInt uc;
+                rs += meUtf8DecodePat(rs-1,meUTF8_LEN_MAX,&uc) - 1;
+                hc = (meInt) uc;
+            }
+            else
+                hc = dd;
+            if(hc < lc)
+                return meREGEX_ERROR_CLASS;
+        }
+        else
+            hc = lc;
+        if((ii = meRegexClassAddRange(regex,item,(meUInt) lc,(meUInt) hc)) != meREGEX_OKAY)
+            return ii;
+    } while((cc=*rs++) != ']');
+    if(inv)
+    {
+        meRegexClassToggleAll(item->data.cclass);
+        /* should not match \0 */
+        meRegexClassClear(item->data.cclass,'\0');
+        item->uflag |= meREGEXITEM_UFLAG_INVERT;
+    }
+    *rsp = rs;
+    return meREGEX_OKAY;
+}
+#endif
 
 static int
 meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
@@ -1052,7 +1543,21 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
             dd += '0';
             /* no break, literal char */
         default:
+#if MEOPT_UNICODE
+            {
+                meInt ec;
+                if((ec = meRegexGetEscChar(&rs,dd)) < 0)
+                    return (int) -ec;
+                if(ec >= 0x80)
+                {
+                    meRegexItemSetUni(regex,item,(meUInt) ec);
+                    break;
+                }
+                dd = (unsigned char) ec;
+            }
+#else
             meRegexItemGetBackslashChar(rs,dd);
+#endif
             if((regex->flags & meREGEX_ICASE) && isAlpha(dd))
             {
                 item->type = meREGEXITEM_DOUBLE;
@@ -1066,6 +1571,20 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
             }
         }
     }
+#if MEOPT_UNICODE
+    else if(cc == '[')
+    {
+        int ii;
+        if((ii = meRegexClassCompUni(regex,item,&rs)) != meREGEX_OKAY)
+            return ii;
+    }
+    else if(cc >= 0x80)
+    {
+        meUInt uc;
+        rs += meUtf8DecodePat(rs-1,meUTF8_LEN_MAX,&uc) - 1;
+        meRegexItemSetUni(regex,item,uc);
+    }
+#else
     else if(cc == '[')
     {
         static char *classChar="aAdDhHlLmMsSuUwW";
@@ -1221,6 +1740,7 @@ meRegexItemGet(meRegex *regex, meRegexItem *lastItem,
             meRegexClassClear(item->data.cclass,'\0');
         }
     }
+#endif
     else if((cc == '^') && (lastItem == NULL))
         item->type = meREGEXITEM_BEGLINE;
     else if(cc == '$')
@@ -1323,6 +1843,117 @@ meRegexGroupComp(meRegex *regex, meRegexItem **head, unsigned char **regStr)
 static int
 meRegexGroupStartComp(meRegex *regex, meRegexItem *hi, int first);
 
+#if MEOPT_UNICODE
+/* Adds char uc to the start masks: its first byte, and its second byte if it has one */
+static void
+meRegexStartAddChar(meRegex *regex, meUInt uc)
+{
+    meUByte bb[meUTF8_LEN_MAX];
+    if(meUtf8Encode(bb,uc) > 1)
+    {
+        meRegexClassSet(regex->start,bb[0]);
+        meRegexClassSet(regex->start2,bb[1]);
+    }
+    else
+        meRegexClassSet(regex->start,bb[0]);
+}
+
+/* Adds every char from 0x80 to the start mask, so a lead byte cannot limit the next byte */
+static void
+meRegexStartAddHigh(meRegex *regex)
+{
+    meRegexClassSetHigh(regex->start);
+    regex->flags &= ~meREGEX_START2;
+}
+
+/* Adds the chars from 0x80 a class can match: its ranges' lead bytes (a range's chars have lead
+ * bytes in order), all when it has property tests, is inverted or ignores case */
+static void
+meRegexStartAddClass(meRegex *regex, meRegexItem *item)
+{
+    meUByte bl[meUTF8_LEN_MAX], bh[meUTF8_LEN_MAX];
+    meUInt *rr;
+    int ii, cc;
+
+    if(item->uc || (item->uflag & (meREGEXITEM_UFLAG_INVERT|meREGEXITEM_UFLAG_ICASE)))
+        meRegexStartAddHigh(regex);
+    else if(item->urangeNo)
+    {
+        for(ii=item->urangeNo, rr=item->urange ; ii>0 ; ii--, rr+=2)
+        {
+            meUtf8Encode(bl,rr[0]);
+            meUtf8Encode(bh,rr[1]);
+            for(cc=bl[0] ; cc<=bh[0] ; cc++)
+                meRegexClassSet(regex->start,cc);
+        }
+        regex->flags &= ~meREGEX_START2;
+    }
+}
+#else
+#define meRegexStartAddHigh(regex)
+#endif
+
+/* Returns the only byte set in clss, -1 if none or more than one */
+static int
+meRegexClassOnly(meRegexClass clss)
+{
+    int ii, bb=-1;
+    for(ii=0 ; ii<256 ; ii++)
+        if(meRegexClassTest(clss,ii))
+        {
+            if(bb >= 0)
+                return -1;
+            bb = ii;
+        }
+    return bb;
+}
+
+/* Notes a start mask of a single byte, or a lead byte and second byte, so it can be found with
+ * memchr */
+static void
+meRegexStartFinish(meRegex *regex)
+{
+#if MEOPT_UNICODE
+    int ii;
+#endif
+    regex->startByte = meRegexClassOnly(regex->start);
+    regex->start2No = 0;
+#if MEOPT_UNICODE
+    regex->start2Byte = (regex->flags & meREGEX_START2) ? meRegexClassOnly(regex->start2):-1;
+    /* when every start is a multi-byte char with one of a few second bytes, those are found with
+     * a memchr each */
+    if(regex->flags & meREGEX_START2)
+    {
+        for(ii=0 ; ii<0xc0 ; ii++)
+            if(meRegexClassTest(regex->start,ii))
+                return;
+        for(ii=0x80 ; ii<0xc0 ; ii++)
+            if(meRegexClassTest(regex->start2,ii))
+            {
+                if(regex->start2No == 4)
+                {
+                    regex->start2No = 0;
+                    return;
+                }
+                regex->start2Bytes[regex->start2No++] = (unsigned char) ii;
+            }
+    }
+#else
+    regex->start2Byte = -1;
+#endif
+}
+
+/* Resets the start masks before they are computed */
+static void
+meRegexStartReset(meRegex *regex)
+{
+    meRegexClassClearAll(regex->start);
+#if MEOPT_UNICODE
+    meRegexClassClearAll(regex->start2);
+    regex->flags |= meREGEX_START2;
+#endif
+}
+
 static int
 meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
 {
@@ -1346,8 +1977,34 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
         break;
     case meREGEXITEM_CLASS:
         meRegexClassMergeAll(regex->start,item->data.cclass);
+#if MEOPT_UNICODE
+        meRegexStartAddClass(regex,item);
+#endif
         gotStart = 1;
         break;
+#if MEOPT_UNICODE
+    case meREGEXITEM_UCHAR:
+        meRegexStartAddChar(regex,item->uc);
+        gotStart = 1;
+        break;
+    case meREGEXITEM_UFOLD:
+        /* every char which folds to it, an ASCII one through the user's case tables */
+        {
+            meUInt cs[8];
+            int ii;
+            if(item->uc < 0x80)
+            {
+                meRegexClassSet(regex->start,item->uc);
+                meRegexClassSet(regex->start,toUpper(item->uc));
+            }
+            if((ii = meUniFoldSources(item->uc,cs,8)) >= 8)
+                meRegexStartAddHigh(regex);
+            while(--ii >= 0)
+                meRegexStartAddChar(regex,cs[ii]);
+        }
+        gotStart = 1;
+        break;
+#endif
     case meREGEXITEM_DIGITCHR:
         {
             int ii=9;
@@ -1365,6 +2022,7 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
                 if((ii < '0') || (ii > '9'))
                     meRegexClassSet(regex->start,ii);
             while(--ii > 0);
+            meRegexStartAddHigh(regex);
         }
         gotStart = 1;
         break;
@@ -1424,6 +2082,7 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
                 if((jj != 0) ^ invert)
                     meRegexClassSet(regex->start,ii);
             } while(--ii > 0);
+            meRegexStartAddHigh(regex);
             if(type != meREGEXITEM_XDIGITCHR)
                 regex->flags |= meREGEX_CLASSUSED;
             gotStart = 1;
@@ -1431,6 +2090,7 @@ meRegexItemStartComp(meRegex *regex, meRegexItem *item, int first)
         }
     case meREGEXITEM_ANYCHR:
         meRegexClassSetAll(regex->start);
+        meRegexStartAddHigh(regex);
         /* this can never match \0 or \n */
         meRegexClassClear(regex->start,'\0');
         meRegexClassClear(regex->start,'\n');
@@ -1491,9 +2151,10 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
         {
             regex->flags &= ~meREGEX_CLASSCHANGE;
             regex->flags |= meREGEX_BEGLINE;
-            meRegexClassClearAll(regex->start);
+            meRegexStartReset(regex);
             if(!meRegexGroupStartComp(regex,regex->head,1))
                 regex->flags |= meREGEX_MAYBEEMPTY;
+            meRegexStartFinish(regex);
         }
         return meREGEX_OKAY;
     }
@@ -1539,14 +2200,67 @@ meRegexComp(meRegex *regex, unsigned char *regStr, int flags)
 
     /* flag it as valid and compile the start optimizations */
     regex->flags |= meREGEX_VALID|meREGEX_BEGLINE;
-    meRegexClassClearAll(regex->start);
+    meRegexStartReset(regex);
     if(!meRegexGroupStartComp(regex,regex->head,1))
         regex->flags |= meREGEX_MAYBEEMPTY;
+    meRegexStartFinish(regex);
 
     return meREGEX_OKAY;
 }
 
+/* Recently compiled regexes, swapped in and out of the regex being compiled, so the patterns a
+ * macro alternates between (often via the main search regex, as &xseq sets @s1) compile once */
+#define meREGEX_CACHE_SIZE 16
+static meRegex meRegexCache[meREGEX_CACHE_SIZE];
+static int meRegexCacheNext;
+
+int
+meRegexCompCache(meRegex *regex, unsigned char *regStr, int flags)
+{
+    meRegex tmp;
+    int ii, len;
+
+    len = (int) strlen((char *) regStr);
+    if((len != regex->regexLen) || ((regex->flags & (meREGEX_VALID|meREGEX_ICASE)) != (flags|meREGEX_VALID)) ||
+       strcmp((char *) regStr,(char *) regex->regex))
+    {
+        for(ii=0 ; ii<meREGEX_CACHE_SIZE ; ii++)
+        {
+            if((len == meRegexCache[ii].regexLen) &&
+               ((meRegexCache[ii].flags & (meREGEX_VALID|meREGEX_ICASE)) == (flags|meREGEX_VALID)) &&
+               !strcmp((char *) regStr,(char *) meRegexCache[ii].regex))
+                break;
+        }
+        if(ii == meREGEX_CACHE_SIZE)
+        {
+            ii = meRegexCacheNext;
+            meRegexCacheNext = (ii+1) & (meREGEX_CACHE_SIZE-1);
+        }
+        tmp = *regex;
+        *regex = meRegexCache[ii];
+        meRegexCache[ii] = tmp;
+    }
+    return meRegexComp(regex,regStr,flags);
+}
+
+void
+meRegexCacheClassChanged(void)
+{
+    int ii;
+    for(ii=0 ; ii<meREGEX_CACHE_SIZE ; ii++)
+        meRegexCache[ii].flags |= meREGEX_CLASSCHANGE;
+}
+
 #if (defined _ME_FREE_ALL_MEMORY) || (defined _TEST_RIG)
+
+void
+meRegexCacheFree(void)
+{
+    void meRegexFree(meRegex *regex);
+    int ii;
+    for(ii=0 ; ii<meREGEX_CACHE_SIZE ; ii++)
+        meRegexFree(meRegexCache + ii);
+}
 
 void
 meRegexFree(meRegex *regex)
@@ -1557,6 +2271,10 @@ meRegexFree(meRegex *regex)
     while((item=regex->lhead) != NULL)
     {
         regex->lhead = item->lnext;
+#if MEOPT_UNICODE
+        if(item->urange != NULL)
+            free(item->urange);
+#endif
         free(item);
     }
     if(regex->regex != NULL)

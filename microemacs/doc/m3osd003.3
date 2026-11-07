@@ -21,6 +21,15 @@ insert-symbol \- Insert an ASCII character
 decimal, hexadecimal and character notations in a tabular form. A character is
 selected using the mouse or cursor characters inserting the selected character
 into the current buffer at the current position.
+.PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) the table shows the characters of the current buffer's code page, or of the current 8-bit code page
+when the buffer is Unicode, a character the font cannot draw being shown as a '\fC.\fR'. The selected character is
+inserted, or for a byte the code page has no character for, the raw byte. Any Unicode character can be inserted by its
+code using
+.Ht quote-char 2
+with a negative argument.
 .SH NOTES
 \fBinsert-symbol\fR is a macro defined in \fCosdmisc.emf\fR.
 .PP

@@ -42,20 +42,29 @@ by default the value is \fC0\fR  which  disables  the  debugger.  The debugger
 displays  the next  command  to execute in the  message  line and the user may
 single step through the macro and interrogate the variables. 
 .PP
-Use the  \fB$debug\fR  variable  for  interactive  debugging.  The best way is
-to insert the following  line  somewhere  BEFORE the problem  occurs where the
-macro needs to be debugged:
+Macros are compiled as they are defined, and only a macro defined while \fB$debug\fR is not \fC0\fR keeps its
+source and so can be debugged (see
+.Ht $debug 5 ),
+so first set \fB$debug\fR before the macro is defined, e.g. at the top of its macro file:
 .Me $emf-scheme
 .CS   
 set-variable $debug 1
 .CE 
 .Me $ehf-scheme
+or start \*(mS with \fC-v $debug=1\fR to make every macro debuggable. Then insert the following  line  somewhere
+BEFORE the problem  occurs where the macro needs to be debugged:
+.Me $emf-scheme
+.CS
+set-variable $debug 2
+.CE
+.Me $ehf-scheme
 As soon as this  variable is set then it drops the user into debug mode. If we
 applied this to our tutorial example then we would define it as:
 .Me $emf-scheme
 .CS   
+set-variable $debug 1           ; Keep the source of the macros defined below
 define-macro write-region
-    set-variable $debug 1       ; Enable debugger
+    set-variable $debug 2       ; Enable debugger
     copy-region
     set-variable #l0 $buffer-fname
     set-position "\\x88"
@@ -85,7 +94,7 @@ The mode line appears as follows:
 macro-name:position:number [line] ?
 .CE
 where   \fBmacro-name\fR   is  the  name  of  the  macro  that  is  executing,
-\fBposition\fR is the line from the start of the macro definition.  \fBline\fR
+\fBposition\fR is the line number in the macro's file.  \fBline\fR
 is the macro line that is being executed. i.e.
 .CS
 display-matching-fenc:22:0 [4 show region] ?
@@ -104,7 +113,7 @@ Continues macro execution the value of $debug is set to 0. Execution continues
 without user interaction up until the next \fB$debug\fR change.
 .IP \fCs\fR 
 Single  steps  through the macro, if another  macro is invoked then  debugging
-with continue in the new sub-macro.
+with continue in the new sub-macro, if it has its source.
 .IP \fCv\fR
 Display the value of a variable. The user is prompted for a variable  value to
 show, once entered, the value of the variable is displayed.
@@ -112,7 +121,7 @@ show, once entered, the value of the variable is displayed.
 Any  other key will step onto the next  instruction,  unlike  \fIstep\fR  then
 any macros that are invoked are not debugged.
 .LP
-See the 
+A macro without source, i.e. defined while \fB$debug\fR was \fC0\fR, is run as one step. See the
 .Ht $debug 5
 help page for more  information.
 .PP

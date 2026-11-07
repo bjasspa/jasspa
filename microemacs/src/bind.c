@@ -38,11 +38,11 @@
 #include "esearch.h"
 #include "eskeys.h"
 
-meUShort
+meKey
 meGetKeyFromString(meUByte **tp)
 {
     meUByte *ss=*tp, cc, dd;
-    meUShort ii=0;
+    meKey ii=0;
     
     for(;;)
     {
@@ -55,6 +55,18 @@ meGetKeyFromString(meUByte **tp)
         else if(cc == 'A')
             ii |= ME_ALT;
     }
+#if MEOPT_UNICODE
+    if(cc >= 0x80)
+    {
+        /* a non-ASCII char key, as with letters the binding is lower case */
+        meUInt uc;
+        ss += meUtf8Decode(ss-2,meUTF8_LEN_MAX,&uc) - 2;
+        if(((dd=*ss) != '\0') && !isSpace(dd))
+            return 0;
+        *tp = ss;
+        return meUniCharToLower(uc) | (ii & (ME_ALT|ME_CONTROL));
+    }
+#endif
     if(cc != '\0')
     {
         if(!isSpace(dd))
@@ -109,10 +121,10 @@ meGetKeyFromString(meUByte **tp)
  * 
  *     flag - meGETKEY flags
  */
-meUShort
+meKey
 meGetKey(int flag)
 {
-    register meUShort cc ;	/* character fetched */
+    register meKey cc ;	/* character fetched */
     
     /* check to see if we are executing a command line */
     if(clexec == meTRUE)
@@ -121,7 +133,7 @@ meGetKey(int flag)
         meUByte tok[meTOKENBUF_SIZE_MAX];	/* command incoming */
         
         tp = execstr;
-        execstr = token(tp,tok);
+        execstr = macroNextToken(tp,tok);
         if((tok[0] != '@') || (tok[1] != 'm') || (tok[2] != 'n'))
         {
             tp = getval(tok);
@@ -140,7 +152,7 @@ meGetKey(int flag)
                     }
                 if(cc & ME_PREFIX_MASK)
                 {
-                    meUShort ee;	/* character fetched */
+                    meKey ee;	/* character fetched */
                     meUByte dd;
                     while(((dd=*tp) != '\0') && isSpace(dd))
                         tp++;
@@ -174,7 +186,7 @@ meGetKey(int flag)
 }
 
 int
-meGetStringFromChar(meUShort cc, meUByte *d)
+meGetStringFromChar(meKey cc, meUByte *d)
 {
     register int  doff=0, spec ;
     register meUByte *ss ;
@@ -195,7 +207,7 @@ meGetStringFromChar(meUShort cc, meUByte *d)
         d[doff++] = '-' ;
     }
     spec = (cc & ME_SPECIAL) ;
-    cc &= 0x0ff ;
+    cc &= ME_KEY_CHAR ;
     
     if(spec)
     {
@@ -206,8 +218,16 @@ name_copy:
         while((ch = *ss++) != '\0')
             d[doff++] = ch ;
     }
+#if MEOPT_UNICODE
+    else if((cc >= 0x80) && !meUniIsRaw(cc))
+        doff += meUtf8Encode(d+doff,cc);
+#endif
     else if((cc == 0) || (cc >= 0x80))
     {
+#if MEOPT_UNICODE
+        if(cc >= 0x80)
+            cc = meUniRawByte(cc);
+#endif
         d[doff++] = '\\';
         d[doff++] = 'x';
         d[doff++] = hexdigits[cc >> 4] ;
@@ -247,7 +267,7 @@ name_copy:
 /* c   - 	sequence to translate */
 /* seq - 	destination string for sequence */
 void
-meGetStringFromKey(meUShort cc, register meUByte * seq)
+meGetStringFromKey(meKey cc, register meUByte * seq)
 {
     /* apply prefix sequence if needed */
     if(cc & ME_PREFIX_MASK)
@@ -264,11 +284,11 @@ descKey(int f, int n)	/* describe the command for a certain key */
 {
     static   meUByte  notBound[] = "Not Bound" ;
     static   meUByte  dskyPrompt[]="Show binding: " ;
-    register meUShort cc;	/* command character to describe */
-    register meUByte *ptr; 	/* string pointer to scan output strings */
-    register int      found;	/* matched command flag */
-    meUInt            arg;	/* argument */
-    meUByte           outseq[40];	/* output buffer for command sequence */
+    register meKey cc;        /* command character to describe */
+    register meUByte *ptr;    /* string pointer to scan output strings */
+    register int found;       /* matched command flag */
+    meUInt arg;               /* argument */
+    meUByte outseq[40];       /* output buffer for command sequence */
 #if MEOPT_LOCALBIND
     meUShort bc;
     char mb;
@@ -371,6 +391,12 @@ charMaskTblInit(void)
 }
 
 
+#if MEOPT_UNICODE
+#define meCHARMASK_MAX 128
+#else
+#define meCHARMASK_MAX 256
+#endif
+
 /* Returns the value of the 4 hex digits at ss, -1 if they are not hex digits */
 static int
 setCharMaskHex(meUByte *ss)
@@ -430,12 +456,17 @@ setCharMask(int f, int n)
             /* the keyboard map as a key's 4 hex digit code point and its Latin char */
             if(charKeyboardMap != NULL)
             {
+#if MEOPT_UNICODE
+                for(ii=0 ; ii<charKeyboardMapLen ; ii++)
+                    ss += sprintf((char *) ss,"%04X%c",charKeyboardMap[ii] >> 8,(meUByte) charKeyboardMap[ii]);
+#else
                 for(c1=0x80 ; c1<256 ; c1++)
                 {
                     if(((c2 = charKeyboardMap[c1]) != '\0') &&
                        ((jj = charToUnicode[toInternalCharset(c1) & 0x7f]) != 0))
                         ss += sprintf((char *) ss,"%04X%c",jj,c2);
                 }
+#endif
             }
                 
         }
@@ -443,7 +474,7 @@ setCharMask(int f, int n)
         {
             if(flags & 0x4000)
                 flags |= 0x18000;
-            for(c1=0 ; c1<256 ; c1++)
+            for(c1=0 ; c1<meCHARMASK_MAX ; c1++)
             {
                 c2 = charIntrnlDsplyTbl[c1];
                 if(c1 != c2)
@@ -479,7 +510,8 @@ setCharMask(int f, int n)
                 mask2 |= CHRMSK_LOWER;
             if(flags & 0x2000)
                 mask2 |= (CHRMSK_LOWER|CHRMSK_HEXDIGIT);
-            for(c1=0 ; c1<256 ; c1++)
+            /* a Unicode build only uses the tables for ASCII */
+            for(c1=0 ; c1<meCHARMASK_MAX ; c1++)
                 if((charMaskTbl1[c1] & mask1) || (charMaskTbl2[c1] & mask2))
                 {
                     if((flags & 0x3000) && ((c2 = toggleCase(c1)) != c1))
@@ -528,20 +560,24 @@ setCharMask(int f, int n)
                 return mlwrite(((n < 0) ? MWABORT|MWCLEXEC:MWABORT),(meUByte *)"[Unknown code page %s]",buf1);
             if(n < 0)
                 return meTRUE;
-            if(!(flags & 0x80000))
-                codePageSpell = cp;
-            else if(cp != NULL)
+            if(flags & 0x80000)
             {
-                codePageCur = cp;
-                charToUnicode = cp->chrToUni;
-#ifdef _ME_MACOSNW
-                TTcharsetChanged();
-#endif            
+                if(cp != NULL)
+                {
+                    codePageCur = cp;
+                    charToUnicode = cp->chrToUni;
+                }
             }
+            else
+                codePageSpell = cp;
+#ifdef _ME_MACOSNW
+            TTcharsetChanged();
+#endif            
             return meTRUE;
         }
         if(flags & 0x40000)
         {
+            meUShort *cp=charToUnicode;
             ss = buf1;
             ii = 0;
             if(*ss != '\0')
@@ -559,11 +595,11 @@ setCharMask(int f, int n)
                     } while(--jj >= 0);
                     if(!isXDigit(mask1))
                         break;
-                    charToUnicode[ii++] = c1;
+                    cp[ii++] = (meUShort) c1;
                 } while(ii < 128);
             }
             for( ; ii < 128 ; ii++)
-                charToUnicode[ii] = 0;
+                cp[ii] = 0;
 #ifdef _ME_MACOSNW
             TTcharsetChanged();
 #endif            
@@ -572,12 +608,53 @@ setCharMask(int f, int n)
         if(flags & 0x20000)
         {
             /* the keyboard map, each key a 4 hex digit code point (a non-ASCII char) followed by the
-             * Latin char it gives, "" removes it. A key is the current code page's char, which keys
-             * arrive as the display's */
+             * Latin char it gives, "" removes it */
             ss = buf1;
             if((ii = (int) meStrlen(ss)) % 5)
                 return mlwrite(MWABORT,(meUByte *)"[Bad keyboard map]");
-            if((ii /= 5) == 0)
+            ii /= 5;
+#if MEOPT_UNICODE
+            {
+                meUInt *km;
+                if(charKeyboardMap != NULL)
+                {
+                    meFree(charKeyboardMap);
+                    charKeyboardMap = NULL;
+                    charKeyboardMapLen = 0;
+                }
+                if(ii == 0)
+                    return meTRUE;
+                if((km = (meUInt *) meMalloc(ii*sizeof(meUInt))) == NULL)
+                    return meABORT;
+                for(jj=0 ; jj<ii ; jj++, ss+=5)
+                {
+                    if(((c1 = setCharMaskHex(ss)) < 0x80) || (ss[4] <= ' ') || (ss[4] >= 0x7f))
+                    {
+                        meFree(km);
+                        return mlwrite(MWABORT,(meUByte *)"[Bad keyboard map]");
+                    }
+                    km[jj] = (((meUInt) c1) << 8) | ss[4];
+                }
+                /* sorted for the lookup (an insertion sort is stable and the map small), a key
+                 * given twice keeps its last */
+                for(jj=1 ; jj<ii ; jj++)
+                {
+                    meUInt kk=km[jj];
+                    for(c2=jj ; (c2 > 0) && ((km[c2-1] >> 8) > (kk >> 8)) ; c2--)
+                        km[c2] = km[c2-1];
+                    km[c2] = kk;
+                }
+                for(c1=0, jj=0 ; jj<ii ; jj++)
+                {
+                    if(c1 && ((km[c1-1] >> 8) == (km[jj] >> 8)))
+                        c1--;
+                    km[c1++] = km[jj];
+                }
+                charKeyboardMap = km;
+                charKeyboardMapLen = c1;
+            }
+#else
+            if(ii == 0)
             {
                 if(charKeyboardMap != NULL)
                 {
@@ -590,6 +667,7 @@ setCharMask(int f, int n)
                ((charKeyboardMap = (meUByte *) meMalloc(256)) == NULL))
                 return meABORT;
             memset(charKeyboardMap,0,256);
+            /* a key is the current code page's char, which keys arrive as the display's */
             for( ; ii>0 ; ii--, ss+=5)
             {
                 if(((c1 = setCharMaskHex(ss)) < 0x80) || (ss[4] <= ' ') || (ss[4] >= 0x7f))
@@ -600,6 +678,7 @@ setCharMask(int f, int n)
                 if(jj >= 0)
                     charKeyboardMap[toDisplayCharset(jj+128)] = ss[4];
             }
+#endif
             return meTRUE ;
         }
         if(flags & 0x4000)
@@ -628,6 +707,14 @@ setCharMask(int f, int n)
         {
             if((c1 == meCHAR_LEADER) && ((c1=*ss++) == meCHAR_TRAIL_NULL))
                 c1 = 0 ;
+#if MEOPT_UNICODE
+            else if(c1 >= 0x80)
+            {
+                meUInt uc;
+                ss += meUtf8Decode(ss-1,meUTF8_LEN_MAX,&uc) - 1;
+                continue;
+            }
+#endif
             *dd++ = toDisplayCharset(c1) ;
             ii++ ;
         }
@@ -717,14 +804,14 @@ int
 bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
 {
     register int	ss;
-    register meUShort   cc;	/* command key to bind */
+    register meKey      cc;	/* command key to bind */
     register meIFuncII	kfunc;	/* ptr to the requexted function to bind to */
     register meBind    *ktp;	/* pointer into the command table */
     meUByte  outseq[40];        /* output buffer for keystroke sequence */
     int	     namidx;		/* Name index */
-    meUByte  buf[meBUF_SIZE_MAX] ;
-    meUInt   arg ;
-    meUShort ssc ;
+    meUByte  buf[meBUF_SIZE_MAX];
+    meUInt   arg;
+    meKey    ssc;
     
     /*---	Get the function name to bind it to */
     
@@ -740,21 +827,21 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
     if((ss=(kfunc==(meIFuncII) prefixFunc)))
     {
         if((n < 1) || (n > ME_PREFIX_NUM))
-            return mlwrite(MWABORT,(meUByte *)"[Prefix number is out of range]") ;
-        ssc = prefixc[n] ;
+            return mlwrite(MWABORT,(meUByte *)"[Prefix number is out of range]");
+        ssc = prefixc[n];
     }
     else if((ss=(kfunc==(meIFuncII) ctrlg)))
-        ssc = breakc ;
+        ssc = breakc;
     else if((ss=(kfunc==(meIFuncII) uniArgument)))
-        ssc = reptc ;
+        ssc = reptc;
 
 #if MEOPT_LOCALBIND
     if((lclNoBinds != NULL) && ss)
-        return mlwrite(MWABORT,(meUByte *)"Can not locally bind [%s]",buf) ;
+        return mlwrite(MWABORT,(meUByte *)"Can not locally bind [%s]",buf);
 #endif              
-    mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"%s [%s] to: ",prom,buf) ;
+    mlwrite(MWCURSOR|MWCLEXEC,(meUByte *)"%s [%s] to: ",prom,buf);
     if((cc = meGetKey((ss) ? meGETKEY_SILENT|meGETKEY_SINGLE:meGETKEY_SILENT)) == 0)
-        return ctrlg(0,1) ;
+        return ctrlg(0,1);
     
     /*---   Change it to something we can print as well */
     
@@ -766,9 +853,9 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
     
     /*---   Calculate the argument */
     if(f)
-        arg = (meUInt) (n+0x80000000) ;
+        arg = (meUInt) (n+0x80000000);
     else
-        arg = 0 ;
+        arg = 0;
     
     /*---	If the function is a prefix key */
     
@@ -780,44 +867,44 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
         
 	/*---	Reset the appropriate global prefix variable */
         if(kfunc == (meIFuncII) prefixFunc)
-            prefixc[n] = cc ;
+            prefixc[n] = cc;
         else if(kfunc ==(meIFuncII) ctrlg)
-            breakc = cc ;
+            breakc = cc;
         else
-            reptc = cc ;
+            reptc = cc;
     }
     
     /*---	Search the table to see if it exists */
 #if MEOPT_LOCALBIND
     if(lclNoBinds != NULL)
     {
-        register meBind *kk=NULL ;
+        register meBind *kk=NULL;
         
-        ktp = *lclBinds ;
+        ktp = *lclBinds;
         for (ss=0 ; ss < *lclNoBinds ; ss++)
         {
             if(ktp[ss].code == cc)
             {
                 ktp[ss].index = (meUShort) namidx;
-                ktp[ss].arg   = arg ;
-                return meTRUE ;
+                ktp[ss].arg   = arg;
+                return meTRUE;
             }
             if(ktp[ss].code == 0)
-                kk = ktp+ss ;
+                kk = ktp+ss;
         }
         if(kk != NULL)
         {
-            kk->code  = cc ;
+            kk->code  = cc;
             kk->index = (meUShort) namidx;
-            kk->arg   = arg ;
+            kk->arg   = arg;
         }
         else
         {
             if((ktp = *lclBinds = meRealloc(ktp,(++(*lclNoBinds))*sizeof(meBind))) == NULL)
-                return meFALSE ;
-            ktp[ss].code  = cc ;
-            ktp[ss].index = (meUShort) namidx ;
-            ktp[ss].arg   = arg ;
+                return meFALSE;
+            ktp[ss].code  = cc;
+            ktp[ss].index = (meUShort) namidx;
+            ktp[ss].arg   = arg;
         }
     }
     else
@@ -844,7 +931,7 @@ bindkey(meUByte *prom, int f, int n, meUShort *lclNoBinds, meBind **lclBinds)
 int
 globalBindKey(int f, int n)
 {
-    return bindkey((meUByte *)"global bind", f, n, NULL, NULL) ;
+    return bindkey((meUByte *)"global bind",f,n,NULL,NULL);
 }
 
 #if MEOPT_LOCALBIND
@@ -865,8 +952,8 @@ mlBind(int f, int n)
 int
 unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
 {
-    register meUShort cc;  /* command key to unbind */
-    meUByte outseq[40];	   /* output buffer for keystroke sequence */
+    register meKey cc;    /* command key to unbind */
+    meUByte outseq[40];	  /* output buffer for keystroke sequence */
     int  rr ;
     
     if(n < 0)
@@ -967,7 +1054,7 @@ unbindkey(meUByte *prom, int n, meUShort *lclNoBinds, meBind **lclBinds)
         {
             if(n == 0)
             {
-                register meUShort mask=ME_PREFIX_NUM+1;
+                register meKey mask=ME_PREFIX_NUM+1;
                 
                 while(--mask > 0)
                     if(cc == prefixc[mask])

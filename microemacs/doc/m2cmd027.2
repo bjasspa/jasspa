@@ -69,6 +69,12 @@ is set, see \fBUse Font Styles\fR in
 .Ht user-setup 3
 for more information.
 .PP
+FreeType fonts are found by fontconfig, which reads the list of installed fonts when \*(mS starts, so a font installed
+while \*(mS is running is only found after \*(mS is restarted. The font's family name must be given in full, e.g.
+"\fCSarasa Term SC\fR" rather than "\fCSarasa Term\fR", as a name fontconfig does not know is not an error, its
+closest match is used instead, often a proportional font such as DejaVu Sans. The command "\fCfc-list : family\fR"
+lists the installed families and "\fCfc-match "\fIname\fC"\fR" shows the font a name gives.
+.PP
 The X core font string describes the attributes of the font in terms of it's size name etc. as follows:
 .IP
 \s-2\- \fIfoundry\fR \-

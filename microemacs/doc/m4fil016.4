@@ -60,6 +60,11 @@ under the  cursor  and then  affect  the  buffer  (i.e. by moving the  cursor,
 deleting  the  character  etc.)  dependent  upon  the  value of the  character
 returned.
 .PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) \fB@wc\fR returns the whole character however many bytes it is stored in, and a NUL character is
+not an empty string so "\fC&seq @wc ""\fR" is only true at the end of the buffer.
+.PP
 Assignment  of the  variables  causes  the  buffer  contents  to be  modified,
 deleting  the pervious  contents and setting the new value. This can be useful
 in certain situations but should be performed with care.

@@ -173,6 +173,13 @@ the last \fIn\fR  characters  from the string  \fIstr\fR this differs from the
 definition of \fB&rig\fR in this implementation. As most string  decomposition
 is performed  left to right, and to make  \fB&lef\fR and \fB&rig\fR complement
 each other, the indexing of the function has been modified.
+.PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) these functions count characters, a character may be stored in several bytes (see
+.Ht &blen 4
+for the byte functions). \fB&slower\fR and \fB&supper\fR change the case of each character using the Unicode simple case
+mappings, so the result may have a different number of bytes.
 .SH "SEE ALSO"
 .na
 .Hl "Variable Functions" Functions - ,

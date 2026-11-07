@@ -112,9 +112,9 @@ jobs:
 
       - name: Locate console binary
         run: |
-          MEC=$(ls -d ./microemacs/src/.linux*-release-mec/mec 2>/dev/null | head -n 1)
+          MEC=$(ls -d ./microemacs/src/.linux*-release-utf8-mec/mec ./microemacs/src/.linux*-release-mec/mec 2>/dev/null | head -n 1)
           if [ -z "$MEC" ]; then
-            echo "::error::no ./microemacs/src/.linux*-release-mec/mec produced by build.sh"
+            echo "::error::no ./microemacs/src/.linux*-release[-utf8]-mec/mec produced by build.sh"
             ls -d ./microemacs/src/.linux* 2>/dev/null || true
             exit 1
           fi
@@ -151,9 +151,9 @@ jobs:
 
       - name: Locate window binary (mew) and check Xft
         run: |
-          MEW=$(ls -d ./microemacs/src/.linux*-release-mew/mew 2>/dev/null | head -n 1)
+          MEW=$(ls -d ./microemacs/src/.linux*-release-utf8-mew/mew ./microemacs/src/.linux*-release-mew/mew 2>/dev/null | head -n 1)
           if [ -z "$MEW" ]; then
-            echo "::error::no ./microemacs/src/.linux*-release-mew/mew produced by build.sh - linuxgcc.mak silently falls back to a console build when it cannot find X11"
+            echo "::error::no ./microemacs/src/.linux*-release[-utf8]-mew/mew produced by build.sh - linuxgcc.mak silently falls back to a console build when it cannot find X11"
             ls -d ./microemacs/src/.linux* 2>/dev/null || true
             exit 1
           fi

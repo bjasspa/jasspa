@@ -243,6 +243,8 @@ createMacro(meUByte *name)
 /* macroDefine:	Set up a macro buffer and flag to store all
 		executed command lines there			*/
 
+static meUByte macroKeepSource=0;       /* name-kbd-macro's macro keeps its source */
+
 int
 macroDefine(int f, int n)
 {
@@ -252,6 +254,13 @@ macroDefine(int f, int n)
         return meFALSE;
     if(n == 0)
         mac->hlp->flag |= meMACRO_HIDE;
+    /* a macro defined while $debug is set keeps its source, for debugging and insert-macro */
+    if((macroKeepSource
+#if MEOPT_DEBUGM
+        || macbug
+#endif
+        ) && !macroSetSource(mac))
+        return meFALSE;
     
     /* and set the macro store pointers to it */
     mcStore = 1;
@@ -652,12 +661,15 @@ nameKbdMacro(int f, int n)
         return mlwrite(MWABORT,(meUByte *)"Macro already active!");
     if(lkbdlen <= 0)
         return mlwrite(MWABORT,(meUByte *)"No macro defined!");
-    if((ss=macroDefine(meFALSE, meTRUE)) > 0)
+    macroKeepSource = 1;
+    ss = macroDefine(meFALSE, meTRUE);
+    macroKeepSource = 0;
+    if(ss > 0)
     {
         meStrcpy(buf,"execute-string \"");
         n = expandexp(lkbdlen,lkbdptr,meBUF_SIZE_MAX-2,16,buf,-1,NULL,meEXPAND_BACKSLASH|meEXPAND_FFZERO|meEXPAND_PRINTABLE);
         meStrcpy(buf+n,"\"");
-        addLine(lpStore,buf);
+        ss = macroStoreText(buf);
     }
     mcStore = 0;
     lpStore = NULL;
@@ -694,6 +706,8 @@ insMacro(int f, int n)
     meStrcpy(buf,"define-macro ");
     if((mac=userGetMacro(buf+13, meBUF_SIZE_MAX-13)) == NULL)
         return meFALSE;
+    if(!(mac->hlp->flag & meMACRO_SOURCE))
+        return mlwrite(MWABORT,(meUByte *)"[Macro %s is compiled, define it with $debug set to insert it]",buf+13);
     
     if((ii=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return ii;
@@ -706,8 +720,8 @@ insMacro(int f, int n)
     lp = meLineGetNext(mac->hlp);            /* First line.          */
     while (lp != mac->hlp)
     {
-        nol += addLine(slp,lp->text);
-        len += meLineGetLength(lp) + 1;
+        nol += addLine(slp,macroLineSource(lp));
+        len += (int) meStrlen(macroLineSource(lp)) + 1;
         lp = meLineGetNext(lp);
     }
     nol += addLine(slp,(meUByte *)"!emacro");

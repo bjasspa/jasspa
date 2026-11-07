@@ -339,6 +339,38 @@ meHashInitHmac(meHash *iCtx, meHash *oCtx, int n, const meUByte *key, int keyLen
     meHashUpdate(oCtx,pad,64);
 }
 
+#if MEOPT_UNICODE
+/* Hashes internal text as UTF-8, a raw byte as its byte and a NUL as 0 */
+static void
+meHashText(meHash *ctx, const meUByte *ss, int len)
+{
+    const meUByte *sp=ss;
+    meUByte bb;
+    meUInt uc;
+    int ll;
+    
+    while(len > 0)
+    {
+        if(*ss < 0x80)
+            ll = 1;
+        else if(((ll = meUtf8Decode(ss,len,&uc)) > 0) && (meUniIsRaw(uc) || (uc == 0)))
+        {
+            if(ss > sp)
+                meHashUpdate(ctx,sp,ss-sp);
+            bb = (uc) ? meUniRawByte(uc):0;
+            meHashUpdate(ctx,&bb,1);
+            sp = ss + ll;
+        }
+        ss += ll;
+        len -= ll;
+    }
+    if(ss > sp)
+        meHashUpdate(ctx,sp,ss-sp);
+}
+#else
+#define meHashText meHashUpdate
+#endif
+
 int
 generateHash(int f, int n)
 {
@@ -349,7 +381,7 @@ generateHash(int f, int n)
     if(n & 0x04)
     {
         /* HMAC-SHA256, must get key */
-        if(meGetString((meUByte *) "Key",MLNOHIST|MLHIDEVAL,0,resultStr,meBUF_SIZE_MAX) <= 0)
+        if(meGetString((meUByte *) "Key",MLNOHIST|MLHIDEVAL|MLFFZERO,0,resultStr,meBUF_SIZE_MAX) <= 0)
             return meABORT;
         if(n & 0x08)
         {
@@ -363,7 +395,7 @@ generateHash(int f, int n)
             ii = (int) (bb - resultStr);
         }
         else
-            ii = (int) meStrlen(resultStr);
+            ii = macStrToBytes(resultStr,resultStr);
         meHashInitHmac(&iCtx,&oCtx,n,resultStr,ii);
         resultStr[0] = '\0';
     }
@@ -371,7 +403,7 @@ generateHash(int f, int n)
         meHashInit(&iCtx,n);
     if(n & 0x02)
     {
-        if(meGetString((meUByte *) "Data",0,0,resultStr,meBUF_SIZE_MAX) <= 0)
+        if(meGetString((meUByte *) "Data",MLFFZERO,0,resultStr,meBUF_SIZE_MAX) <= 0)
             return meABORT;
         if(n & 0x01)
         {
@@ -385,7 +417,7 @@ generateHash(int f, int n)
             ii = (int) (bb - resultStr);
         }
         else
-            ii = (int) meStrlen(resultStr);
+            ii = macStrToBytes(resultStr,resultStr);
         meHashUpdate(&iCtx,resultStr,ii);
     }
     else
@@ -394,33 +426,13 @@ generateHash(int f, int n)
         meBuffer *bp=wp->buffer;
         register meLine *elp,*lp;
         
-        if(meModeTest(bp->mode,MDCR))
-        {
-            if(meModeTest(bp->mode,MDLF))
-            {
-                ss = (meUByte *) "\r\n";
-                ii = 2;
-            }
-            else
-            {
-                ss = (meUByte *) "\r";
-                ii = 1;
-            }
-        }
-        else if(meModeTest(bp->mode,MDLF))
-        {
-            ss = (meUByte *) "\n";
-            ii = 1;
-        }
-        else
-        {
-            ss = (meUByte *) "";
-            ii = 0;
-        }
+        /* text is hashed as UTF-8 with a \n line end, whatever the encoding and line ending
+         * style, so the same text gives the same hash on every platform */
         if(n & 1)
         {            
             elp = bp->baseLine;
             lp = meLineGetNext(elp);
+            elo = 0;
         }
         else
         {
@@ -455,7 +467,7 @@ generateHash(int f, int n)
                     slo = wp->markOffset;
                     elo = 0 - elo;
                 }
-                meHashUpdate(&iCtx,meLineGetText(lp)+slo,elo);
+                meHashText(&iCtx,meLineGetText(lp)+slo,elo);
                 elo = 0;
             }
             else
@@ -475,9 +487,9 @@ generateHash(int f, int n)
                     elo = wp->dotOffset;
                 }
                 if(slo < meLineGetLength(lp))
-                    meHashUpdate(&iCtx,meLineGetText(lp)+slo,meLineGetLength(lp)-slo);
-                if(ii && !(lp->flag & meLINE_NOEOL))
-                    meHashUpdate(&iCtx,ss,ii);
+                    meHashText(&iCtx,meLineGetText(lp)+slo,meLineGetLength(lp)-slo);
+                if(!(lp->flag & meLINE_NOEOL))
+                    meHashUpdate(&iCtx,(meUByte *) "\n",1);
                 lp = meLineGetNext(lp);
             }
         }
@@ -525,18 +537,13 @@ generateHash(int f, int n)
         {
             while(lp != elp)
             {
-                meHashUpdate(&iCtx,meLineGetText(lp),meLineGetLength(lp));
-                if(ii && !(lp->flag & meLINE_NOEOL))
-                    meHashUpdate(&iCtx,ss,ii);
+                meHashText(&iCtx,meLineGetText(lp),meLineGetLength(lp));
+                if(!(lp->flag & meLINE_NOEOL))
+                    meHashUpdate(&iCtx,(meUByte *) "\n",1);
                 lp = meLineGetNext(lp);
             }
-            if(n & 1)
-            {
-                if(meModeTest(bp->mode,MDCTRLZ))
-                    meHashUpdate(&iCtx,(meUByte *) "\x1a",1);
-            }
-            else if(elo)
-                meHashUpdate(&iCtx,meLineGetText(elp),elo);
+            if(elo)
+                meHashText(&iCtx,meLineGetText(elp),elo);
         }
     }
     if(iCtx.flag & meHASH_OVERRUN)

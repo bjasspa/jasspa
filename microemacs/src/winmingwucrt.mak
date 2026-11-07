@@ -205,7 +205,7 @@ MAKEFILE = $(TOOLKIT)
 
 # Compiler defines: native Windows builds use -D_WIN32 -D_MINGW
 # MSYS2 builds also use these for Windows GUI apps
-CCDEFS   = -m$(BIT_SIZE) -D_WIN32 -D_MINGW -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
+CCDEFS   = -m$(BIT_SIZE) -D_WIN32 -D_MINGW -D_WIN32_WINNT=0x0602 -DWINVER=0x0602 -D_ARCHITEC=$(ARCHITEC) -D_TOOLKIT=$(TOOLKIT) -D_TOOLKIT_VER=$(TOOLKIT_VER) -D_PLATFORM_VER=$(PLATFORM_VER) -D_$(BIT_SIZE)BIT -Wall -I$(TRDPARTY)/tfs -DmeVER_CN=$(meVER_CN) -DmeVER_YR=$(meVER_YR) -DmeVER_MN=$(meVER_MN) -DmeVER_DY=$(meVER_DY)
 CCFLAGSR = -O3 -mfpmath=sse -Ofast -flto -funroll-loops -DNDEBUG=1 -Wno-uninitialized
 CCFLAGSD = -g -D_DEBUG
 LDDEFS   = -m$(BIT_SIZE)
@@ -257,6 +257,11 @@ endif
 
 ifeq "$(BCOR)" "ne"
 
+ifeq "$(BENC)" "u"
+$(error ERROR: Unicode Utf8 encoding (-eu) is not supported by NanoEmacs)
+endif
+
+BENC = c
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
@@ -376,17 +381,27 @@ BTYP_LDF = -Wl,-subsystem,windows
 BTYP     = w
 endif
 
-OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
+ifeq "$(BENC)" "c"
+BENCD    = cdpg
+INSTPRG  = - echo No install - code-page encoding 
+else
+BENCD    = utf8
+CCDEFS  += -DMEOPT_UNICODE=1
+# me.rc embeds meutf8.manifest, the process code page is UTF-8 (Windows 10 1903+)
+RCFLAGS += -DMEOPT_UNICODE=1
+BENC_RCDEP = meutf8.manifest
+endif
+OUTDIR   = $(BOUTDIR)-$(BENCD)-$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h eunicode.h eunitbl.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
 	   $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
 	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
-	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/unicode.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
 	   $(OUTDIR)/winterm.o $(OUTDIR)/winprint.o $(OUTDIR)/$(BCOR).coff
 #
 # Rules
@@ -395,7 +410,7 @@ PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffe
 $(OUTDIR)/%.o : %.c
 	$(CC) $(CCDEFS) $(CCPROF) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) -c -o $@ $<
 
-$(OUTDIR)/%.coff : %.rc
+$(OUTDIR)/%.coff : %.rc $(BENC_RCDEP)
 	$(RC) $(RCFLAGS) -o $@ -i $<
 
 all: $(PRGLIBS) $(OUTDIR)/$(PRGFILE)

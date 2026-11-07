@@ -264,11 +264,8 @@
 #endif
 
 /*************************************************************************
- * Microsoft : 32s/'95/'98/NT                                            *
+ * Microsoft : Windows                                                   *
  *************************************************************************/
-#ifdef _WIN32s
-#define _WIN32         1                /* Use win32                     */
-#endif
 #ifdef _WIN32
 #define meSYSTEM_NAME  "windows"        /* Identity name of the system   */
 #define _CTRLZ         1                /* ^Z at end of files (MSDOS)    */
@@ -278,8 +275,7 @@
 #define _IPIPES        1                /* platform supports Inc. pipes  */
 #define _CLIENTSERVER  1                /* Client server support         */
 #endif
-/* The next option is commented out as the win32*.mak files define them when required */
-/*#define _SOCKET     1*/               /* Supports url reading          */
+#define _SOCKET        1                /* Supports url reading          */
 #define _MOUSE         1                /* Mouse supported               */
 #define _CLIPBRD       1                /* Inter window clip board supp  */
 #define _WINDOW        1                /* Windowed, resizing & title    */
@@ -384,6 +380,29 @@
 #define MEOPT_SCROLL    1       /* enable scroll bars                    */
 #define MEOPT_HSPLIT    1       /* enable vertical window                */ 
 #define MEOPT_FRAME     1       /* enable multiple frames                */
+/* Unicode (UTF-8) internal text is built with build -eu (BENC=u), -ec for 8-bit CodePage based */
+#ifndef MEOPT_UNICODE
+#define MEOPT_UNICODE   0       /* Unicode (UTF-8) internal text         */
+#elif MEOPT_UNICODE && !(defined _UNIX) && !(defined _WIN32)
+#error Unicode is not yet supported on this platform
+#endif
+/* Build name used in meVERSION_INFO, e.g. linux64-utf8-debug */
+#ifdef _64BIT
+#define meBUILD_BITS    "64"
+#else
+#define meBUILD_BITS    "32"
+#endif
+#if MEOPT_UNICODE
+#define meBUILD_ENC     "-utf8"
+#else
+#define meBUILD_ENC     "-cdpg"
+#endif
+#ifdef NDEBUG
+#define meBUILD_CFG     ""
+#else
+#define meBUILD_CFG     "-debug"
+#endif
+#define meBUILD_NAME    meSYSTEM_NAME meBUILD_BITS meBUILD_ENC meBUILD_CFG
 #if MEOPT_FRAME && (defined _MULTI_WINDOW)
 #define MEOPT_MWFRAME   1       /* enable multiple window frames         */
 #else
@@ -417,9 +436,6 @@
 #endif
 #ifdef _METFS
 #define MEOPT_TFS       1       /* enable the tack-on file system        */
-#endif
-#if MEOPT_EXTENDED
-#define MEOPT_BYTECOMP  1       /* enable macro byte-compile, requires extended */
 #endif
 
 /* the name used on about etc           */
@@ -460,6 +476,12 @@
 #define MEOPT_SCROLL    0       /* enable scroll bars                    */
 #define MEOPT_HSPLIT    0       /* enable vertical window                */ 
 #define MEOPT_FRAME     0       /* enable multiple frames                */
+#define meBUILD_NAME    meSYSTEM_NAME
+#if (defined MEOPT_UNICODE) && MEOPT_UNICODE
+#error NanoEmacs does not support Unicode
+#endif
+#undef  MEOPT_UNICODE
+#define MEOPT_UNICODE   0       /* Unicode (UTF-8) internal text         */
 #if MEOPT_FRAME && (defined _MULTI_WINDOW)
 #define MEOPT_MWFRAME   0       /* enable multiple window frames         */
 #else
@@ -589,6 +611,9 @@ typedef   time_t       meTime;
 #include "macosnw.h"
 #else
 #include "eterm.h"      /* platform terminal definitions */
+#endif
+#if MEOPT_UNICODE
+#include "eunicode.h"   /* Unicode character support     */
 #endif
 #include "eextrn.h"     /* External function defintions  */
 

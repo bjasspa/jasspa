@@ -87,19 +87,28 @@ BCOR_CDF =
 PRGLIBS  = 
 endif
 
+ifeq "$(BENC)" "u"
+$(error ERROR: Unicode Utf8 encoding (-eu) is not supported on DOS)
+endif
+ifeq "$(BTYP)" ""
+BTYP     = c
+else ifneq "$(BTYP)" "c"
+$(error ERROR: Window build type (-t w) is not supported on DOS)
+endif
+
 #
 # Rules
-OUTDIR   = $(BOUTDIR).$(BCOR)
+OUTDIR   = $(BOUTDIR).$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h eunicode.h eunitbl.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
 	   $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
 	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
-	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/unicode.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
 	   $(OUTDIR)/dosterm.o
 #
 # Rules

@@ -1,0 +1,97 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m5var100.5,v 1.1 2026/11/01 00:00:00 steve Exp $
+.Im MicroEmacs variable|file
+.so me.tni
+.TH $file-checks 5
+.XI $file-checks - "File save check actions"
+.SH NAME
+$file-checks \- File save check actions
+.Me $a
+.SH SYNOPSIS
+\fB$file-checks\fR \fIbitmask\fR; Default is \fC0\fR
+.SH DESCRIPTION
+Reading a file is lossless, so a condition which may need the user's attention is reported in the read message, e.g.
+"\fC[Read 120 lines - 2 NULs, mixed line endings, no final newline]\fR", and checked again when the buffer is saved
+with
+.Ht save-buffer 2
+or
+.Ht write-buffer 2 ,
+so changes made since the file was read count. The user is prompted for each condition still present, check \fB5\fR
+first as text would be lost, then in the order below, to preserve it or to fix the buffer before it is written, and
+an abort (\fCC-g\fR) aborts the save. A preserve answer to checks \fB1\fR to \fB4\fR is remembered for the buffer
+until the file is read again. The conditions are:
+.IP "\fB1\fR NUL characters"
+The file is binary, the NULs may be preserved or stripped from the buffer. A version of \*(mS without Unicode support
+removes the NULs when the file is read and asks whether the file should be written without them, this check's bits
+are not used.
+.IP "\fB2\fR Inconsistent line endings"
+Lines end with different line endings, e.g. some with a CR and LF and others with only an LF. The line endings may be
+preserved, each line being written with its own ending, or standardised to Unix LF or Windows CRLF line endings, see
+the
+.Ht cr 2m
+and
+.Ht lf 2m
+modes.
+.IP "\fB3\fR No final newline"
+The last line has no line ending, a newline may be added or this preserved.
+.IP "\fB4\fR Invalid bytes"
+A UTF-8, UTF-16 or UTF-32 file has bytes which are not valid in its encoding (see
+.Ht $buffer-encoding 5 ),
+e.g. stray bytes of a code page in a UTF-8 file. They may be preserved, converted to the characters the current
+code page gives them or replaced with the replacement character U+FFFD. This check is only made by a version of \*(mS
+with Unicode support.
+.IP "\fB5\fR Characters the code page does not have"
+The buffer is saved in a code page (see
+.Ht $buffer-encoding 5 )
+and holds characters the code page does not have, typically text pasted or typed since the file was read, e.g. Greek
+in a \fCcp1252\fR file. They cannot be written, so they may be replaced with a '\fC?\fR' or the file converted to
+UTF-8, which changes the buffer's
+.Ht $buffer-encoding 5 .
+To use another code page, abort the save and change the buffer's encoding. This check is always asked first, and as
+the text is lost a replace answer is never remembered. This check is only made by a version of \*(mS with Unicode
+support.
+.PP
+\fB$file-checks\fR sets the action of each check, 2 bits per check starting from bit 0, so check \fB1\fR uses bits
+\fC0x03\fR, \fB2\fR uses \fC0x0c\fR, \fB3\fR \fC0x30\fR, \fB4\fR \fC0xc0\fR and \fB5\fR \fC0x300\fR, where:
+.IP \fC0\fR
+Prompt the user (the default).
+.IP \fC1\fR
+Always preserve.
+.IP \fC2\fR
+Always fix, stripping the NULs, standardising the line endings to the buffer's
+.Ht cr 2m
+and
+.Ht lf 2m
+modes, adding a newline, converting invalid bytes and converting the file to UTF-8.
+.PP
+For check \fB5\fR preserving the code page is the choice which loses text: \fC1\fR always replaces the characters with
+a '\fC?\fR' and \fC2\fR always converts the file to UTF-8.
+.PP
+A save which does not check the file preserves every condition, writing a '\fC?\fR' for each character check \fB5\fR
+would ask about, i.e. a
+.Ht write-buffer 2
+with an argument of \fC0\fR, a macro using the same argument,
+.Ht save-some-buffers 2
+and the saves made on exit.
+.SH EXAMPLE
+To always add a missing final newline without being prompted, check \fB3\fR is set to always fix:
+.Me $emf-scheme
+.CS
+set-variable $file-checks 0x20
+.CE 0
+.Me $ehf-scheme
+.SH "SEE ALSO"
+.na
+.Ht $buffer-encoding 5 ,
+.Ht $buffer-fmod 5 ,
+.Ht cr 2m ,
+.Ht lf 2m ,
+.Ht save-buffer 2 ,
+.Ht write-buffer 2 .
+.ad
+.FH

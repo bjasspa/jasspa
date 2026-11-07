@@ -1,0 +1,1 @@
+SOH[] STX[] BEL[] ESC[] DEL[]

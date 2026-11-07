@@ -77,9 +77,6 @@ DEFVAR ("buffer-names",        EVBNAMES)        /* buffer names access variable 
 DEFVAR ("buffer-scheme",       EVBUFSCHM)       /* Window colour  */
 #endif
 DEFVAR ("buffer-tab-width",    EVBUFTABWIDTH)   /* Buffer literal tab width */
-#if MEOPT_EXTENDED
-DEFVAR ("buffer-xlate",        EVBUFXLATE)      /* Buffer translate flags */
-#endif
 DEFVAR ("build",               EVBUILD)         /* Build OS bit & compiler info */
 #if MEOPT_EXTENDED
 DEFVAR ("command-names",       EVCNAMES)        /* command names access variable */
@@ -97,6 +94,7 @@ DEFVAR ("debug",               EVDEBUG)         /* macro debugging */
 DEFVAR ("delay-time",          EVDELAYTIME)     /* mouse-time delay time (msec) */
 #endif
 #if MEOPT_EXTENDED
+DEFVAR ("file-checks",         EVFILECHECKS)    /* save file check actions   */
 DEFVAR ("file-ignore",         EVFILEIGNORE)    /* file extension ignore list*/
 DEFVAR ("file-names",          EVFNAMES)        /* file names access variable*/
 DEFVAR ("file-size-prompt",    EVFSPROMPT)      /* size at which to start prompting */

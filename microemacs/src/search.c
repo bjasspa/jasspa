@@ -83,7 +83,7 @@ mere_compile_pattern(meUByte *apat)
 {
     int ii ;
     
-    if(((ii=meRegexComp(&mereRegex,apat,
+    if(((ii=meRegexCompCache(&mereRegex,apat,
                         (exactFlag) ? meREGEX_ICASE:0)) != meREGEX_OKAY) && reportErrors)
         mlwrite(MWABORT,(meUByte *)"[Regex Error: %s]",meRegexCompErrors[ii]) ;
     return ii ;
@@ -130,7 +130,11 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
             flags |= meREGEX_BACKWARD ;
             /* when searching backward, we must not match the current position
              * forwrds, always the char before and onwards. if ii == 0 then its now -1! */
+#if MEOPT_UNICODE
+            kk = (ii > 0) ? meUtf8Prev(meLineGetText(lp),ii):-1 ;
+#else
             kk = ii - 1 ;
+#endif
             ii = 0 ;
         }
         if((kk < 0) || ((ii=meRegexMatch(&mereRegex,meLineGetText(lp),jj,ii,kk,flags)) == 0))
@@ -201,7 +205,11 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
         }
         else
         {
+#if MEOPT_UNICODE
+            if((offe = (ii > 0) ? meUtf8Prev(meLineGetText(lp),ii):-1) < 0)
+#else
             if((offe = ii-1) < 0)
+#endif
             {
                 if(--lnno < 0)
                     return meFALSE ;
@@ -332,6 +340,231 @@ mere_scanner(int direct, int beg_or_end, int *n, SCANNERPOS *sp)
 }
 
 #endif
+
+#if MEOPT_UNICODE
+/* The char scanner takes the pattern forwards in both directions */
+#define scanRevPat(fwd) (fwd)
+
+static meUInt scanPat[meBUF_SIZE_MAX];
+
+static meUInt
+scanFold(meUInt uc)
+{
+    return (uc < 0x80) ? (meUInt) toLower(uc):meUniFold(uc);
+}
+
+#define scanCharEq(a,b) (((a) == (b)) || (exactFlag && (scanFold(a) == scanFold(b))))
+
+/* Gets the char at lp, off, \n at a line end, and moves past it; returns 0 at the buffer end */
+static int
+scanCharNext(meBuffer *bp, meLine **lpp, int *offp, meInt *lnop, meUInt *uc)
+{
+    meLine *lp=*lpp;
+    int off=*offp;
+    
+    if((off < meLineGetLength(lp)) && (lp->text[off] < 0x80))
+    {
+        *uc = lp->text[off];
+        *offp = off+1;
+        return 1;
+    }
+    if(off >= meLineGetLength(lp))
+    {
+        if(lp == bp->baseLine)
+            return 0;
+        *uc = meCHAR_NL;
+        *lpp = meLineGetNext(lp);
+        *offp = 0;
+        (*lnop)++;
+        return 1;
+    }
+    *offp = off + meUtf8Decode(lp->text+off,meLineGetLength(lp)-off,uc);
+    return 1;
+}
+
+/* Gets the char before lp, off and moves back to it; returns 0 at the buffer start */
+static int
+scanCharPrev(meBuffer *bp, meLine **lpp, int *offp, meInt *lnop, meUInt *uc)
+{
+    meLine *lp=*lpp;
+    int off=*offp;
+    
+    if((off > 0) && (lp->text[off-1] < 0x80))
+    {
+        *uc = lp->text[--off];
+        *offp = off;
+        return 1;
+    }
+    if(off == 0)
+    {
+        if((lp = meLineGetPrev(lp)) == bp->baseLine)
+            return 0;
+        *uc = meCHAR_NL;
+        *lpp = lp;
+        *offp = meLineGetLength(lp);
+        (*lnop)--;
+        return 1;
+    }
+    off = meUtf8Prev(lp->text,off);
+    meUtf8Decode(lp->text+off,meLineGetLength(lp)-off,uc);
+    *offp = off;
+    return 1;
+}
+
+/*
+ * scanner -- Search for a pattern in either direction, a char at a time so a match never starts
+ * or ends inside a char and case folding works for every char. A stray byte in the pattern is the
+ * char of that value. As before, going backwards the cur position is the match end and the match
+ * position its start.
+ */
+static int 
+scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
+{
+    meWindow *cwp=frameCur->windowCur;
+    meBuffer *bp=cwp->buffer;
+    meLine *curline, *matchline;
+    int curoff, matchoff, patLen, nlPat, ii;
+    meInt curlnno, matchlnno;
+    meUInt cc;
+    
+    srchLastState = meFALSE;
+    for(patLen=0, ii=0 ; patrn[ii] != '\0' ; patLen++)
+        ii += meUtf8DecodePat(patrn+ii,meUTF8_LEN_MAX,scanPat+patLen);
+    if(patLen == 0)
+        return meFALSE;
+    nlPat = ((patLen == 1) && (scanPat[0] == meCHAR_NL));
+    curline = cwp->dotLine;
+    curoff = cwp->dotOffset;
+    curlnno = cwp->dotLineNo;
+    if(direct == meFORWARD)
+    {
+        /* only try a match where a byte can start the first char: its first byte, or ignoring
+         * case the first byte of any char which folds the same, and after a lead byte the
+         * second byte of one. Matching case the first char's last byte is found with memchr */
+        meUByte fb[meUTF8_LEN_MAX], lead[32], lead2[32], *text, *pp;
+        meUInt pc=scanPat[0], cs[16];
+        int len, nn, sb, sl;
+        
+#define scanLeadSet(cc) (lead[(cc) >> 3] |= (1 << ((cc) & 7)))
+#define scanLeadAdd(uc)                                                      \
+        do {                                                                 \
+            if(meUtf8Encode(fb,(uc)) > 1)                                    \
+                lead2[fb[1] >> 3] |= (1 << (fb[1] & 7));                     \
+            scanLeadSet(fb[0]);                                              \
+        } while(0)
+        memset(lead,0,32);
+        memset(lead2,0,32);
+        if(exactFlag)
+        {
+            for(nn=meUniFoldSources(scanFold(pc),cs,16) ; --nn >= 0 ; )
+            {
+                if(cs[nn] < 0x80)
+                {
+                    scanLeadSet(toLower(cs[nn]));
+                    scanLeadSet(toUpper(cs[nn]));
+                }
+                else
+                    scanLeadAdd(cs[nn]);
+            }
+            sb = -1;
+        }
+        else
+            sb = 0;
+        scanLeadAdd(pc);
+        if(sb == 0)
+        {
+            sl = meUtf8Encode(fb,pc) - 1;
+            sb = fb[sl];
+        }
+        for(;;)
+        {
+            len = meLineGetLength(curline);
+            text = curline->text;
+            if(sb >= 0)
+            {
+                while(((curoff+sl) < len) && ((pp = (meUByte *) memchr(text+curoff+sl,sb,len-curoff-sl)) != NULL))
+                {
+                    curoff = (int) (pp - text) - sl;
+                    if(!sl || !memcmp(text+curoff,fb,sl))
+                    {
+                        matchline = curline;
+                        matchoff = curoff;
+                        matchlnno = curlnno;
+                        for(ii=0 ; ii<patLen ; ii++)
+                            if(!scanCharNext(bp,&matchline,&matchoff,&matchlnno,&cc) || !scanCharEq(cc,scanPat[ii]))
+                                break;
+                        if(ii == patLen)
+                            goto scan_found;
+                    }
+                    curoff++;
+                }
+                curoff = len;
+            }
+            for( ; curoff < len ; curoff++)
+            {
+                cc = text[curoff];
+                if((lead[cc >> 3] & (1 << (cc & 7))) &&
+                   ((cc < 0xc0) || (lead2[text[curoff+1] >> 3] & (1 << (text[curoff+1] & 7)))))
+                {
+                    matchline = curline;
+                    matchoff = curoff;
+                    matchlnno = curlnno;
+                    for(ii=0 ; ii<patLen ; ii++)
+                        if(!scanCharNext(bp,&matchline,&matchoff,&matchlnno,&cc) || !scanCharEq(cc,scanPat[ii]))
+                            break;
+                    if(ii == patLen)
+                        goto scan_found;
+                }
+            }
+            /* the line end, a \n */
+            if((curline == bp->baseLine) || ((*count > 0) && (--(*count) == 0) && !nlPat))
+                return meFALSE;
+            if(scanPat[0] == meCHAR_NL)
+            {
+                matchline = curline;
+                matchoff = curoff;
+                matchlnno = curlnno;
+                for(ii=0 ; ii<patLen ; ii++)
+                    if(!scanCharNext(bp,&matchline,&matchoff,&matchlnno,&cc) || !scanCharEq(cc,scanPat[ii]))
+                        break;
+                if(ii == patLen)
+                    goto scan_found;
+            }
+            curline = meLineGetNext(curline);
+            curoff = 0;
+            curlnno++;
+            if(TTbreakTest(1))
+            {
+                ctrlg(meFALSE,1);
+                return meFALSE;
+            }
+        }
+    }
+    for(;;)
+    {
+        matchline = curline;
+        matchoff = curoff;
+        matchlnno = curlnno;
+        {
+            if((curoff == 0) &&
+               ((meLineGetPrev(curline) == bp->baseLine) || ((*count > 0) && (--(*count) == 0))))
+                return meFALSE;
+            for(ii=patLen ; ii>0 ; ii--)
+                if(!scanCharPrev(bp,&matchline,&matchoff,&matchlnno,&cc) || !scanCharEq(cc,scanPat[ii-1]))
+                    break;
+            if(ii == 0)
+                break;
+            scanCharPrev(bp,&curline,&curoff,&curlnno,&cc);
+        }
+        if(TTbreakTest(1))
+        {
+            ctrlg(meFALSE,1);
+            return meFALSE;
+        }
+    }
+scan_found:
+#else
+#define scanRevPat(fwd) srchRPat
 
 #define cNotEq(a,b)                                                          \
 (((a) != (b)) &&                                                             \
@@ -506,6 +739,7 @@ scanner(meUByte *patrn, int direct, int beg_or_end, int *count, SCANNERPOS *sp)
             }
         }
     }
+#endif
                     
     /*
      * A SUCCESSFULL MATCH!!!
@@ -549,7 +783,13 @@ expandchar(int c, meUByte *d, int flags)
 {
     register int  doff=1 ;
 
+#if MEOPT_UNICODE
+    /* internal UTF-8 & escape bytes are left for the file writer to encode or the display to
+     * render */
+    if((c & 0x80) || ((flags & meEXPAND_PRINTABLE) ? isPrint(c): isDisplayable(c)))
+#else
     if((flags & meEXPAND_PRINTABLE) ? isPrint(c): isDisplayable(c))
+#endif
     {
         if((flags & meEXPAND_BACKSLASH) && ((c == '\\') || (c == '"')))
         {
@@ -944,7 +1184,7 @@ replaces(int kind, int ff, int nn)
                 
 		/* Delete the new string. */
                 
-		meWindowBackwardChar(cwp, ilength);
+		meWindowBackwardBytes(cwp, ilength);
                 if (!ldelete(ilength,6))
                     return mlwrite(MWABORT,(meUByte *)"[ERROR while deleting]");
                 
@@ -958,7 +1198,7 @@ replaces(int kind, int ff, int nn)
 		--numsub;
                 lastoff = cwp->dotOffset ;
                 lastlno = cwp->dotLineNo ;
-                meWindowBackwardChar(cwp, slength);
+                meWindowBackwardBytes(cwp, slength);
                 /* must research for this instance to setup the auto-repeat sections
                  * correctly */
                 --nummatch;	/* decrement # of matches */
@@ -1101,7 +1341,12 @@ replaces(int kind, int ff, int nn)
                                 rng = -1;
                             }
                             else if(jj >= 0)
+#if MEOPT_UNICODE
+                                /* pad to a width in cells */
+                                rng -= meStrCells(dpat+jj,kk-jj);
+#else
                                 rng = rng + jj - kk;
+#endif
                             if((rng > 0) && (lchr != '\0') && ((ll = (rchr == '\0') ? rng:(rng>>1)) > 0))
                             {
                                 rng -= ll;
@@ -1118,6 +1363,38 @@ replaces(int kind, int ff, int nn)
                             }
                         }
                             
+#if MEOPT_UNICODE
+                        /* copy the group a char at a time, a case change can change a char's length */
+                        while((jj >= 0) && (jj < kk) && (status > 0))
+                        {
+                            meUByte cb[meUTF8_LEN_MAX];
+                            meUInt uc;
+                            int cl;
+                            jj += meUtf8Decode(dpat+jj,kk-jj,&uc);
+                            if(changeCase)
+                            {
+                                if(changeCase > 0)
+                                {
+                                    uc = meUniCharToUpper(uc);
+                                    if(changeCase == 'c')
+                                        changeCase = -1;
+                                }
+                                else
+                                    uc = meUniCharToLower(uc);
+                            }
+                            if(uc == meCHAR_NL)
+                            {
+                                status = lineInsertNewline(0);
+                                ilength++;
+                            }
+                            else
+                            {
+                                cl = meUtf8Encode(cb,uc);
+                                status = lineInsertString(cl,cb);
+                                ilength += cl;
+                            }
+                        }
+#else
                         if(jj >= 0)
                         {
                             for( ; ((jj < kk) && (status > 0)) ; ilength++)
@@ -1140,6 +1417,7 @@ replaces(int kind, int ff, int nn)
                                     status = lineInsertChar(1, tmpc);
                             }
                         }
+#endif
                         if((rng > 0) && (status > 0))
                         {
                             if(rchr == meCHAR_NL)
@@ -1327,7 +1605,7 @@ searchBack(int f, int n)
                 status = mere_scanner(meREVERSE, PTBEG, &n, NULL);
             else
 #endif
-                status = scanner(srchRPat, meREVERSE, PTBEG, &n, NULL);
+                status = scanner(scanRevPat(srchPat), meREVERSE, PTBEG, &n, NULL);
         } while ((--repCount > 0) && status);
         
         /* ...and complain if not there.
@@ -1454,7 +1732,7 @@ huntBack(int f, int n)
             status = mere_scanner(meREVERSE, PTBEG, &n, NULL);
         else
 #endif
-            status = scanner (srchRPat, meREVERSE, PTBEG, &n, NULL);
+            status = scanner (scanRevPat(srchPat), meREVERSE, PTBEG, &n, NULL);
     } while ((--repCount > 0) && status);
     
     /* ...and complain if not there. */
@@ -1508,7 +1786,7 @@ iscanner(meUByte *apat, int n, int flags, SCANNERPOS *sp)
         /* Reverse string copy */
         rvstrcpy(apat);
     
-    return scanner (((direct == meFORWARD) ? apat : srchRPat),direct, beg_or_end, &n, sp);
+    return scanner (((direct == meFORWARD) ? apat : scanRevPat(apat)),direct, beg_or_end, &n, sp);
 }
 
 int
@@ -1562,6 +1840,7 @@ void srchFreeMemory(void)
 
     meRegexFree(&mereRegex) ;
     meRegexFree(&meRegexStrCmp) ;
+    meRegexCacheFree() ;
     meNullFree(mereNewlBuf) ;
 #endif
 }

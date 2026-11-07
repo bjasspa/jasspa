@@ -97,26 +97,26 @@ jobs:
         Move-Item -Path windows100-intel32 -Destination ..
         cd ..
         Rename-Item -Path release_readme.txt -NewName readme.txt
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_msyswin_intel_binaries
 
     - name: Create msyswin-intel mesc
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\mesingle
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
+        cd .\dev\mesingle
         mkdir -Path bin\msyswin2-intel64
-        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\msyswin2-intel64\mec.exe -t ..\windows100-intel32\tfs.exe -o bin\msyswin2-intel64\mesc.exe
-        Copy-Item -Path ..\LICENSE -Destination .
-        Copy-Item -Path ..\readme.txt -Destination .
-        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_msyswin_intel_mesc
+        ..\..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\..\bin\msyswin2-intel64\mec.exe -t ..\..\windows100-intel32\tfs.exe -o bin\msyswin2-intel64\mesc.exe
+        Copy-Item -Path ..\..\LICENSE -Destination .
+        Copy-Item -Path ..\..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_msyswin_intel_mesc
 
     - name: Create msyswin-intel openssl download
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
         mkdir -Path tfs\bin\msyswin2-intel64
         Copy-Item -Path C:\msys64\usr\bin\msys-ssl-3.dll -Destination tfs\bin\msyswin2-intel64
         Copy-Item -Path C:\msys64\usr\bin\msys-crypto-3.dll -Destination tfs\bin\msyswin2-intel64

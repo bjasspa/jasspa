@@ -35,6 +35,17 @@ If this bit is set then a  partial  insert is  performed  based on  skipping  th
 \fBlower-offset\fR  bytes and inserting the next  \fBbyte-length\fR  bytes. If  \fBbyte-length\fR is negative then the
 same is done except  moving from the end of the file. Partial  insert is only  supported  for regular files on a local
 disk.
+.PP
+The inserted lines take the current buffer's line endings (see the
+.Ht cr 2m
+and
+.Ht lf 2m
+modes), as typed or yanked text does, so inserting a file with different line endings does not mix the buffer's line
+endings. The inserted lines keep their own line endings when either the buffer or the file is binary (i.e. it holds a
+NUL character, see
+.Ht $buffer-fmod 5 ),
+or when bit \fB0x02\fR or \fB0x04\fR is given, bit \fB0x02\fR then also setting the buffer's line ending modes to
+those of the file. An inserted last line with no line ending is given one unless it becomes the buffer's last line.
 .SH "SEE ALSO"
 .na
 .Ht find-bfile 3 ,

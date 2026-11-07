@@ -62,6 +62,14 @@ aborts.
 .SH NOTES
 The mouse can be easily configured using
 .Ht user-setup 3 .
+.PP
+On UNIX terminals the mouse protocol is chosen by the terminfo \fCkmous\fR entry
+for  \fB$TERM\fR. If it is  \fC\eE[<\fR the SGR protocol is used which has no
+size limit. If it is \fC\eE[M\fR the older X10 protocol is used which  encodes
+each  coordinate  in a single  byte, so  mouse  events  beyond  column or row
+223 cannot be reported and mouse actions there will not work. If the terminal
+supports SGR mouse reporting, a \fB$TERM\fR or local terminfo entry with
+\fCkmous=\eE[<\fR removes the limit.
 .SH "SEE ALSO"
 .na
 .Ht user-setup 3 ,

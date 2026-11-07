@@ -36,7 +36,7 @@ jobs:
       - name: Generate spelling packages
         run: |
           export PATH=`pwd`/microemacs/bin/linux6-intel64-gcc11:$PATH
-          export MEVER=`mec -p @microemacs/contribs/ver.emf`
+          export MEVER=`mec -p @microemacs/dev/ver.emf`
           cd ./microemacs/spelling
           declare -a lsl=("dede" "elgr" "engb" "enus" "eses" "fifi" "frfr" "itit" "plpl" "ptpt" "ruru")
           for ii in "${lsl[@]}"

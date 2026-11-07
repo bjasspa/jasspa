@@ -34,6 +34,12 @@ is erased on the next screen update. The \fIstring\fR is clipped to the screen
 area  hence the caller  need not  continually  check on the size of the client
 area.
 .PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) a wide character takes two cells and a character the font does not have is drawn as a '\fC.\fR',
+half of a wide character cut by the edge of the area being drawn as a space. With bit \fB0x04\fR the color scheme
+string has a value for each character.
+.PP
 The numeric argument \fIn\fR is a bitwise flag which has the following meaning:
 .IP \fB0x01\fR
 Don't mark the poke area for update.

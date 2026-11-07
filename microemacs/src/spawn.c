@@ -349,12 +349,6 @@ ipipeGetChildWindow(meIPipe *ipipe)
     return ipipe->childWnd ;
 }
 
-#ifdef _WIN32s
-
-#define ipipeKillProcessTree(ppid) meFALSE
-
-#else
-
 #include <tlhelp32.h>
 
 static int
@@ -431,7 +425,6 @@ ipipeKillProcessTree(DWORD ppid)
     return meTRUE ;
 }
 #endif
-#endif
 
 #if (IPIPE_DEBUG >= 3)
 /* ipipeLogWrite; record what goes *to* the child. On Windows this is the only channel by which
@@ -465,19 +458,51 @@ ipipeLogWrite(const char *where, meUByte *str, int len)
 static void
 ipipeWriteString(meIPipe *ipipe, int n, meUByte *str)
 {
+    int len;
+#if MEOPT_UNICODE
+    /* internal text is sent as UTF-8, a raw byte as its byte, or in the code page */
+    meUByte obuf[meBUF_SIZE_MAX], *dd=obuf;
+    meUInt uc;
+    int ll, ii;
+    while((*str != '\0') && (dd < obuf+meBUF_SIZE_MAX-meUTF8_LEN_MAX))
+    {
+        ll = meUtf8Decode(str,meUTF8_LEN_MAX,&uc);
+        if(meUniIsRaw(uc))
+            *dd++ = meUniRawByte(uc);
+        else if(uc < 0x80)
+            *dd++ = (meUByte) uc;
+        else if((ipipe->flag & (meIPIPE_NOUTF8|meIPIPE_RAW)) == meIPIPE_NOUTF8)
+        {
+            ii = 127;
+            while((ii >= 0) && (charToUnicode[ii] != uc))
+                ii--;
+            *dd++ = (ii < 0) ? '?':(meUByte) (ii+128);
+        }
+        else
+        {
+            memcpy(dd,str,ll);
+            dd += ll;
+        }
+        str += ll;
+    }
+    len = (int) (dd - obuf);
+    str = obuf;
+#else
+    len = (int) meStrlen(str);
+#endif
     while(n--)
     {
 #ifdef _WIN32
         DWORD written ;
 #if (IPIPE_DEBUG >= 3)
-        ipipeLogWrite("STR",str,(int) meStrlen(str));
+        ipipeLogWrite("STR",str,len);
 #endif
-        WriteFile(ipipe->outWfd,str,(DWORD) meStrlen(str),&written,NULL) ;
+        WriteFile(ipipe->outWfd,str,(DWORD) len,&written,NULL) ;
 #else
 #if (IPIPE_DEBUG >= 3)
-        ipipeLogWrite("STR",str,(int) meStrlen(str));
+        ipipeLogWrite("STR",str,len);
 #endif
-        write(ipipe->outWfd,str,meStrlen(str)) ;
+        write(ipipe->outWfd,str,len) ;
 #endif
     }
 }
@@ -1016,10 +1041,17 @@ ipipeTimeNow(void)
  (((curRRead=readFromPipe(ipipe,meBUF_SIZE_MAX,rbuff,doSleep)) > 0) ?        \
   (((cc)=rbuff[0]),curROff=1): 0))
 
+#if MEOPT_UNICODE
+#define ipipeAddLine(ipipe,lp_old,buff,cbuff,dotoP)                          \
+ipipeAddCellLine(lp_old,buff,cbuff,(ipipe->flag & meIPIPE_ANSICOLOR),dotoP)
+#define ipipeDecodeLine(ipipe,src,buff,cbuff,offs)                           \
+ipipeDecodeCellLine(src,buff,cbuff,(ipipe->flag & meIPIPE_ANSICOLOR),offs)
+#else
 #define ipipeAddLine(ipipe,lp_old,buff,cbuff,dotoP)                          \
 ((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeAddColorLine(lp_old,buff,cbuff,dotoP):addLine(lp_old,buff))
 #define ipipeDecodeLine(ipipe,src,buff,cbuff,offs)                           \
 ((ipipe->flag & meIPIPE_ANSICOLOR) ? ipipeDecodeColorLine(src,buff,cbuff,offs):(meStrcpy(buff,src),offs))
+#endif
 
 #define ipipeStoreInputPos()                                                 \
 do {                                                                         \
@@ -1046,14 +1078,210 @@ do {                                                                         \
         bp->vertScroll = bp->dotLineNo-curRow;                               \
     bp->dotLine = lp_new;                                                    \
     bp->dotOffset = (meUShort) doto;                                         \
+    ipipeStoreCol();                                                         \
     meBufferUpdateLocation(bp,noLines,bp->dotOffset);                        \
 } while(0)
+#if MEOPT_UNICODE
+#define ipipeStoreCol() (ipipe->curCol = (meShort) (p1 - buff))
+#else
+#define ipipeStoreCol()
+#endif
 
 
 /* Maximum number of parameters collected from a CSI sequence, must be large enough to hold a
  * combined SGR setting both an rgb fg & bg colour, i.e. '\E[0;38;2;r;g;b;48;2;r;g;bm' */
 #define meIPIPE_PRM_MAX 16
 
+#if MEOPT_UNICODE
+/* The line being built holds a cell per terminal column: a char, the second column of a wide
+ * char, or a cluster - a char followed by zero width chars, held in ipipeClust */
+typedef meUInt meIPipeCell;
+#define meIPIPE_CELL_CONT    0x3fffffff
+#define meIPIPE_CELL_CLUST   0x40000000
+#define meIPIPE_CLUST_MAX    64
+#define meIPIPE_CLUST_LEN    32
+static meUByte ipipeClust[meIPIPE_CLUST_MAX][meIPIPE_CLUST_LEN];
+static int ipipeClustNo;
+
+#define ipipeCellIsClust(cc) (((cc) & meIPIPE_CELL_CLUST) != 0)
+
+/* The columns a char takes, 0 for a mark which joins the char before */
+static int
+ipipeCharWidth(meUInt uc)
+{
+    meUByte pp, gc;
+    if((uc < 0x80) || meUniIsRaw(uc))
+        return 1;
+    pp = meUniProps(uc);
+    gc = meUniPropGC(pp);
+    if((gc == meUNIGC_Mn) || (gc == meUNIGC_Me) || (gc == meUNIGC_Cf))
+        return 0;
+    return (meUniPropWidth(pp) == meUNIWIDTH_WIDE) ? 2:1;
+}
+
+static int
+ipipeCellIsWide(meIPipeCell cc)
+{
+    meUInt uc=cc;
+    if(cc == meIPIPE_CELL_CONT)
+        return 0;
+    if(ipipeCellIsClust(cc))
+        meUtf8Decode(ipipeClust[cc & 0xffff],meUTF8_LEN_MAX,&uc);
+    return (ipipeCharWidth(uc) == 2);
+}
+
+/* Adds zero width char uc to the char in cell cp */
+static void
+ipipeCellAddMark(meIPipeCell *cp, meUInt uc)
+{
+    meUByte *ss;
+    int ll;
+    if(*cp == meIPIPE_CELL_CONT)
+        cp--;
+    if(ipipeCellIsClust(*cp))
+        ss = ipipeClust[*cp & 0xffff];
+    else if(ipipeClustNo < meIPIPE_CLUST_MAX)
+    {
+        ss = ipipeClust[ipipeClustNo];
+        ss[meUtf8Encode(ss,*cp)] = '\0';
+        *cp = meIPIPE_CELL_CLUST | ipipeClustNo++;
+    }
+    else
+        return;
+    if(((ll = (int) meStrlen(ss)) + meUTF8_LEN_MAX) < meIPIPE_CLUST_LEN)
+        ss[ll+meUtf8Encode(ss+ll,uc)] = '\0';
+}
+
+/* Converts a line's text to cells, returns the cell of byte offset offs */
+static int
+ipipeDecodeCellLine(const meUByte *src, meIPipeCell *buff, meUByte *cbuff, int color, int offs)
+{
+    const meUByte *s0=src;
+    meUByte cc='A';
+    meUInt uc;
+    int ii=0, rr=-1, ww;
+    
+    ipipeClustNo = 0;
+    while((*src != '\0') && (ii < meBUF_SIZE_MAX-1))
+    {
+        if((rr < 0) && ((int) (src - s0) >= offs))
+            rr = ii;
+        if(color && (*src == '\x03'))
+        {
+            if(*++src != '\0')
+                cc = *src++;
+            continue;
+        }
+        src += meUtf8Decode(src,meUTF8_LEN_MAX,&uc);
+        if(((ww = ipipeCharWidth(uc)) == 0) && (ii > 0))
+        {
+            ipipeCellAddMark(buff+ii-1,uc);
+            continue;
+        }
+        cbuff[ii] = cc;
+        buff[ii++] = uc;
+        if((ww == 2) && (ii < meBUF_SIZE_MAX-1))
+        {
+            cbuff[ii] = cc;
+            buff[ii++] = meIPIPE_CELL_CONT;
+        }
+    }
+    buff[ii] = 0;
+    return (rr < 0) ? ii:rr;
+}
+
+/* Converts the cells to text and adds the line before lp. Half a wide char left by an overwrite
+ * becomes a space. If given dotoP is changed from a cell to its byte offset */
+static int
+ipipeAddCellLine(meLine *lp, const meIPipeCell *buff, const meUByte *cbuff, int color, int *dotoP)
+{
+    meUByte text[meBUF_SIZE_MAX*8], *dd=text, cc='A', sc;
+    meIPipeCell vv;
+    int ii, doto = (dotoP == NULL) ? -1:*dotoP;
+    
+    for(ii=0 ; (vv=buff[ii]) != 0 ; ii++)
+    {
+        if(ii == doto)
+            *dotoP = (int) (dd-text);
+        if(vv == meIPIPE_CELL_CONT)
+        {
+            if((ii > 0) && ipipeCellIsWide(buff[ii-1]))
+                continue;
+            vv = ' ';
+        }
+        else if(ipipeCellIsWide(vv) && (buff[ii+1] != meIPIPE_CELL_CONT))
+            vv = ' ';
+        if(color && ((sc = (cbuff[ii]) ? cbuff[ii]:'A') != cc))
+        {
+            cc = sc;
+            *dd++ = '\x03';
+            *dd++ = cc;
+        }
+        if(ipipeCellIsClust(vv))
+        {
+            meStrcpy(dd,ipipeClust[vv & 0xffff]);
+            dd += meStrlen(dd);
+        }
+        else
+            dd += meUtf8Encode(dd,vv);
+    }
+    if(ii == doto)
+        *dotoP = (int) (dd-text);
+    if(cc != 'A')
+    {
+        *dd++ = '\x03';
+        *dd++ = 'A';
+    }
+    *dd = '\0';
+    return addLine(lp,text);
+}
+
+/* Blanks a line, a space for each column */
+static void
+ipipeClearLine(meLine *lp, int color)
+{
+    meUByte *ss=lp->text, *se=ss+lp->length;
+    meUInt uc;
+    int ll=0;
+    while(ss < se)
+    {
+        if(color && (*ss == '\x03'))
+            ss += (ss[1] != '\0') ? 2:1;
+        else
+        {
+            ss += meUtf8Decode(ss,(int) (se-ss),&uc);
+            ll += ipipeCharWidth(uc);
+        }
+    }
+    memset(lp->text,' ',ll);
+    lp->text[ll] = '\0';
+    lp->unused += (meUByte) (lp->length - ll);
+    lp->length = (meUShort) ll;
+    lp->flag |= meLINE_CHANGED;
+}
+#define ipipeClearColorLine(lp) ipipeClearLine((lp),1)
+#else
+typedef meUByte meIPipeCell;
+#endif
+
+static int
+ipipeCellLen(const meIPipeCell *cc)
+{
+    const meIPipeCell *c0=cc;
+    while(*cc)
+        cc++;
+    return (int) (cc - c0);
+}
+
+static void
+ipipeCellSet(meIPipeCell *cc, meIPipeCell vv, int nn)
+{
+    while(--nn >= 0)
+        *cc++ = vv;
+}
+#define ipipeCellMove(dd,ss,nn) memmove((dd),(ss),(nn)*sizeof(meIPipeCell))
+
+#if !MEOPT_UNICODE
 static int
 ipipeDecodeColorLine(const meUByte *src, meUByte *buff, meUByte *cbuff, int offs)
 {
@@ -1131,6 +1359,7 @@ ipipeAddColorLine(meLine *lp, const meUByte *buff, const meUByte *cbuff, int *do
     *op = '\0';
     return addLine(lp,encbuff);
 }
+#endif
 
 /* ipipeBaseToColor - convert one of the 16 standard terminal colours, i.e. 0-7 and their
  * bright versions 8-15, into the colour encoding */
@@ -1321,7 +1550,8 @@ ipipeRead(meIPipe *ipipe)
     meLine   *lp_old;
     int     len, maxOff, curRow, ii;
     meUInt  noLines;
-    meUByte  *p1, cc=0, buff[meBUF_SIZE_MAX+1], cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
+    meIPipeCell *p1, buff[meBUF_SIZE_MAX+1];
+    meUByte  cc=0, cbuff[meBUF_SIZE_MAX+1], rbuff[meBUF_SIZE_MAX];
     int     curROff=0, curRRead=0;
     int     prmA, prmL;
 #ifdef IPIPE_DEBUG
@@ -1397,6 +1627,18 @@ ipipeRead(meIPipe *ipipe)
     lp_old = bp->dotLine;
     meBufferStoreLocation(lp_old,bp->dotOffset,bp->dotLineNo);
     len = ipipeDecodeLine(ipipe,lp_old->text,buff,cbuff,bp->dotOffset);
+#if MEOPT_UNICODE
+    /* the offset cannot say the cursor was on the second column of a wide char */
+    if((len > 0) && (len == ipipe->curCol+1) && (buff[len-1] == meIPIPE_CELL_CONT))
+        len--;
+    if(ipipe->utfPendLen)
+    {
+        /* the start of a char split across reads, read again before the new data */
+        memcpy(rbuff,ipipe->utfPend,ipipe->utfPendLen);
+        curRRead = ipipe->utfPendLen;
+        ipipe->utfPendLen = 0;
+    }
+#endif
     p1 = buff+len;
     noLines = 0;
     if(ipipe->oscSplit != 0)
@@ -1423,30 +1665,31 @@ ipipeRead(meIPipe *ipipe)
             }
             else
             {
+                meUByte ins[24];
                 cc = meCHAR_NL;
                 if(ipipe->pid == -4)
-                    ii = sprintf((char *) p1,"[EXIT %d]",(int) ipipe->exitCode);
+                    ii = sprintf((char *) ins,"[EXIT %d]",(int) ipipe->exitCode);
                 else
                 {
-                    meUByte *ins;
                     if(ipipe->pid == -3)
                     {
                         ipipe->exitCode = -1000-9;
-                        ins = (meUByte *)"[KILLED]";
+                        meStrcpy(ins,"[KILLED]");
                     }
                     else if(ipipe->pid == -2)
                     {
                         ipipe->exitCode = -1000-11;
-                        ins = (meUByte *)"[CORE DUMP]";
+                        meStrcpy(ins,"[CORE DUMP]");
                     }
                     else
                     {
                         ipipe->exitCode = -1000-15;
-                        ins = (meUByte *)"[TERMINATED]";
+                        meStrcpy(ins,"[TERMINATED]");
                     }
                     ii = meStrlen(ins);
-                    memcpy(p1,ins,ii+1);
                 }
+                for(prmA=0 ; prmA<=ii ; prmA++)
+                    p1[prmA] = ins[prmA];
                 memset(cbuff+len,ipipe->ansiCc,ii);
             }
             ipipe->pid = -1;
@@ -1485,9 +1728,12 @@ ipipeRead(meIPipe *ipipe)
             if(curRow < ipipe->noRows-1)
                 curRow += ii;
             p1 = buff;
+#if MEOPT_UNICODE
+            ipipeClustNo = 0;
+#endif
             if(!(ipipe->flag & meIPIPE_LFISNL) && (len > 0))
             {
-                memset(buff,' ',len);
+                ipipeCellSet(buff,' ',len);
                 if(ipipe->flag & meIPIPE_ANSICOLOR)
                     memset(cbuff,'A',len);
                 p1 = buff+len;
@@ -1560,16 +1806,16 @@ get_another:
                                 prmL = maxOff - len;
                             if(prmL <= 0)
                                 break;
-                            if((ii = meStrlen(p1)) > (maxOff - len - prmL))
+                            if((ii = ipipeCellLen(p1)) > (maxOff - len - prmL))
                                 ii = maxOff - len - prmL;
                             if(ipipe->flag & meIPIPE_ANSICOLOR)
                             {
                                 memmove(cbuff+len+prmL,cbuff+len,ii);
                                 memset(cbuff+len,(char)ipipe->ansiCc,prmL);
                             }
-                            memmove(p1+prmL,p1,ii);
+                            ipipeCellMove(p1+prmL,p1,ii);
                             p1[prmL+ii] = '\0';
-                            memset(p1,' ',prmL);
+                            ipipeCellSet(p1,' ',prmL);
                             break;
                         }
                         
@@ -1600,12 +1846,12 @@ cursor_forward:
                                 prmL = maxOff - len - 1;
                             if(prmL <= 0)
                                 break;
-                            ii = prmL - meStrlen(p1);
+                            ii = prmL - ipipeCellLen(p1);
                             p1 += prmL;
                             len += prmL;
                             if(ii > 0)
                             {
-                                memset(p1-ii,' ',ii);
+                                ipipeCellSet(p1-ii,' ',ii);
                                 if(ipipe->flag & meIPIPE_ANSICOLOR)
                                     memset(cbuff+(p1-ii-buff),'A',ii);
                                 *p1 = '\0';
@@ -1640,12 +1886,12 @@ cursor_forward:
                                 prmL = 0;
                             else if(prmL >= maxOff)
                                 prmL = maxOff - 1;
-                            ii = prmL - meStrlen(buff);
+                            ii = prmL - ipipeCellLen(buff);
                             p1  = buff + prmL;
                             len = prmL;
                             if(ii > 0)
                             {
-                                memset(p1-ii,' ',ii);
+                                ipipeCellSet(p1-ii,' ',ii);
                                 if(ipipe->flag & meIPIPE_ANSICOLOR)
                                     memset(cbuff+(p1-ii-buff),'A',ii);
                                 *p1 = '\0';
@@ -1736,11 +1982,11 @@ move_cursor_pos:
                             bp->dotLine = lp_old;
                             ipipeDecodeLine(ipipe,lp_old->text,buff,cbuff,0);
                             meBufferStoreLocation(lp_old,(meUShort)len,bp->dotLineNo);
-                            prmL -= meStrlen(buff);
+                            prmL -= ipipeCellLen(buff);
                             p1 = buff+len;
                             if(prmL > 0)
                             {
-                                memset(p1-prmL,' ',prmL);
+                                ipipeCellSet(p1-prmL,' ',prmL);
                                 if(ipipe->flag & meIPIPE_ANSICOLOR)
                                     memset(cbuff+(p1-prmL-buff),'A',prmL);
                                 *p1 = '\0';
@@ -1912,13 +2158,16 @@ move_cursor_pos:
                                 if(prmL == 1)
                                 {
                                     ii = (*p1 == '\0') ? len:len+1;
-                                    memset(buff,' ',ii);
+                                    ipipeCellSet(buff,' ',ii);
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         memset(cbuff,'A',ii);
                                     for(jj=curRow ; jj>0 ; jj--)
                                     {
                                         if((lp = meLineGetPrev(lp)) == bp->baseLine)
                                             break;
+#if MEOPT_UNICODE
+                                        ipipeClearLine(lp,(ipipe->flag & meIPIPE_ANSICOLOR));
+#else
                                         if(ipipe->flag & meIPIPE_ANSICOLOR)
                                             ipipeClearColorLine(lp);
                                         else
@@ -1926,6 +2175,7 @@ move_cursor_pos:
                                             memset(lp->text,' ',meLineGetLength(lp));
                                             lp->flag |= meLINE_CHANGED;
                                         }
+#endif
                                     }
                                     break;
                                 }
@@ -1937,15 +2187,15 @@ move_cursor_pos:
                                 {
                                     for(ii=curRow ; ii>0 ; ii--)
                                         lp = meLineGetPrev(lp);
-                                    ii = meStrlen(buff);
-                                    memset(buff,' ',ii);
+                                    ii = ipipeCellLen(buff);
+                                    ipipeCellSet(buff,' ',ii);
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         memset(cbuff,'A',ii);
                                 }
                                 else if(prmL == 0)
                                 {
-                                    ii = meStrlen(buff+len);
-                                    memset(buff+len,' ',ii);
+                                    ii = ipipeCellLen(buff+len);
+                                    ipipeCellSet(buff+len,' ',ii);
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         memset(cbuff+len,'A',ii);
                                     if(lp != bp->baseLine)
@@ -1959,6 +2209,9 @@ move_cursor_pos:
 #endif
                                 while(lp != bp->baseLine)
                                 {
+#if MEOPT_UNICODE
+                                    ipipeClearLine(lp,(ipipe->flag & meIPIPE_ANSICOLOR));
+#else
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         ipipeClearColorLine(lp);
                                     else
@@ -1966,6 +2219,7 @@ move_cursor_pos:
                                         memset(lp->text,' ',meLineGetLength(lp));
                                         lp->flag |= meLINE_CHANGED;
                                     }
+#endif
                                     lp = meLineGetNext(lp);
                                 }
                                 break;
@@ -1978,7 +2232,7 @@ move_cursor_pos:
                                 /* 1 erases up to and including the cursor, 2 the whole line;
                                  * both blank rather than truncate so the cursor column survives */
                                 ii = (prmL == 1) ? ((*p1 == '\0') ? len:len+1):len;
-                                memset(buff,' ',ii);
+                                ipipeCellSet(buff,' ',ii);
                                 if(ipipe->flag & meIPIPE_ANSICOLOR)
                                     memset(cbuff,'A',ii);
                                 if(prmL == 2)
@@ -1991,11 +2245,11 @@ move_cursor_pos:
                                 int ll;
                                 if(prmL <= 0)
                                     prmL = 1;
-                                if((ll = meStrlen(p1) - prmL) <= 0)
+                                if((ll = ipipeCellLen(p1) - prmL) <= 0)
                                     *p1 = '\0';
                                 else
                                 {
-                                    memmove(p1,p1+prmL,ll+1);
+                                    ipipeCellMove(p1,p1+prmL,ll+1);
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         memmove(cbuff+len,cbuff+len+prmL,ll);
                                 }
@@ -2007,11 +2261,11 @@ move_cursor_pos:
                                 int ll;
                                 if(prmL <= 0)
                                     prmL = 1;
-                                if((ll = meStrlen(p1)) <= prmL)
+                                if((ll = ipipeCellLen(p1)) <= prmL)
                                     *p1 = '\0';
                                 else
                                 {
-                                    memset(p1,' ',prmL);
+                                    ipipeCellSet(p1,' ',prmL);
                                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                                         memset(cbuff+len,(char)ipipe->ansiCc,prmL);
                                 }
@@ -2141,7 +2395,7 @@ osc_consume:
                 /* Everything else has no terminal meaning, it is data and is stored verbatim, e.g.
                  * gdb's -f option marks the current position line with two SUBs (0x1a) store them */
             }
-#if MEOPT_EXTENDED
+#if MEOPT_EXTENDED && !MEOPT_UNICODE
             if(!(ipipe->flag & meIPIPE_NOUTF8) && (cc >= 0x80))
             {
 #if (IPIPE_DEBUG >= 2)
@@ -2175,6 +2429,104 @@ osc_consume:
                 /* Should unrepresentable (cc == meCHAR_UNDEF) be discarded? */
             }
 #endif
+#if MEOPT_UNICODE
+            {
+            meUInt ucs[4];
+            meUByte ub[4], c2;
+            int un=1, need, ucn;
+            
+            ucs[0] = cc;
+            if(cc < 0x80)
+                ;
+            else if((ipipe->flag & (meIPIPE_NOUTF8|meIPIPE_RAW)) == meIPIPE_NOUTF8)
+            {
+                /* a code page char */
+                if((ucs[0] = charToUnicode[cc-128]) == 0)
+                    ucs[0] = meUNI_RAW_BASE + cc;
+            }
+            else
+            {
+                ub[0] = cc;
+                need = (cc >= 0xf0) ? 4:((cc >= 0xe0) ? 3:((cc >= 0xc2) ? 2:1));
+                while(un < need)
+                {
+                    if(!ipipeGetNextChar(ipipe,c2,rbuff,curROff,curRRead,1))
+                    {
+                        /* the rest has not arrived, unless it has waited too long keep the start
+                         * for the next read and stop, so nothing which follows overtakes it */
+                        if((ipipe->pid >= 0) &&
+                           ((ipipe->utfSplit == 0) || ((ipipeTimeNow() - ipipe->utfSplit) <= meIPIPE_OSC_TIMEOUT)))
+                        {
+                            if(ipipe->utfSplit == 0)
+                                ipipe->utfSplit = ipipeTimeNow();
+                            memcpy(ipipe->utfPend,ub,un);
+                            ipipe->utfPendLen = (meUByte) un;
+                            goto ipipe_read_end;
+                        }
+                        break;
+                    }
+                    if((c2 & 0xc0) != 0x80)
+                    {
+                        /* not part of the char, read it again */
+                        curROff--;
+                        break;
+                    }
+                    ub[un++] = c2;
+                }
+                ipipe->utfSplit = 0;
+                if((un == need) && (meUtf8SeqLen(ub,un) == un))
+                {
+                    meUtf8Decode(ub,un,ucs);
+                    un = 1;
+                }
+                else
+                {
+                    /* invalid, each byte is kept as a raw byte */
+                    for(need=0 ; need<un ; need++)
+                        ucs[need] = meUNI_RAW_BASE + ub[need];
+                }
+            }
+            for(ucn=0 ; ucn<un ; ucn++)
+            {
+            meIPipeCell vv=ucs[ucn];
+            int ww;
+            
+            if((ww = ipipeCharWidth(vv)) == 0)
+            {
+                if(len > 0)
+                {
+                    ipipeCellAddMark(p1-1,vv);
+                    continue;
+                }
+                ww = 1;
+            }
+            if((ww == 2) && (len == maxOff-1))
+            {
+                /* a wide char does not fit in the last column so wraps, leaving it as it is */
+                if(ipipe->flag & meIPIPE_NOAUTOWRAP)
+                {
+                    p1--;
+                    len--;
+                }
+                else
+                {
+                    if(*p1 == '\0')
+                    {
+                        if(ipipe->flag & meIPIPE_ANSICOLOR)
+                            cbuff[len] = ipipe->ansiCc;
+                        p1[0] = ' ';
+                        p1[1] = '\0';
+                    }
+                    p1++;
+                    len++;
+                }
+            }
+#else
+            {
+            meIPipeCell vv=cc;
+            int ww=1;
+            {
+#endif
             if(len >= maxOff)
             {
                 if(ipipe->flag & meIPIPE_NOAUTOWRAP)
@@ -2202,7 +2554,7 @@ osc_consume:
 #endif
                 else
                 {
-                    meUByte bb[2];
+                    meIPipeCell bb[2];
                     int splitIdx = (int)(p1-buff);
                     bb[0] = p1[0];
                     bb[1] = p1[1];
@@ -2243,7 +2595,7 @@ osc_consume:
                         curRow += ii;
                     p1[0] = bb[0];
                     p1[1] = bb[1];
-                    meStrcpy(buff,p1);
+                    ipipeCellMove(buff,p1,ipipeCellLen(p1)+1);
                     if(ipipe->flag & meIPIPE_ANSICOLOR)
                         memmove(cbuff,cbuff+splitIdx,meBUF_SIZE_MAX-splitIdx);
                     p1 = buff;
@@ -2253,24 +2605,35 @@ osc_consume:
 #ifdef _WIN32
             scrollWrapCUP = 0;
 #endif
-            if(ipipe->flag & meIPIPE_OVERWRITE)
+            while(--ww >= 0)
             {
-                int ll = meStrlen(p1)+1;
-                memmove(p1+1,p1,ll);
-                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                if(ipipe->flag & meIPIPE_OVERWRITE)
                 {
-                    int p1i = (int)(p1-buff);
-                    memmove(cbuff+p1i+1,cbuff+p1i,ll);
+                    int ll = ipipeCellLen(p1)+1;
+                    ipipeCellMove(p1+1,p1,ll);
+                    if(ipipe->flag & meIPIPE_ANSICOLOR)
+                    {
+                        int p1i = (int)(p1-buff);
+                        memmove(cbuff+p1i+1,cbuff+p1i,ll);
+                    }
                 }
+                else if(*p1 == '\0')
+                    p1[1] = '\0';
+                if(ipipe->flag & meIPIPE_ANSICOLOR)
+                    cbuff[p1-buff] = ipipe->ansiCc;
+                *p1++ = vv;
+                len++;
+#if MEOPT_UNICODE
+                vv = meIPIPE_CELL_CONT;
+#endif
             }
-            else if(*p1 == '\0')
-                p1[1] = '\0';
-            if(ipipe->flag & meIPIPE_ANSICOLOR)
-                cbuff[p1-buff] = ipipe->ansiCc;
-            *p1++ = cc;
-            len++;
+            }
+            }
         }
     }
+#if MEOPT_UNICODE
+ipipe_read_end:
+#endif
     ipipeStoreInputPos();
     ipipeCheckInvar(ipipe,"read");
     ipipeCheckWins("end");
@@ -3191,6 +3554,11 @@ doIpipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, 
         bp->ipipeFlags |= meBUFFER_IPIPE_UTF8;
 #endif
     ipipe->oscSplit = 0;
+#if MEOPT_UNICODE
+    ipipe->utfSplit = 0;
+    ipipe->curCol = 0;
+    ipipe->utfPendLen = 0;
+#endif
     ipipe->ansiCc = 'A';
     ipipe->ansiFg = 0;
     ipipe->ansiBg = 0;
@@ -3463,7 +3831,7 @@ doPipeCommand(meUByte *comStr, meUByte *path, meUByte *bufName, int ipipeFunc, i
     meUnlinkNT(filnam);
 #endif
     
-#if MEOPT_EXTENDED
+#if MEOPT_EXTENDED && !MEOPT_UNICODE
     if((ret > 0) && !(flags & LAUNCH_TO_VAR) && !(flags & LAUNCH_RAW) &&
        (meSystemCfg & meSYSTEM_IO_UTF8) && !(flags & LAUNCH_NOUTF8))
         meBufferDecodeUtf8(bp);

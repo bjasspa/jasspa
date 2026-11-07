@@ -100,7 +100,7 @@ printFreeMemory(void)
  * Compute the length of the string with characters translated
  */
 static int
-getTranslationLen (meUByte *str, int n)
+getTranslationLen (meFrameChar *str, int n)
 {
     int len = 0;                        /* Length of the string */
     int cc;                             /* Character pointer */
@@ -108,6 +108,15 @@ getTranslationLen (meUByte *str, int n)
 
     while((--n >= 0) && ((cc = *str++) != '\0'))
     {
+#if MEOPT_UNICODE
+        if(cc >= 0x80)
+        {
+            meUByte bb[meUTF8_LEN_MAX];
+            if(cc != meFRAMECHAR_CONT)
+                len += meUtf8Encode(bb,cc);
+            continue;
+        }
+#endif
         if ((p = printer.filter[cc]) == NULL)
             len++;
         else
@@ -121,7 +130,7 @@ getTranslationLen (meUByte *str, int n)
  * Translate the characters in the string ready for the printer.
  */
 static int
-doTranslation (meUByte *dest, meUByte *str, int n)
+doTranslation (meUByte *dest, meFrameChar *str, int n)
 {
     int len = 0;                        /* Length of the string */
     int cc;                             /* Character pointer */
@@ -129,6 +138,15 @@ doTranslation (meUByte *dest, meUByte *str, int n)
 
     while((--n >= 0) && ((cc = *str++) != '\0'))
     {
+#if MEOPT_UNICODE
+        /* the printer filter only covers single byte chars */
+        if(cc >= 0x80)
+        {
+            if(cc != meFRAMECHAR_CONT)
+                len += meUtf8Encode(dest+len,cc);
+            continue;
+        }
+#endif
         /* Convert special characters i.e. box chars to an ASCII equivelent */
         if ((meSystemCfg & meSYSTEM_FONTFIX) && (cc < TTSPECCHARS))
             cc = ttSpeChars [cc];
@@ -723,11 +741,18 @@ addFormatedLine (meLine **head, meLine **tail,
                 p++;
                 if (cc == meCHAR_NL)
                     break;
-                /* Filter the character if required. */
+                /* Filter the character if required, the bytes of a UTF-8 char are copied */
+#if MEOPT_UNICODE
+                if ((filter == 0) || (cc & 0x80))
+#else
                 if (filter == 0)
+#endif
                     tbuf [ii++] = cc;
                 else
-                    ii += doTranslation (&tbuf[ii], &cc, 1);
+                {
+                    meFrameChar fc=cc;
+                    ii += doTranslation (&tbuf[ii], &fc, 1);
+                }
             }
         }
         else

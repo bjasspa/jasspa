@@ -150,6 +150,11 @@ CCFLAGS  = $(CCFLAGS) /fsanitize=address
 
 !IF "$(BCOR)" == "ne"
 
+!IF "$(BENC)" == "c"
+!ERROR Unicode Utf8 encoding (-eu) is not supported by NanoEmacs.
+!ENDIF
+
+BENC = c
 BCOR_CDF = /D_NANOEMACS
 PRGLIBS  = 
 LDLIBS   = $(LDLIBSB)
@@ -211,25 +216,33 @@ BTYP_CDF = /D_ME_WINDOW
 BTYP_LDF = /SUBSYSTEM:WINDOWS
 BTYP     = w
 !ENDIF
-
-OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
+!IF "$(BENC)" == "c"
+BENCD    = cdpg
+INSTPRG  = - echo No install - code-page encoding
+!ELSE
+BENCD    = utf8
+BENC_CDF = /DMEOPT_UNICODE=1
+# The process code page is UTF-8 (Windows 10 1903+) so the ANSI file, process & CRT functions take the internal UTF-8 text
+BENC_MAN = meutf8.manifest
+!ENDIF
+OUTDIR   = $(BOUTDIR)-$(BENCD)-$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
-PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h \
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h eterm.h evar.h evers.h eopt.h eunicode.h eunitbl.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def \
 	   $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
 PRGOBJS  = $(OUTDIR)\abbrev.o $(OUTDIR)\basic.o $(OUTDIR)\bind.o $(OUTDIR)\buffer.o $(OUTDIR)\crypt.o $(OUTDIR)\dirlist.o $(OUTDIR)\display.o \
 	   $(OUTDIR)\eval.o $(OUTDIR)\exec.o $(OUTDIR)\file.o $(OUTDIR)\fileio.o $(OUTDIR)\frame.o $(OUTDIR)\hash.o $(OUTDIR)\hilight.o $(OUTDIR)\history.o \
 	   $(OUTDIR)\input.o $(OUTDIR)\isearch.o $(OUTDIR)\key.o $(OUTDIR)\line.o $(OUTDIR)\macro.o $(OUTDIR)\main.o $(OUTDIR)\narrow.o $(OUTDIR)\next.o \
 	   $(OUTDIR)\osd.o $(OUTDIR)\print.o $(OUTDIR)\random.o $(OUTDIR)\regex.o $(OUTDIR)\region.o $(OUTDIR)\registry.o $(OUTDIR)\search.o $(OUTDIR)\sock.o \
-	   $(OUTDIR)\spawn.o $(OUTDIR)\spell.o $(OUTDIR)\tag.o $(OUTDIR)\termio.o $(OUTDIR)\time.o $(OUTDIR)\undo.o $(OUTDIR)\window.o $(OUTDIR)\word.o \
-	   $(OUTDIR)\winterm.o $(OUTDIR)\winprint.o $(OUTDIR)\$(BCOR).res
+	   $(OUTDIR)\spawn.o $(OUTDIR)\spell.o $(OUTDIR)\tag.o $(OUTDIR)\termio.o $(OUTDIR)\time.o $(OUTDIR)\undo.o $(OUTDIR)\unicode.o $(OUTDIR)\window.o \
+	   $(OUTDIR)\word.o $(OUTDIR)\winterm.o $(OUTDIR)\winprint.o $(OUTDIR)\$(BCOR).res
 #
 # Rules
 .SUFFIXES: .c .o .rc .res
 
 .c{$(OUTDIR)}.o:
-	$(CC) $(CCDEFS) $(BCOR_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc$(TOOLKIT_VER)0.pdb" /c $< /Fo"$@"
+	$(CC) $(CCDEFS) $(BCOR_CDF) $(BENC_CDF) $(BTYP_CDF) $(CCFLAGS) /Fd"$(OUTDIR)\vc$(TOOLKIT_VER)0.pdb" /c $< /Fo"$@"
 
 .rc{$(OUTDIR)}.res:
 	$(RC) $(RCFLAGS) $(BTYP_CDF) /fo"$@" $<
@@ -241,7 +254,7 @@ $(OUTDIR)\$(PRGFILE): $(OUTDIR) $(INSTDIR) $(PRGOBJS) $(PRGLIBS)
 	$(LD) $(LDDEFS) $(BTYP_LDF) $(LDFLAGS) /PDB:"$(OUTDIR)\$(PRGNAME).pdb" /OUT:"$@" $(PRGOBJS) $(PRGLIBS) $(LDLIBS)
 	(echo ^<?xml version="1.0" encoding="UTF-8" standalone="yes"?^> & echo ^<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"^> & echo ^<assemblyIdentity version="$(meVER_YR).$(meVER_MN).$(meVER_DY).0" processorArchitecture="$(MANPARCH)" name="$(PRGNAME).exe" type="win32"/^> & echo ^<trustInfo xmlns="urn:schemas-microsoft-com:asm.v3"^> & echo ^<security^> & echo ^<requestedPrivileges^> & echo ^<requestedExecutionLevel level="asInvoker" uiAccess="false"/^> & echo ^</requestedPrivileges^> & echo ^</security^> & echo ^</trustInfo^> & echo ^</assembly^>) > $@.manifest
 	$(MT) -manifest $@.manifest -validate_manifest
-	$(MT) -outputresource:"$@;#1" -manifest $@.manifest
+	$(MT) -outputresource:"$@;#1" -manifest $@.manifest $(BENC_MAN)
 	$(INSTPRG) $@ $(INSTDIR)
 
 $(PRGOBJS): $(PRGHDRS)

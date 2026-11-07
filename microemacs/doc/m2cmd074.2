@@ -25,7 +25,13 @@ re-load and therefore re-used at a later date. This is often used in conjunction
 .Ht end-kbd-macro 2
 and
 .Ht name-kbd-macro 2 .
-The given \fIcommand\fR must have been defined either by a keyboard macro or in \*(mS macro code.
+The given \fIcommand\fR must have been defined either by a keyboard macro or in \*(mS macro code. Macros are
+compiled as they are defined and a macro defined by macro code only keeps its source if
+.Ht $debug 5
+was not \fC0\fR at the time, otherwise \fBinsert-macro\fR fails saying the macro is compiled; a keyboard macro
+named by
+.Ht name-kbd-macro 2
+always keeps its source.
 .SH NOTES
 The \fBinsert-macro\fR provides a good method of identifying unknown low level key codes. Simply record the unknown
 key as a macro and insert the macro into the scratch buffer. The low level key code appears within the string.

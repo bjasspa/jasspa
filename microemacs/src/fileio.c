@@ -218,6 +218,11 @@ meCodePageFreeAll(void)
 meUByte isWordMask=CHRMSK_DEFWORDMSK;
 meUByte charMaskFlags[]="luhs1234dpPwaAMIDkcCS";
 
+#if MEOPT_UNICODE
+meUInt  *charKeyboardMap=NULL;
+int      charKeyboardMapLen=0;
+#else
+meUByte *charKeyboardMap=NULL;
 /* Convert a Unicode codepoint to the best single ME codepage byte.
  * Tries codepage reverse lookup first, then box-drawing chars, then
  * ASCII approximations for common typography (matches encodutl.emf). */
@@ -347,9 +352,9 @@ meBufferDecodeUtf8(meBuffer *bp)
         lp = meLineGetNext(lp);
     }
 }
-#endif /* MEOPT_EXTENDED */
 
-meUByte *charKeyboardMap=NULL;
+#endif /* !MEOPT_UNICODE */
+#endif /* MEOPT_EXTENDED */
 
 #define meBINARY_BPL       16   /* bytes per line */
 #define meRBIN_BPL       1024   /* bytes per line */
@@ -1511,6 +1516,432 @@ ffgetBuf(meIo *io,int offset, int len)
     return meTRUE;
 }
 
+#if MEOPT_UNICODE
+#define ffDBUFSIZ (3*((meFIOBUFSIZ > meLINE_LLEN_MAX) ? meFIOBUFSIZ:meLINE_LLEN_MAX) + 16)
+/* UTF-16/32 transcoded blocks, or a decoded UTF-8/legacy line - never both at once */
+static meUByte ffdbuf[ffDBUFSIZ];
+static meUByte ffwbuf[meFIOBUFSIZ+8];
+/* lines split from a decoded line longer than meLINE_LLEN_MAX still to be returned */
+static meLine *ffpending=NULL;
+
+static meUInt
+ffGetUnit(meUByte *ss, int usz, int be)
+{
+    if(usz == 2)
+        return (be) ? ((((meUInt) ss[0]) << 8) | ss[1]):((((meUInt) ss[1]) << 8) | ss[0]);
+    if(be)
+        return (((meUInt) ss[0]) << 24) | (((meUInt) ss[1]) << 16) | (((meUInt) ss[2]) << 8) | ss[3];
+    return (((meUInt) ss[3]) << 24) | (((meUInt) ss[2]) << 16) | (((meUInt) ss[1]) << 8) | ss[0];
+}
+
+/* Tests whether a BOM-less block is plausibly UTF-16 or UTF-32 text, i.e. it decodes cleanly
+ * with no control characters other than white space and, for UTF-16, the zero bytes of the
+ * ASCII characters fall predominantly in the high byte - plain 8-bit text has no zero bytes
+ * and a UTF-8 file containing NULs has them in both positions */
+static int
+ffDetectUnits(meUByte *ss, int len, int usz, int be)
+{
+    meUInt uc;
+    int ii, nn, zh=0, zl=0;
+
+    if((nn = len / usz) < 2)
+        return 0;
+    for(ii=0 ; ii<nn ; ii++, ss+=usz)
+    {
+        uc = ffGetUnit(ss,usz,be);
+        if(usz == 2)
+        {
+            if(ss[(be) ? 0:1] == 0)
+                zh++;
+            if(ss[(be) ? 1:0] == 0)
+                zl++;
+            if((uc >= 0xd800) && (uc <= 0xdbff) && (ii+1 < nn))
+            {
+                if(((uc = ffGetUnit(ss+2,2,be)) < 0xdc00) || (uc > 0xdfff))
+                    return 0;
+                ii++;
+                ss += 2;
+                continue;
+            }
+            if((uc >= 0xdc00) && (uc <= 0xdfff))
+                return 0;
+        }
+        else if((uc > meUNI_MAX) || ((uc >= 0xd800) && (uc <= 0xdfff)))
+            return 0;
+        if((uc < 0x20) && (uc != '\t') && (uc != '\n') && (uc != '\r') && (uc != '\f') && (uc != 0x1b))
+            return 0;
+    }
+    if(usz == 2)
+        return ((zh >= 2) && ((zh*16) >= nn) && ((zl*8) <= zh));
+    return 1;
+}
+
+static void
+ffDetectEncoding(meIo *io)
+{
+    static meUByte bomLen[] = { 0, 3, 2, 4 };
+    meUByte *ss=ffcur, enc=0;
+    int len=ffremain, bb;
+
+    if(len >= 2)
+    {
+        if(ss[0] == 0)
+        {
+            if((len >= 4) && (ss[1] == 0) && (ss[2] == 0xfe) && (ss[3] == 0xff))
+                enc = meENCODING_UTF32|meENCODING_BE|meENCODING_BOM;
+        }
+        else if(ss[0] == 0xef)
+        {
+            if((len > 2) && (ss[1] == 0xbb) && (ss[2] == 0xbf))
+                enc = meENCODING_UTF8|meENCODING_BOM;
+        }
+        else if(ss[0] == 0xff)
+        {
+            if(ss[1] == 0xfe)
+                enc = ((len >= 4) && (ss[2] == 0) && (ss[3] == 0)) ? (meENCODING_UTF32|meENCODING_BOM):(meENCODING_UTF16|meENCODING_BOM);
+        }
+        else if((ss[0] == 0xfe) && (ss[1] == 0xff))
+            enc = meENCODING_UTF16|meENCODING_BE|meENCODING_BOM;
+    }
+    
+    if(io->encoding & meENCODING_FORCE)
+    {
+        /* only a BOM of the given encoding is skipped */
+        if((enc == 0) || ((enc ^ io->encoding) & (meENCODING_TYPE|meENCODING_BE)) ||
+           ((io->encoding & meENCODING_TYPE) == meENCODING_LEGACY))
+            enc = io->encoding & ~(meENCODING_START|meENCODING_BOM);
+        else
+            enc = (io->encoding & ~meENCODING_START) | meENCODING_BOM;
+    }
+    else if(enc == 0)
+    {
+        /* UTF-16 and UTF-32 text has zero bytes */
+        if(memchr(ss,0,len) == NULL)
+            enc = meENCODING_DETECT;
+        else if(ffDetectUnits(ss,len,4,0))
+            enc = meENCODING_UTF32;
+        else if(ffDetectUnits(ss,len,4,1))
+            enc = meENCODING_UTF32|meENCODING_BE;
+        else if(ffDetectUnits(ss,len,2,0))
+            enc = meENCODING_UTF16;
+        else if(ffDetectUnits(ss,len,2,1))
+            enc = meENCODING_UTF16|meENCODING_BE;
+        else
+            enc = meENCODING_DETECT;
+    }
+    io->encoding = enc;
+    if(enc & meENCODING_BOM)
+    {
+        bb = bomLen[enc & meENCODING_TYPE];
+        ffcur += bb;
+        ffremain -= bb;
+    }
+}
+
+/* Converts UTF-16/32 to internal text in ffdbuf, a partial unit or surrogate pair is carried to
+ * the next block. Invalid data is kept as raw bytes so the file still saves unchanged */
+static int
+ffTranscode(meIo *io, meUByte *ss, int len, int eof)
+{
+    meUByte *ws=ffwbuf, *dd=ffdbuf;
+    int usz, be, wl, ii;
+    meUInt uc, u2;
+
+    usz = ((io->encoding & meENCODING_TYPE) == meENCODING_UTF32) ? 4:2;
+    be = io->encoding & meENCODING_BE;
+    memcpy(ws,io->carry,io->carryLen);
+    memcpy(ws+io->carryLen,ss,len);
+    wl = io->carryLen + len;
+    io->carryLen = 0;
+    while(wl >= usz)
+    {
+        uc = ffGetUnit(ws,usz,be);
+        if(usz == 2)
+        {
+            if((uc >= 0xd800) && (uc <= 0xdbff))
+            {
+                if(wl < 4)
+                {
+                    if(!eof)
+                        break;
+                }
+                else if(((u2 = ffGetUnit(ws+2,2,be)) >= 0xdc00) && (u2 <= 0xdfff))
+                {
+                    uc = 0x10000 + ((uc - 0xd800) << 10) + (u2 - 0xdc00);
+                    ws += 2;
+                    wl -= 2;
+                }
+            }
+        }
+        else if(uc > meUNI_MAX)
+        {
+            for(ii=0 ; ii<4 ; ii++)
+                dd += meUtf8Encode(dd,meUNI_RAW_BASE+ws[ii]);
+            ws += 4;
+            wl -= 4;
+            io->rawCount += 4;
+            continue;
+        }
+        if(uc == 0)
+            io->nulCount++;
+        dd += meUtf8Encode(dd,uc);
+        ws += usz;
+        wl -= usz;
+    }
+    if(wl > 0)
+    {
+        if(eof)
+        {
+            io->rawCount += wl;
+            while(--wl >= 0)
+                dd += meUtf8Encode(dd,meUNI_RAW_BASE+*ws++);
+        }
+        else
+        {
+            memcpy(io->carry,ws,wl);
+            io->carryLen = (meUByte) wl;
+        }
+    }
+    return (int) (dd - ffdbuf);
+}
+#endif
+
+/* Reads the next block into ffcur/ffremain, ffremain is 0 at the end of the file */
+static int
+ffgetBlock(meIo *io)
+{
+#if MEOPT_CRYPT
+    int ii;
+#endif
+#if MEOPT_UNICODE
+    int eof;
+    for(;;)
+    {
+#endif
+        ffcur = ffbuf;
+#if MEOPT_CRYPT
+        if(io->flags & meIOFLAG_CRYPT)
+        {
+            if(cryCtx.blk[5])
+                ffremain = 0;
+            else
+            {
+                /* always read 1 byte more than a block so we know when we hit the end of file */
+                ii=(2*meCRYPT_BLK_SIZE)+1;
+                ffbuf[2*meCRYPT_BLK_SIZE] = (meUByte) cryCtx.blk[4];
+                do {
+                    if(ffgetBuf(io,ii,meFIOBUFSIZ+1-ii) < 0)
+                        return meABORT;
+                    if(ffremain <= 0)
+                    {
+                        /* no more to read, must sort out padding after decrypt */
+                        cryCtx.blk[5] = 1;
+                        break;
+                    }
+                } while((ii += ffremain) <= meFIOBUFSIZ);
+                if(ii > meFIOBUFSIZ)
+                {
+                    meAssert(ii == meFIOBUFSIZ+1);
+                    cryCtx.blk[4] = ffbuf[meFIOBUFSIZ];
+                    ii--;
+                }
+                else if((ii & (meCRYPT_BLK_SIZE-1)) != 0)
+                    return mlwrite(MWABORT,(meUByte *)"[File block read error %d]",ii);
+                ffremain = ii-(2*meCRYPT_BLK_SIZE);
+                meDecrypt(ffbuf,ffremain);
+                if(cryCtx.blk[5])
+                    /* remove padding */
+                    ffremain -= ffbuf[ffremain-1];
+            }
+        }
+        else
+#endif
+            if(ffgetBuf(io,0,meFIOBUFSIZ) < 0)
+            return meABORT;
+#if MEOPT_UNICODE
+        if(io->encoding & meENCODING_RAW)
+            return meTRUE;
+        if(io->encoding & meENCODING_START)
+        {
+            if(ffremain <= 0)
+                return meTRUE;
+            ffDetectEncoding(io);
+        }
+        if((io->encoding & meENCODING_TYPE) < meENCODING_UTF16)
+            return meTRUE;
+        eof = (ffremain <= 0);
+        ffremain = ffTranscode(io,ffcur,(eof) ? 0:ffremain,eof);
+        ffcur = ffdbuf;
+        if((ffremain > 0) || eof)
+            return meTRUE;
+    }
+#else
+    return meTRUE;
+#endif
+}
+
+#if MEOPT_UNICODE
+/* 8 byte word tests: a byte with its top bit set, a 0 byte, a byte equal to bb */
+#define ffWordHigh(ww)     ((ww) & 0x8080808080808080ULL)
+#define ffWordZero(ww)     (((ww) - 0x0101010101010101ULL) & ~(ww) & 0x8080808080808080ULL)
+#define ffWordByte(ww,bb)  ffWordZero((ww) ^ (0x0101010101010101ULL * (bb)))
+
+/* Returns the length of the valid UTF-8 sequence at ss, before se, the common 2 and 3 byte forms
+ * tested here, the others by meUtf8SeqLen */
+#define ffUtf8Len(ss,se)                                                     \
+    ((((ss)[0] >= 0xc2) && ((ss)[0] < 0xe0) && (((se)-(ss)) >= 2) && (((ss)[1] & 0xc0) == 0x80)) ? 2: \
+     (((ss)[0] > 0xe0) && ((ss)[0] < 0xf0) && ((ss)[0] != 0xed) && (((se)-(ss)) >= 3) && \
+      (((ss)[1] & 0xc0) == 0x80) && (((ss)[2] & 0xc0) == 0x80)) ? 3:meUtf8SeqLen((ss),(int) ((se)-(ss))))
+
+static void
+ffDecideEncoding(meUByte *ss, int len, int *valid, int *invalid)
+{
+    int ll;
+    while(len > 0)
+    {
+        if(*ss < 0x80)
+            ll = 1;
+        else if((ll = meUtf8SeqLen(ss,len)) > 0)
+            (*valid)++;
+        else if(ll < 0)
+            break;
+        else
+        {
+            (*invalid)++;
+            ll = 1;
+        }
+        ss += ll;
+        len -= ll;
+    }
+}
+
+/* Converts a UTF-8 or legacy line read from the file to internal text. The choice between
+ * UTF-8 and legacy is made at the first non-ASCII byte as everything before it reads the same
+ * either way, using the rest of the line and the current block */
+static meLine *
+ffDecodeLine(meIo *io, meLine *lp)
+{
+    meUByte *ss=lp->text, *se=ss+lp->length, *dd, cc=0;
+    meLine *nlp, *flp=NULL, *plp=NULL;
+    meUInt uc;
+    int ll, cl, utf8;
+
+    while((ss < se) && ((cc=*ss) != 0) && (cc < 0x80))
+        ss++;
+    if(ss == se)
+        return lp;
+    if(io->encoding & meENCODING_DETECT)
+    {
+        /* decided at the first non-ASCII byte, a NUL before it does not count */
+        meUByte *fs=ss;
+        while((fs < se) && (*fs < 0x80))
+            fs++;
+        if(fs < se)
+        {
+            int valid=0, invalid=0;
+            ffDecideEncoding(fs,(int) (se-fs),&valid,&invalid);
+            if(ffremain > 0)
+                ffDecideEncoding(ffcur,ffremain,&valid,&invalid);
+            io->encoding = ((valid > 0) && (invalid <= valid)) ? meENCODING_UTF8:meENCODING_LEGACY;
+        }
+    }
+    utf8 = ((io->encoding & (meENCODING_TYPE|meENCODING_DETECT)) == meENCODING_UTF8);
+    if(utf8)
+    {
+        meULong ww;
+        while(ss < se)
+        {
+            /* skip 8 ASCII bytes with no NUL at a time */
+            if((se - ss) >= 8)
+            {
+                memcpy(&ww,ss,8);
+                if(!ffWordHigh(ww) && !ffWordZero(ww))
+                {
+                    ss += 8;
+                    continue;
+                }
+            }
+            if(((cc=*ss) != 0) && (cc < 0x80))
+                ll = 1;
+            else if((cc == 0) || ((ll = ffUtf8Len(ss,se)) <= 0))
+                break;
+            ss += ll;
+        }
+        if(ss == se)
+            return lp;
+    }
+    ll = (int) (ss - lp->text);
+    memcpy(ffdbuf,lp->text,ll);
+    dd = ffdbuf + ll;
+    while(ss < se)
+    {
+        if((cc=*ss) == 0)
+        {
+            dd += meUtf8Encode(dd,0);
+            ss++;
+            io->nulCount++;
+        }
+        else if(cc < 0x80)
+            *dd++ = *ss++;
+        else if(utf8 && ((ll = ffUtf8Len(ss,se)) > 0))
+        {
+            memcpy(dd,ss,ll);
+            dd += ll;
+            ss += ll;
+        }
+        else
+        {
+            /* a code page character mapped below 0x80 would not save back the same */
+            if(utf8 || (io->encoding & meENCODING_DETECT) || ((uc = io->codePage->chrToUni[cc-128]) < 0x80))
+            {
+                uc = meUNI_RAW_BASE + cc;
+                if(utf8)
+                    io->rawCount++;
+            }
+            dd += meUtf8Encode(dd,uc);
+            ss++;
+        }
+    }
+    ll = (int) (dd - ffdbuf);
+    dd = ffdbuf;
+    for(;;)
+    {
+        if((cl = ll) > meLINE_LLEN_MAX)
+        {
+            cl = meLINE_LLEN_MAX;
+            while((dd[cl] & 0xc0) == 0x80)
+                cl--;
+        }
+        if((nlp = meLineMalloc(cl,0)) == NULL)
+        {
+            while((plp = flp) != NULL)
+            {
+                flp = flp->next;
+                meFree(plp);
+            }
+            meFree(lp);
+            return NULL;
+        }
+        memcpy(nlp->text,dd,cl);
+        nlp->next = NULL;
+        if(flp == NULL)
+            flp = nlp;
+        else
+            plp->next = nlp;
+        plp = nlp;
+        dd += cl;
+        if((ll -= cl) == 0)
+            break;
+        nlp->flag |= meLINE_NOEOL;
+        io->longCount++;
+    }
+    nlp->flag |= lp->flag & (meLINE_NOEOL|meLINE_EOL_MASK);
+    meFree(lp);
+    ffpending = flp->next;
+    return flp;
+}
+#endif
+
 /*
  * Read a line from a file and create a new line to hold it.
  * If mode & MDBINARY then loading it in binary mode an a line
@@ -1524,53 +1955,23 @@ ffgetBuf(meIo *io,int offset, int len)
 static int
 ffgetline(meIo *io, meLine **line)
 {
-    meLine  *lp;
+    meLine  *lp=NULL;
     meUByte *text, *endp, *lle=NULL;
     meUByte cc, cs, ecc=0;
     int len=0, newl, ii;
     
+#if MEOPT_UNICODE
+    if((lp = ffpending) != NULL)
+    {
+        ffpending = lp->next;
+        *line = lp;
+        return meTRUE;
+    }
+#endif
     do {
         if(ffremain <= 0)
         {
-            ffcur = ffbuf;
-#if MEOPT_CRYPT
-            if(io->flags & meIOFLAG_CRYPT)
-            {
-                if(cryCtx.blk[5])
-                    ffremain = 0;
-                else
-                {
-                    /* always read 1 byte more than a block so we know when we hit the end of file */
-                    ii=(2*meCRYPT_BLK_SIZE)+1;
-                    ffbuf[2*meCRYPT_BLK_SIZE] = (meUByte) cryCtx.blk[4];
-                    do {
-                        if(ffgetBuf(io,ii,meFIOBUFSIZ+1-ii) < 0)
-                            return meABORT;
-                        if(ffremain <= 0)
-                        {
-                            /* no more to read, must sort out padding after decrypt */
-                            cryCtx.blk[5] = 1;
-                            break;
-                        }
-                    } while((ii += ffremain) <= meFIOBUFSIZ);
-                    if(ii > meFIOBUFSIZ)
-                    {
-                        meAssert(ii == meFIOBUFSIZ+1);
-                        cryCtx.blk[4] = ffbuf[meFIOBUFSIZ];
-                        ii--;
-                    }
-                    else if((ii & (meCRYPT_BLK_SIZE-1)) != 0)
-                        return mlwrite(MWABORT,(meUByte *)"[File block read error %d]",ii);
-                    ffremain = ii-(2*meCRYPT_BLK_SIZE);
-                    meDecrypt(ffbuf,ffremain);
-                    if(cryCtx.blk[5])
-                        /* remove padding */
-                        ffremain -= ffbuf[ffremain-1];
-                }
-            }
-            else
-#endif
-                if(ffgetBuf(io,0,meFIOBUFSIZ) < 0)
+            if(ffgetBlock(io) < 0)
                 return meABORT;
             if(ffremain <= 0)
             {
@@ -1583,7 +1984,7 @@ ffgetline(meIo *io, meLine **line)
                     ffremain = -1;
                 break;
             }
-            ffbuf[ffremain]='\n';
+            ffcur[ffremain]='\n';
         }
         if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
         {
@@ -1618,20 +2019,46 @@ ffgetline(meIo *io, meLine **line)
                 if((ii=meLINE_LLEN_MAX-len) < ffremain)
                 {
                     lle = ffcur+ii;
+#if MEOPT_UNICODE
+                    if(((io->encoding & meENCODING_TYPE) != meENCODING_LEGACY) || (io->encoding & meENCODING_DETECT))
+                    {
+                        /* don't split a UTF-8 character across lines */
+                        for(cc=0 ; (cc < 3) && (lle > ffcur) && ((*lle & 0xc0) == 0x80) ; cc++)
+                            lle--;
+                    }
+#endif
                     cs = *lle;
                     *lle = '\n';
                 }
+#if MEOPT_UNICODE
+                {
+                    /* skip 8 bytes with no \n or \r at a time, never reading past the data */
+                    meUByte *fe=ffcur+ffremain;
+                    meULong ww;
+                    while((fe - ffcur) >= 8)
+                    {
+                        memcpy(&ww,ffcur,8);
+                        if(ffWordByte(ww,'\n') || ffWordByte(ww,'\r'))
+                            break;
+                        ffcur += 8;
+                    }
+                    newl = (int) (ffcur - endp);
+                }
+                while(((ecc=*ffcur++) != '\n') && (ecc != '\r'))
+                    newl++;
+#else
                 while(((ecc=*ffcur++) != '\n') && (ecc != '\r'))
                     if(ecc == '\0')
                         io->flags |= meIOFLAG_BINARY;
                     else
                         newl++;
+#endif
                 
                 ffremain -= (meInt) (((size_t) ffcur) - ((size_t) endp));
                 
                 if(newl)
                 {
-                    if(len == 0)
+                    if(lp == NULL)
                     {
                         len = newl;
                         if((lp = (meLine *) meLineMalloc(len,0)) == NULL)
@@ -1650,14 +2077,19 @@ ffgetline(meIo *io, meLine **line)
                         lp->unused = (meUByte) (ss - len - meLINE_SIZE);
                         lp->length = len;
                     }
+#if MEOPT_UNICODE
+                    memcpy(text,endp,newl);
+                    text[newl] = '\0';
+#else
                     if(ecc == '\r')
                         ffcur[-1] = '\n';
                     while((cc = *endp++) != '\n')
                         if(cc != '\0')
                             *text++ = cc;
                     *text = '\0';
+#endif
                 }
-                else if((len == 0) && ((lp = (meLine *) meLineMalloc(0,0)) == NULL))
+                else if((lp == NULL) && ((lp = (meLine *) meLineMalloc(0,0)) == NULL))
                     return meABORT;
                 if(lle != NULL)
                 {
@@ -1702,7 +2134,11 @@ ffgetline(meIo *io, meLine **line)
                     text[(newl*3)+10] = hexdigits[cc >> 4];
                     text[(newl*3)+11] = hexdigits[cc & 0x0f];
                     text[(newl*3)+12] = ' ';
+#if MEOPT_UNICODE
+                    if(!isDisplayable(cc) || (cc & 0x80))
+#else
                     if(!isDisplayable(cc))
+#endif
                         cc = '.';
                 }
                 else
@@ -1751,7 +2187,12 @@ ffgetline(meIo *io, meLine **line)
     {
         /* had to break */
         if(len == 0)
+        {
+            /* the 8-bit build drops NULs so a last line of them has an empty lp */
+            if(lp != NULL)
+                meFree(lp);
             return meFALSE;
+        }
         if((len == 1) && (lp->text[0] == 26))
         {
             io->flags |= meIOFLAG_CTRLZ;
@@ -1767,32 +2208,35 @@ ffgetline(meIo *io, meLine **line)
     {
         /* had to break because line was too long - this 'line' therefore has no \n  */
         lp->flag = meLINE_NOEOL;
+        io->longCount++;
     }
     else
     {
-        /* If we ended in '\r' check for a '\n' */
+        /* line bits record the terminator read, ffReadFile makes them relative to the buffer's style */
         meAssert((ecc == '\n') || (ecc == '\r'));
-        if(ecc == '\r')
+        if(ecc == '\n')
         {
-            if(*ffcur == '\n')
-            {
-                if(io->flags & meIOFLAG_NOTSET)
-                    io->flags = (io->flags & ~meIOFLAG_NOTSET) | (meIOFLAG_CR|meIOFLAG_LF);
-                else if((io->flags & (meIOFLAG_CR|meIOFLAG_LF)) != (meIOFLAG_CR|meIOFLAG_LF))
-                    io->flags |= meIOFLAG_LTDIFF;
-                ffremain--;
-                ffcur++;
-            }
-            else if(io->flags & meIOFLAG_NOTSET)
-                io->flags = (io->flags & ~meIOFLAG_NOTSET) | meIOFLAG_CR;
-            else if((io->flags & (meIOFLAG_CR|meIOFLAG_LF)) != meIOFLAG_CR)
-                io->flags |= meIOFLAG_LTDIFF;
+            lp->flag |= meLINE_EOLLF;
+            io->eolCount[1]++;
         }
-        else if(io->flags & meIOFLAG_NOTSET)
-            io->flags = (io->flags & ~meIOFLAG_NOTSET) | meIOFLAG_LF;
-        else if((io->flags & (meIOFLAG_CR|meIOFLAG_LF)) != meIOFLAG_LF)
-            io->flags |= meIOFLAG_LTDIFF;
+        else if(*ffcur == '\n')
+        {
+            lp->flag |= meLINE_EOLCR|meLINE_EOLLF;
+            io->eolCount[2]++;
+            ffremain--;
+            ffcur++;
+        }
+        else
+        {
+            lp->flag |= meLINE_EOLCR;
+            io->eolCount[0]++;
+        }
     }
+#if MEOPT_UNICODE
+    if(((io->encoding & meENCODING_TYPE) < meENCODING_UTF16) && !(io->encoding & meENCODING_RAW) &&
+       ((lp = ffDecodeLine(io,lp)) == NULL))
+        return meABORT;
+#endif
     *line = lp;
     
     return meTRUE;
@@ -1801,7 +2245,7 @@ ffgetline(meIo *io, meLine **line)
 int
 ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 {
-    io->flags = meIOFLAG_NOTSET;
+    io->flags = 0;
     if(bp != NULL)
     {
         if(meModeTest(bp->mode,MDBINARY))
@@ -1813,6 +2257,31 @@ ffReadFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             flags |= meRWFLAG_CRYPT;
 #endif
     }
+    io->eolCount[0] = io->eolCount[1] = io->eolCount[2] = 0;
+    io->longCount = 0;
+#if MEOPT_UNICODE
+    io->carryLen = 0;
+    io->unrep = 0;
+    io->nulCount = 0;
+    io->rawCount = 0;
+    if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
+        io->encoding = meENCODING_RAW;
+    else if(flags & meRWFLAG_CODEPAGE)
+        io->encoding = meENCODING_START|meENCODING_LEGACY|meENCODING_FORCE;
+    else if((bp != NULL) && !(flags & meRWFLAG_INSERT) && (bp->encoding & meENCODING_FORCE))
+        io->encoding = meENCODING_START | (bp->encoding & meENCODING_USER);
+    else
+        io->encoding = meENCODING_START;
+    /* a single byte file uses the given code page, the buffer's when inserting into one or forced,
+     * else the current one */
+    if(flags & meRWFLAG_CODEPAGE)
+        ;
+    else if((bp != NULL) && (bp->codePage != NULL) && ((flags & meRWFLAG_INSERT) || (bp->encoding & meENCODING_FORCE)))
+        io->codePage = bp->codePage;
+    else
+        io->codePage = codePageCur;
+    meAssert(ffpending == NULL);
+#endif
     
 #ifdef _UNIX
     /* must stop any signals or a socket connection may fail or a read */
@@ -1975,14 +2444,23 @@ ffReadFileClose(meIo *io, meUInt flags)
     meSigRelease();
 #endif
     io->type = meIOTYPE_NONE;
+#if MEOPT_UNICODE
+    while(ffpending != NULL)
+    {
+        meLine *lp=ffpending;
+        ffpending = lp->next;
+        meFree(lp);
+    }
+#endif
 }
 
 int
 ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
            meUInt uoffset, meUInt loffset, meInt length)
 {
-    meLine *lp0, *lp1, *lp2;
-    int   ss, nline;
+    meLine *lp0, *lp1, *lp2, *lpb;
+    meLineFlag oeol, neol;
+    int   ss, eolStd, nline;
 #if MEOPT_SOCKET
     int ff = ((bp != NULL) && (fname != NULL) && (bp->fileName == fname));
 #endif
@@ -2047,6 +2525,7 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     nline = 0;
     lp2 = hlp;	        /* line after  insert */
     lp0 = lp2->prev;	/* line before insert */
+    lpb = lp0;
     while((ss=ffgetline(io,&lp1)) == meTRUE)
     {
         /* re-link new line between lp0 and lp1 */
@@ -2075,9 +2554,14 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
     if(bp != NULL)
     {
         bp->lineCount += nline;
+        oeol = meBufferEolStyle(bp);
         if((flags & meRWFLAG_PRESRVFMOD) == 0)
         {
-            bp->fileFlag = io->flags & (meIOFLAG_BINARY|meIOFLAG_LTDIFF);
+            int *ec=io->eolCount;
+            bp->fileKeep = 0;
+            bp->fileFlag = 0;
+            if(((ec[0] != 0) + (ec[1] != 0) + (ec[2] != 0)) > 1)
+                bp->fileFlag |= meBFFLAG_LTDIFF;
             if(io->type & meIOTYPE_DIR)
                 bp->fileFlag |= meBFFLAG_DIR;
             if(io->flags & meIOFLAG_CTRLZ)
@@ -2087,24 +2571,78 @@ ffReadFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp, meLine *hlp,
                 meModeSet(bp->mode,MDLF);
                 meModeSet(bp->mode,MDCTRLZ);
             }
-            else if((io->flags & meIOFLAG_NOTSET) == 0)
+            else if(ec[0] || ec[1] || ec[2])
             {
+                /* the most common terminator sets the style, ties prefer \n then \r\n */
                 meModeClear(bp->mode,MDCTRLZ);
-                if(io->flags & meIOFLAG_CR)
-                    meModeSet(bp->mode,MDCR);
-                else
+                if((ec[1] >= ec[2]) && (ec[1] >= ec[0]))
+                {
                     meModeClear(bp->mode,MDCR);
-                if(io->flags & meIOFLAG_LF)
                     meModeSet(bp->mode,MDLF);
+                }
+                else if(ec[2] >= ec[0])
+                {
+                    meModeSet(bp->mode,MDCR);
+                    meModeSet(bp->mode,MDLF);
+                }
                 else
+                {
+                    meModeSet(bp->mode,MDCR);
                     meModeClear(bp->mode,MDLF);
+                }
             }
-#if MEOPT_EXTENDED
-            if(!(flags & meRWFLAG_INSERT))
-                bp->codePage = codePageCur;
-#endif
         }
+        /* an insert of a binary file makes the buffer binary too */
+#if MEOPT_UNICODE
+        if(io->nulCount)
+#else
+        if(io->flags & meIOFLAG_BINARY)
+#endif
+            bp->fileFlag |= meBFFLAG_BINARY;
+        neol = meBufferEolStyle(bp);
+        if(oeol != neol)
+        {
+            /* re-base any existing lines so their terminators are unchanged */
+            for(lp1=meLineGetNext(bp->baseLine) ; lp1 != bp->baseLine ; lp1=meLineGetNext(lp1))
+            {
+                if((nline > 0) && (lp1 == lpb->next))
+                    lp1 = lp0;
+                else if(!(lp1->flag & meLINE_NOEOL))
+                    lp1->flag ^= oeol ^ neol;
+            }
+        }
+#if MEOPT_UNICODE
+        if(!(flags & meRWFLAG_INSERT) && !(io->encoding & meENCODING_RAW))
+        {
+            if(io->encoding & meENCODING_START)
+                /* empty file */
+                bp->encoding = (bp->encoding & meENCODING_FORCE) ? bp->encoding:meENCODING_UTF8;
+            else if(io->encoding & meENCODING_DETECT)
+                bp->encoding = meENCODING_UTF8;
+            else
+                bp->encoding = (io->encoding & (meENCODING_TYPE|meENCODING_BE|meENCODING_BOM)) | (bp->encoding & meENCODING_FORCE);
+            bp->codePage = ((bp->encoding & meENCODING_TYPE) == meENCODING_LEGACY) ? io->codePage:NULL;
+        }
+#elif MEOPT_EXTENDED
+        if(!(flags & meRWFLAG_INSERT))
+            bp->codePage = codePageCur;
+#endif
     }
+    else
+        neol = 0;
+    /* a plain insert takes the buffer's line ending style, a read, an insert that sets the
+     * modes, a partial read or an insert into a binary buffer keeps each line's own ending */
+    eolStd = ((bp == NULL) || ((flags & meRWFLAG_PRESRVFMOD) && (length == 0) && !(bp->fileFlag & meBFFLAG_BINARY)));
+    for(lp1=lpb->next ; lp1 != lp2 ; lp1=meLineGetNext(lp1))
+    {
+        if(eolStd || (lp1->flag & meLINE_NOEOL))
+            lp1->flag &= ~meLINE_EOL_MASK;
+        else
+            lp1->flag ^= neol;
+    }
+    /* a last line with no newline inserted before another would save joined to it */
+    if(eolStd && (bp != NULL) && (lp0 != lpb) && (lp2 != bp->baseLine))
+        lp0->flag &= ~meLINE_NOEOL;
     if(length > 0)
     {
         meUInt el, eu=uoffset;
@@ -2181,8 +2719,190 @@ ffputBuf(meIo *io)
     return 0;
 }
 
+#if MEOPT_EXTENDED
+/* Returns the buffer's $buffer-encoding name, e.g. "utf16le-bom" written to buf, or a single byte
+ * file's code page name (the current code page if it has none) */
+meUByte *
+meEncodingName(meBuffer *bp, meUByte *buf)
+{
+#if MEOPT_UNICODE
+    static char *encId[] = { "", "utf8", "utf16", "utf32" };
+    meUByte *dd;
+    if((bp->encoding & meENCODING_TYPE) != meENCODING_LEGACY)
+    {
+        dd = buf + sprintf((char *) buf,"%s",encId[bp->encoding & meENCODING_TYPE]);
+        if((bp->encoding & meENCODING_TYPE) >= meENCODING_UTF16)
+            dd += sprintf((char *) dd,(bp->encoding & meENCODING_BE) ? "be":"le");
+        if(bp->encoding & meENCODING_BOM)
+            sprintf((char *) dd,"-bom");
+        return buf;
+    }
+#endif
+    return (bp->codePage != NULL) ? bp->codePage->name:codePageCur->name;
+}
+#endif
+
+#if MEOPT_UNICODE
+/* Returns the meENCODING_* bits of a UTF encoding id, -1 if it is not one */
+int
+meEncodingFromId(meUByte *ss)
+{
+    int enc;
+    if(meStrncmp(ss,"utf",3))
+        return -1;
+    ss += 3;
+    if(*ss == '8')
+    {
+        enc = meENCODING_UTF8;
+        ss++;
+    }
+    else if(((ss[0] == '1') && (ss[1] == '6')) || ((ss[0] == '3') && (ss[1] == '2')))
+    {
+        enc = (ss[0] == '1') ? meENCODING_UTF16:meENCODING_UTF32;
+        ss += 2;
+        if(!meStrncmp(ss,"be",2))
+            enc |= meENCODING_BE;
+        else if(meStrncmp(ss,"le",2))
+            return -1;
+        ss += 2;
+    }
+    else
+        return -1;
+    if(!meStrcmp(ss,"-bom"))
+        enc |= meENCODING_BOM;
+    else if(*ss != '\0')
+        return -1;
+    return enc;
+}
+#endif
+
+int
+meLineGetEolFlag(meBuffer *bp, meLine *lp)
+{
+    meLineFlag ff;
+    if(lp->flag & meLINE_NOEOL)
+        return 0;
+    ff = (lp->flag & meLINE_EOL_MASK) ^ meBufferEolStyle(bp);
+    return ((ff & meLINE_EOLCR) ? meIOFLAG_CR:0) | ((ff & meLINE_EOLLF) ? meIOFLAG_LF:0);
+}
+
+void
+meBufferEolNormalise(meBuffer *bp)
+{
+    meLine *lp;
+    for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp=meLineGetNext(lp))
+        lp->flag &= ~meLINE_EOL_MASK;
+    bp->fileFlag &= ~meBFFLAG_LTDIFF;
+    bp->fileKeep &= ~meFILEKEEP_EOL;
+}
+
+/* Returns non-zero if any line will be saved with a terminator other than the buffer's style */
+int
+meBufferEolCheck(meBuffer *bp)
+{
+    meLine *lp;
+    for(lp=meLineGetNext(bp->baseLine) ; lp != bp->baseLine ; lp=meLineGetNext(lp))
+        if((lp->flag & meLINE_EOL_MASK) && !(lp->flag & meLINE_NOEOL)
+#if MEOPT_EXTENDED
+           && !(lp->flag & meLINE_MARKUP)
+#endif
+           )
+            return 1;
+    return 0;
+}
+
+#if MEOPT_UNICODE
+/* Returns the code page byte of char uc, -1 if the page does not have it */
+int
+ffCharFromUnicode(meCodePage *cp, meUInt uc)
+{
+    int ii;
+    if(uc < 0x80)
+        return (int) uc;
+    ii = 127;
+    while((cp->chrToUni[ii] != uc) && (--ii >= 0))
+        ;
+    return (ii < 0) ? -1:(ii+128);
+}
+
+#endif
+
 #define ffputc(io,c)                                                         \
 (((ffbuf[ffremain++]=c),(ffremain == meFIOBUFSIZ))? ffputBuf(io):0)
+
+#if MEOPT_UNICODE
+static int
+ffputUni(meIo *io, meUInt uc)
+{
+    meUByte bb[meUTF8_LEN_MAX];
+    int ii, ll;
+    
+    /* ASCII is the byte in UTF-8 and every code page */
+    if((uc < 0x80) && ((io->encoding & meENCODING_TYPE) <= meENCODING_UTF8))
+        return ffputc(io,uc);
+    if(meUniIsRaw(uc))
+        return ffputc(io,meUniRawByte(uc));
+    switch(io->encoding & meENCODING_TYPE)
+    {
+    case meENCODING_UTF8:
+        if(uc == 0)
+            return ffputc(io,0);
+        ll = meUtf8Encode(bb,uc);
+        for(ii=0 ; ii<ll ; ii++)
+            if(ffputc(io,bb[ii]))
+                return meABORT;
+        return 0;
+    case meENCODING_UTF16:
+        if(uc >= 0x10000)
+        {
+            uc -= 0x10000;
+            ii = 0xd800 | (uc >> 10);
+            if((io->encoding & meENCODING_BE) ? (ffputc(io,ii >> 8) || ffputc(io,ii & 0xff)):(ffputc(io,ii & 0xff) || ffputc(io,ii >> 8)))
+                return meABORT;
+            uc = 0xdc00 | (uc & 0x3ff);
+        }
+        if(io->encoding & meENCODING_BE)
+            return (ffputc(io,uc >> 8) || ffputc(io,uc & 0xff)) ? meABORT:0;
+        return (ffputc(io,uc & 0xff) || ffputc(io,uc >> 8)) ? meABORT:0;
+    case meENCODING_UTF32:
+        if(io->encoding & meENCODING_BE)
+            return (ffputc(io,0) || ffputc(io,uc >> 16) || ffputc(io,(uc >> 8) & 0xff) || ffputc(io,uc & 0xff)) ? meABORT:0;
+        return (ffputc(io,uc & 0xff) || ffputc(io,(uc >> 8) & 0xff) || ffputc(io,uc >> 16) || ffputc(io,0)) ? meABORT:0;
+    }
+    if((ii = ffCharFromUnicode(io->codePage,uc)) < 0)
+    {
+        io->unrep++;
+        ii = '?';
+    }
+    return ffputc(io,ii);
+}
+
+/* Returns non-zero if internal UTF-8 text contains a NUL or raw byte escape, 8 bytes with no
+ * 0xc0, 0xc1 or 0xe0 byte, which every escape starts with, are skipped at a time */
+static int
+ffNeedsEncode(meUByte *ss, int len)
+{
+    meUByte *se=ss+len, cc;
+    meULong ww;
+    while(ss < se)
+    {
+        if((se - ss) >= 8)
+        {
+            memcpy(&ww,ss,8);
+            if(!ffWordHigh(ww) || (!ffWordByte(ww & 0xfefefefefefefefeULL,0xc0) && !ffWordByte(ww,0xe0)))
+            {
+                ss += 8;
+                continue;
+            }
+        }
+        if(((cc=*ss++) & 0xfe) == 0xc0)
+            return 1;
+        if((cc == 0xe0) && (ss < se) && (*ss < 0x83))
+            return 1;
+    }
+    return 0;
+}
+#endif
 
 int
 ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
@@ -2463,30 +3183,24 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
         if(meModeTest(bp->mode,MDCRYPT))
             flags |= meRWFLAG_CRYPT;
 #endif
-        if(meModeTest(bp->mode,MDXLATE))
-            /* translateBufferBack must have been called already returned an rbin formatted line loop */
+        if(meModeTest(bp->mode,MDBINARY))
+            io->flags = meIOFLAG_BINMOD;
+        else if(meModeTest(bp->mode,MDRBIN))
             io->flags = meIOFLAG_RBNMOD;
         else
         {
-            if(meModeTest(bp->mode,MDBINARY))
-                io->flags = meIOFLAG_BINMOD;
-            else if(meModeTest(bp->mode,MDRBIN))
-                io->flags = meIOFLAG_RBNMOD;
-            else
-            {
-                io->flags = 0;
-                if(meModeTest(bp->mode,MDCR))
-                    io->flags |= meIOFLAG_CR;
-                if(meModeTest(bp->mode,MDLF))
-                    io->flags |= meIOFLAG_LF;
-                if(meModeTest(bp->mode,MDCTRLZ))
-                    io->flags |= meIOFLAG_CTRLZ;
-            }
-#if MEOPT_NARROW
-            if((bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
-                meBufferExpandNarrowAll(bp);
-#endif
+            io->flags = 0;
+            if(meModeTest(bp->mode,MDCR))
+                io->flags |= meIOFLAG_CR;
+            if(meModeTest(bp->mode,MDLF))
+                io->flags |= meIOFLAG_LF;
+            if(meModeTest(bp->mode,MDCTRLZ))
+                io->flags |= meIOFLAG_CTRLZ;
         }
+#if MEOPT_NARROW
+        if((bp->narrow != NULL) && !(flags & meRWFLAG_IGNRNRRW))
+            meBufferExpandNarrowAll(bp);
+#endif
 #if MEOPT_TIMSTMP
         if(!(flags & meRWFLAG_AUTOSAVE))
             set_timestamp(bp);
@@ -2494,6 +3208,17 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
     }
     else
         io->flags = meIOFLAG_CR;
+#if MEOPT_UNICODE
+    io->unrep = 0;
+    /* text written without a buffer (registry etc.) is UTF-8, binary writers must set RAW */
+    if(bp == NULL)
+        io->encoding = meENCODING_UTF8;
+    else if(io->flags & (meIOFLAG_BINMOD|meIOFLAG_RBNMOD))
+        io->encoding = meENCODING_RAW;
+    else
+        io->encoding = bp->encoding & (meENCODING_TYPE|meENCODING_BE|meENCODING_BOM);
+    io->codePage = ((bp != NULL) && (bp->codePage != NULL)) ? bp->codePage:codePageCur;
+#endif
     
 #if (defined _DOS)
     /* the directory time stamps on dos are not updated so the best
@@ -2521,6 +3246,11 @@ ffWriteFileOpen(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
             return meABORT;
         io->flags |= meIOFLAG_CRYPT;
     }
+#endif
+#if MEOPT_UNICODE
+    if((io->encoding & meENCODING_BOM) && ((io->encoding & meENCODING_TYPE) != meENCODING_LEGACY) &&
+       ffputUni(io,0xfeff))
+        return meABORT;
 #endif
     return meTRUE;
 }
@@ -2571,6 +3301,23 @@ ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
     }
     else
     {
+#if MEOPT_UNICODE
+        if(!(io->encoding & meENCODING_RAW) &&
+           (((io->encoding & meENCODING_TYPE) != meENCODING_UTF8) || ffNeedsEncode(buff,len)))
+        {
+            meUInt uc;
+            int ll;
+            while(len > 0)
+            {
+                ll = meUtf8Decode(buff,len,&uc);
+                buff += ll;
+                len -= ll;
+                if(ffputUni(io,uc))
+                    return meABORT;
+            }
+        }
+        else
+#endif
         if((ffremain+len) < meFIOBUFSIZ)
         {
             memcpy(ffbuf+ffremain,buff,len);
@@ -2587,8 +3334,20 @@ ffWriteFileWrite(meIo *io, int len, meUByte *buff, int eolFlag)
         }
         if(eolFlag)
         {
-            if(((io->flags & meIOFLAG_CR) && ffputc(io,'\r')) ||
-               ((io->flags & meIOFLAG_LF) && ffputc(io,'\n')))
+            /* eolFlag is meIOFLAG_CR and/or meIOFLAG_LF, or 1 for the file's style */
+            if(eolFlag == 1)
+                eolFlag = io->flags;
+#if MEOPT_UNICODE
+            if(!(io->encoding & meENCODING_RAW))
+            {
+                if(((eolFlag & meIOFLAG_CR) && ffputUni(io,'\r')) ||
+                   ((eolFlag & meIOFLAG_LF) && ffputUni(io,'\n')))
+                    return meABORT;
+            }
+            else
+#endif
+            if(((eolFlag & meIOFLAG_CR) && ffputc(io,'\r')) ||
+               ((eolFlag & meIOFLAG_LF) && ffputc(io,'\n')))
                 return meABORT;
         }
     }
@@ -2657,7 +3416,7 @@ ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 {
     meLine *blp, *lp;
     flags |= meRWFLAG_WRITE;
-    if((blp = translateBufferBack(bp,flags)) != NULL)
+    blp = bp->baseLine;
     {
         if(ffWriteFileOpen(io,fname,flags,bp) > 0)
         {
@@ -2676,15 +3435,19 @@ ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
 #endif
                 {
                     if(ffWriteFileWrite(io,meLineGetLength(lp),meLineGetText(lp),
-                                        !(lp->flag & meLINE_NOEOL)) <= 0)
+                                        meLineGetEolFlag(bp,lp)) <= 0)
                         break;
                 }
                 lp = meLineGetNext(lp);
             }
             if(ffWriteFileClose(io,flags,bp) > 0)
             {
-                if(blp != bp->baseLine)
-                    meLineLoopFree(blp,1);
+#if MEOPT_UNICODE
+                if(io->unrep)
+                    mlwrite(MWCLEXEC,(meUByte *)"[%sWrote %d lines, %d characters could not be encoded]",
+                            (io->flags & meIOFLAG_NEWFILE) ? "New file, ":"",noLines,io->unrep);
+                else
+#endif
                 if(io->flags & meIOFLAG_NEWFILE)
                     mlwrite(MWCLEXEC,(meUByte *)"[New file %s, Wrote %d lines]",fname,noLines);
                 else
@@ -2692,8 +3455,6 @@ ffWriteFile(meIo *io, meUByte *fname, meUInt flags, meBuffer *bp)
                 return meTRUE;
             }
         }
-        if(blp != bp->baseLine)
-            meLineLoopFree(blp,1);
     }
     return meFALSE;
 }
@@ -2887,594 +3648,6 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
     }
 #endif
     return rr;
-}
-
-/* n bits:
- * 0x0003 Base conversion type - 0 = lossless bin, 1 = utf8, 2 = utf16, 3 = utf32 
- * 0x0004 Big-Endian utf16 or utf32 (little endian if not set)
- * 0x0008 Check for & remove Unicode BOM or add BOM on save 
- * 0x0100 utf - test for type (bits 0x0f must not be set) 
- * 0x0200 Convert to new buffer rather than replace current
- * 0x0400 Hide output buffer (used with 0x200)
- * 
- * Default is 0x0100 - ID and translate a Unicode file
- */
-static meUByte *uniBom[] = { (meUByte *) "EFBBBF",(meUByte *) "FFFE",(meUByte *) "FFFE0000",NULL,NULL,(meUByte *) "FEFF",(meUByte *) "0000FEFF" };
-int
-translateBuffer(int f, int n)
-{
-    meBuffer *bp;
-    meUByte cc, ca, cb, c1, c2, c3, c4, flg=0, *dd, *ss;
-    meLine *lp, *elp, *blp, *plp, *nlp;
-    int ii, uc, rr, lc=0, ll;
-    
-    if(!f)
-        n = 0x0100;
-    if(n & 0x0200)
-    {
-        /* prompt for and get the new buffer name */
-        meUByte buf[meBUF_SIZE_MAX];
-        if((rr = getBufferName((meUByte *)"Output buffer",0,0,buf)) <= 0)
-            return rr;
-        if((bp=bfind(buf,BFND_CREAT|BFND_CLEAR)) == NULL)
-            return meFALSE;
-        blp = bp->baseLine;
-    }
-    else
-    {
-        bp = frameCur->windowCur->buffer;
-        if(meModeTest(bp->mode,MDEDIT)
-#if MEOPT_IPIPES
-           || meModeTest(bp->mode,MDPIPE)
-#endif
-#if MEOPT_NARROW
-           || (bp->narrow != NULL)
-#endif
-#if MEOPT_UNDO
-           || (bp->undoHead != NULL)
-#endif
-           )
-            return mlwrite(MWABORT,(meUByte *)"[Current buffer must be clean]");
-        if((blp=meLineMalloc(0,0)) == NULL)
-            return meABORT;
-    }
-    nlp = plp = blp;
-    elp = frameCur->windowCur->buffer->baseLine;
-    lp = meLineGetNext(elp);
-    ss = lp->text;
-    if((n & 0x010f) == 0x0100)
-    {
-        ii = 6;
-        do {
-            if((dd = uniBom[ii]) != NULL)
-            {
-                ll = (int) meStrlen(dd);
-                if(!memcmp(ss,dd,ll))
-                    break;
-            }
-        } while(--ii >= 0);
-        if(ii >= 0)
-        {
-            n |= (ii+1) | 0x0008;
-            ss += ll;
-        }
-        else
-            n |= 1;
-    }
-    else if((n & 0x000f) > 0x0008)
-    {
-        dd = uniBom[(n & 0x0007) - 1];
-        ll = (int) meStrlen(dd);
-        if(!memcmp(ss,dd,ll))
-            ss += ll;
-        else
-            n ^= 0x0008;
-    }
-    dd = ffbuf;
-    ll = 0;
-    for(;;)
-    {
-        while(((cc = *ss++) == '\0') &&
-              ((lp = meLineGetNext(lp)) != elp))
-            ss = lp->text;
-        if((lp == elp) || ((cb = *ss++) == '\0'))
-            break;
-        uc = (((cc < 'A') ? cc-'0':cc-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
-        if(n & 0x0002)
-        {
-            if(((ca = *ss++) == '\0') || ((cb = *ss++) == '\0'))
-                break;
-            c2 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
-            if(n & 0x0001)
-            {
-                if(((ca = *ss++) == '\0') || ((cb = *ss++) == '\0'))
-                    break;
-                c3 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
-                if(((ca = *ss++) == '\0') || ((cb = *ss++) == '\0'))
-                    break;
-                c4 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
-                if(n & 0x0004)
-                    uc = (uc << 24) | (((int) c2) << 16) | (((int) c3) << 8) | c4;
-                else
-                    uc = (((int) c4) << 24) | (((int) c3) << 16) | (((int) c2) << 8) | uc;
-            }
-            else
-            {
-                if(n & 0x0004)
-                    uc = (uc << 8) | c2;
-                else
-                    uc = (((int) c2) << 8) | uc;
-                if(((ii=(uc & 0xff00)) >= 0xd800) && (ii <= 0xdfff))
-                {
-                    if(ii >= 0xdc00)
-                        break;
-                    while(((ca = *ss++) == '\0') &&
-                          ((lp = meLineGetNext(lp)) != elp))
-                        ss = lp->text;
-                    if((lp == elp) || ((cb = *ss++) == '\0') ||
-                       ((c3 = *ss++) == '\0') || ((c4 = *ss++) == '\0'))
-                        break;
-                    c2 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10);
-                    c3 = (((c3 < 'A') ? c3-'0':c3-'A'+10) << 4) | ((c4 < 'A') ? c4-'0':c4-'A'+10);
-                    if(n & 0x0004)
-                        ii = (((int) c2) << 8) | c3;
-                    else
-                        ii = (((int) c3) << 8) | c2;
-                    if(((ii & 0xff00) < 0xdc00) || ((ii & 0xff00) > 0xdfff))
-                        break;
-                    uc = 0x10000+((uc&0x3ff)<<10)+(ii&0x3ff);
-                }
-            }
-        }
-        else if((n & 0x0001) && (uc & 0x80))
-        {
-            if((uc & 0x40) == 0)
-                break;
-            ii = 0;
-            c2 = 0x40;
-            c3 = 0;
-            do {
-                while(((ca = *ss++) == '\0') &&
-                      ((lp = meLineGetNext(lp)) != elp))
-                    ss = lp->text;
-                if((lp == elp) || ((cb = *ss++) == '\0') ||
-                   (((c1 = (((ca < 'A') ? ca-'0':ca-'A'+10) << 4) | ((cb < 'A') ? cb-'0':cb-'A'+10)) & 0xc0) != 0x80))
-                    break;
-                ii = (ii << 6) | (c1 & 0x3f);
-                c3 += 6;
-            } while((uc & (c2 >>= 1)) != 0);
-            uc = ((uc & (c2-1)) << c3) | ii;
-        }
-        if((uc == 10) || (ll >= meLINE_LLEN_MAX))
-        {
-            if((n & 0x0003) && (uc == 10))
-            {
-                if((ll > 0) && (dd[-1] == '\r'))
-                {
-                    ll--;
-                    if(flg == 0)
-                        flg = meIOFLAG_CR|meIOFLAG_LF;
-                    else if(flg != (meIOFLAG_CR|meIOFLAG_LF))
-                        flg |= meIOFLAG_LTDIFF;
-                }
-                else if(flg == 0)
-                    flg = meIOFLAG_LF;
-                else if(flg != meIOFLAG_LF)
-                    flg |= meIOFLAG_LTDIFF;
-            }
-            if((nlp=meLineMalloc(ll,0)) == NULL)
-                break;
-            memcpy(nlp->text,ffbuf,ll);
-            nlp->text[ll] = '\0';
-            plp->next = nlp;
-            nlp->prev = plp;
-            plp = nlp;
-            lc++;
-            dd = ffbuf;
-            ll = 0;
-            if(uc == 10)
-                continue;
-            nlp->flag |= meLINE_NOEOL;
-        }
-        if((uc <= 2) || (uc == 0x07))
-        {
-            *dd++ = 0x01;
-            *dd++ = '0';
-            *dd++ = '0';
-            *dd++ = '0'+uc;
-            ll += 4;
-        }
-        else if(!(n & 0x0003))
-        {
-            *dd++ = (meUByte) uc;
-            ll++;
-        }
-        else if((uc < 256) && ((uc < 128) || (charToUnicode[uc-128] == uc)))
-        {
-            *dd++ = (meUByte) uc;
-            ll++;
-        }
-        else
-        {
-            ii = 127;
-            while((charToUnicode[ii] != uc) && (--ii >= 0))
-                ;
-            if(ii >= 0)
-            {
-                *dd++ = (meUByte) (ii+128);
-                ll++;
-            }
-            else if(uc < 0x1000)
-            {
-                *dd++ = 0x01;
-                *dd++ = hexdigits[uc >> 8];
-                *dd++ = hexdigits[(uc >> 4) & 0x0f];
-                *dd++ = hexdigits[uc & 0x0f];
-                ll += 4;
-            }
-            else if(uc < 0x100000)
-            {
-                *dd++ = 0x02;
-                *dd++ = hexdigits[uc >> 16];
-                *dd++ = hexdigits[(uc >> 12) & 0x0f];
-                *dd++ = hexdigits[(uc >> 8) & 0x0f];
-                *dd++ = hexdigits[(uc >> 4) & 0x0f];
-                *dd++ = hexdigits[uc & 0x0f];
-                ll += 6;
-            }
-            else
-            {
-                *dd++ = meCHAR_UNDEF;
-                ll++;
-            }
-        }
-    }
-    if((cc == '\0') && (ll > 0))
-    {
-        if((nlp=meLineMalloc(ll,0)) != NULL)
-        {
-            memcpy(nlp->text,ffbuf,ll);
-            nlp->text[ll] = '\0';
-            nlp->flag |= meLINE_NOEOL;
-            plp->next = nlp;
-            nlp->prev = plp;
-            plp = nlp;
-            lc++;
-        }
-        else
-            cc = 1;
-    }
-    blp->prev = plp;
-    plp->next = blp;
-    if(cc != '\0')
-    {
-        if(n & 0x0200)
-        {
-            bp->intFlag |= BIFBLOW;
-            zotbuf(bp,clexec);
-        }
-        else
-            meLineLoopFree(blp,1);
-        if(nlp == NULL)
-            /* ran out of memory */
-            return meABORT;
-        if((uc = (int) (ss-lp->text) -2) < 0)
-            uc = 0;
-        ll = 1;
-        while((lp = meLineGetPrev(lp)) != elp)
-            ll++;
-        return mlwrite(MWABORT,(meUByte *)"[Format error in source data at line %d column %d]",ll,uc);
-    }
-    if(!(n & 0x0200))
-    {
-        meAnchor *mk;
-        while((mk=bp->anchorList) != NULL)
-        {
-            bp->anchorList = mk->next;
-            meFree(mk);
-        }
-#if MEOPT_LOCALBIND
-        if(bp->bindList != NULL)
-        {
-            meFree(bp->bindList);
-            bp->bindList = NULL;
-            bp->bindCount = 0;
-        }
-#endif
-        meLineLoopFree(bp->baseLine,1);
-        bp->baseLine = blp;
-    }
-    bp->lineCount = lc; 
-    bp->dotLine = meLineGetNext(blp);
-    bp->dotLineNo = 0;
-    bp->dotOffset = 0;
-    bp->dotLineNo = 0;
-    bp->markLine = NULL;
-    bp->markOffset = 0;
-    bp->markLineNo = 0;
-    bp->vertScroll = 0;
-    bp->tabWidth = tabWidth;
-    bp->indentWidth = indentWidth;
-#if MEOPT_MAJORMODE
-    bp->fhook = bp->dhook = bp->bhook = bp->ehook = -1;
-#endif
-#if MEOPT_HILIGHT
-    bp->hilight = 0;
-    bp->indent = 0;
-#endif
-    bp->fileFlag = (bp->fileFlag & ~(meBFFLAG_BINARY|meBFFLAG_LTDIFF)) | (flg & meIOFLAG_LTDIFF);
-    meModeSet(bp->mode,MDXLATE);
-    if(flg & meIOFLAG_CR)
-        meModeSet(bp->mode,MDCR);
-    else
-        meModeClear(bp->mode,MDCR);
-    meModeSet(bp->mode,MDLF);
-    meModeClear(bp->mode,MDRBIN);
-    bp->xlateFlag = (n & 0x00ff);
-    resetBufferWindows(bp);
-    setBufferContext(bp);
-    /* the buffer's fhook could have done some really whacky things like
-     * delete the buffer. If it has avoid crashing by checking the buffer
-     * is still a buffer! */
-    {
-        meBuffer *tbp = bheadp;
-        while(tbp != bp)
-            if((tbp=tbp->next) == NULL)
-                return meFALSE;
-    }
-    if((n & 0x0600) == 0x0200)
-        meWindowPopup(bp,NULL,0,NULL);
-    return meTRUE;
-}
-
-meLine *
-translateBufferBack(meBuffer *bp, meUInt flags)
-{
-    meLine *lp, *elp, *blp, *plp, *nlp;
-    meUByte xlt, cc, c2, *dd, *ss;
-    meUInt uc;
-    int ii, ll;
-    
-    if(!meModeTest(bp->mode,MDXLATE))
-        return bp->baseLine;
-    if((blp=meLineMalloc(0,0)) == NULL)
-        return NULL;
-    nlp = plp = blp;
-    dd = ffbuf;
-    ll = 0;
-    xlt = (bp->xlateFlag & 0x07);
-    if((bp->xlateFlag & 0x0f) > 0x08)
-    {
-        ss = uniBom[xlt - 1];
-        ll = (int) meStrlen(ss);
-        memcpy(dd,ss,ll);
-        dd += ll;
-    }
-    elp = bp->baseLine;
-    lp = meLineGetNext(elp);
-    ss = lp->text;
-    for(;;)
-    {
-        if((uc = *ss++) == '\0')
-        {
-            if((lp->flag & meLINE_NOEOL) == 0)
-            {
-                if(meModeTest(bp->mode,MDCR))
-                {
-                    if((xlt & 6) == 6)
-                    {
-                        *dd++ = '0';
-                        *dd++ = '0';
-                        ll += 2;
-                        if(xlt & 1)
-                        {
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            ll += 4;
-                        }
-                    }
-                    *dd++ = '0';
-                    *dd++ = 'D';
-                    ll += 2;
-                    if((xlt & 6) == 2)
-                    {
-                        *dd++ = '0';
-                        *dd++ = '0';
-                        ll += 2;
-                        if(xlt & 1)
-                        {
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            ll += 4;
-                        }
-                    }
-                }
-                if(meModeTest(bp->mode,MDLF))
-                {
-                    if((xlt & 6) == 6)
-                    {
-                        *dd++ = '0';
-                        *dd++ = '0';
-                        ll += 2;
-                        if(xlt & 1)
-                        {
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            ll += 4;
-                        }
-                    }
-                    *dd++ = '0';
-                    *dd++ = 'A';
-                    ll += 2;
-                    if((xlt & 6) == 2)
-                    {
-                        *dd++ = '0';
-                        *dd++ = '0';
-                        ll += 2;
-                        if(xlt & 1)
-                        {
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            *dd++ = '0';
-                            ll += 4;
-                        }
-                    }
-                }
-            }
-            if((lp = meLineGetNext(lp)) == elp)
-                break;
-            ss = lp->text;
-        }
-        else if(xlt == 0)
-        {
-            if(uc > 0x02)
-            {
-                *dd++ = hexdigits[uc >> 4];
-                *dd++ = hexdigits[uc & 0x0f];
-            }
-            else if((uc == 0x02) || (*ss++ != '0') || ((cc = *ss++),!isXDigit(cc)) || ((c2 = *ss++),!isXDigit(c2)))
-                break;
-            else
-            {
-                *dd++ = cc;
-                *dd++ = c2;
-            }
-            ll += 2;
-        }
-        else
-        {
-            if(uc <= 0x02)
-            {
-                ii = (uc == 0x02) ? 5:3;
-                uc = 0;
-                do {
-                    cc = *ss++;
-                    if(!isXDigit(cc))
-                        break;
-                    uc = (uc<<4) | hexToNum(cc);
-                } while(--ii > 0);
-                if(ii)
-                {
-                    uc = 1;
-                    break;
-                }
-            }
-            else if((uc == 0x07) || ((uc >= 128) && (((uc = charToUnicode[uc-128]) == 0) || (uc > 0x10ffff))))
-                uc = 0x0fffd;
-            if(xlt & 0x02)
-            {
-                if(xlt & 0x01)
-                    ii = 4;
-                else if(uc > 0x0ffff)
-                {
-                    uc -= 0x10000;
-                    if(xlt & 0x04)
-                        uc = 0xd800dc00 | ((uc & 0x0ffc00) << 6) | (uc & 0x0003ff);
-                    else
-                        uc = 0xdc00d800 | ((uc & 0x0ffc00) >> 10) | ((uc & 0x0003ff) << 16);
-                    ii = 4;
-                }
-                else
-                    ii = 2;
-                ll += ii << 1;
-                if(xlt & 0x04)
-                {
-                    while(--ii >= 0)
-                    {
-                        cc = uc >> (ii << 3) & 0x0ff;
-                        *dd++ = hexdigits[cc >> 4];
-                        *dd++ = hexdigits[cc & 0x0f];
-                    }
-                }
-                else
-                {
-                    do {
-                        *dd++ = hexdigits[(uc >> 4) & 0x0f];
-                        *dd++ = hexdigits[uc & 0x0f];
-                        uc >>= 8;
-                    } while(--ii > 0);
-                }
-            }
-            else if(uc < 128)
-            {
-                *dd++ = hexdigits[uc >> 4];
-                *dd++ = hexdigits[uc & 0x0f];
-                ll += 2;
-            }
-            else
-            {
-                if(uc & 0x1ff800)
-                {
-                    if(uc & 0x1f0000)
-                    {
-                        *dd++ = 'F';
-                        *dd++ = hexdigits[uc >> 18];
-                        *dd++ = hexdigits[0x08 | ((uc >> 16) & 0x03)];
-                        *dd++ = hexdigits[((uc >> 12) & 0x0f)];
-                        ll += 8;
-                    }
-                    else
-                    {
-                        *dd++ = 'E';
-                        *dd++ = hexdigits[uc >> 12];
-                        ll += 6;
-                    }
-                    *dd++ = hexdigits[0x08 | ((uc >> 10) & 0x03)];
-                }
-                else
-                {
-                    *dd++ = hexdigits[0x0c | (uc >> 10)];
-                    ll += 4;
-                }
-                *dd++ = hexdigits[((uc >> 6) & 0x0f)];
-                *dd++ = hexdigits[0x08 | ((uc >> 4) & 0x03)];
-                *dd++ = hexdigits[(uc & 0x0f)];
-            }
-        }            
-        if(ll >= meLINE_LLEN_MAX)
-        {
-            if((nlp=meLineMalloc(ll,0)) == NULL)
-                break;
-            memcpy(nlp->text,ffbuf,ll);
-            nlp->text[ll] = '\0';
-            plp->next = nlp;
-            nlp->prev = plp;
-            plp = nlp;
-            dd = ffbuf;
-            ll = 0;
-        }
-    }
-    if((uc == '\0') && (ll > 0))
-    {
-        if((nlp=meLineMalloc(ll,0)) != NULL)
-        {
-            memcpy(nlp->text,ffbuf,ll);
-            nlp->text[ll] = '\0';
-            plp->next = nlp;
-            nlp->prev = plp;
-            plp = nlp;
-        }
-        else
-            uc = 1;
-    }
-    blp->prev = plp;
-    plp->next = blp;
-    if(uc == '\0')
-        return blp;
-    meLineLoopFree(blp,1);
-    uc = (meUInt) (ss-lp->text);
-    ll = 1;
-    while((lp = meLineGetPrev(lp)) != elp)
-        ll++;
-    mlwrite(MWABORT,(meUByte *)"[Format error in source data at line %d column %d]",ll,uc);
-    return NULL;
 }
 
 #endif

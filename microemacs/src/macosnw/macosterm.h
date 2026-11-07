@@ -87,10 +87,14 @@ void meNativeReturnViewFrameSize(void *viewPtr, int cols, int rows);
 /* -------------------------------------------------------------------------
  * Swift - C: deliver an input event.
  * ---------------------------------------------------------------------- */
-void meNativePushKey(uint16_t keyCode);
-void meNativePushMouseMove(int col, int row, int dX, int dY, uint16_t modifiers);
-void meNativePushMouseButton(int button, int pick, int col, int row, int dX, int dY, uint16_t modifiers);
-void meNativeScrollWheel(int up, int col, int row, uint16_t modifiers);
+/* keyCode is an ME key, a special key (meSKeys), a control or ASCII char with the meNativeMods
+ * modifiers. meNativePushChar pushes a typed Unicode char uc with modifiers mods, the C side
+ * converts it to the build's char (the code page char in an 8-bit build). */
+void meNativePushKey(uint32_t keyCode);
+void meNativePushChar(uint32_t uc, uint32_t mods);
+void meNativePushMouseMove(int col, int row, int dX, int dY, uint32_t modifiers);
+void meNativePushMouseButton(int button, int pick, int col, int row, int dX, int dY, uint32_t modifiers);
+void meNativeScrollWheel(int up, int col, int row, uint32_t modifiers);
 
 /* -------------------------------------------------------------------------
  * Swift - C: window lifecycle events.
@@ -186,7 +190,11 @@ void meNativeViewChangeFont(void *viewPtr, int n, const char *name, float size);
  * These are called by Swift inside meNativeViewFlush, while the ME engine
  * thread is blocked on DispatchQueue.main.sync, so access is safe.
  *
- *  meNativeGetRowText(row)    - pointer to frameCur->store[row].text
+ *  meNativeGetRowChars(row)   - the chars of frameCur->store[row].text, a char
+ *                               below 0x20 is a special char, ME_FRAMECHAR_CONT
+ *                               the second cell of a wide char. A Unicode build
+ *                               (meNativeUnicode) gives code points, an 8-bit
+ *                               build its code page chars (see charToUnicode)
  *  meNativeGetRowScheme(row)  - pointer to frameCur->store[row].scheme
  *                               (uint16_t scheme indices)
  *  meNativeGetFrameCols()     - frameCur->width
@@ -195,7 +203,9 @@ void meNativeViewChangeFont(void *viewPtr, int n, const char *name, float size);
  *                               attrs=bits[23:16] (ME_ATTR_* flags)
  *                               Index with: scheme & 0x0fff
  * ---------------------------------------------------------------------- */
-const uint8_t  *meNativeGetRowText(int row);
+#define ME_FRAMECHAR_CONT 0x7fffffffu
+extern const int meNativeUnicode;
+const uint32_t *meNativeGetRowChars(int row);
 const uint16_t *meNativeGetRowScheme(int row);
 int             meNativeGetFrameCols(void);
 uint8_t         meNativeGetCursorColor(void *viewPtr);
@@ -222,44 +232,48 @@ const uint32_t *meNativeGetStyleTable(void);
 void meNativeViewFlush(void *viewPtr, int rowMin, int rowMax,
                        const int *colStart, const int *colEnd);
 
-extern unsigned short mouseKeyState;
-
 /* -------------------------------------------------------------------------
- * ME modifier bits and special-key code table.
+ * ME modifier bits and special-key code table, read by Swift as their values
+ * depend on the build (an ME key is 16 bits in an 8-bit build, 32 in Unicode).
  * ---------------------------------------------------------------------- */
-#define ME_MOD_SHIFT    0x0100u
-#define ME_MOD_CONTROL  0x0200u
-#define ME_MOD_ALT      0x0400u
-#define ME_SPECIAL_BIT  0x0800u
+typedef struct {
+    uint32_t shift;
+    uint32_t control;
+    uint32_t alt;
+    uint32_t special;
+} MEModTable;
+
+extern MEModTable meNativeMods;
 
 typedef struct {
-    uint16_t backspace;
-    uint16_t delete_;
-    uint16_t down;
-    uint16_t end_;
-    uint16_t esc;
-    uint16_t f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12;
-    uint16_t home;
-    uint16_t insert;
-    uint16_t left;
-    uint16_t pageDown;
-    uint16_t pageUp;
-    uint16_t ret;
-    uint16_t right;
-    uint16_t tab;
-    uint16_t up;
-    uint16_t kpBegin;
-    uint16_t kpDelete;
-    uint16_t kpEnd;
-    uint16_t kpHome;
-    uint16_t kpPageDown;
-    uint16_t kpPageUp;
+    uint32_t backspace;
+    uint32_t delete_;
+    uint32_t down;
+    uint32_t end_;
+    uint32_t esc;
+    uint32_t f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12;
+    uint32_t home;
+    uint32_t insert;
+    uint32_t left;
+    uint32_t pageDown;
+    uint32_t pageUp;
+    uint32_t ret;
+    uint32_t right;
+    uint32_t tab;
+    uint32_t up;
+    uint32_t kpBegin;
+    uint32_t kpDelete;
+    uint32_t kpEnd;
+    uint32_t kpHome;
+    uint32_t kpPageDown;
+    uint32_t kpPageUp;
 } MESKeyTable;
 
 extern MESKeyTable meSKeys;
 
 /* -------------------------------------------------------------------------
- * Charset - Char -> Unicode mapping, read by Swift.
+ * Charset - the current code page's char -> Unicode table (128 entries for
+ * chars 0x80 to 0xff), read by Swift in an 8-bit build.
  * ---------------------------------------------------------------------- */
 extern uint16_t *charToUnicode;
 

@@ -347,7 +347,7 @@ lineMakeSpace(int n)
         cp1 = lp_new->text;	/* Return pointer */
         doto = 0;
 #if MEOPT_UNDO
-        meUndoAddInsChar();
+        meUndoAddInsChar(1);
 #endif
     }
     else
@@ -500,6 +500,123 @@ lineInsertString(register int n, register meUByte *cp)
     return meTRUE;
 }
 
+#if MEOPT_UNICODE
+meUInt
+meLineGetUniHigh(meLine *lp, int off)
+{
+    meUInt uc;
+    meUtf8Decode(lp->text+off,lp->length-off,&uc);
+    return uc;
+}
+
+/* Returns the start of the char containing byte off */
+int
+meLineCharStart(meLine *lp, int off)
+{
+    meUInt uc;
+    int ii=off;
+    
+    while((ii > 0) && ((off-ii) < (meUTF8_LEN_MAX-1)) && ((lp->text[ii] & 0xc0) == 0x80))
+        ii--;
+    if((ii != off) && ((ii + meUtf8Decode(lp->text+ii,lp->length-ii,&uc)) > off))
+        return ii;
+    return off;
+}
+
+/* Returns the number of chars before byte off */
+int
+meLineCharIndex(meLine *lp, int off)
+{
+    int ii=0, nn=0;
+    if(off > lp->length)
+    {
+        nn = off - lp->length;
+        off = lp->length;
+    }
+    while(ii < off)
+    {
+        ii = meLineNextChar(lp,ii);
+        nn++;
+    }
+    return nn;
+}
+
+/* Returns the offset of the char at index nn, -1 if the line has fewer chars */
+int
+meLineCharOffset(meLine *lp, int nn)
+{
+    int off=0;
+    while(--nn >= 0)
+    {
+        if(off >= lp->length)
+            return -1;
+        off = meLineNextChar(lp,off);
+    }
+    return off;
+}
+
+int
+meLineIsWord(meLine *lp, int off)
+{
+    meUInt uc=lp->text[off];
+    if(uc < 0x80)
+        return isWord(uc);
+    meUtf8Decode(lp->text+off,lp->length-off,&uc);
+    return meUniPropIsWord(meUniProps(uc));
+}
+
+#endif
+
+/* Replaces the char at dot with cc, which may differ in length, dot is left at its start */
+int
+lineReplaceChar(meUInt cc)
+{
+    meWindow *wp=frameCur->windowCur;
+#if MEOPT_UNICODE
+    meLine *lp=wp->dotLine;
+    meUByte buf[meUTF8_LEN_MAX];
+    int off=wp->dotOffset, ol, nl, ii;
+    
+    ol = meLineNextChar(lp,off) - off;
+    nl = meUtf8Encode(buf,cc);
+    if(nl == ol)
+    {
+        lineSetChanged(WFMAIN);
+        for(ii=0 ; ii<nl ; ii++)
+        {
+            if(meLineGetChar(lp,off+ii) != buf[ii])
+            {
+                wp->dotOffset = off + ii;
+#if MEOPT_UNDO
+                meUndoAddRepChar();
+#endif
+                meLineSetChar(lp,off+ii,buf[ii]);
+            }
+        }
+        wp->dotOffset = off;
+        return meTRUE;
+    }
+    /* insert before deleting so a mark just after the char stays after it */
+    if(lineInsertString(nl,buf) <= 0)
+        return meFALSE;
+#if MEOPT_UNDO
+    meUndoAddReplaceBgn(wp->dotLine,(meUShort) (off+nl+ol));
+#endif
+    mldelete(ol,NULL);
+#if MEOPT_UNDO
+    meUndoAddReplaceEnd(nl);
+#endif
+    wp->dotOffset = off;
+#else
+    lineSetChanged(WFMAIN);
+#if MEOPT_UNDO
+    meUndoAddRepChar();
+#endif
+    meLineSetChar(wp->dotLine,wp->dotOffset,cc);
+#endif
+    return meTRUE;
+}
+
 /*
  * Insert a newline into the buffer at the current location of dot in the
  * current window. The funny ass-backwards way it does things is not a botch;
@@ -600,17 +717,16 @@ lineInsertNewline(meInt flags)
             meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,bp,
                                lp1,lp2,doto,0-((meInt)doto)) ;
     }
-    if(lflag & meLINE_NOEOL)
-    {
-        lp1->flag &= ~meLINE_NOEOL ;
-        lp2->flag |= meLINE_NOEOL ;
-    }
+    /* the second line keeps the original terminator, the first takes the buffer's style */
+    lp1->flag &= ~(meLINE_NOEOL|meLINE_EOL_MASK) ;
+    lp2->flag = (lp2->flag & ~(meLINE_NOEOL|meLINE_EOL_MASK)) | (lflag & (meLINE_NOEOL|meLINE_EOL_MASK)) ;
 #if MEOPT_EXTENDED
     /* scheme & user set flags should remain on the top line even if offset was 0 - important for narrows etc */ 
     if(doto || !(flags & meBUFINSFLAG_UNDOCALL))
     {
-        lp1->flag |= lflag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
-        lp2->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
+#define meLINE_TOP_MASK (meLINE_MARKUP|meLINE_PROTECT|(meLINE_SET_MASK & ~(meLINE_NOEOL|meLINE_EOL_MASK))|meLINE_SCHEME_MASK)
+        lp1->flag |= lflag & meLINE_TOP_MASK ;
+        lp2->flag &= ~meLINE_TOP_MASK ;
     }
 #endif
     lineno = wp->dotLineNo;
@@ -763,9 +879,10 @@ bufferInsertText(meUByte *str, meInt flags)
                     meLineResetAnchors(meLINEANCHOR_IF_LESS|meLINEANCHOR_RETAIN,wp->buffer,
                                        wp->dotLine,meLineGetNext(line),0,0);
 #if MEOPT_EXTENDED
-                /* scheme & user set flags should remain on the top line as well - important for narrows etc */ 
-                meLineGetNext(line)->flag |= wp->dotLine->flag & (meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK) ;
-                wp->dotLine->flag &= ~(meLINE_MARKUP|meLINE_PROTECT|meLINE_SET_MASK|meLINE_SCHEME_MASK);
+                /* scheme & user set flags should remain on the top line as well - important for narrows etc,
+                 * but not the line's ending which stays with its text */
+                meLineGetNext(line)->flag |= wp->dotLine->flag & meLINE_TOP_MASK;
+                wp->dotLine->flag &= ~meLINE_TOP_MASK;
 #endif
             }
             tlen += len+1;
@@ -1241,7 +1358,7 @@ mldelete(meInt noChrs, meUByte *kstring)
             if(elp->flag & meLINE_ANCHOR)
                 meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,cbp,
                                    elp,slp,(meUShort) eoff,soff-eoff);
-            slp->flag = (slp->flag & ~meLINE_NOEOL) | (elp->flag & meLINE_NOEOL) ;
+            slp->flag = (slp->flag & ~(meLINE_NOEOL|meLINE_EOL_MASK)) | (elp->flag & (meLINE_NOEOL|meLINE_EOL_MASK)) ;
             fslp = meLineGetNext(slp) ;
         }
         else if(meLineGetMaxLength(elp) >= newl)
@@ -1311,7 +1428,9 @@ mldelete(meInt noChrs, meUByte *kstring)
                 meLineResetAnchors(meLINEANCHOR_IF_GREATER|meLINEANCHOR_RELATIVE,cbp,
                                    elp,slp,(meUShort) eoff,soff-eoff);
 #if MEOPT_EXTENDED
-            slp->flag |= (fslp->flag & (meLINE_MARKUP|meLINE_SCHEME_MASK)) | (elp->flag & meLINE_NOEOL) ;
+            slp->flag |= (fslp->flag & (meLINE_MARKUP|meLINE_SCHEME_MASK)) | (elp->flag & (meLINE_NOEOL|meLINE_EOL_MASK)) ;
+#else
+            slp->flag |= elp->flag & (meLINE_NOEOL|meLINE_EOL_MASK) ;
 #endif
             felp = slp ;
         }
@@ -1527,8 +1646,9 @@ ldelete(meInt nn, int kflag)
 #if MEOPT_UNDO
     if(kflag & 2)
     {
-        if(!(kflag & 4) && (nn == 1))
-            meUndoAddDelChar();
+        if(!(kflag & 4) &&
+           (nn == ((cwp->dotOffset < meLineGetLength(cwp->dotLine)) ? (meLineNextChar(cwp->dotLine,cwp->dotOffset)-cwp->dotOffset):1)))
+            meUndoAddDelChar(nn);
         else
             meUndoAddDelChars(nn);
     }

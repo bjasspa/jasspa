@@ -29,7 +29,7 @@
  */
 #ifdef maindef
 
-#define	DEFBIND(x,y,z)	{(meUShort)(x), (meUShort)(z), (meUInt)(y)},
+#define	DEFBIND(x,y,z)	{(meKey)(x), (meUShort)(z), (meUInt)(y)},
 
 meBind  keytab[meBIND_MAX] = {
 

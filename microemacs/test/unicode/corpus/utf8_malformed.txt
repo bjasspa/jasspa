@@ -1,0 +1,18 @@
+stray-cont[€]
+stray-cont[¿]
+overlong-slash[À¯]
+overlong-nul[À€]
+escape-lookalike[Á¿]
+overlong3[à€¯]
+overlong4[ğ€€¯]
+surrogate[í €]
+surrogate-pair[í ½í¸€]
+too-big[ô€€]
+f5[õ€€€]
+fe[ş]
+ff[ÿ]
+cut2[Ã]x
+cut3[â‚]x
+cut4[ğŸ˜]x
+valid[Ã©]
+latin1[été]

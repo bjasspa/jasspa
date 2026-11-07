@@ -282,7 +282,7 @@ static char tcapSpecSKeyStrs[][3]=
 #ifdef _USE_NCURSES
 #define tcapSpecSKeyMod1st '3'
 #define tcapSpecSKeyModCnt 6
-meUShort tcapSpecSKeyModMsk[tcapSpecSKeyModCnt] = {
+meKey tcapSpecSKeyModMsk[tcapSpecSKeyModCnt] = {
     ME_ALT, ME_SHIFT|ME_ALT, ME_CONTROL, ME_SHIFT|ME_CONTROL,
     ME_ALT|ME_CONTROL, ME_SHIFT|ME_CONTROL|ME_ALT
 };
@@ -344,11 +344,12 @@ XftDraw *xdraw=NULL;
 #define meATOM_COPY_TEXT        3
 #define meATOM_INCR             4
 #define meATOM_MULTIPLE         5
-#define meATOM_CLIPBOARD        6
+#define meATOM_NET_WM_NAME      6
+#define meATOM_CLIPBOARD        7
 /* All the clipboard target atoms must follow the TARGETS atom */
-#define meATOM_TARGETS          7
-#define meATOM_UTF8_STRING      8
-#define meATOM_STRING           9
+#define meATOM_TARGETS          8
+#define meATOM_UTF8_STRING      9
+#define meATOM_STRING           10
 #define meTARGET_ATOM_COUNT     3
 static int TTdefaultPosX, TTdefaultPosY;
 static Atom meAtoms[meATOM_STRING+1]={0};
@@ -370,7 +371,7 @@ static void meSetIconState (Display *display, Window window);
 #if MEOPT_MOUSE
 /* Local definitions for mouse handling code */
 /* mouseKeyState - The state of the control keys when the mouse was pressed. */
-meUShort mouseKeyState;          /* State of keyboard control */
+meKey    mouseKeyState;          /* State of keyboard control */
 
 static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5 } ;
 #define mouseButtonPick(bb)  (mouseState |=  (1<<((bb)-1)))
@@ -979,8 +980,49 @@ TCAPinitDrawChar(void)
         TTspecChar = 0x00;
 }
 
+#if MEOPT_UNICODE
 void
-TCAPdrawChar(meUByte cc)
+TCAPdrawChar(meFrameChar cc)
+{
+    meUByte bb[meUTF8_LEN_MAX];
+    int uc, ii, ll;
+    
+    if(cc == meFRAMECHAR_CONT)
+        /* second cell of a wide char, the char covers it */
+        return;
+    if(cc < TTspecChar)
+        uc = ttSpeUChars[cc];
+    else if(cc < 0x80)
+    {
+        TCAPputc(cc);
+        return;
+    }
+    else if(!(meSystemCfg & meSYSTEM_IO_UTF8))
+    {
+        /* code page terminal - unrepresentable chars are shown as '?', padded to the char's width
+         * so the following cells stay aligned */
+        ii = 127;
+        while((charToUnicode[ii] != cc) && (--ii >= 0))
+            ;
+        if(ii >= 0)
+            TCAPputc(ii+128);
+        else
+        {
+            TCAPputc('?');
+            if(meUniPropWidth(meUniProps(cc)) == meUNIWIDTH_WIDE)
+                TCAPputc(' ');
+        }
+        return;
+    }
+    else
+        uc = cc;
+    ll = meUtf8Encode(bb,uc);
+    for(ii=0 ; ii<ll ; ii++)
+        TCAPputc(bb[ii]);
+}
+#else
+void
+TCAPdrawChar(meFrameChar cc)
 {
     int uc;
     if(cc > TTutf8Char)
@@ -1011,6 +1053,7 @@ TCAPdrawChar(meUByte cc)
     else
         TCAPputc(uc);
 }
+#endif
 
 /* Copy the current kill buffer to the terminal/multiplexer clipboard using
  * an OSC 52 escape sequence: ESC ] 52 ; cp ; <base64> ESC \.
@@ -1531,6 +1574,99 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
     }
 }
 
+#if MEOPT_UNICODE
+#if MEOPT_XFT
+/* Draws the box with a diagonal shown for a char the font has no glyph for (as the Windows build) in
+ * the GC's foreground, x and y are the top left of its cw cells */
+static void
+meFrameXDrawUnavailableChar(meFrame *frame, int x, int y, int cw)
+{
+    XPoint pp[6];
+    int ww=colToClient(cw), hh=mecm.fdepth;
+    
+    pp[0].x = pp[1].x = pp[4].x = x + 1;
+    pp[2].x = pp[3].x = pp[5].x = x + ww - 2;
+    pp[1].y = pp[2].y = pp[5].y = y + 1;
+    pp[0].y = pp[3].y = pp[4].y = y + hh - 2;
+    XDrawLines(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),pp,6,CoordModeOrigin);
+}
+#endif
+
+/* Draws len cells of the current scheme from cell column col at client y. With Xft the background
+ * must already be drawn; a wide char is drawn on its own at its cell so the following text stays
+ * aligned whatever the glyph's advance, a char the font has no glyph for is drawn as a box. Core
+ * fonts are drawn in the code page, '?' if missing */
+void
+meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
+{
+    meFrameChar cc;
+    int ii;
+#if MEOPT_XFT
+    if(meXftUsed())
+    {
+        FcChar32 wb[meFRAME_WIDTH_MAX];
+        int nn=0, ss=0, wide, na;
+        
+        for(ii=0 ; ii<len ; ii++)
+        {
+            cc = cells[ii];
+            wide = ((ii+1 < len) && (cells[ii+1] == meFRAMECHAR_CONT));
+            na = ((cc >= 0x80) && (cc != meFRAMECHAR_CONT) && !XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),cc));
+            if((cc < 0x20) || (cc == meFRAMECHAR_CONT) || wide || na)
+            {
+                if(nn)
+                {
+                    meFrameXftDrawString32(frame,colToClient(col+ss),y,wb,nn);
+                    nn = 0;
+                }
+                if(cc < 0x20)
+                    meFrameXftDrawSpecialChar(frame,colToClient(col+ii),y,(meUByte) cc);
+                else if(na)
+                    meFrameXDrawUnavailableChar(frame,colToClient(col+ii),y,(wide) ? 2:1);
+                else if(cc != meFRAMECHAR_CONT)
+                    meFrameXftDrawString32(frame,colToClient(col+ii),y,&cc,1);
+            }
+            else
+            {
+                if(nn == 0)
+                    ss = ii;
+                wb[nn++] = cc;
+            }
+        }
+        if(nn)
+            meFrameXftDrawString32(frame,colToClient(col+ss),y,wb,nn);
+        if(meFrameGetXGCFont(frame) & meFONT_UNDERLINE)
+            XftDrawRect(meFrameGetXftDraw(frame),meFrameGetFgColor(frame),colToClient(col),y+mecm.underline,colToClient(len),1);
+        return;
+    }
+#endif
+    {
+        char buff[meFRAME_WIDTH_MAX];
+        int jj;
+        
+        for(ii=0 ; ii<len ; ii++)
+        {
+            cc = cells[ii];
+            if((cc < 0x20) || (cc == meFRAMECHAR_CONT))
+                buff[ii] = ' ';
+            else if(cc < 0x80)
+                buff[ii] = (char) cc;
+            else
+            {
+                jj = 127;
+                while((charToUnicode[jj] != cc) && (--jj >= 0))
+                    ;
+                buff[ii] = (jj >= 0) ? (char) (jj+128):'?';
+            }
+        }
+        meFrameXTermDrawString(frame,colToClient(col),y,buff,len);
+        for(ii=0 ; ii<len ; ii++)
+            if(cells[ii] < 0x20)
+                meFrameXTermDrawSpecialChar(frame,colToClient(col+ii),y,(meUByte) cells[ii]);
+    }
+}
+#endif
+
 /*
  * meFrameXTermDraw
  * Repaint the screen for the specified region from the frame store.
@@ -1547,7 +1683,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
 {
     meFrameLine *flp;                   /* Frame store line pointer */
     meScheme *fssp;                     /* Frame store colour pointer */
-    meUByte *fstp;                      /* Frame store text pointer */
+    meFrameChar *fstp;                  /* Frame store text pointer */
     meScheme schm;                      /* Current colour */
     int col;                            /* Current column position */
     int tcol;                           /* Text column start */
@@ -1557,6 +1693,34 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
         return;
     /* Process each row in turn until we reach the end of the line */
     flp = frame->store + row;
+#if MEOPT_UNICODE
+    (void) length;
+    row = rowToClient(row);
+    do {
+        fssp = flp->scheme;
+        fstp = flp->text;
+        col = scol;
+        /* start on the first half of a wide char */
+        if((col > 0) && (fstp[col] == meFRAMECHAR_CONT))
+            col--;
+        while(col < ecol)
+        {
+            /* a scheme run never splits a wide char, its background would hide half the glyph */
+            schm = fssp[col];
+            tcol = col;
+            while((++col < ecol) && ((fssp[col] == schm) || (fstp[col] == meFRAMECHAR_CONT)))
+                ;
+            meFrameXTermSetScheme(frame,schm);
+#if MEOPT_XFT
+            if(meXftUsed())
+                meFrameXftDrawBackground(frame,colToClient(tcol),row,col-tcol);
+#endif
+            meFrameXDrawCells(frame,tcol,row,fstp+tcol,col-tcol);
+        }
+        flp++;
+        row += mecm.fdepth;
+    } while(--erow > 0);
+#else
 #if MEOPT_XFT
     if(meXftUsed())
     {
@@ -1683,6 +1847,7 @@ meFrameXTermDraw(meFrame *frame, int row, int scol, int erow, int ecol)
             row += mecm.fdepth;
         } while(--erow > 0);
     }
+#endif
 }
 
 #if MEOPT_MWFRAME
@@ -1796,6 +1961,75 @@ meFrameKillFocus(meFrame *frame)
         }
     }
 }
+#if MEOPT_UNICODE
+/* Converts internal text to UTF-8 for X (clipboard and title), or Latin-1 if l1, into dd (which may
+ * be NULL to get the length), returns the length. Raw bytes have no char so are written as U+FFFD
+ * or '?'. A char takes no more than 1.5 times its internal length */
+static int
+meXClipFromInternal(meUByte *dd, meUByte *ss, int l1)
+{
+    meUByte bb[meUTF8_LEN_MAX];
+    meUInt uc;
+    int ll, nn=0;
+    
+    while(*ss != '\0')
+    {
+        if(*ss < 0x80)
+        {
+            if(dd != NULL)
+                dd[nn] = *ss;
+            nn++;
+            ss++;
+            continue;
+        }
+        ss += meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+        if(meUniIsRaw(uc))
+            uc = (l1) ? '?':meUNI_REPLACE;
+        if(l1 || (uc == 0))
+        {
+            bb[0] = (uc > 0xff) ? '?':(meUByte) uc;
+            ll = 1;
+        }
+        else
+            ll = meUtf8Encode(bb,uc);
+        if(dd != NULL)
+            memcpy(dd+nn,bb,ll);
+        nn += ll;
+    }
+    return nn;
+}
+#endif
+
+#if (defined _CLIPBRD) && MEOPT_UNICODE
+/* Converts clipboard text (UTF-8, or Latin-1 if l1) to internal text in dd, which must allow 3
+ * bytes for each byte, returns the length. Invalid bytes are kept as raw bytes */
+static int
+meXClipToInternal(meUByte *dd, meUByte *ss, int len, int l1)
+{
+    int ll, nn=0;
+    
+    while(len > 0)
+    {
+        if((*ss != 0) && (*ss < 0x80))
+            ll = 1;
+        else if(!l1 && ((ll = meUtf8SeqLen(ss,len)) > 0))
+            ;
+        else
+        {
+            nn += meUtf8Encode(dd+nn,(l1 || (*ss == 0)) ? *ss:(meUNI_RAW_BASE + *ss));
+            ss++;
+            len--;
+            continue;
+        }
+        memcpy(dd+nn,ss,ll);
+        nn += ll;
+        ss += ll;
+        len -= ll;
+    }
+    return nn;
+}
+#endif
+
 
 /* following are used for incremental Selection getting, the bytes are converted when all are received */
 static meUByte *meClipRaw=NULL ;
@@ -1803,13 +2037,20 @@ static meUByte *meClipBuff=NULL ;
 static meUInt   meClipSize=0 ;
 static meUByte  meClipString=0 ;
 
-/* Makes the received clipboard text (nitems bytes followed by a 0) the current kill, a UTF8_STRING
- * is converted to the code page */
+/* Makes the received clipboard text (nitems bytes followed by a 0) the current kill, a STRING is
+ * Latin-1 and a UTF8_STRING is converted to the code page in an 8-bit build */
 static void
 meXClipReceived(meUByte *buff, int nitems, int isString)
 {
     meUByte *dd;
-#if MEOPT_EXTENDED
+#if MEOPT_UNICODE
+    meUByte *ib;
+    if((ib = meMalloc(nitems*3+1)) == NULL)
+        return;
+    nitems = meXClipToInternal(ib,buff,nitems,isString);
+    ib[nitems] = '\0';
+    buff = ib;
+#elif MEOPT_EXTENDED
     if(!isString && !(clipState & CLIP_UTF8))
     {
         int ss, uc;
@@ -1855,7 +2096,7 @@ meXClipReceived(meUByte *buff, int nitems, int isString)
         }
         buff[nitems] = '\0';
     }
-#endif /* MEOPT_EXTENDED */
+#endif
     if((klhead == NULL) || (klhead->kill == NULL) ||
        (klhead->kill->next != NULL) ||
        meStrncmp(klhead->kill->data,buff,nitems) ||
@@ -1870,6 +2111,9 @@ meXClipReceived(meUByte *buff, int nitems, int isString)
         }
         thisflag = meCFKILL;
     }
+#if MEOPT_UNICODE
+    meFree(buff);
+#endif
 }
 
 /* The xterm XEvent handler */
@@ -2090,7 +2334,7 @@ meXEventHandler(void)
              * does not seemed to have aquired an incorrect state (i.e. button
              * state mis-represented). I will leave it for the time being (JDG)
              */
-            meUShort cc;                /* Character code */
+            meKey cc;                   /* Character code */
             meUInt arg;                 /* Decode key argument */
             mouse_X = event.xmotion.x / mecm.fwidth ;
             mouse_Y = event.xmotion.y / mecm.fdepth ;
@@ -2152,7 +2396,7 @@ meXEventHandler(void)
            ((frame = meXEventGetFrame(&event)) != NULL))
         {
             unsigned int   bb ;
-            meUShort ss ;
+            meKey    ss ;
             if(frame->flags & meFRAME_NOT_FOCUS)
             {
                 /* if we haven't currently got the input focus, grab it now */
@@ -2172,7 +2416,8 @@ meXEventHandler(void)
             
             /* Generate keycode and shunt on the key queue */
             ss = event.xbutton.state ;
-            mouseKeyState = ((ss & 0x01) << 8) | ((ss & 0x0C) << 7);
+            /* X shift (0x01), control (0x04) & mod1 (0x08) to ME_SHIFT, ME_CONTROL & ME_ALT */
+            mouseKeyState = ((ss & 0x01) << ME_KEY_HIGH_SHIFT) | ((ss & 0x0C) << (ME_KEY_HIGH_SHIFT-1));
             ss = (ME_SPECIAL | (SKEY_mouse_pick_1+mouseKeys[bb]-1) | mouseKeyState) ;
             addKeyToBuffer(ss) ;
         }
@@ -2181,7 +2426,7 @@ meXEventHandler(void)
         if(meMouseCfg & meMOUSE_ENBLE)
         {
             unsigned int   bb ;
-            meUShort ss ;
+            meKey    ss ;
             /* Collect the position of the mouse. Require the row/column mouse
              * position. Also require the fractional bits incase we are scrolling */
             mouse_X = event.xbutton.x / mecm.fwidth ;
@@ -2195,7 +2440,8 @@ meXEventHandler(void)
             
             /* Generate keycode and shunt on the key queue */
             ss = event.xbutton.state ;
-            mouseKeyState = ((ss & 0x01) << 8) | ((ss & 0x0C) << 7);
+            /* X shift (0x01), control (0x04) & mod1 (0x08) to ME_SHIFT, ME_CONTROL & ME_ALT */
+            mouseKeyState = ((ss & 0x01) << ME_KEY_HIGH_SHIFT) | ((ss & 0x0C) << (ME_KEY_HIGH_SHIFT-1));
             ss = (ME_SPECIAL | (SKEY_mouse_drop_1+mouseKeys[bb]-1) | mouseKeyState) ;
             addKeyToBuffer(ss) ;
         }
@@ -2205,7 +2451,7 @@ meXEventHandler(void)
     case KeyPress:
         if((frame = meXEventGetFrame(&event)) != NULL)
         {
-            meUShort ii, ss;
+            meKey ii, ss;
             meUByte keyStr[20];
             KeySym keySym;
             Status st;
@@ -2221,6 +2467,18 @@ meXEventHandler(void)
             /* keyStr[nn] = '\0' ;*/
             /* printf("got key %x, ss=%x %d:%02x %02x [%s]\n",(unsigned int) keySym,ss,nn,keyStr[0],keyStr[1],keyStr);*/
             /* printf("#2 got key %x, ss=%x \n",(unsigned int) keySym, ss) ;*/
+#if MEOPT_UNICODE
+            if(nn > 1)
+            {
+                meUInt uc;
+                meUtf8Decode(keyStr,nn,&uc);
+                ii = (meKey) uc;
+                if(ControlMask & ss)
+                    ii |= ME_CONTROL;
+                if(Mod1Mask & ss)
+                    ii |= ME_ALT;
+            }
+#else
             if(nn > 1)
             {
                 meUByte cc, c1, c2;
@@ -2261,6 +2519,7 @@ meXEventHandler(void)
                         ii |= ME_ALT;
                 }
             }
+#endif
             else if(keySym > 0xff)
             {
                 if(((keySym >= XK_dead_grave) && (keySym <= XK_dead_currency)) || (keySym == XK_Multi_key))
@@ -2587,12 +2846,23 @@ special_bound:
                 {
                     static meUByte *data=NULL ;
                     static int dataLen=0 ;
+#if MEOPT_UNICODE
+                    meUByte *ss, *dd ;
+#else
                     meUByte *ss, *dd, cc ;
+#endif
                     meKillNode *killp ;
                     int   len ;
                     
                     len = 0 ;
                     killp = klhead->kill;
+#if MEOPT_UNICODE
+                    while(killp != NULL)
+                    {
+                        len += meXClipFromInternal(NULL,killp->data,(event.xselectionrequest.target == XA_STRING));
+                        killp = killp->next;
+                    }
+#else
                     while(killp != NULL)
                     {
                         if(event.xselectionrequest.type == XA_STRING)
@@ -2606,6 +2876,7 @@ special_bound:
                         }
                         killp = killp->next;
                     }
+#endif
                     if((dataLen <= len) && ((dd = meMalloc(len+33)) != NULL))
                     {
                         meNullFree(data);
@@ -2619,6 +2890,9 @@ special_bound:
                         while(killp != NULL)
                         {
                             ss = killp->data;
+#if MEOPT_UNICODE
+                            dd += meXClipFromInternal(dd,ss,(event.xselectionrequest.target == XA_STRING));
+#else
 #if MEOPT_EXTENDED
                             if(event.xselectionrequest.type == XA_STRING)
 #endif
@@ -2660,6 +2934,7 @@ special_bound:
                                 }
                             }
 #endif /* MEOPT_EXTENDED */
+#endif /* MEOPT_UNICODE */
                             killp = killp->next;
                         }
                         if((meSystemCfg & meSYSTEM_NOEMPTYANK) && (len == 0))
@@ -2925,6 +3200,25 @@ TCAPgetattr(meTermio p, int isX)
 }
 #endif /* _USG */
 
+/* Sets the terminal I/O to UTF-8 if the locale's char set is UTF-8. A Unicode build also assumes
+ * UTF-8 when LC_ALL, LC_CTYPE and LANG are all unset (e.g. a macOS Terminal not setting the locale,
+ * ssh or a container), an explicit non UTF-8 locale such as LANG=C keeps the code page */
+static void
+TTinitLocale(void)
+{
+    char *ss;
+
+    setlocale(LC_ALL,"");
+    if((ss=nl_langinfo(CODESET)) && !strcmp(ss,"UTF-8"))
+        meSystemCfg |= meSYSTEM_IO_UTF8;
+#if MEOPT_UNICODE
+    else if((((ss=meGetenv("LC_ALL")) == NULL) || (ss[0] == '\0')) &&
+            (((ss=meGetenv("LC_CTYPE")) == NULL) || (ss[0] == '\0')) &&
+            (((ss=meGetenv("LANG")) == NULL) || (ss[0] == '\0')))
+        meSystemCfg |= meSYSTEM_IO_UTF8;
+#endif
+}
+
 #ifdef _ME_CONSOLE
 #ifdef _TCAP
 
@@ -2956,9 +3250,7 @@ TCAPstart(void)
     /* default to use fonts - usually supports reverse */
     meSystemCfg &= ~meSYSTEM_RGBCOLOR ;
     meSystemCfg |= (meSYSTEM_CONSOLE|meSYSTEM_FONTS) ;
-    setlocale(LC_ALL,"") ;
-    if((ss=nl_langinfo(CODESET)) && !strcmp(ss,"UTF-8"))
-        meSystemCfg |= meSYSTEM_IO_UTF8 ;
+    TTinitLocale();
     if(((tv_stype = meGetenv("TERM")) == NULL) || (tv_stype[0] == '\0'))
     {
         if(!(meSystemCfg & meSYSTEM_PIPEDMODE))
@@ -3045,7 +3337,7 @@ TCAPstart(void)
 #ifndef _USE_NCURSES
         char buf[20];
 #endif
-        meUShort ii, sl[20];
+        meKey    ii, sl[20];
         
         for(ii=0 ; ii<SKEY_MAX ; ii++)
         {
@@ -4244,9 +4536,7 @@ XTERMstart(void)
 #endif
     
     /* Configure X-Windows */
-    setlocale(LC_ALL, "");
-    if((xdefs=nl_langinfo(CODESET)) && !strcmp(xdefs,"UTF-8"))
-        meSystemCfg |= meSYSTEM_IO_UTF8;
+    TTinitLocale();
     XSetLocaleModifiers("@im=none");
     XSetIOErrorHandler(meXIODie);
     {
@@ -4344,6 +4634,7 @@ XTERMstart(void)
 #endif
             "INCR",
             "MULTIPLE",
+            "_NET_WM_NAME",
             "CLIPBOARD",
             "TARGETS",
             "UTF8_STRING",
@@ -4420,6 +4711,45 @@ XTERMend(void)
 /*
  * TThideCur - hide the cursor
  */
+#if MEOPT_UNICODE
+/* Draws the char under the cursor at cell column cl, a wide char covers both its cells. The scheme
+ * is set unless cursor is set, when the caller has already set the cursor colours */
+static void
+meFrameXCursorChar(meFrame *frame, meFrameLine *flp, int cl, int rw, meScheme schm, int cursor)
+{
+    meFrameChar fc[2];
+    int cw=1;
+    
+    if((fc[0] = flp->text[cl]) == meFRAMECHAR_CONT)
+    {
+        /* the cursor was left on the right half of a wide char, e.g. by a scroll, so hiding it
+         * redraws the whole char, drawing only this cell would blank its half */
+        if(!cursor && (cl > 0))
+        {
+            cl--;
+            schm = flp->scheme[cl];
+            fc[0] = flp->text[cl];
+            fc[1] = meFRAMECHAR_CONT;
+            cw = 2;
+        }
+        else
+            fc[0] = ' ';
+    }
+    else if((cl+1 < frame->width) && (flp->text[cl+1] == meFRAMECHAR_CONT))
+    {
+        fc[1] = meFRAMECHAR_CONT;
+        cw = 2;
+    }
+    if(!cursor)
+        meFrameXTermSetScheme(frame,schm);
+#if MEOPT_XFT
+    if(meXftUsed())
+        meFrameXftDrawBackground(frame,colToClient(cl),rw,cw);
+#endif
+    meFrameXDrawCells(frame,cl,rw,fc,cw);
+}
+#endif
+
 void
 meFrameXTermHideCursor(meFrame *frame)
 {
@@ -4431,6 +4761,10 @@ meFrameXTermHideCursor(meFrame *frame)
         meScheme schm;                    /* Current colour */
         
         flp  = frame->store + rw;
+#if MEOPT_UNICODE
+        meFrameXCursorChar(frame,flp,cl,rowToClient(rw),flp->scheme[cl],0);
+        return;
+#endif
         /* Get char & scheme under cursor */
         cc = flp->text[cl];           
         schm = flp->scheme[cl];
@@ -4536,6 +4870,10 @@ meFrameXTermShowCursor(meFrame *frame)
             meFrameSetXGCFont(frame,fu);
             if(valueMask)
                 XChangeGC(mecm.xdisplay,meFrameGetXGC(frame),valueMask,&meFrameGetXGCValues(frame));
+#if MEOPT_UNICODE
+            meFrameXCursorChar(frame,flp,frame->cursorColumn,rw,schm,1);
+            return;
+#endif
 #if MEOPT_XFT
             if(meXftUsed())
             {
@@ -4950,8 +5288,23 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
             meStrcat(buf,": ");
             meStrcat(buf,str);
         }
+#if MEOPT_UNICODE
+        {
+            /* the title is internal text, _NET_WM_NAME is UTF-8 and WM_NAME a Latin-1 STRING */
+            char tb[meBUF_SIZE_MAX*2];
+            int ll;
+            
+            ll = meXClipFromInternal((meUByte *) tb,(meUByte *) buf,0);
+            XChangeProperty(mecm.xdisplay,meFrameGetXWindow(frame),meAtoms[meATOM_NET_WM_NAME],meAtoms[meATOM_UTF8_STRING],
+                            8,PropModeReplace,(unsigned char *) tb,ll);
+            tb[meXClipFromInternal((meUByte *) tb,(meUByte *) buf,1)] = '\0';
+            ss = tb;
+            XStoreName(mecm.xdisplay,meFrameGetXWindow(frame),ss);
+        }
+#else
         ss = buf;
         XStoreName(mecm.xdisplay,meFrameGetXWindow(frame),ss);
+#endif
     }
 }
 
@@ -5033,6 +5386,45 @@ TTstart(void)
 #endif /* _ME_CONSOLE */
 #endif /* _ME_WINDOW */
 
+#if (defined _ME_CONSOLE) && MEOPT_UNICODE
+/* Adds the key for terminal input byte cc (0x80 or more). A UTF-8 terminal's sequence is read and
+ * decoded, a code page terminal's byte is mapped; an invalid byte becomes a raw byte key */
+static void
+TTaddInputChar(meUByte cc)
+{
+    meUByte bb[meUTF8_LEN_MAX];
+    meUInt uc;
+    int ll, nn=1, ii;
+
+    if(!(meSystemCfg & meSYSTEM_IO_UTF8))
+    {
+        if((uc = charToUnicode[cc-128]) == 0)
+            uc = meUNI_RAW_BASE + cc;
+        addKeyToBuffer((meKey) uc);
+        return;
+    }
+    bb[0] = cc;
+    ll = (cc >= 0xf0) ? 4:(cc >= 0xe0) ? 3:(cc >= 0xc2) ? 2:1;
+    /* a terminal sends a char's bytes together */
+    while((nn < ll) && (read(meStdin,bb+nn,1) > 0))
+        nn++;
+    if(meUtf8SeqLen(bb,nn) == nn)
+    {
+        meUtf8Decode(bb,nn,&uc);
+        addKeyToBuffer((meKey) uc);
+        return;
+    }
+    addKeyToBuffer((meKey) (meUNI_RAW_BASE + cc));
+    for(ii=1 ; ii<nn ; ii++)
+    {
+        if(bb[ii] & 0x80)
+            addKeyToBuffer((meKey) (meUNI_RAW_BASE + bb[ii]));
+        else
+            addKeyToBuffer(bb[ii]);
+    }
+}
+#endif
+
 void
 TTwaitForChar(void)
 {
@@ -5043,7 +5435,7 @@ TTwaitForChar(void)
      */
     if(!isTimerSet(MOUSE_TIMER_ID) && (mouseState != 0))
     {
-        meUShort mc;
+        meKey mc;
         meUInt arg;
         mc = ME_SPECIAL | mouseKeyState | (SKEY_mouse_time+mouseKeys[mouseButtonGetPick()]);
         /* mouse-time bound ?? */
@@ -5226,6 +5618,10 @@ TTahead(void)
                  * translation. */
                 if (cc == '\0')
                     addKeyToBuffer (ME_CONTROL|' ');
+#if MEOPT_UNICODE
+                else if(cc & 0x80)
+                    TTaddInputChar(cc);
+#endif
                 else if(cc > TTutf8Char)
                 {
                     int uc;
@@ -5273,7 +5669,7 @@ TTahead(void)
                         uc = meCHAR_UNDEF;
                     }
 #endif /* MEOPT_EXTENDED */
-                    addKeyToBuffer((meUShort) uc);
+                    addKeyToBuffer((meKey) uc);
                 }
                 else
                     addKeyToBuffer(cc);
@@ -5294,7 +5690,7 @@ TTahead(void)
     /* If an alarm hCheck the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))
     {
-        meUShort mc;
+        meKey mc;
         meUInt arg;
         
         timerClearExpired(MOUSE_TIMER_ID);

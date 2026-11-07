@@ -36,6 +36,11 @@
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
+#if (defined _MINGW) && (defined MEOPT_UNICODE)
+// The process code page is UTF-8 so file names are UTF-8, the MSVC build merges this with mt
+1 24 "meutf8.manifest"
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 // English (U.K.) resources
 

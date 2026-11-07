@@ -87,6 +87,43 @@
 #define WM_MOUSEWHEEL (WM_MOUSELAST+1)  // message that will be supported by the OS
 #endif
 
+#if MEOPT_UNICODE
+/* The window class is registered as Unicode so its char messages are UTF-16, they must be
+ * fetched and dispatched with the W functions or Windows converts them to the ANSI code page */
+#undef  GetMessage
+#define GetMessage      GetMessageW
+#undef  PeekMessage
+#define PeekMessage     PeekMessageW
+#undef  DispatchMessage
+#define DispatchMessage DispatchMessageW
+#undef  DefWindowProc
+#define DefWindowProc   DefWindowProcW
+#define meIsHighSurrogate(cc) (((cc) & 0xfc00) == 0xd800)
+#define meIsLowSurrogate(cc)  (((cc) & 0xfc00) == 0xdc00)
+#define meSurrogatesToUni(hh,ll) (0x10000 + ((((meUInt) (hh)) & 0x3ff) << 10) + (((meUInt) (ll)) & 0x3ff))
+/* the cursor on a wide char covers both its cells */
+#define meFrameCursorCells(ff)                                                       \
+((((ff)->cursorColumn+1 < (ff)->width) &&                                            \
+  ((ff)->store[(ff)->cursorRow].text[(ff)->cursorColumn+1] == meFRAMECHAR_CONT)) ? 2:1)
+
+/* Converts char cc to UTF-16 in dd, returns the number of units */
+static int
+meFrameCharToUtf16(WCHAR *dd, meUInt cc)
+{
+    if(cc > 0xffff)
+    {
+        cc -= 0x10000;
+        dd[0] = (WCHAR) (0xd800 + (cc >> 10));
+        dd[1] = (WCHAR) (0xdc00 + (cc & 0x3ff));
+        return 2;
+    }
+    dd[0] = (WCHAR) cc;
+    return 1;
+}
+#else
+#define meFrameCursorCells(ff) 1
+#endif
+
 #define _WIN_DEBUG_KEY   0
 #define _WIN_DEBUG_MOUSE 0
 #define _WIN_DEBUG_MSG   0
@@ -94,20 +131,6 @@
 
 #if _WIN_DEBUG_KEY || _WIN_DEBUG_MOUSE || _WIN_DEBUG_MSG || _WIN_DEBUG_POS
 FILE *logfp=NULL;
-#endif
-
-/* For the Win32s then we have to perform a thunking operation in order to get
- * a synchronous spawn to operate correctly. In addition to the fact we
- * actually have to process using a BAT file because CreateProcess() and
- * WinExec() are both f**ked !! CreateProcess() does not allow re-direction.
- * WinExec() does not allow the parent environment to be inherited, therefore
- * we can never get the current directory correct !!. To find all of this out
- * you need to look in the MSDM developer database - even then it is not spelt
- * out. */
-#ifdef _WIN32s
-#define SYNCHSPAWN 1                    /* Our command to spawn */
-#define W32SUT_32  1                    /* Tell "w32sut.h" that we are 32-bit complier */
-#include "win32s/w32sut.h"              /* Local to the win32s directory */
 #endif
 
 HWND baseHwnd=meHWndNull;               /* Handle to base hidden window */
@@ -198,7 +221,7 @@ meUByte ttServerCheck = 0;
 LRESULT APIENTRY
 MainWndProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam);
 /* The following stores raw key of potential AltGr special key */
-static meUShort keyDownChr=0;
+static meKey keyDownChr=0;
 
 /***************************************************************************/
 #ifdef _ME_CONSOLE
@@ -211,6 +234,12 @@ static DWORD ConsoleMode, OldConsoleMode;	/* Current and old console modes */
 static SMALL_RECT consolePaintArea={0};		/* Update area for console */
 static int ciScreenSize=0;			/* Size of screen buffer memory */
 static CHAR_INFO *ciScreenBuffer=NULL;		/* Copy of screen buffer memory */
+#if MEOPT_UNICODE
+/* ciScreenBuffer holds the second cell of a wide char as meCONSOLE_CONT, ciPaintBuffer is the
+ * area being painted with the wide char pairs in the console's leading/trailing form */
+static CHAR_INFO *ciPaintBuffer=NULL;
+#define meCONSOLE_CONT 0xffff
+#endif
 static COORD OldConsoleSize;
 meUInt *colTable=NULL;				/* Currently allocated colour table */
 #define consoleNumColors 16			/* Number of colours in console window */
@@ -248,7 +277,7 @@ WinKillToClipboard(void);
 
 static int ttfcol = meCOLOR_FDEFAULT;   /* Foregound colour */
 static int ttbcol = meCOLOR_BDEFAULT;   /* Background colour */
-static meUShort ttmodif=0;              /* Modified keyboard state */
+static meKey ttmodif=0;                 /* Modified keyboard state */
 HANDLE ttInstance;                      /* Instance of the application */
 static DWORD ttThreadId=0;              /* Current thread identity */
 
@@ -412,66 +441,6 @@ int platformId;                         /* Running under NT, 95, or Win32s? */
  * PORTING FUNCTIONS
  *
  ****************************************************************************/
-
-#ifdef _WIN32s
-/**************************************************************************
- * Function: DWORD SynchSpawn(LPTSTR, UINT)                                *
- *                                                                         *
- * Purpose: Thunk to 16-bit code. This allows a synchronous process spawn  *
- * i.e. it only returns when the new process has been created.             *
- **************************************************************************/
-static DWORD
-SynchSpawn( LPCSTR lpszCmdLine, UINT nCmdShow )
-{
-    static int doneOnce = 0;            /* Have loaded DLL once */
-    UT32PROC pfnUTProc = NULL;
-    DWORD dwVersion;
-    BOOL fWin32s;
-    DWORD Args[2];
-    PVOID Translist[2];
-    DWORD status;
-    
-    /* Find out if we're running on Win32s */
-    dwVersion = GetVersion();
-    fWin32s = (BOOL) (!(dwVersion < 0x80000000)) && (LOBYTE(LOWORD(dwVersion)) < 4);
-    if(!fWin32s)
-        return 0;                       /* Not win32s */
-    
-    /* Register the 16bit DLL. We do this when we are called. This saves
-       problems with a win32s 32-bit DLL under Win 3.1 with win32s installed. */
-again:
-    if(UTRegister(ttInstance,           /* 'me's module handle */
-                    "methnk16.dll",     /* 16-bit thunk dll */
-                    NULL,               /* Nothing to do */
-                    "UTProc",           /* 16-bit dispatch routine */
-                    &pfnUTProc,         /* Receives thunk address */
-                    NULL,               /* No callback function */
-                    NULL) == meFALSE)     /* no shared memroy */
-    {
-        
-        /* This fails the first time !! */
-        if(doneOnce == 0)
-        {
-            doneOnce = 1;
-            goto again;
-        }
-        return 0;
-    }
-    
-    /* Build the argument list to the 16 bit side */
-    Args[0] = (DWORD) lpszCmdLine;
-    Args[1] = (DWORD) nCmdShow;
-    
-    Translist[0] = &Args[0];
-    Translist[1] = NULL;
-    
-    status = (* pfnUTProc)(Args, SYNCHSPAWN, Translist);
-    
-    /* Unregister the DLL */
-    UTUnRegister(ttInstance);
-    return status;
-}
-#endif
 
 /* gettimeofday - Retreives the time of day to millisecond resolution */
 void
@@ -737,17 +706,51 @@ ConsolePaint(void)
     if(consolePaintArea.Right > 0)
     {
         COORD coordUpdateBegin, coordBufferSize;
-        
+#if MEOPT_UNICODE
+        CHAR_INFO *sci, *dci;
+        int ww=frameCur->width, xx, yy;
+
+        /* a wide char is painted whole, so its other cell may need adding to the area */
+        for(yy=consolePaintArea.Top ; yy<=consolePaintArea.Bottom ; yy++)
+        {
+            sci = ciScreenBuffer + (yy * ww);
+            if((consolePaintArea.Left > 0) && (sci[consolePaintArea.Left].Char.UnicodeChar == meCONSOLE_CONT))
+                consolePaintArea.Left--;
+            if((consolePaintArea.Right < ww) && (sci[consolePaintArea.Right].Char.UnicodeChar == meCONSOLE_CONT))
+                consolePaintArea.Right++;
+        }
+        for(yy=consolePaintArea.Top ; yy<=consolePaintArea.Bottom ; yy++)
+        {
+            sci = ciScreenBuffer + (yy * ww);
+            dci = ciPaintBuffer + (yy * ww);
+            for(xx=consolePaintArea.Left ; xx<consolePaintArea.Right ; xx++)
+            {
+                dci[xx] = sci[xx];
+                if(sci[xx].Char.UnicodeChar == meCONSOLE_CONT)
+                {
+                    dci[xx].Char.UnicodeChar = (xx > 0) ? sci[xx-1].Char.UnicodeChar:' ';
+                    dci[xx].Attributes |= COMMON_LVB_TRAILING_BYTE;
+                }
+                else if((xx+1 < ww) && (sci[xx+1].Char.UnicodeChar == meCONSOLE_CONT))
+                    dci[xx].Attributes |= COMMON_LVB_LEADING_BYTE;
+            }
+        }
+#endif
+
         /* Set size of screen buffer */
         coordBufferSize.X = frameCur->width;
         coordBufferSize.Y = frameCur->depth+1;
-        
+
         consolePaintArea.Right--;
         /* top left cord of buffer to write from */
         coordUpdateBegin.X = consolePaintArea.Left;
         coordUpdateBegin.Y = consolePaintArea.Top;
-        
+
+#if MEOPT_UNICODE
+        WriteConsoleOutputW(hOutput,ciPaintBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
+#else
         WriteConsoleOutputW(hOutput,ciScreenBuffer,coordBufferSize,coordUpdateBegin,&consolePaintArea);
+#endif
         
         /* Remove the region, as we just updated it */
         consolePaintArea.Right = consolePaintArea.Bottom = 0;
@@ -758,20 +761,31 @@ ConsolePaint(void)
 
 /* Draw string to console buffer */
 void
-ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
+ConsoleDrawString(meFrameChar *ss, WORD wAttribute, int x, int y, int len)
 {
     CHAR_INFO *pCI;     /* Pointer to current screen buffer location */
     BOOL bAny = meFALSE;  /* Anything to refresh? */
-    meUByte cc;
+    meFrameChar cc;
     int r=x+len;
     WCHAR uc;
-    
+
     /* Get pointer to correct location in screen buffer */
     pCI = &ciScreenBuffer[(y * frameCur->width) + x];
-    
+
     /* Copy the string to the screen buffer memory, and flag any changes */
     while(--len >= 0)
     {
+#if MEOPT_UNICODE
+        if((cc=*ss++) < 0x20)
+            uc = ttSpeUChars[cc];
+        else if(cc == meFRAMECHAR_CONT)
+            uc = meCONSOLE_CONT;
+        else if(cc > 0xffff)
+            /* a cell holds one UTF-16 unit, as the console does a wide char shows as a wide U+FFFD */
+            uc = meUNI_REPLACE;
+        else
+            uc = (WCHAR) cc;
+#else
         if(((cc=*ss++) & 0xe0) == 0)
             uc = ttSpeUChars[cc];
         else if((cc & 0x80) == 0)
@@ -779,6 +793,7 @@ ConsoleDrawString(meUByte *ss, WORD wAttribute, int x, int y, int len)
 #if MEOPT_EXTENDED
         else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
             uc = ttSpeUChars[meCHAR_UNDEF];
+#endif
 #endif
         if(uc != pCI->Char.UnicodeChar)
         {
@@ -888,7 +903,11 @@ meGetConsoleMessage(MSG *msg, int mode)
     }
     
     /* Get the next keyboard/mouse/resize event */
+#if MEOPT_UNICODE
+    if(ReadConsoleInputW(hInput, &ir, 1, &dwCount) == 0)
+#else
     if(ReadConsoleInput(hInput, &ir, 1, &dwCount) == 0)
+#endif
     {
         /* if ReadConsoleInput fails we have lost the console input
          * and as the user is waiting on this bomb out */
@@ -911,9 +930,13 @@ meGetConsoleMessage(MSG *msg, int mode)
         
         /* Make message a la windows GUI */
         msg->lParam = 0;
+#if MEOPT_UNICODE
+        if(kr->uChar.UnicodeChar == 0)
+#else
         /* SWP - 8/5/99 another odd one from bill, the cursor keys on win9? seem
          * to come through with an AsciiChar value of -32 or 224 instead of 0... Why? */
         if((kr->uChar.AsciiChar == 0) || (((meUByte) kr->uChar.AsciiChar) == 224))
+#endif
         {
             /* WM_KEYDOWN of WM_KEYUP */
             if(kr->bKeyDown)
@@ -934,7 +957,11 @@ meGetConsoleMessage(MSG *msg, int mode)
         else if(kr->bKeyDown)
         {
             msg->message = WM_CHAR;
+#if MEOPT_UNICODE
+            msg->wParam = kr->uChar.UnicodeChar;
+#else
             msg->wParam = (meUByte) kr->uChar.AsciiChar;
+#endif
         }
         else
             msg->message = 0;
@@ -1417,6 +1444,63 @@ makePoly:
     }
 }
 
+#if MEOPT_UNICODE
+/* WinUnavailableChar; Draws the box with a diagonal shown for a char the font has no glyph for,
+ * w is the width of its cells. A foreground pen is expected to be selected. */
+static void
+WinUnavailableChar(HDC hdc, int x, int y, int w, int h)
+{
+    MoveToEx(hdc, x + 1, y + h - 2, NULL);
+    LineTo(hdc, x + 1, y + 1);
+    LineTo(hdc, x + w - 2, y + 1);
+    LineTo(hdc, x + w - 2, y + h - 2);
+    LineTo(hdc, x + 1, y + h - 2);
+    LineTo(hdc, x + w - 2, y + 1);
+}
+
+/* WinGlyphIndices; Converts the len chars in ss to glyph indices of the selected font in gi. A
+ * char the font has no glyph for, and one above U+FFFF which GDI cannot look up, is given the
+ * space glyph and flagged in na. Returns the number unavailable. Drawing by glyph index stops GDI
+ * shaping the text, so a char is drawn the same whatever is drawn with it */
+static int
+WinGlyphIndices(HDC hdc, meFrameChar *ss, int len, WORD *gi, meUByte *na)
+{
+    WCHAR wb[meFRAME_WIDTH_MAX+1];
+    int ii, nn=0;
+
+    for(ii=0 ; ii<len ; ii++)
+        wb[ii] = (ss[ii] > 0xffff) ? 0xffff:(WCHAR) ss[ii];
+    wb[len] = ' ';
+    if(GetGlyphIndicesW(hdc,wb,len+1,gi,GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR)
+        memset(gi,0xff,(len+1)*sizeof(WORD));
+    for(ii=0 ; ii<len ; ii++)
+    {
+        if((na[ii] = (gi[ii] == 0xffff)) != 0)
+        {
+            gi[ii] = gi[len];
+            nn++;
+        }
+    }
+    return nn;
+}
+#endif
+
+#if MEOPT_UNICODE
+/* WinCursorUnavailableChar; Draws the unavailable char box for the cursor in colour fcol, rr is the
+ * char's cells from its top */
+static void
+WinCursorUnavailableChar(HDC hdc, RECT *rr, COLORREF fcol)
+{
+    HPEN pen, oldpen;
+    
+    pen = CreatePen(PS_SOLID, 0, fcol);
+    oldpen = SelectObject(hdc, pen);
+    WinUnavailableChar(hdc,rr->left,rr->top,rr->right-rr->left,eCellMetrics.cell.sizeY);
+    SelectObject(hdc, oldpen);
+    DeleteObject(pen);
+}
+#endif
+
 /* meFrameDrawCursor; Draw the cursor on the screen. We use the information from
  * the frame store to determine what character to render */
 void
@@ -1427,28 +1511,45 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     int clientCol;                      /* Text region col start - client units */
     meFrameLine *flp;                   /* Frame store line pointer */
     meStyle style;                      /* Current style */
-    WCHAR uc;
-    meUByte cc;                         /* Current char  */
+    WCHAR ub[2];
+    INT dx[2];
+    int cw;
+    UINT gopt=0;                        /* ETO_GLYPH_INDEX if ub is a glyph index */
+    meFrameChar cc;                     /* Current char  */
     meColor cCol;
-    
+#if MEOPT_UNICODE
+    meUByte na=0;                       /* char is unavailable in the font */
+#endif
+
     /* Set up the drawing borders. */
+    cw = meFrameCursorCells(frame);
     rline.top    = eCellMetrics.cellRowPos[frame->cursorRow];
     rline.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
     rline.left   = eCellMetrics.cellColPos[frame->cursorColumn];
-    rline.right  = eCellMetrics.cellColPos[frame->cursorColumn+1];
+    rline.right  = eCellMetrics.cellColPos[frame->cursorColumn+cw];
     /* Set up text start position */
     clientRow = eCellMetrics.cellRowPos[frame->cursorRow];
     clientCol = eCellMetrics.cellColPos[frame->cursorColumn];
-    
+    dx[0] = rline.right - rline.left;
+    dx[1] = 0;
+
     flp = frame->store + frame->cursorRow;
     cc = flp->text[frame->cursorColumn];                          /* Get char under cursor */
     style = meSchemeGetStyle(flp->scheme[frame->cursorColumn]);   /* Get style under cursor */
     cCol = cursorColor[(meModeTest(frame->windowCur->buffer->mode,MDOVER)) ? 1:0];
-    
+#if MEOPT_UNICODE
+    if(cc == meFRAMECHAR_CONT)
+        cc = ' ';
+#endif
+
     /* Check the current character set and select the special font or convert
      * the character for the current font. Bring the appropriate font into the
      * device context. */
+#if MEOPT_UNICODE
+    if(cc < 0x20)
+#else
     if((cc & 0xe0) == 0)
+#endif
     {
 	HBRUSH brush;
 	HPEN pen;                   /* Foreground pen */
@@ -1471,7 +1572,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
         
 	/* This is a special character, render the character to the
 	 * screen. We need to create a pen to handle the object */
-	WinSpecialChar(hdc, &eCellMetrics.cell, rline.left, rline.top, cc,
+	WinSpecialChar(hdc, &eCellMetrics.cell, rline.left, rline.top, (meUByte) cc,
                        eCellMetrics.pInfo.cPal[meStyleGetFColor(style)].cpixel);
         
 	if(frame->flags & meFRAME_NOT_FOCUS)
@@ -1495,30 +1596,45 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
 	/* Finished !! */
 	return;
     }
-#if MEOPT_EXTENDED
+#if MEOPT_UNICODE
+    else
+        ub[0] = (WCHAR) cc;
+#elif MEOPT_EXTENDED
     else if((cc & 0x80) == 0)
-        uc = cc;
-    else if((uc = (WCHAR) charToUnicode[cc-128]) == 0)
-        uc = 0xFFFD;
+        ub[0] = cc;
+    else if((ub[0] = (WCHAR) charToUnicode[cc-128]) == 0)
+        ub[0] = 0xFFFD;
 #else
     else
-        uc = cc;
+        ub[0] = cc;
 #endif
     
     /* Set up the font */
     SetTextColor(hdc, eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel);
     SetBkColor(hdc, eCellMetrics.pInfo.cPal[cCol].cpixel);
     SelectObject(hdc, eCellMetrics.fontdef[meStyleGetFont(style)]);
+#if MEOPT_UNICODE
+    /* drawn as the text is, by glyph index unless ASCII */
+    if(cc >= 0x80)
+    {
+        WinGlyphIndices(hdc,&cc,1,(WORD *) ub,&na);
+        gopt = ETO_GLYPH_INDEX;
+    }
+#endif
     
     /* Output the character */
     ExtTextOutW(hdc,
                 clientCol,                /* Text start position */
                 clientRow,
-                ETO_OPAQUE|ETO_CLIPPED,   /* Fill background */
+                ETO_OPAQUE|ETO_CLIPPED|gopt, /* Fill background */
                 &rline,                   /* Background area */
-                (LPCWSTR) &uc,            /* Text string */
+                ub,                       /* Text string */
                 1,                        /* Length of string */
-                eCellMetrics.cellSpacing);
+                dx);
+#if MEOPT_UNICODE
+    if(na)
+        WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel);
+#endif
     
     if(frame->flags & meFRAME_NOT_FOCUS)
     {
@@ -1535,11 +1651,20 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
         ExtTextOutW(hdc,
                     clientCol,      /* Text start position */
                     clientRow,
-                    ETO_CLIPPED,    /* Clip char to smaller rectangle */
+                    ETO_CLIPPED|gopt, /* Clip char to smaller rectangle */
                     &rline,         /* Background area */
-                    (LPCWSTR) &uc,  /* Text string */
+                    ub,             /* Text string */
                     1,              /* Length of string */
-                    eCellMetrics.cellSpacing);
+                    dx);
+#if MEOPT_UNICODE
+        if(na)
+        {
+            rline.top--;
+            rline.left--;
+            rline.right++;
+            WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetFColor(style)].cpixel);
+        }
+#endif
     }
 }
 
@@ -1679,11 +1804,21 @@ meFrameDraw(meFrame *frame)
     for(flp = frame->store + srow; srow <= erow; srow++, flp++)
     {
         meScheme *fschm;
+#if MEOPT_UNICODE
+        WCHAR tbp[meFRAME_WIDTH_MAX];
+        INT tdx[meFRAME_WIDTH_MAX];
+        meFrameChar cc, tfc[meFRAME_WIDTH_MAX], *ftext;
+        WORD tgi[meFRAME_WIDTH_MAX+1];
+        meShort tcl[meFRAME_WIDTH_MAX];
+        meUByte tna[meFRAME_WIDTH_MAX];
+        int ii, ll, naFlag;
+#else
         WCHAR uc, tbp[meFRAME_WIDTH_MAX];
         meUByte cc, *ftext;
+#endif
         int length;
         int tcol, spFlag;
-        
+
         /* Determine the boundaries we are painting around */
         if(meFrameDataGetWinPaintAll(fd))
             col = ecol;
@@ -1691,12 +1826,20 @@ meFrameDraw(meFrame *frame)
             scol = meFrameDataGetWinPaintStartCol(fd)[srow];
         else
             continue;
-        
+
         /* Reset the paint extremities - we set these for optimisation
          * purposes. */
         meFrameDataGetWinPaintStartCol(fd)[srow] = frame->width;
         meFrameDataGetWinPaintEndCol(fd)[srow] = 0;
-        
+#if MEOPT_UNICODE
+        /* a wide char is drawn whole, so paint from its first cell to its second */
+        ftext = flp->text;
+        if((scol > 0) && (ftext[scol] == meFRAMECHAR_CONT))
+            scol--;
+        if((col < frame->width) && (ftext[col] == meFRAMECHAR_CONT))
+            col++;
+#endif
+
         /* Set up the drawing borders. */
         rline.top    = eCellMetrics.cellRowPos[srow];
         rline.bottom = eCellMetrics.cellRowPos[srow+1];
@@ -1768,6 +1911,67 @@ meFrameDraw(meFrame *frame)
              * reach the end */
             tcol = col;
             spFlag = 0;
+#if MEOPT_UNICODE
+            /* a run never splits a wide char, its first cell joins its second's run */
+            while((--col >= scol) && ((*--fschm == schm) || (ftext[col+1] == meFRAMECHAR_CONT)))
+                ;
+            col++;
+            /* a wide char's advance covers both its cells */
+            length = 0;
+            ll = 0;
+            for(ii=col ; ii<=tcol ; ii++)
+            {
+                if((cc = ftext[ii]) == meFRAMECHAR_CONT)
+                {
+                    if(length)
+                    {
+                        tdx[length-1] += eCellMetrics.cell.sizeX;
+                        continue;
+                    }
+                    cc = ' ';
+                }
+                else if(cc < 0x20)
+                {
+                    spFlag++;
+                    cc = ' ';
+                }
+                else if(cc >= 0x80)
+                    ll = 1;
+                tfc[length] = cc;
+                tcl[length] = ii;
+                tdx[length++] = eCellMetrics.cell.sizeX;
+            }
+            rline.left = eCellMetrics.cellColPos[col];
+
+            if(ll)
+            {
+                naFlag = WinGlyphIndices(ps.hdc,tfc,length,tgi,tna);
+                ExtTextOutW(ps.hdc,
+                            eCellMetrics.cellColPos[col], /* Text start position */
+                            clientRow,
+                            etoOpt|ETO_GLYPH_INDEX,
+                            &rline,          /* Background area */
+                            (LPCWSTR) tgi,   /* Glyph indices */
+                            length,          /* Length of string */
+                            tdx);
+            }
+            else
+            {
+                /* plain ASCII needs no glyph look up and is never shaped */
+                naFlag = 0;
+                for(ii=0 ; ii<length ; ii++)
+                    tbp[ii] = (WCHAR) tfc[ii];
+                ExtTextOutW(ps.hdc,
+                            eCellMetrics.cellColPos[col], /* Text start position */
+                            clientRow,
+                            etoOpt,          /* Fill background & may be clip */
+                            &rline,          /* Background area */
+                            tbp,             /* Text string */
+                            length,          /* Length of string */
+                            tdx);
+            }
+            col--;                       /* Restore position */
+#else
             do
             {
                 cc = ftext[col];
@@ -1804,9 +2008,14 @@ meFrameDraw(meFrame *frame)
                         length,          /* Length of string */
                         eCellMetrics.cellSpacing);
             col--;                       /* Restore position */
-            
+#endif
+
             /* Special characters */
+#if MEOPT_UNICODE
+            if((spFlag != 0) || (naFlag != 0))
+#else
             if(spFlag != 0)
+#endif
             {
                 /* Correct the pen colours if required. We do this here
                  * because we expect less special characters. We do not want
@@ -1832,14 +2041,30 @@ meFrameDraw(meFrame *frame)
                         DeleteObject(bbrush);
                     bbrush = CreateSolidBrush(eCellMetrics.pInfo.cPal[bcol].cpixel);
                 }
-                /* Render the special characters */
+                /* Render the unavailable and special characters */
+#if MEOPT_UNICODE
+                for(ii=0 ; naFlag > 0 ; ii++)
+                {
+                    if(tna[ii])
+                    {
+                        WinUnavailableChar(ps.hdc,eCellMetrics.cellColPos[tcl[ii]],rline.top,tdx[ii],eCellMetrics.cell.sizeY);
+                        naFlag--;
+                    }
+                }
+                if(spFlag != 0)
+#endif
                 do
                 {
+#if MEOPT_UNICODE
+                    while(ftext[tcol] >= 0x20)
+                        tcol--;
+#else
                     while(((cc=ftext[tcol]) & 0xe0) != 0)
                         tcol--;
-                    
+#endif
+
                     WinSpecialChar(ps.hdc,&eCellMetrics.cell,eCellMetrics.cellColPos[tcol],
-                                   rline.top,ftext[tcol],eCellMetrics.pInfo.cPal[fcol].cpixel);
+                                   rline.top,(meUByte) ftext[tcol],eCellMetrics.pInfo.cPal[fcol].cpixel);
                     tcol--;
                 }
                 while(--spFlag > 0);
@@ -1914,9 +2139,9 @@ meModifierUpdate(void)
 
 #endif /* _ME_WINDOW */
 
-/* returns 0 for not translation, -1 for dead key, -2 for key>255 else char */
+/* returns 0 for not translation, -1 for dead key, -2 for key>255 (not in a Unicode build) else char */
 int
-WinKeyTranslate(WPARAM key, meUShort modif)
+WinKeyTranslate(WPARAM key, meKey modif)
 {
     BYTE keyBuf[256];
     WCHAR buf[5];
@@ -1931,8 +2156,15 @@ WinKeyTranslate(WPARAM key, meUShort modif)
     
     if((rr = ToUnicode((UINT) key,0,keyBuf,buf,5,4)) < 0)
         rr = -1;
+#if MEOPT_UNICODE
+    else if((rr > 1) && meIsHighSurrogate(buf[0]) && meIsLowSurrogate(buf[1]))
+        rr = meSurrogatesToUni(buf[0],buf[1]);
+    else if(rr > 0)
+        rr = buf[0];
+#else
     else if((rr > 0) && ((rr = buf[0]) > 0x0ff))
         rr = -2;
+#endif
     return rr;
 }
 
@@ -1945,22 +2177,46 @@ static HANDLE
 WinKillToClipboard(void)
 {
     HANDLE hmem;                        /* Windows global memory handle */
-    WCHAR uc, *bufp;                    /* Windows global memory pointer */
+    WCHAR *bufp;                        /* Windows global memory pointer */
     meKillNode *killp;                  /* Pointer to the kill data */
     meUByte cc;                         /* Local character pointer */
     meUByte *dd;                        /* Pointer to the kill data */
     int killSize = 0;                   /* Number of bytes in kill buffer */
     int noEmpty;
-    
+#if MEOPT_UNICODE
+    meUInt ui;
+#else
+    WCHAR uc;
+#endif
+
     /* Determine the size of the data in the kill buffer.
      * Make sure that \r\n are appended to the end of each line. */
     if(klhead != NULL)
     {
         for(killp = klhead->kill; killp != NULL; killp = killp->next)
         {
+#if MEOPT_UNICODE
+            /* a char above U+FFFF needs 2 UTF-16 units */
+            for(dd = killp->data; (cc = *dd) != '\0'; killSize++)
+            {
+                if(cc < 0x80)
+                {
+                    if(cc == meCHAR_NL)
+                        killSize++;
+                    dd++;
+                }
+                else
+                {
+                    dd += meUtf8Decode(dd,meUTF8_LEN_MAX,&ui);
+                    if((ui > 0xffff) && !meUniIsRaw(ui))
+                        killSize++;
+                }
+            }
+#else
             for(dd = killp->data; (cc = *dd++) != '\0'; killSize++)
                 if(cc == meCHAR_NL)
                     killSize++; /* Add 1 for the '\r' */
+#endif
         }
     }
     if((noEmpty = ((meSystemCfg & meSYSTEM_NOEMPTYANK) && (killSize == 0))) != 0)
@@ -1979,6 +2235,27 @@ WinKillToClipboard(void)
             for(killp = klhead->kill; killp != NULL; killp = killp->next)
             {
                 dd = killp->data;
+#if MEOPT_UNICODE
+                while((cc = *dd) != '\0')
+                {
+                    if(cc >= 0x80)
+                    {
+                        /* a raw byte has no char so is written as U+FFFD, as is U+0000 which
+                         * would end the text */
+                        dd += meUtf8Decode(dd,meUTF8_LEN_MAX,&ui);
+                        if((ui == 0) || meUniIsRaw(ui))
+                            ui = meUNI_REPLACE;
+                        bufp += meFrameCharToUtf16(bufp,ui);
+                        continue;
+                    }
+                    dd++;
+                    if(cc == meCHAR_NL)
+                        *bufp++ = '\r';
+                    else if(cc < 0x20)
+                        cc = ttSpeChars[cc];
+                    *bufp++ = cc;
+                }
+#else
                 while((uc = (WCHAR) *dd++))
                 {
                     /* Convert the end of line to CR/LF */
@@ -1994,6 +2271,7 @@ WinKillToClipboard(void)
                     /* Copy in the character */
                     *bufp++ = uc;
                 }
+#endif
             }
         }
         
@@ -2059,6 +2337,48 @@ TTgetClipboard(int flag)
     /* Get the data from the clipboard */
     if((hmem = GetClipboardData(CF_UNICODETEXT)) != NULL)
     {
+#if MEOPT_UNICODE
+        WCHAR *cb, *ss;
+        meUInt uc;
+        meUByte *dd;
+        int ll, len;
+        
+        cb = GlobalLock(hmem);        /* Lock global buffer */
+        /* a UTF-16 unit is at most 3 bytes of internal text and a line longer than
+         * meLINE_ELEN_MAX is split */
+        for(ss=cb ; *ss != '\0' ; ss++)
+            ;
+        len = (int) (ss - cb) * 3;
+        len += len / (meLINE_ELEN_MAX-meUTF8_LEN_MAX);
+        if((len > 0) &&
+           ((kn = (meKillNode *) meMalloc(((size_t) (&(((meKillNode *) 0)->data[1])))+len)) != NULL))
+        {
+            ss = cb;                        /* Start of clipboard data */
+            dd = kn->data;                  /* Start of the kill buffer */
+            ll = 0;
+            while((uc = *ss++) != '\0')
+            {
+                if((uc == '\r') && (*ss == '\n'))
+                    continue;
+                if(uc == '\n')
+                {
+                    *dd++ = '\n';
+                    ll = 0;
+                    continue;
+                }
+                /* a lone surrogate is kept, internal text can hold one */
+                if(meIsHighSurrogate(uc) && meIsLowSurrogate(*ss))
+                    uc = meSurrogatesToUni(uc,*ss++);
+                if(ll > meLINE_ELEN_MAX-meUTF8_LEN_MAX)
+                {
+                    *dd++ = '\n';
+                    ll = 0;
+                }
+                len = meUtf8Encode(dd,uc);
+                dd += len;
+                ll += len;
+            }
+#else
         WCHAR *cb, *ss, uc;
         meUByte *dd;
         int ll, len;
@@ -2140,6 +2460,7 @@ TTgetClipboard(int flag)
                     ll++;
                 }
             }
+#endif
             *dd = '\0';
         
             /* Make sure that it is not the same as the current save buffer head */
@@ -2407,11 +2728,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
     meUByte  dummyInFile[meBUF_SIZE_MAX];       /* Dummy input file */
     meUByte  pipeOutFile[meBUF_SIZE_MAX];       /* Pipe output file */
     int    status;
-#ifdef _WIN32s
-    static int pipeStderr=0;                    /* Remember the stderr state */
-#else
     HANDLE inHdlTmp, inHdl, outHdlTmp, outHdl, dumHdl;
-#endif
     
     /* Get the comspec */
     if(((flags & LAUNCH_NOCOMSPEC) == 0) && (compSpecName == NULL))
@@ -2429,13 +2746,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         }
         compSpecLen = (int) meStrlen(compSpecName);
     }
-    
-#ifdef _WIN32s
-    /* If the pipe to stderr is not defined then get the value. Note that this
-     * is a once off get and we only look on the first run */
-    if(pipeStderr == 0)
-        pipeStderr = ((meGetenv("ME_PIPE_STDERR") != NULL) ? 1 : -1);
-#endif
     
     /* set the startup window size */
     memset(&meSuInfo,0,sizeof(STARTUPINFO));
@@ -2466,18 +2776,11 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             mkTempName(pipeOutFile,NULL,NULL);
             outFile = pipeOutFile;
         }
-#ifdef _WIN32s
-        status = strlen(ss) + strlen(outFile) + 16;
-        if(flags & LAUNCH_FILTER)
-            status += strlen(inFile) + 4;
-#else
         status = ((int) meStrlen(ss)) + compSpecLen + 16;
-#endif
         if((cmdLine = meMalloc(status)) == NULL)
             return meFALSE;
         cp = dd = cmdLine;
         
-#ifndef _WIN32s
         /* If there is no command spec then skip */
         if((flags & LAUNCH_NOCOMSPEC) == 0)
         {
@@ -2491,7 +2794,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
 #endif
                 *dd++ = '"';
         }
-#endif
         
         if((flags & LAUNCH_LEAVENAMES) == 0)
         {
@@ -2540,12 +2842,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             
             if(flags & LAUNCH_FILTER)
             {
-#ifdef _WIN32s
-                strcat(cp, " <");
-                strcat(cp, inFile);
-                strcat(cp, " >");
-                strcat(cp, outFile);
-#else
                 HANDLE h;
                 if((meSuInfo.hStdInput=CreateFile((const char *) inFile,GENERIC_READ,FILE_SHARE_READ,&sbuts,
                                                   OPEN_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL)) == INVALID_HANDLE_VALUE)
@@ -2562,7 +2858,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 }
                 if(CreatePipe(&meSuInfo.hStdError,&h,&sbuts,0) != 0)
                     CloseHandle(h);
-#endif
             }
 #if MEOPT_IPIPES
             else if(flags & LAUNCH_IPIPE)
@@ -2698,13 +2993,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             else
             {
                 /* the output file name will be set as either one was given or we have created one */
-#ifdef _WIN32s
-                if(pipeStderr > 0)
-                    strcat(cp, " >& ");
-                else
-                    strcat(cp, " > ");
-                strcat(cp, outFile);
-#else
                 meSuInfo.hStdOutput=CreateFile((const char *) outFile,GENERIC_WRITE,FILE_SHARE_WRITE,
                                                &sbuts,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL);
                 if(meSuInfo.hStdOutput == INVALID_HANDLE_VALUE)
@@ -2755,17 +3043,13 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
                 DuplicateHandle(GetCurrentProcess(),meSuInfo.hStdOutput,
                                 GetCurrentProcess(),&meSuInfo.hStdError,0,meTRUE,
                                 DUPLICATE_SAME_ACCESS);
-#endif
             }
-#ifndef _WIN32s
 #if MEOPT_IPIPES
             if(((flags & LAUNCH_IPIPE) == 0) || (ipipe->hPCon == NULL))
 #endif
                 meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
-#endif
         }
 #ifndef _WIN32_WINNT
-#ifndef _WIN32s
         else if(platformId == VER_PLATFORM_WIN32_WINDOWS)
         {
             /* For some reason Win98 shell-command start-up path is incorrect unless a dummy input
@@ -2789,45 +3073,7 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
             meSuInfo.dwFlags |= STARTF_USESTDHANDLES;
         }
 #endif
-#endif
     }
-#ifdef _WIN32s
-    if((cmdLine == NULL) || (flags & LAUNCH_NOCOMSPEC))
-        status = SynchSpawn(cp,/*SW_HIDE*/SW_SHOWNORMAL);
-    else
-    {
-        meUByte buff[1024];
-        FILE *fp;
-        
-        /* Get the current directory in the 32-bit world */
-        _getcwd(buff,1024);
-        
-        /* Create a BAT file to hold the command */
-        mkTempName(dummyInFile,NULL,".bat");
-        
-        if((fp = fopen(dummyInFile, "w")) != NULL)
-        {
-            /* Change drive */
-            fprintf(fp,"%c:\n",buff[0]);
-            /* Change directory */
-            fprintf(fp,"cd %s\n",buff);
-            /* Do the command */
-            fprintf(fp,"%s\n",cp);
-            fclose(fp);
-            
-            strcpy(buff,compSpecName);
-            strcat(buff," /c ");
-            strcat(buff,dummyInFile);
-            
-            status = SynchSpawn(buff,/*SW_HIDE*/SW_SHOWNORMAL);
-        }
-        else
-            status = 0;
-    }
-    /* Correct the status frpom the call */
-    if(status != 1)
-        status = meFALSE;
-#else /* ! _WIN32s */
 #if MEOPT_IPIPES
     if(((flags & LAUNCH_IPIPE) != 0) && (ipipe->hPCon != NULL))
     {
@@ -2954,7 +3200,6 @@ WinLaunchProgram(meUByte *cmd, int flags, meUByte *inFile, meUByte *outFile,
         CloseHandle(meSuInfo.hStdOutput);
     if(meSuInfo.hStdError != INVALID_HANDLE_VALUE)
         CloseHandle(meSuInfo.hStdError);
-#endif /* WIN32s */
     
 #if MEOPT_IPIPES
     if(flags & LAUNCH_IPIPE)
@@ -3240,7 +3485,7 @@ WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             static LPARAM lastPos=-1;
             meUInt arg;           /* Decode key argument */
-            meUShort cc;
+            meKey cc;
             
             /* Mouse buttons are the same - handle as a move mouse */
             
@@ -3331,7 +3576,7 @@ WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 if(((mouseCode ^ mouseState) & ii) != 0)
                 {
-                    meUShort cc;
+                    meKey cc;
                     if(mouseCode & ii)             /* Release ?? */
                         cc = SKEY_mouse_pick_1;    /* Get mouse pick key binding */
                     else
@@ -3370,7 +3615,7 @@ WinMouse(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 #ifdef WM_MOUSEWHEEL
     case WM_MOUSEWHEEL:
         {
-            meUShort cc;
+            meKey cc;
             
 #if _WIN_DEBUG_MOUSE
             if(logfp != NULL)
@@ -3412,7 +3657,7 @@ int
 WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     meFrame *frame;
-    meUShort cc;                  /* Local keyboard character */
+    meKey cc;                     /* Local keyboard character */
     
     if((frame = meMessageGetFrame(hwnd)) == NULL)
         return meFALSE;
@@ -3555,7 +3800,7 @@ WinKeyboard(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 test_do_keydown:
             {
                 meUInt arg;
-                if(decode_key((meUShort) (ME_SPECIAL|ttmodif|cc),&arg) != -1)  /* Key bound ?? */
+                if(decode_key((meKey) (ME_SPECIAL|ttmodif|cc),&arg) != -1)  /* Key bound ?? */
                     goto do_keydown;
             }
             break;
@@ -3572,12 +3817,12 @@ test_do_keydown:
         case VK_F7:
         case VK_F8:
         case VK_F9:
-            cc = SKEY_f3 + ((meUShort) (wParam - VK_F3));
+            cc = SKEY_f3 + ((meKey) (wParam - VK_F3));
             goto do_keydown;
         case VK_F10:
         case VK_F11:
         case VK_F12:
-            cc = SKEY_f10 + ((meUShort) (wParam - VK_F10));
+            cc = SKEY_f10 + ((meKey) (wParam - VK_F10));
 do_keydown:
             cc = (ME_SPECIAL | ttmodif | cc);
             /* Add the character to the typeahead buffer.
@@ -3632,7 +3877,7 @@ do_keydown:
                 /* if the initial key translates to anything, including ones above 255 & deadchars, return */
                 if(ci != 0)
                 {
-                    keyDownChr = (meUShort) (ci & 0xff);
+                    keyDownChr = (meKey) (ci & ME_KEY_CHAR);
                     return meFALSE;
                 }
                 /* Get the base key, we must pass in the Shift state as this will change the key and
@@ -3712,7 +3957,23 @@ do_keydown:
             }
 #endif
         }
+#if MEOPT_UNICODE
+        {
+            /* a char above U+FFFF comes as a pair of surrogates, the key is added on the second */
+            static meKey hiSurrogate=0;
+            cc = (meKey) wParam;
+            if(meIsHighSurrogate(cc))
+            {
+                hiSurrogate = cc;
+                return meTRUE;
+            }
+            if(meIsLowSurrogate(cc) && hiSurrogate)
+                cc = meSurrogatesToUni(hiSurrogate,cc);
+            hiSurrogate = 0;
+        }
+#else
         cc = (meUShort) wParam;
+#endif
         if(cc > 0x20)
         {
             if(cc == 0x7f)
@@ -3764,10 +4025,10 @@ do_keydown:
             if(meSystemCfg & meSYSTEM_CONSOLE)
             {
                 if(!(ttmodif & ME_CONTROL))
-                    cc = ME_ALT | toLower(cc);
+                    cc = ME_ALT | meUniCharToLower(cc);
             }
             else if(keyDownChr & ME_ALT)
-                cc = ME_ALT | toLower(cc);
+                cc = ME_ALT | meUniCharToLower(cc);
         }
         else if((ttmodif & ME_CONTROL) && (cc > 0x1a) && !(meSystemCfg & meSYSTEM_CONSOLE))
         {
@@ -4391,15 +4652,13 @@ meFrameHideCursor(meFrame *frame)
         {
             meFrameLine *flp;                    /* Frame store line pointer */
             meScheme schm;                       /* Current colour */
-            meUByte cc;                          /* Current cchar  */
             WORD dcol;
             
             flp  = frame->store + frame->cursorRow;
-            cc   = flp->text[frame->cursorColumn];          /* Get char under cursor */
             schm = flp->scheme[frame->cursorColumn];        /* Get colour under cursor */
             
             dcol = (WORD) TTschemeSet(schm);
-            ConsoleDrawString(&cc, dcol, frame->cursorColumn, frame->cursorRow, 1);
+            ConsoleDrawString(flp->text+frame->cursorColumn, dcol, frame->cursorColumn, frame->cursorRow, meFrameCursorCells(frame));
         }
 #ifdef _ME_WINDOW
         else if(!meFrameGetWinPaintAll(frame))
@@ -4411,6 +4670,7 @@ meFrameHideCursor(meFrame *frame)
         {
             RECT rect;                  /* Area of screen to update */
             int startCol = frame->cursorColumn;
+            int cw = meFrameCursorCells(frame);
             meFrameLine *flp;
             
             /* If the cursor preceeeds an italic character then we need to fix
@@ -4428,15 +4688,15 @@ meFrameHideCursor(meFrame *frame)
             
             if(meFrameGetWinPaintStartCol(frame)[frame->cursorRow] > startCol)
                 meFrameGetWinPaintStartCol(frame)[frame->cursorRow] = startCol;
-            if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] <= frame->cursorColumn)
-                meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+1;
+            if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] < frame->cursorColumn+cw)
+                meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+cw;
             /* Set up the area on the client window to be modified
                and signal that the client is about to be updated */
             /* SWP 20040108 - XP ClearType smooth edge font rendering seems
              * to spill the bg out onto the next character by one pixel so
              * to avoid dropping vertical lines add 1 to the right edge */
             rect.left   = eCellMetrics.cellColPos[frame->cursorColumn];
-            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1] + 1;
+            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+cw] + 1;
             rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
             rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
             InvalidateRect(meFrameGetWinHandle(frame), &rect, meFALSE);
@@ -4460,17 +4720,15 @@ meFrameShowCursor(meFrame *frame)
         {
             meFrameLine *flp;                    /* Frame store line pointer */
             meScheme schm;                       /* Current colour */
-            meUByte cc;                          /* Current cchar  */
             WORD dcol;
             
             flp  = frame->store + frame->cursorRow;
-            cc   = flp->text[frame->cursorColumn];          /* Get char under cursor */
             schm = flp->scheme[frame->cursorColumn];        /* Get colour under cursor */
             
             dcol = (WORD) TTcolorSet(colTable[meStyleGetBColor(meSchemeGetStyle(schm))],
                                      colTable[cursorColor[(meModeTest(frame->windowCur->buffer->mode,MDOVER)) ? 1:0]]);
             
-            ConsoleDrawString(&cc, dcol, frame->cursorColumn, frame->cursorRow, 1);
+            ConsoleDrawString(flp->text+frame->cursorColumn, dcol, frame->cursorColumn, frame->cursorRow, meFrameCursorCells(frame));
         }
 #ifdef _ME_WINDOW
         else if(!meFrameGetWinPaintAll(frame))
@@ -4482,6 +4740,7 @@ meFrameShowCursor(meFrame *frame)
         {
             RECT rect;                  /* Area of screen to update */
             int startCol = frame->cursorColumn;
+            int cw = meFrameCursorCells(frame);
             meFrameLine *flp;
             
             /* If the cursor preceeeds an italic character then we need to fix
@@ -4499,13 +4758,13 @@ meFrameShowCursor(meFrame *frame)
             
             if(meFrameGetWinPaintStartCol(frame)[frame->cursorRow] > startCol)
                 meFrameGetWinPaintStartCol(frame)[frame->cursorRow] = startCol;
-            if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] <= frame->cursorColumn)
-                meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+1;
+            if(meFrameGetWinPaintEndCol(frame)[frame->cursorRow] < frame->cursorColumn+cw)
+                meFrameGetWinPaintEndCol(frame)[frame->cursorRow] = frame->cursorColumn+cw;
             /* Set up the area on the client window to be modified
                and signal that the client is about to be updated */
             /* SWP 20040108 - XP ClearType smooth edge font fix - see first comment */
             rect.left   = eCellMetrics.cellColPos[frame->cursorColumn];
-            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+1] + 1;
+            rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+cw] + 1;
             rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
             rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
             InvalidateRect(meFrameGetWinHandle(frame), &rect, meFALSE);
@@ -4720,7 +4979,7 @@ void
 TTwaitForChar(void)
 {
 #if MEOPT_MOUSE
-    meUShort mc;
+    meKey mc;
     meUInt arg;
     /* If no keys left then if theres currently no mouse timer and
      * theres a button press (No mouse-time key) then check for a
@@ -5224,7 +5483,7 @@ TTahead(void)
     /* If the mouse alarm has returned Check the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))
     {
-        meUShort mc;
+        meKey mc;
         meUInt arg;
         
         timerClearExpired(MOUSE_TIMER_ID);
@@ -5363,7 +5622,7 @@ TTaheadFlush(void)
     /* If the mouse alarm has returned Check the mouse */
     if(isTimerExpired(MOUSE_TIMER_ID))
     {
-        meUShort mc;
+        meKey mc;
         meUInt arg;
         
         timerClearExpired(MOUSE_TIMER_ID);
@@ -5575,6 +5834,11 @@ meFrameSetWindowSize(meFrame *frame)
                 free(ciScreenBuffer);
             ciScreenBuffer = (CHAR_INFO *) meMalloc(sizeof(CHAR_INFO) * width * depth);
             memset((void *)ciScreenBuffer, 0, sizeof(CHAR_INFO) * width * depth);
+#if MEOPT_UNICODE
+            if(ciPaintBuffer != NULL)
+                free(ciPaintBuffer);
+            ciPaintBuffer = (CHAR_INFO *) meMalloc(sizeof(CHAR_INFO) * width * depth);
+#endif
         }
         /* Hide/rehide the cursor (resize window seems to make it visible again) */
         GetConsoleCursorInfo(hOutput,&CursorInfo);
@@ -5932,8 +6196,12 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
     {
 #endif
         /* Initialise the window data and register window class */
+#if MEOPT_UNICODE
+        WNDCLASSW wc;
+#else
         WNDCLASS  wc;
-        
+#endif
+
         wc.style = 0;
         wc.lpfnWndProc = (WNDPROC) MainWndProc;
         wc.cbClsExtra = 0;
@@ -5942,11 +6210,19 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
         wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
         wc.hCursor = NULL;
         wc.hbrBackground = GetStockObject(BLACK_BRUSH);
+#if MEOPT_UNICODE
+        wc.lpszMenuName =  L"InputMenu";
+        wc.lpszClassName = L"MicroEmacsClass";
+
+        if(!RegisterClassW(&wc))
+            return meFALSE;
+#else
         wc.lpszMenuName =  "InputMenu";
         wc.lpszClassName = "MicroEmacsClass";
-        
+
         if(!RegisterClass(&wc))
             return meFALSE;
+#endif
         
         ttInstance =  hInstance;
 #ifdef _ME_CONSOLE
@@ -6699,6 +6975,23 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
         meStrcpy(ss,ME_FULLNAME " '" meVERSION);
 #endif
     
+#if MEOPT_UNICODE
+    {
+        WCHAR wbuf[meBUF_SIZE_MAX];
+        if(MultiByteToWideChar(CP_UTF8,0,(LPCSTR) buf,-1,wbuf,meBUF_SIZE_MAX) <= 0)
+            wbuf[0] = 0;
+#ifdef _ME_CONSOLE
+        if(meSystemCfg & meSYSTEM_CONSOLE)
+            SetConsoleTitleW(wbuf);
+#ifdef _ME_WINDOW
+        else
+#endif /* _ME_WINDOW */
+#endif /* _ME_CONSOLE */
+#ifdef _ME_WINDOW
+            SetWindowTextW(meFrameGetWinHandle(frame),wbuf);
+#endif /* _ME_WINDOW */
+    }
+#else
 #ifdef _ME_CONSOLE
     if(meSystemCfg & meSYSTEM_CONSOLE)
         SetConsoleTitle((const char *) buf);	            /* Set console window title */
@@ -6709,6 +7002,7 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 #ifdef _ME_WINDOW
         SetWindowText(meFrameGetWinHandle(frame),(LPCSTR) buf);        /* Change the window text */
 #endif /* _ME_WINDOW */
+#endif /* MEOPT_UNICODE */
 }
 
 /* TTsetBgcol; Set the default fill of the background. Now in windows then we

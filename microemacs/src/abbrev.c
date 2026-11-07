@@ -158,12 +158,14 @@ expandAbbrev(int f, int n)
     cwp = frameCur->windowCur;
     ii = cwp->dotOffset ;
     if(((cwp->buffer->abbrevFile != NULL) || (globalAbbrevFile != NULL)) &&
-       (--ii >= 0) && isWord(cwp->dotLine->text[ii]))
+       (ii > 0) && meLineInWord(cwp->dotLine,meLinePrevChar(cwp->dotLine,ii)))
     {
-        len = 1 ;
-        while((--ii >= 0) && isWord(cwp->dotLine->text[ii]))
-            len++ ;
-        strncpy((char *) buf,(char *) &(cwp->dotLine->text[++ii]),len) ;
+        len = ii ;
+        do
+            ii = meLinePrevChar(cwp->dotLine,ii) ;
+        while((ii > 0) && meLineInWord(cwp->dotLine,meLinePrevChar(cwp->dotLine,ii))) ;
+        len -= ii ;
+        strncpy((char *) buf,(char *) &(cwp->dotLine->text[ii]),len) ;
         if(((cwp->buffer->abbrevFile != NULL) && 
             ((ii=doExpandAbbrev(buf,len,cwp->buffer->abbrevFile)) != meFALSE)) ||
            ((globalAbbrevFile != NULL) && 

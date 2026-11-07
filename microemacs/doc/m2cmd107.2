@@ -20,11 +20,23 @@ generate-hash \- Generate SHA1 or SHA256 hash or HMAC
 .ad
 .SH DESCRIPTION
 .B generate-hash
-computes  the SHA256 hash value of the current  buffer's  content, as if it were written to file in its current  state
-(i.e. the binary, line and file termination modes are taken into consideration). The hash is then turned into a hex string and
-the
+computes  the SHA256 hash value of the current  buffer's  content. The hash is then turned into a hex string and the
 .Ht $result 5
 variable is set to the resultant 64 byte string.
+.PP
+The hash of a text buffer is of its text rather than the file's bytes, so the same text gives the same hash on every
+platform. The text is hashed in UTF-8 and every line end as a single \fC\\n\fR (0x0a) character, whatever the buffer's
+encoding and its
+.Ht cr 2m ,
+.Ht lf 2m
+and
+.Ht ctrlz 2m
+modes. A line with no line end, the last line of a file with no final newline or a long line split when the file
+was loaded, adds no \fC\\n\fR. When the hash of a file's exact bytes is required, load the file with
+.Ht rbin 2m
+or
+.Ht binary 2m
+mode enabled, the hash of such a buffer is the hash of the bytes it holds.
 .PP
 The numeric  argument  \fIn\fR is a bit based flag used to modify the default  behaviour of the  command,  where the bits are defined as
 follows:
@@ -62,27 +74,26 @@ After executing the SHA256 hash value will be stored in \fB$result\fR. To calcul
 .PP
 After executing \fB$result\fR will be set to \fC1804C1869D6DD76A9A8D00819E6F62E970D981F01FE805F927CF4E3BDF4AD95C\fR.
 .SH NOTES
-When using an argument of 2 the data must be a plain text string  which means it cannot  contain a byte of value 0. If
-the hash of binary data is required then set bit 1 and convert to a hex-string or create a temporary buffer, enable
-.Ht rbin 2m
-mode, insert the data as a hex string and then call  \fBgenerate-hash\fR  with no argument to  calculate  the buffer's
-hash.
+The \fIkey\fR and \fIdata\fR strings are hashed as their bytes, a character above 0x7f in its UTF-8 form, and a byte
+given by
+.Ht &hexb 4 ,
+including 0, as that byte. Alternatively set bit 0x01 or 0x08 and give the \fIdata\fR or \fIkey\fR as a hex-string.
+.PP
+An 8-bit build of \*(mS holds a file's bytes as its text, so a file written in a code page other than ASCII or
+UTF-8 hashes differently to the Unicode build; ASCII and UTF-8 files give the same hash in both. An 8-bit build
+cannot hold a 0 byte in a text buffer.
 .PP
 When calculating the hash of a region, if
 .Ht binary 2m
 or
 .Ht rbin 2m
 modes are enabled then the whole of the region's  first line is always  included , as is the whole of the last line if
-the region's end point column is greater than 0. If neither of these modes are enabled then the
-.Ht cr 2m 
-and 
-.Ht lf 2m 
-line termination modes are taken into account, as is the
-.Ht ctrlz 2m 
-end of file mode.  
+the region's end point column is greater than 0. If neither of these modes are enabled then each line end within the
+region is hashed as a \fC\\n\fR.
 .SH "SEE ALSO"
 .na
 .Ht $result 5 ,
+.Ht &hexb 4 ,
 .Ht binary 2m ,
 .Ht rbin 2m ,
 .Ht cr 2m ,

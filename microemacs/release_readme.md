@@ -7,7 +7,7 @@
 
 MicroEmacs is an Emacs like text editor for developers, its great strength is its speed, fast key-bindings and powerful macro language. If you are looking for a menu driven editor this is probably not for you!
 
-Jasspa MicroEmacs also has a couple of other base limitations, firstly, no real Unicode support - so you you are constantly editing multi-language files this is probably not the best tool for you. MicroEmacs also does not support long line wrapping in its rendering, one line of a file will always be represented as one line on the screen regardless of how long the line is - this is *Micro*Emacs, if these issues are blockers to you, try Emacs.
+Jasspa MicroEmacs also has a base limitation, it does not support long line wrapping in its rendering, one line of a file will always be represented as one line on the screen regardless of how long the line is. It also does not support right to left text or the shaping of complex scripts - this is *Micro*Emacs, if these issues are blockers to you, try Emacs.
 
 For move information visit our [Github repository](https://github.com/bjasspa/jasspa/).
 

@@ -147,7 +147,7 @@ meInit(meUByte *bname)
      * lead to exit in mlwrite so we don't need to check */
     styleTable = meMalloc(2*meSCHEME_STYLES*sizeof(meStyle));
     hilBlock = meMalloc((hilBlockS+2)*sizeof(meSchemeSet));
-    disLineBuff = meMalloc((disLineSize+32)*sizeof(meUByte));
+    disLineBuff = meMalloc((disLineSize+32)*sizeof(meFrameChar));
     
     memcpy(styleTable,defaultScheme,2*meSCHEME_STYLES*sizeof(meStyle));
     /* Set the fore and back colours */
@@ -191,11 +191,9 @@ insertChar(register int c, register int n)
             if((meLineGetChar(wp->dotLine, wp->dotOffset) != meCHAR_TAB) ||
                (at_tab_pos(getwcol(wp)+index+1,wp->buffer->tabWidth) == 0))
             {
-                lineSetChanged(WFMAIN);
-#if MEOPT_UNDO
-                meUndoAddRepChar();
-#endif
-                meLineSetChar(wp->dotLine,wp->dotOffset++,c);
+                /* the char replaced may differ in length */
+                lineReplaceChar(c);
+                wp->dotOffset = meLineNextChar(wp->dotLine,wp->dotOffset);
                 index = 0;
             }
             else
@@ -207,6 +205,24 @@ insertChar(register int c, register int n)
         n += ii;
     }
     /*---    Do the appropriate insertion */
+#if MEOPT_UNICODE
+    if((n > 0) && ((c >= 0x80) || (c == 0)))
+    {
+        /* a char from 0x80, or a NUL, is inserted as its internal UTF-8 */
+        meUByte buf[meUTF8_LEN_MAX];
+        int ii, ll=meUtf8Encode(buf,c);
+        for(ii=0 ; ii<n ; ii++)
+            if(lineInsertString(ll,buf) <= 0)
+                break;
+#if MEOPT_UNDO
+        if(ii == 1)
+            meUndoAddInsChar(ll);
+        else if(ii > 1)
+            meUndoAddInsChars(ii*ll);
+#endif
+        return (ii == n) ? meTRUE:meFALSE;
+    }
+#endif
     if(n > 0)
     {
 #if MEOPT_UNDO
@@ -214,7 +230,7 @@ insertChar(register int c, register int n)
         {
             if(lineInsertChar(1,c) <= 0)
                 return meFALSE;
-            meUndoAddInsChar();
+            meUndoAddInsChar(1);
         }
         else
         {
@@ -239,7 +255,9 @@ insertChar(register int c, register int n)
 int
 execute(register int c, register int f, register int n)
 {
+#if MEOPT_WORDPRO || MEOPT_HILIGHT
     register meWindow *cwp;
+#endif
     register int index;
     meUInt arg;
 #if MEOPT_EXTENDED
@@ -257,9 +275,9 @@ execute(register int c, register int f, register int n)
          * kbd macros or in the $recent-keys. This could led to a macro failing
          * but alternatives have similar if not worse problems.
          */
-        static meUShort lastcc=0;
+        static meKey lastcc=0;
         meUInt arg;
-        meUShort mask, kk, ccx=lastcc ^ c;
+        meKey mask, kk, ccx=lastcc ^ c;
         
         lastcc = c;
         for(mask=ME_SHIFT ; mask != ME_SPECIAL ; mask<<=1)
@@ -285,7 +303,7 @@ execute(register int c, register int f, register int n)
     lastIndex = thisIndex;
     thisCommand = c;
     
-    if(((index = decode_key((meUShort) c,&arg)) >= 0) && (arg != 0))
+    if(((index = decode_key((meKey) c,&arg)) >= 0) && (arg != 0))
     {
         f = 1;
         n *= (int) (arg + 0x80000000);
@@ -324,10 +342,10 @@ execute(register int c, register int f, register int n)
         selhilight.bp = NULL;
         selhilight.flags = 0;
     }
-    if(c < 0x20 || c > 0xff)    /* If not an insertable char */
+    if((c < 0x20) || !meKeyIsChar(c))    /* If not an insertable char */
     {
         meUByte outseq[40];	/* output buffer for keystroke sequence */
-        meGetStringFromKey((meUShort) c,outseq);  /* change to something printable */
+        meGetStringFromKey((meKey) c,outseq);  /* change to something printable */
         lastflag = 0;                             /* Fake last flags.     */
         cmdstatus = 0;
 #if MEOPT_MOUSE
@@ -353,11 +371,13 @@ execute(register int c, register int f, register int n)
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return (cmdstatus = meFALSE);
     
+#if MEOPT_WORDPRO || MEOPT_HILIGHT
     cwp = frameCur->windowCur;
+#endif
 #if MEOPT_WORDPRO
     /* If a space was typed, fill column is defined, the argument is non- negative, wrap mode is
      * enabled, and we are now past fill column, and we are not read-only, perform word wrap. */
-    if(meModeTest(cwp->buffer->mode,MDWRAP) && ((c == ' ') || (meStrchr(filleos,c) != NULL)) &&
+    if(meModeTest(cwp->buffer->mode,MDWRAP) && ((c == ' ') || ((c < meKEY_BYTE_MAX) && (meStrchr(filleos,c) != NULL))) &&
        (cwp->buffer->fillcol > 0) && (n >= 0) && (getwcol(cwp) > cwp->buffer->fillcol) &&
        !meModeTest(cwp->buffer->mode,MDVIEW))
         wrapWord(meFALSE,1);

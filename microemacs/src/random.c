@@ -131,6 +131,25 @@ meStrnicmp(const meUByte *str1, const meUByte *str2, size_t nn)
 int
 meStricmp(const meUByte *str1, const meUByte *str2)
 {
+#if MEOPT_UNICODE
+    meUInt cc, dd, fc, fd;
+    
+    for(;;)
+    {
+        str1 += meUtf8Decode(str1,meUTF8_LEN_MAX,&cc);
+        str2 += meUtf8Decode(str2,meUTF8_LEN_MAX,&dd);
+        if(cc != dd)
+        {
+            fc = (cc < 0x80) ? (meUInt) toLower(cc):meUniFold(cc);
+            fd = (dd < 0x80) ? (meUInt) toLower(dd):meUniFold(dd);
+            if(fc != fd)
+                return (fc < fd) ? -1:1;
+        }
+        /* an internal NUL decodes to 0 but is not the end */
+        if((cc == 0) && ((str1[-1] == 0) || (str2[-1] == 0)))
+            return (str1[-1] == str2[-1]) ? 0:((str1[-1] == 0) ? -1:1);
+    }
+#else
     meUByte cc, dd;
     int ii;
 
@@ -142,6 +161,7 @@ meStricmp(const meUByte *str1, const meUByte *str2)
             return ii;
     } while(cc != 0);
     return 0;
+#endif
 }
 
 /* case insensitive str compare/diff
@@ -152,6 +172,33 @@ meStricmp(const meUByte *str1, const meUByte *str2)
 int
 meStridif(const meUByte *str1, const meUByte *str2)
 {
+#if MEOPT_UNICODE
+    meUInt cc, dd, fc, fd;
+    int rr=0;
+
+    for(;;)
+    {
+        str1 += meUtf8Decode(str1,meUTF8_LEN_MAX,&cc);
+        str2 += meUtf8Decode(str2,meUTF8_LEN_MAX,&dd);
+        if(cc != dd)
+        {
+            fc = (cc < 0x80) ? (meUInt) toLower(cc):meUniFold(cc);
+            fd = (dd < 0x80) ? (meUInt) toLower(dd):meUniFold(dd);
+            if(fc != fd)
+                return (fc < fd) ? -1:1;
+            if(!rr)
+                rr = (cc < dd) ? -1:1;
+        }
+        /* an internal NUL decodes to 0 but is not the end */
+        if((cc == 0) && ((str1[-1] == 0) || (str2[-1] == 0)))
+        {
+            if(str1[-1] != str2[-1])
+                return (str1[-1] == 0) ? -1:1;
+            break;
+        }
+    }
+    return rr;
+#else
     int cc, dd, rr=0, ss, tt;
 
     do {
@@ -166,6 +213,7 @@ meStridif(const meUByte *str1, const meUByte *str2)
         }
     } while(cc != 0);
     return rr;
+#endif
 }
 
 /* Encode exactly 3 input bytes as 4 base64 characters into dd. Caller is
@@ -252,13 +300,39 @@ sortStrings(int noStr, meUByte **strs, int offset, meIFuncSS cmpFunc)
 
 #endif
 
+#if MEOPT_UNICODE
+/* A line to sort from a column, key is the text from the column's char, which is at a different
+ * byte offset in each line */
+typedef struct {
+    meUByte *key;
+    meLine  *line;
+} meSortKey;
+
+static meIFuncSS sortKeyCmpFunc;
+static int sortKeyBackward;
+
+static int
+sortKeyCmp(const void *v1, const void *v2)
+{
+    int ii;
+
+    ii = sortKeyCmpFunc(((const meSortKey *) v1)->key,((const meSortKey *) v2)->key);
+    return (sortKeyBackward) ? 0-ii:ii;
+}
+#endif
+
 int
 sortLines(int f, int n)
 {
     meWindow *cwp=frameCur->windowCur;
     meIFuncSS cmpFunc;
     meLine *sL, *eL, *l, **list;
-    meInt sln, noL, ii, jj, offs;
+    meInt sln, noL, ii, jj, offs, col;
+    int bk;
+#if MEOPT_UNICODE
+    meSortKey *keys;
+    meInt kk, cc, bo;
+#endif
 #if MEOPT_UNDO
     meInt *undoInfo;
 #endif
@@ -288,15 +362,18 @@ sortLines(int f, int n)
     if(f == meFALSE)
         n = 0;
     offs = (meInt) (((size_t) sL->text) - ((size_t) sL));
-    if(n < 0)
-    {
-        offs = 0-offs;
-        f = -1-n;
-    }
-    else
-        f = n;
+    /* a negative n sorts backwards from column -1-n, sortStrings takes a backward offset o as -1-o */
+    col = ((bk = (n < 0))) ? -1-n:n;
     if((list = (meLine **) meMalloc(noL*sizeof(meLine *))) == NULL)
         return meFALSE;
+#if MEOPT_UNICODE
+    keys = NULL;
+    if((col != 0) && ((keys = (meSortKey *) meMalloc(noL*sizeof(meSortKey))) == NULL))
+    {
+        meFree(list);
+        return meFALSE;
+    }
+#endif
     for(ii=0, l=meLineGetNext(sL) ; ii<noL ; l=meLineGetNext(l),ii++)
     {
         list[ii] = l;
@@ -316,11 +393,35 @@ sortLines(int f, int n)
         cmpFunc = (meIFuncSS) strcmp;
     else
         cmpFunc = meStridif;
-    if(f != 0)
+    /* lines shorter than col chars go first, sorted from column 0 */
+    if(col != 0)
     {
+#if MEOPT_UNICODE
+        /* the column is a char index, so each line's key starts at its own byte offset */
+        for(ii=0,jj=0,kk=0 ; ii<noL ; ii++)
+        {
+            l = list[ii];
+            for(cc=0,bo=0 ; (cc < col) && (bo < meLineGetLength(l)) ; cc++)
+                bo = meLineNextChar(l,bo);
+            if(cc < col)
+                list[jj++] = l;
+            else
+            {
+                keys[kk].key = l->text+bo;
+                keys[kk++].line = l;
+            }
+        }
+        sortStrings(jj,(meUByte **)list,(bk) ? -1-offs:offs,cmpFunc);
+        sortKeyCmpFunc = cmpFunc;
+        sortKeyBackward = bk;
+        qsort(keys,kk,sizeof(meSortKey),sortKeyCmp);
+        for(ii=0 ; ii<kk ; ii++)
+            list[jj+ii] = keys[ii].line;
+        meFree(keys);
+#else
         for(ii=0,jj=0 ; ii<noL ; ii++)
         {
-            if(meLineGetLength(list[ii]) < f)
+            if(meLineGetLength(list[ii]) < col)
             {
                 l = list[jj];
                 list[jj] = list[ii];
@@ -328,12 +429,12 @@ sortLines(int f, int n)
                 jj++;
             }
         }
-        /* offs is already negative when sorting backwards, which sortStrings takes as -1-offset */
-        sortStrings(jj,(meUByte **)list,(n < 0) ? offs-1:offs,cmpFunc);
+        sortStrings(jj,(meUByte **)list,(bk) ? -1-offs:offs,cmpFunc);
+        sortStrings(noL-jj,(meUByte **)(list+jj),(bk) ? -1-offs-col:offs+col,cmpFunc);
+#endif
     }
     else
-        jj = 0;
-    sortStrings(noL-jj,(meUByte **)(list+jj), n+offs,cmpFunc);
+        sortStrings(noL,(meUByte **)list,(bk) ? -1-offs:offs,cmpFunc);
 
     for(ii=0, l=sL ; ii<noL ; l=meLineGetNext(l),ii++)
     {
@@ -403,6 +504,26 @@ getBufferInfo(meInt *numlines, meInt *predlines,
 }
 
 
+/* Writes the line end under the cursor for buffer-info, returns 0 if not at one */
+static int
+bufferInfoEol(meWindow *wp, meUByte *ss)
+{
+    int ff;
+    
+    if(wp->dotLine == wp->buffer->baseLine)
+        return sprintf((char *) ss,"no char (end of buffer)");
+    if(wp->dotOffset < meLineGetLength(wp->dotLine))
+        return 0;
+    ff = meLineGetEolFlag(wp->buffer,wp->dotLine);
+    if(ff == (meIOFLAG_CR|meIOFLAG_LF))
+        return sprintf((char *) ss,"char 13, 10 (0D, 0A - CRLF)");
+    if(ff == meIOFLAG_CR)
+        return sprintf((char *) ss,"char 13 (0D - CR)");
+    if(ff == meIOFLAG_LF)
+        return sprintf((char *) ss,"char 10 (0A - LF)");
+    return sprintf((char *) ss,"no char (no line end)");
+}
+
 /* buffer-info. Display the current position of the cursor, in origin 1 X-Y
  * coordinates, the character that is under the cursor (in hex), and the
  * fraction of the text that is before the cursor. The displayed column is not
@@ -436,6 +557,62 @@ bufferInfo(int f, int n)
     if (numchars != 0)
         ratio = (100L*predchars) / numchars;
 
+#if MEOPT_UNICODE
+    {
+        /* the existing fields count bytes as macros compare them with file sizes, chars are added */
+        meLine *lp=meLineGetNext(cwp->buffer->baseLine);
+        meInt numuc=0, preduc=0;
+        int cuoff, euoff;
+        
+        while(lp != cwp->buffer->baseLine)
+        {
+            if(lp == cwp->dotLine)
+                preduc = numuc + meLineCharIndex(lp,coff);
+            numuc += meLineCharIndex(lp,meLineGetLength(lp)) + 1;
+            lp = meLineGetNext(lp);
+        }
+        if(cwp->dotLine == cwp->buffer->baseLine)
+            preduc = numuc;
+        else
+            curchar = meWindowGetUni(cwp);
+        cuoff = meLineCharIndex(cwp->dotLine,coff);
+        euoff = meLineCharIndex(cwp->dotLine,eoff);
+        if((cwp->buffer->encoding & meENCODING_TYPE) == meENCODING_LEGACY)
+        {
+            /* a single byte file has a byte per char, so the file's byte counts are the char counts */
+            predchars = preduc;
+            numchars = numuc;
+            ratio = (numchars != 0) ? ((100L*predchars) / numchars):0;
+        }
+        if(n == 0)
+        {
+            sprintf((char *)resultStr,"|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|%d|0x%02x|%d|%d|%d|%d|",
+                    predlines+1,numlines+1,coff,eoff,predchars,numchars,ratio,
+                    (int) (cwp->dotLineNo-cwp->vertScroll),cwp->textDepth-1,ccol,ecol,curchar,
+                    cuoff,euoff,preduc,numuc);
+            return meTRUE;
+        }
+        n = sprintf((char *)resultStr,"Line %d/%d Col %d/%d Char %d/%d Byte %d/%d (%d%%) Win Line %d/%d ACol %d/%d ",
+                    predlines+1,numlines+1,cuoff,euoff,preduc,numuc,predchars,numchars,ratio,
+                    (int) (cwp->dotLineNo-cwp->vertScroll),cwp->textDepth-1,ccol,ecol);
+        if(bufferInfoEol(cwp,resultStr+n))
+            ;
+        else if(meUniIsRaw(curchar))
+            sprintf((char *)resultStr+n,"raw byte (0x%02X)",meUniRawByte(curchar));
+        else if(((cwp->buffer->encoding & meENCODING_TYPE) == meENCODING_LEGACY) && (cwp->buffer->codePage != NULL))
+        {
+            /* a single byte file shows the byte first */
+            int cb;
+            if((cb = ffCharFromUnicode(cwp->buffer->codePage,curchar)) < 0)
+                sprintf((char *)resultStr+n,"char U+%04X (not in %s)",curchar,cwp->buffer->codePage->name);
+            else
+                sprintf((char *)resultStr+n,"char %d (%02X, U+%04X)",cb,cb,curchar);
+        }
+        else
+            sprintf((char *)resultStr+n,"char %d (U+%04X)",curchar,curchar);
+        return mlwrite(MWSPEC,resultStr);
+    }
+#endif
     if(n == 0)
     {
         /* macro call - put info into $result only and in a more usable form */
@@ -445,9 +622,20 @@ bufferInfo(int f, int n)
         return meTRUE;
     }
     /* summarize and report the info */
-    sprintf((char *)resultStr,"Line %d/%d Col %d/%d Char %d/%d (%d%%) Win Line %d/%d ACol %d/%d char %d (0x%02x)",
-            predlines+1,numlines+1,coff,eoff,predchars,numchars,ratio,
-            (int) (cwp->dotLineNo-cwp->vertScroll),cwp->textDepth-1,ccol,ecol,curchar,curchar);
+    n = sprintf((char *)resultStr,"Line %d/%d Col %d/%d Char %d/%d (%d%%) Win Line %d/%d ACol %d/%d ",
+                predlines+1,numlines+1,coff,eoff,predchars,numchars,ratio,
+                (int) (cwp->dotLineNo-cwp->vertScroll),cwp->textDepth-1,ccol,ecol);
+    if(bufferInfoEol(cwp,resultStr+n) == 0)
+    {
+#if MEOPT_EXTENDED
+        /* the char's Unicode value in the buffer's code page */
+        meCodePage *cp=(cwp->buffer->codePage != NULL) ? cwp->buffer->codePage:codePageCur;
+        if((curchar >= 0x80) && cp->chrToUni[curchar-0x80])
+            sprintf((char *)resultStr+n,"char %d (0x%02x U+%04X)",curchar,curchar,cp->chrToUni[curchar-0x80]);
+        else
+#endif
+            sprintf((char *)resultStr+n,"char %d (0x%02x)",curchar,curchar);
+    }
     return mlwrite(MWSPEC,resultStr);
 }
 
@@ -475,6 +663,66 @@ getcline(meWindow *wp)	/* get the current line number */
     return numlines;
 }
 
+#if MEOPT_UNICODE
+/* Returns the display width of the char at ss which starts at column col and sets *len to its
+ * length, relies on the text being nul terminated */
+static int
+getCharWidth(meUByte *ss, int col, int tabWidth, int *len)
+{
+    meUInt uc;
+    int cc=*ss;
+    
+    *len = 1;
+    if(cc & 0x80)
+    {
+        *len = meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+        return renderUniChar(NULL,uc);
+    }
+    if(isDisplayable(cc))
+        return 1;
+    if(cc == meCHAR_TAB)
+        return get_tab_pos(col,tabWidth) + 1;
+    if(cc < 0x20)
+        return 2;
+    return 4;
+}
+
+int
+getcol(meUByte *ss,register int off, int tabWidth)
+{
+    int col=0, len;
+    
+    while(off > 0)
+    {
+        col += getCharWidth(ss,col,tabWidth,&len);
+        ss += len;
+        off -= len;
+    }
+    return col;
+}
+
+int
+setccol(meWindow *wp,register int pos)
+{
+    meUByte *ss=wp->dotLine->text;
+    int col=0, len, ii=0, llen;
+    
+    llen = meLineGetLength(wp->dotLine);
+    /* scan the line until we are at or past the target column */
+    while(ii < llen)
+    {
+        col += getCharWidth(ss+ii,col,wp->buffer->tabWidth,&len);
+        ii += len;
+        if(col > pos)
+        {
+            ii -= len;
+            break;
+        }
+    }
+    wp->dotOffset = ii;
+    return ((col < pos) ? meFALSE:meTRUE);
+}
+#else
 int
 getcol(meUByte *ss,register int off, int tabWidth)
 {
@@ -529,6 +777,7 @@ setccol(meWindow *wp,register int pos)
     /* if not long enough return an error */
     return ((col < pos) ? meFALSE:meTRUE);
 }
+#endif
 
 int
 getiwcol(meWindow *wp, register int off)
@@ -543,6 +792,9 @@ getiwcol(meWindow *wp, register int off)
     }
     return col;
 }
+
+/* The offset table may hold a char's width against any of its bytes, so a char reached part way
+ * is finished; the widths are summed a byte at a time as the other bytes hold 0 */
 int
 setcwcol(meWindow *wp,register int col)
 {
@@ -551,9 +803,16 @@ setcwcol(meWindow *wp,register int col)
     if((col > 0) && ((jj = wp->dotLine->length) > 0))
     {
         register meUByte *off = windCurLineOffsetEval(wp);
-        do {
-            col -= off[ii++];
-        } while((ii < jj) && (col > 0));
+        do
+            col -= off[ii];
+        while((++ii < jj) && (col > 0));
+#if MEOPT_UNICODE
+        {
+            register meUByte *text = wp->dotLine->text;
+            while((ii < jj) && ((text[ii] & 0xc0) == 0x80))
+                col -= off[ii++];
+        }
+#endif
     }
     wp->dotOffset = ii;
     return ((col) ? meFALSE:meTRUE);
@@ -569,35 +828,37 @@ transChars(int f, int n)
 {
     meWindow *cwp=frameCur->windowCur;
     meLine *dotp;
-    int doto;
-    meUByte cl, cr;
+    meUByte buf[meCHAR_LEN_MAX*2];
+    int doto, lo, ro, eo, ii;
 
     dotp = cwp->dotLine;
     doto = cwp->dotOffset;
     if((doto==meLineGetLength(dotp)) && (doto > 0))
-        cwp->dotOffset--;
-    if(cwp->dotOffset == 0)
-    {
-        cwp->dotOffset = doto;
+        ro = meLinePrevChar(dotp,doto);
+    else
+        ro = doto;
+    if(ro == 0)
         return meFALSE;
-    }
-    cr = meLineGetChar(dotp, cwp->dotOffset);
-    cwp->dotOffset--;
     if(bufferSetEdit() <= 0)               /* Check we can change the buffer */
         return meABORT;
-    cl = meLineGetChar(dotp, cwp->dotOffset);
+    /* swap the chars lo-ro & ro-eo, the total length does not change */
+    lo = meLinePrevChar(dotp,ro);
+    eo = meLineNextChar(dotp,ro);
+    memcpy(buf,dotp->text+ro,eo-ro);
+    memcpy(buf+eo-ro,dotp->text+lo,ro-lo);
     lineSetChanged(WFMAIN);
+    for(ii=lo ; ii<eo ; ii++)
+    {
+        if(meLineGetChar(dotp,ii) != buf[ii-lo])
+        {
 #if MEOPT_UNDO
-    meUndoAddRepChar();
-    meLineSetChar(dotp, cwp->dotOffset, cr);
-    cwp->dotOffset++;
-    meUndoAddRepChar();
-    meLineSetChar(dotp, cwp->dotOffset, cl);
-#else
-    meLineSetChar(dotp, cwp->dotOffset, cr);
-    meLineSetChar(dotp, cwp->dotOffset+1, cl);
+            cwp->dotOffset = ii;
+            meUndoAddRepChar();
 #endif
-    cwp->dotOffset = doto;
+            meLineSetChar(dotp,ii,buf[ii-lo]);
+        }
+    }
+    cwp->dotOffset = (doto == eo) ? doto:(lo+eo-ro);
     return (meTRUE);
 }
 
@@ -678,9 +939,9 @@ transLines(int f, int n)
 }
 
 int
-quoteKeyToChar(meUShort cc)
+quoteKeyToChar(meKey cc)
 {
-    if(cc > 255)
+    if(!meKeyIsChar(cc))
     {
         switch(cc)
         {
@@ -711,6 +972,13 @@ quoteKeyToChar(meUShort cc)
         case ME_SPECIAL|SKEY_right:
             cc = 'F' - '@';
             break;
+#if MEOPT_UNICODE
+        case ME_CONTROL|' ':
+        case ME_CONTROL|'@':
+            /* a NUL, a terminal sends C-@ as C-space */
+            cc = 0;
+            break;
+#endif
         default:
             return -1;
         }
@@ -719,10 +987,227 @@ quoteKeyToChar(meUShort cc)
 }
 
 
+#if !MEOPT_UNICODE
+#define meUNI_MAX 0x10ffff
+#endif
+/* Parses a char code reply, a hex code point optionally U+ prefixed, xHH or rHH. Returns -1 if
+ * invalid, 0 if it has no digit yet, else 1 with the code type ('u', 'x' or 'r') and value */
+static int
+charCodeParse(meUByte *ss, int *type, meUInt *uc)
+{
+    meUInt vv=0, lim=0xff;
+    int tt, nn=0;
+
+    if(((tt = (*ss | 0x20)) == 'x') || (tt == 'r'))
+        ss++;
+    else
+    {
+        if(tt == 'u')
+        {
+            if(*++ss == '\0')
+                return 0;
+            if(*ss++ != '+')
+                return -1;
+        }
+        tt = 'u';
+        lim = meUNI_MAX;
+    }
+    for(; *ss != '\0' ; ss++, nn++)
+        if(!isXDigit(*ss) || ((vv = (vv << 4) | hexToNum(*ss)) > lim))
+            return -1;
+    *type = tt;
+    *uc = vv;
+    return (nn > 0);
+}
+
+/* Writes the char of a parsed code to buf as internal text, returns its length, 0 if the code
+ * page has no char for it or -1 for a NUL in the 8-bit build, which cannot hold one */
+static int
+charCodeChar(int tt, meUInt uc, meUByte *buf)
+{
+#if MEOPT_UNICODE
+    if(uc >= 0x80)
+    {
+        if(tt == 'r')
+            uc += meUNI_RAW_BASE;
+        else if((tt == 'x') && ((uc = charToUnicode[uc-0x80]) == 0))
+            return 0;
+    }
+    return meUtf8Encode(buf,uc);
+#else
+    if(uc == 0)
+        return -1;
+    if((tt == 'u') && (uc >= 0x80))
+    {
+        int ii = -1;
+#if MEOPT_EXTENDED
+        ii = 127;
+        while((ii >= 0) && (charToUnicode[ii] != uc))
+            ii--;
+#endif
+        if(ii < 0)
+            return 0;
+        uc = ii + 128;
+    }
+    buf[0] = (meUByte) uc;
+    return 1;
+#endif
+}
+
+/* Prompts for a char by its code (see charCodeParse), the default prompt when prompt is NULL, and
+ * writes it to buf as internal text, a raw byte and a NUL in their internal form. Returns the
+ * length written, 0 if the user backed out (Esc or an empty reply) or the code has no char, or
+ * meABORT on an abort */
+int
+meGetCharCode(meUByte *prompt, meUByte *buf)
+{
+    meUByte reply[16], line[meBUF_SIZE_MAX];
+    meUInt uc=0;
+    int ll=0, cc, tt, rr;
+
+    if(prompt == NULL)
+        prompt = (meUByte *) "Char code (hex, U+hex, xHH, rHH)";
+    if(clexec)
+    {
+        if(meGetString(prompt,0,0,line,meBUF_SIZE_MAX) <= 0)
+            return meABORT;
+        if(line[0] == '\0')
+            return 0;
+        if(charCodeParse(line,&tt,&uc) <= 0)
+        {
+            mlwrite(0,(meUByte *)"[Invalid char code %s]",line);
+            return 0;
+        }
+        if((rr = charCodeChar(tt,uc,buf)) < 0)
+        {
+            mlwrite(0,(meUByte *)"[NUL not supported]");
+            rr = 0;
+        }
+        else if(rr == 0)
+            mlwrite(0,(meUByte *)"[Code page has no char %s]",line);
+        return rr;
+    }
+    else
+    {
+        meUByte *msg=NULL;
+        meUInt arg;
+        int idx;
+#if MEOPT_LOCALBIND
+        meUByte oldUseMlBinds=useMlBinds;
+        useMlBinds = 1;
+#endif
+        sprintf((char *) line,"%s: ",prompt);
+        reply[0] = '\0';
+        for(;;)
+        {
+            /* a rejected key is beeped and the reason shown after the reply */
+            mlDisp(line,reply,msg,ll);
+            msg = NULL;
+            cc = meGetKeyFromUser(meFALSE,0,meGETKEY_SILENT|meGETKEY_SINGLE);
+            frameCur->mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML);
+            idx = decode_key((meKey) cc,&arg);
+            if((cc == breakc) || (idx == CK_ABTCMD))
+            {
+                rr = meABORT;
+                break;
+            }
+            if((cc == (ME_SPECIAL|SKEY_esc)) || (cc == 0x1b))
+            {
+                rr = 0;
+                break;
+            }
+            if((cc == (ME_SPECIAL|SKEY_return)) || (cc == 0x0d) || (idx == CK_NEWLIN))
+            {
+                if(ll == 0)
+                {
+                    rr = 0;
+                    break;
+                }
+                if(charCodeParse(reply,&tt,&uc) <= 0)
+                    msg = (meUByte *) " [incomplete]";
+                else if((rr = charCodeChar(tt,uc,buf)) > 0)
+                    break;
+                else if(rr < 0)
+                    msg = (meUByte *) " [NUL not supported]";
+                else
+                    msg = (meUByte *) " [not in code page]";
+            }
+            else if((cc == (ME_SPECIAL|SKEY_backspace)) || (cc == 0x08) || (idx == CK_DELBAK))
+            {
+                if(ll > 0)
+                    reply[--ll] = '\0';
+                else
+                    TTbell();
+                continue;
+            }
+            else if(idx == CK_YANK)
+            {
+                /* a yank must leave a valid reply, surrounding spaces are ignored */
+                meKillNode *kp;
+                meUByte *ss, *se;
+                int kl=ll;
+#ifdef _CLIPBRD
+                TTgetClipboard((kbdmode == mePLAY) ? 0:1);
+#endif
+                kp = (klhead == NULL) ? NULL:klhead->kill;
+                for(; kp != NULL ; kp=kp->next)
+                {
+                    for(ss=kp->data ; (*ss != '\0') && (kl < (int) sizeof(reply)-1) ; ss++)
+                        if((kl > ll) || !isSpace(*ss))
+                            reply[kl++] = *ss;
+                    if(*ss != '\0')
+                        break;
+                }
+                for(se=reply+kl ; (se > reply+ll) && isSpace(se[-1]) ; se--)
+                    ;
+                *se = '\0';
+                if((kp == NULL) && (se > reply+ll) && (charCodeParse(reply,&tt,&uc) >= 0))
+                {
+                    ll = (int) (se - reply);
+                    continue;
+                }
+                reply[ll] = '\0';
+                msg = (meUByte *) " [not a char code]";
+            }
+            else if(meKeyIsChar(cc) && (cc > ' ') && (cc < 0x7f) && (ll < (int) sizeof(reply)-1))
+            {
+                reply[ll] = (meUByte) cc;
+                reply[ll+1] = '\0';
+                if(charCodeParse(reply,&tt,&uc) >= 0)
+                {
+                    ll++;
+                    continue;
+                }
+                if(!isXDigit(cc))
+                    msg = (meUByte *) " [not hex]";
+                else if(((reply[0] | 0x20) == 'x') || ((reply[0] | 0x20) == 'r'))
+                    msg = (meUByte *) " [too large, max FF]";
+                else
+                    msg = (meUByte *) " [too large, max 10FFFF]";
+                reply[ll] = '\0';
+            }
+            else if(meKeyIsChar(cc) && (cc > ' ') && (cc < 0x7f))
+                msg = (meUByte *) " [too long]";
+            else
+                msg = (meUByte *) " [not hex]";
+            TTbell();
+        }
+#if MEOPT_LOCALBIND
+        useMlBinds = oldUseMlBinds;
+#endif
+        if(rr == meABORT)
+            return ctrlg(meFALSE,1);
+        frameCur->mlStatus &= ~(MLSTATUS_KEEP|MLSTATUS_RESTORE|MLSTATUS_POSML);
+        mlerase(0);
+        return rr;
+    }
+}
+
 /* quote-char. Quote the next character, and insert it into the buffer. All
  * the characters are taken literally, with the exception of the C-j,
  * which always has its line splitting meaning. The character is always read,
- * even if it is inserted 0 times. Normally bound to C-q
+ * even if it is inserted 0 times. A -ve n prompts for the char's code and
+ * inserts it -n times. Normally bound to C-q
  */
 int
 quote(int f, int n)
@@ -730,11 +1215,25 @@ quote(int f, int n)
     register int s;
     register int c;
 
-    if(n < 0)
-        return meFALSE;
     if(n == 0)
         return meTRUE;
-    if((c = mlCharReply((meUByte *)"Quote: ",mlCR_QUOTE_CHAR,NULL, NULL)) < 0)
+    if(n < 0)
+    {
+        meUByte buf[meCHAR_LEN_MAX];
+        if((c = meGetCharCode(NULL,buf)) <= 0)
+            return (c == 0) ? meTRUE:meABORT;
+#if MEOPT_UNICODE
+        {
+            meUInt uc;
+            meUtf8Decode(buf,c,&uc);
+            c = (int) uc;
+        }
+#else
+        c = buf[0];
+#endif
+        n = -n;
+    }
+    else if((c = mlCharReply((meUByte *)"Quote: ",mlCR_QUOTE_CHAR,NULL, NULL)) < 0)
         return mlwrite(MWABORT,(meUByte *)"[Cannot quote this key]");
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s;
@@ -987,7 +1486,7 @@ indentInsert(void)
     if(lineInsertNewline(0) <= 0)
         return meFALSE;
 #if MEOPT_UNDO
-    meUndoAddInsChar();
+    meUndoAddInsChar(1);
 #endif
     if(indentLine(&inComment) <= 0)
         return meFALSE;
@@ -1062,7 +1561,9 @@ meLineSetIndent(int curInd, int newInd, int undo)
 int
 meNewline(int f, int n)
 {
+#if MEOPT_WORDPRO || MEOPT_HILIGHT
     meBuffer *cbp;
+#endif
     register int s;
 
     if (n == 0)
@@ -1071,7 +1572,9 @@ meNewline(int f, int n)
         return meFALSE;
     if((s=bufferSetEdit()) <= 0)               /* Check we can change the buffer */
         return s;
+#if MEOPT_WORDPRO || MEOPT_HILIGHT
     cbp = frameCur->windowCur->buffer;
+#endif
 
 #if MEOPT_WORDPRO
     /* If a newline was typed, fill column is defined, the argument is non-
@@ -1105,7 +1608,7 @@ meNewline(int f, int n)
             s = lineInsertNewline(0);
 #if MEOPT_UNDO
             if (s > 0)
-                meUndoAddInsChar();
+                meUndoAddInsChar(1);
 #endif
         }
         if (s <= 0)
@@ -1149,7 +1652,7 @@ forwDelChar(int f, int n)
 
     /* Always make ldelete save the deleted stuff in a kill buffer
      * unless only one character and not in letter kill mode. */
-    return ldelete(n,keep);
+    return ldelete(meWindowCharsToBytes(frameCur->windowCur,n),keep);
 }
 
 /* backward-delete-char. Normally bound to C-h */
@@ -2882,7 +3385,7 @@ int
 cmpBuffers(int f, int n)
 {
     register meWindow *swp, *wp;
-    register meUByte cc;
+    register meUInt cc;
 
     swp = NULL;
     wp = frameCur->windowList;
@@ -2903,10 +3406,10 @@ cmpBuffers(int f, int n)
         for(;;)
         {
             wp = swp;
-            cc = meWindowGetChar(wp);
+            cc = meWindowGetUni(wp);
             while((wp = wp->next) != NULL)
                 if(((wp->flags & meWINDOW_NO_CMP) == 0) &&
-                   (meWindowGetChar(wp) != cc))
+                   (meWindowGetUni(wp) != cc))
                     return meFALSE;
             wp = swp;
             cc = meWindowForwardChar(wp,1);
@@ -2925,24 +3428,24 @@ cmpBuffers(int f, int n)
         {
             meUByte moreData;
             meUByte winData;
-            meUByte tmpc;
+            meUInt  tmpc;
 
             wp = swp;
-            cc = meWindowGetChar(wp);
-            if((n & 1) && isSpace(cc))
+            cc = meWindowGetUni(wp);
+            if((n & 1) && meUniIsSpace(cc))
                 cc = ' ';
 
             /* Check the current character */
             while((wp = wp->next) != NULL)
             {
-                if(((wp->flags & meWINDOW_NO_CMP) == 0) && ((tmpc = meWindowGetChar(wp)) != cc))
+                if(((wp->flags & meWINDOW_NO_CMP) == 0) && ((tmpc = meWindowGetUni(wp)) != cc))
                 {
                     if(cc == ' ')
                     {
-                        if(((n & 1) == 0) || !isSpace(tmpc))
+                        if(((n & 1) == 0) || !meUniIsSpace(tmpc))
                             return meFALSE;
                     }
-                    else if(((n & 2) == 0) || (toLower(cc) != toLower(tmpc)))
+                    else if(((n & 2) == 0) || (meUniCharToLower(cc) != meUniCharToLower(tmpc)))
                         return meFALSE;
                 }
             }
@@ -2955,8 +3458,8 @@ cmpBuffers(int f, int n)
             {
                 do
                 {
-                    tmpc = meWindowGetChar(wp);
-                    if(!isSpace(tmpc))
+                    tmpc = meWindowGetUni(wp);
+                    if(!meUniIsSpace(tmpc))
                         break;
                 }
                 while ((moreData = meWindowForwardChar(wp,1)) > 0);
@@ -2971,8 +3474,8 @@ cmpBuffers(int f, int n)
                     {
                         do
                         {
-                            tmpc = meWindowGetChar(wp);
-                            if(!isSpace(tmpc))
+                            tmpc = meWindowGetUni(wp);
+                            if(!meUniIsSpace(tmpc))
                                 break;
                         }
                         while ((winData = meWindowForwardChar(wp,1)) > 0);

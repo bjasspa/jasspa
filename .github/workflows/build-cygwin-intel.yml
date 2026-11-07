@@ -101,38 +101,38 @@ jobs:
         Move-Item -Path windows100-intel32 -Destination ..
         cd ..
         Rename-Item -Path release_readme.txt -NewName readme.txt
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
         Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_cygwin_intel_binaries
 
     - name: Create cygwin-intel mesc
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\mesingle
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
+        cd .\dev\mesingle
         mkdir -Path bin\cygwin-intel64
-        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mec.exe -t ..\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesc.exe
-        Copy-Item -Path ..\LICENSE -Destination .
-        Copy-Item -Path ..\readme.txt -Destination .
-        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
+        ..\..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\..\bin\cygwin3-intel64\mec.exe -t ..\..\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesc.exe
+        Copy-Item -Path ..\..\LICENSE -Destination .
+        Copy-Item -Path ..\..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesc
 
     - name: Create cygwin-intel mesw
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
-        cd .\mesingle
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
+        cd .\dev\mesingle
         Remove-Item bin\cygwin-intel64\mesc.exe
-        ..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\bin\cygwin3-intel64\mew.exe -t ..\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesw.exe
-        Copy-Item -Path ..\LICENSE -Destination .
-        Copy-Item -Path ..\readme.txt -Destination .
-        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
+        ..\..\windows100-intel32\mec.exe -p "@./mesgen" -f -p ..\..\bin\cygwin3-intel64\mew.exe -t ..\..\windows100-intel32\tfs.exe -o bin\cygwin-intel64\mesw.exe
+        Copy-Item -Path ..\..\LICENSE -Destination .
+        Copy-Item -Path ..\..\readme.txt -Destination .
+        Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_cygwin_intel_mesw
 
     - name: Create cygwin-intel openssl download
       shell: pwsh
       run: |
         cd .\microemacs
-        $env:MEVER=$(.\windows100-intel32\mec -p @contribs/ver.emf)
+        $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
         mkdir -Path tfs\bin\cygwin3-intel64
         Copy-Item -Path D:\cygwin\bin\cygssl-3.dll -Destination tfs\bin\cygwin3-intel64
         Copy-Item -Path D:\cygwin\bin\cygcrypto-3.dll -Destination tfs\bin\cygwin3-intel64

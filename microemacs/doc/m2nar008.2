@@ -54,8 +54,10 @@ or logograms (e.g. Chinese) which require multiple bytes to encode. There
 are many different code pages to choose between and if the wrong code page is selected then the incorrect
 character translation is performed resulting in an incorrect command behaviour and/or character display.
 .PP
-For several  reasons the core of \*(mS can only support a single byte code page so cannot support  languages like
-Chinese. 
+A version of \*(mS with Unicode support holds all text as Unicode, so text in any language can be edited, see
+\fBUnicode support\fR below; code pages are then only used for files which are not Unicode encoded. A version without
+Unicode support can only support a single byte code page so cannot support languages like Chinese, the rest of this
+section mainly concerns that version.
 .SS "Internal Code Page"
 Before the adoption of  international  standards such as Unicode, each operating  system vendor would typically create
 their own code pages that best met the needs of their customers. As a result there are many in use
@@ -68,7 +70,8 @@ main  Windows  code pages (i.e.  CP-1252,  CP-1253 etc) have been  adopted as th
 characters  providing the best language support.  Therefore all supported  languages use the most appropriate  Windows
 code page for their spelling rules and dictionaries. 
 .SS "Displayed Code Page"
-The current display code page being used is not determined by the current operating system, but by the font being
+A version of \*(mS with Unicode support draws every character, the font only needs to have it. In a version without
+Unicode support the current display code page being used is not determined by the current operating system, but by the font being
 used in \*(mS (which may be limited be the OS). For example, UNIX X-Term  systems  typically  use \*(iF based fonts but
 fonts using other code pages, such as CP-1252  which have  numerous  additional  important  characters  such as a Euro
 symbol, can be found in \fCpcf\fR format, installed and used by \*(mS.
@@ -82,7 +85,8 @@ command to check and correct the font and code page \*(mS is configured to use.
 If the problem persists (i.e. because the encoding used to write the text is not supported on your current
 system) use the
 .Ht change-buffer-encoding 3
-command to convert the text to the current display code page.
+command to convert the text to the current display code page, or with Unicode support to decode it with the encoding
+it was written in.
 .PP
 If your code page is not supported then first make sure that \*(mS will draw all of the characters to be used. By
 default \*(mS does not draw some characters directly as the symbol may not be defined. When a character is not defined
@@ -118,14 +122,55 @@ defined by using the '\fCM\fR' flag of the
 .Ht set-char-mask 2
 command.
 .PP
-The user may declare the display code page in the platform page of
+The user may declare the 8-bit code page in the platform page of
 .Ht user-setup 3 .
 All the settings required for supporting each code page may be found in its \fCcp*.emf\fR macro file and the list of
 code pages in \fCcodepage.emf\fR, so if your code page is not supported, these are the files to edit, see
 .Ht code-page-define 3 .
 .SS "Unicode support"
-Unicode support within \*(mS is very limited due to its single byte code page limitation,  however flag \fBc\fR of
-command 
+A version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) holds all text as Unicode:
+.BS
+When a file is read its encoding is detected, UTF-8, UTF-16 or UTF-32 (little or big endian, with or without a byte
+order mark), any other file is read with the current 8-bit code page. The buffer's encoding is given by
+.Ht $buffer-encoding 5 ,
+which can be set to save the buffer in another encoding or to re-read it with a different one, and is shown on the mode
+line (see
+.Ht $mode-line 5 ).
+.BU
+Reading a file is lossless, any byte which is not valid in the file's encoding is kept as a raw byte, drawn as
+\fC\\x\fIhh\fR and written back as it was, and NUL characters are kept. So any file can be loaded and saved
+unchanged, see
+.Ht $file-checks 5
+for the checks made when a file is saved.
+.BU
+Each character is drawn in one cell, or two for a wide character, a combining mark or other zero width or format
+character is drawn as \fC\\u\fIhhhh\fR so every character can be seen. A terminal is assumed to use UTF-8 when its
+locale does, otherwise the current 8-bit code page. Use
+.Ht buffer-info 2
+to get the details of the character at the cursor.
+.BU
+A character can be typed directly or entered by its code using
+.Ht quote-char 2
+with a negative argument, or selected using
+.Ht insert-symbol 3 .
+.BU
+Commands which move by, delete or change the case of a character work on whole characters. Searches match whole
+characters and ignore case using Unicode case folding, see
+.Hl "Regular Expressions" RegularExpressions 2
+for the character classes.
+.BU
+The macro string functions count characters, functions
+.Ht &atoi 4
+and
+.Ht &itoa 4
+use Unicode code points and the byte functions (e.g.
+.Ht &blen 4 )
+work on the UTF-8 bytes.
+.BE
+A version of \*(mS without Unicode support has very limited support due to its single byte code page limitation,
+however flag \fBc\fR of command
 .Ht set-char-mask 2
 can be used to map characters 0x80 to 0xff of the current code page to their Unicode equivalent. Correctly mapping
 these  characters  allows  better  handling  of  text  transfer  between  \*(mS  and the  system  clipboard  (see  bit
@@ -146,6 +191,10 @@ commands use the 'Word' character set such as
 .Ht forward-word 2
 and
 .Ht upper-case-word 2 .
+A version of \*(mS with Unicode support classifies a character from 0x80 by its Unicode properties, so every letter,
+mark and number is a word character, the rest of this section concerns the \s-1ASCII\s0 characters in that version and
+a version without Unicode support.
+.PP
 The  characters  that form the word class should be determined by the display code page being used rather than by the
 language, this is because which character are letters within the display code page doesn't change and flagging
 all letters  improves  general  usability.  For example,  English does not typically use accented  letters but it does

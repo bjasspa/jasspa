@@ -47,7 +47,16 @@ not  possible  to split or join a protected  line with any other line. This is
 used by the folding or collapse mechanisms to protect
 .Hl "narrrow" narrow-buffer 2
 regions from editing operations.
-.IP \fB0x0080-0x0800\fR
+.IP \fB0x0080\fR
+The line's ending differs from the buffer's
+.Ht cr 2m
+mode, i.e. it ends with a carriage return when the mode is disabled or without one when enabled. This is set when a
+file with inconsistent line endings is read so the line is written back unchanged.
+.IP \fB0x0100\fR
+The line's ending differs from the buffer's
+.Ht lf 2m
+mode in the same way.
+.IP \fB0x0200-0x0800\fR
 User defined. Users may use the upper most bits from left to right. JASSPA may
 use more bits in future  releases which shall be consumed from the lower bits,
 right to left.

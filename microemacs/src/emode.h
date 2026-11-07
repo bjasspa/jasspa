@@ -116,8 +116,7 @@ meMode modeLineDraw = {
     meModeMask(MDTIME)   |
     meModeMask(MDUNDO)   |
     meModeMask(MDVIEW)   |
-    meModeMask(MDWRAP)   |
-    meModeMask(MDXLATE)
+    meModeMask(MDWRAP)
 } ;
 
 #endif /* INC_MODE_DEF */

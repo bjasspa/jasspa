@@ -24,7 +24,10 @@ command  name  must be  either  unique  or the  name of an  existing  macro. A
 keyboard  macro is deleted  when another  keyboard  macro is defined, but when
 named, it is  preserved. A named  keyboard  macro can also be bound to its own
 command  key  sequence,  and may be inserted  into a buffer  enabling it to be
-saved and thus re-loaded and re-used at a later date.
+saved and thus re-loaded and re-used at a later date. The macro always keeps its source so
+.Ht insert-macro 2
+can insert it, whatever the value of
+.Ht $debug 5 .
 .SH "SEE ALSO"
 .na
 .Ht execute-file 2 ,

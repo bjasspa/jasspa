@@ -76,7 +76,7 @@ meCellMetrics mecm;
  * are not compiling unixterm.c we must provide them here.
  * ====================================================================== */
 /* mouseKeyState - The state of the control keys when the mouse was pressed. */
-meUShort mouseKeyState;          /* State of keyboard control */
+meKey mouseKeyState;          /* State of keyboard control */
 
 /* mouseKeys maps physical button index to allows swap. */
 static meUShort mouseKeys[8] = { 0, 1, 2, 3, 4, 5, 0, 0 };
@@ -124,6 +124,12 @@ MESKeyTable meSKeys = {
     .kpPageUp   = ME_SPECIAL | SKEY_kp_page_up,
 };
 
+/* ME's modifier bits, read by Swift as they depend on the build */
+MEModTable meNativeMods = { ME_SHIFT, ME_CONTROL, ME_ALT, ME_SPECIAL };
+
+/* Whether the frame store holds code points (see meNativeGetRowChars) */
+const int meNativeUnicode = MEOPT_UNICODE;
+
 meUByte meColorTable[ME_MAX_COLORS*3];
 
 /* ---- Thread-safe input queue -------------------------------------------
@@ -132,7 +138,7 @@ meUByte meColorTable[ME_MAX_COLORS*3];
  * ---------------------------------------------------------------------- */
 #define INPUT_QUEUE_SIZE 512
 
-static meUShort        gInputQueue[INPUT_QUEUE_SIZE];
+static meKey           gInputQueue[INPUT_QUEUE_SIZE];
 static int             gInputHead  = 0;
 static int             gInputTail  = 0;
 static int             gInputCount = 0;
@@ -255,7 +261,7 @@ sigAlarm(SIGNAL_PROTOTYPE)
 /* Push a key code - safe to call from any thread, including signal handlers
  * (pthread_mutex_lock is async-signal-safe on macOS via the kernel). */
 static void
-queuePush(meUShort key)
+queuePush(meKey key)
 {
     pthread_mutex_lock(&gInputMutex);
     if (gInputCount < INPUT_QUEUE_SIZE) {
@@ -269,7 +275,7 @@ queuePush(meUShort key)
 
 /* Pop one key - ME engine thread only. */
 static int
-queuePop(meUShort *key)
+queuePop(meKey *key)
 {
     int ok = 0;
     pthread_mutex_lock(&gInputMutex);
@@ -288,7 +294,7 @@ queuePop(meUShort *key)
 static void
 drainQueue(void)
 {
-    meUShort k;
+    meKey k;
 #ifdef _DRAGNDROP
     if (gOpenFileHead != NULL) {
         meOpenFileReq *ofr, *nfr;
@@ -389,10 +395,23 @@ meNativeOpenFile(const char *path)
  * while the ME engine thread is blocked on DispatchQueue.main.sync.
  * ====================================================================== */
 
-const uint8_t *
-meNativeGetRowText(int row)
+const uint32_t *
+meNativeGetRowChars(int row)
 {
-    return ((row >= 0) && (row <= (int) frameCur->depth)) ? frameCur->store[row].text:NULL;
+#if MEOPT_UNICODE
+    return ((row >= 0) && (row <= (int) frameCur->depth)) ? (const uint32_t *) frameCur->store[row].text:NULL;
+#else
+    /* the 8-bit chars are widened, Swift maps the code page chars when drawing */
+    static uint32_t rowChars[meFRAME_WIDTH_MAX];
+    meUByte *ss;
+    int ii;
+    if((row < 0) || (row > (int) frameCur->depth))
+        return NULL;
+    ss = frameCur->store[row].text;
+    for(ii=0 ; ii<frameCur->width ; ii++)
+        rowChars[ii] = ss[ii];
+    return rowChars;
+#endif
 }
 
 const uint16_t *
@@ -468,21 +487,40 @@ meNativeReturnViewFrameSize(void *viewPtr, int cols, int rows)
 }
 
 void
-meNativePushKey(uint16_t keyCode)
+meNativePushKey(uint32_t keyCode)
 {
-    queuePush((meUShort)keyCode);
+    queuePush((meKey) keyCode);
 }
 
 void
-meNativePushMouseMove(int col, int row, int dX, int dY, uint16_t modifiers)
+meNativePushChar(uint32_t uc, uint32_t mods)
 {
-    meUShort cc;
+#if MEOPT_UNICODE
+    if((uc > 0x10ffff) || ((uc >= 0xd800) && (uc <= 0xdfff)))
+        return;
+#else
+    /* the code page char, or the undefined char if the code page does not have it */
+    if(uc >= 0x80)
+    {
+        int ii = 127;
+        while((charToUnicode[ii] != uc) && (--ii >= 0))
+            ;
+        uc = (ii >= 0) ? (uint32_t) (ii+128):meCHAR_UNDEF;
+    }
+#endif
+    queuePush((meKey) (uc | (mods & (ME_SHIFT|ME_CONTROL|ME_ALT))));
+}
+
+void
+meNativePushMouseMove(int col, int row, int dX, int dY, uint32_t modifiers)
+{
+    meKey cc;
     meUInt arg;
     mouse_X  = (meShort)col;
     mouse_Y  = (meShort)row;
     mouse_dX = (meShort)dX;
     mouse_dY = (meShort)dY;
-    mouseKeyState = (meUShort) (modifiers & (ME_SHIFT | ME_CONTROL | ME_ALT));
+    mouseKeyState = (meKey) (modifiers & (ME_SHIFT | ME_CONTROL | ME_ALT));
     cc = (ME_SPECIAL | mouseKeyState | 
           (SKEY_mouse_move + mouseKeys[mouseState & (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)]));
     if((TTallKeys & 0x1) || (!TTallKeys && (decode_key(cc,&arg) != -1)))
@@ -492,37 +530,37 @@ meNativePushMouseMove(int col, int row, int dX, int dY, uint16_t modifiers)
 void
 meNativePushMouseButton(int button, int pick,
                         int col, int row, int dX, int dY,
-                        uint16_t modifiers)
+                        uint32_t modifiers)
 {
     mouse_X  = (meShort)col;
     mouse_Y  = (meShort)row;
     mouse_dX = (meShort)dX;
     mouse_dY = (meShort)dY;
-    mouseKeyState = (meUShort)(modifiers & (ME_SHIFT | ME_CONTROL | ME_ALT));
+    mouseKeyState = (meKey)(modifiers & (ME_SHIFT | ME_CONTROL | ME_ALT));
 
     if (pick) {
         mouseButtonPick((meUInt)button);
-        addKeyToBuffer((meUShort)(ME_SPECIAL
+        addKeyToBuffer((meKey)(ME_SPECIAL
                       | (SKEY_mouse_pick_1 + mouseKeys[button] - 1)
                       | mouseKeyState));
     } else {
         mouseButtonDrop((meUInt)button);
         timerKill(MOUSE_TIMER_ID);
-        addKeyToBuffer((meUShort)(ME_SPECIAL
+        addKeyToBuffer((meKey)(ME_SPECIAL
                       | (SKEY_mouse_drop_1 + mouseKeys[button] - 1)
                       | mouseKeyState));
     }
 }
 
 void
-meNativeScrollWheel(int up, int col, int row, uint16_t modifiers)
+meNativeScrollWheel(int up, int col, int row, uint32_t modifiers)
 {
     mouse_X  = (meShort)col;
     mouse_Y  = (meShort)row;
     mouse_dX = 0;
     mouse_dY = 0;
-    mouseKeyState = (meUShort)(modifiers & (ME_SHIFT | ME_CONTROL | ME_ALT));
-    addKeyToBuffer((meUShort)(ME_SPECIAL
+    mouseKeyState = (meKey)(modifiers & (ME_SHIFT | ME_CONTROL | ME_ALT));
+    addKeyToBuffer((meKey)(ME_SPECIAL
                   | (up ? SKEY_mouse_wup : SKEY_mouse_wdown)
                   | mouseKeyState));
 }
@@ -556,6 +594,50 @@ meNativeDeleteFrame(void *viewPtr)
 {
     gDeleteFrameView = viewPtr;
     wakeSelect();
+}
+
+/* Converts the char at *ssp of internal text to UTF-8 in dd (4 bytes) and moves *ssp past it,
+ * returns the number of bytes. A Unicode build's raw byte has no char so is given as U+FFFD, an
+ * 8-bit build's char is converted from the code page (Latin-1 if it has no mapping) */
+static int
+meNativeCharToUtf8(meUByte **ssp, meUByte *dd)
+{
+    meUByte *ss=*ssp, cc=*ss;
+#if MEOPT_UNICODE
+    meUInt uc;
+    
+    if(cc < 0x80)
+    {
+        *ssp = ss+1;
+        dd[0] = cc;
+        return 1;
+    }
+    *ssp = ss + meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+    if(meUniIsRaw(uc))
+        uc = meUNI_REPLACE;
+    return meUtf8Encode(dd,uc);
+#else
+    meUShort uc;
+    
+    *ssp = ss+1;
+    if((cc < 0x80) || ((uc = charToUnicode[cc-128]) == 0))
+        uc = cc;
+    if(uc < 0x80)
+    {
+        dd[0] = (meUByte) uc;
+        return 1;
+    }
+    if(uc < 0x800)
+    {
+        dd[0] = (meUByte) (0xc0 | (uc >> 6));
+        dd[1] = (meUByte) (0x80 | (uc & 0x3f));
+        return 2;
+    }
+    dd[0] = (meUByte) (0xe0 | (uc >> 12));
+    dd[1] = (meUByte) (0x80 | ((uc >> 6) & 0x3f));
+    dd[2] = (meUByte) (0x80 | (uc & 0x3f));
+    return 3;
+#endif
 }
 
 #ifdef _CLIPBRD
@@ -605,6 +687,20 @@ clipBuildUtf8(int *outLen)
     } else {
         for(killp = klhead->kill; killp != NULL; killp = killp->next) {
             meUByte *dd = killp->data;
+#if MEOPT_UNICODE
+            /* internal text is UTF-8, only raw bytes need converting */
+            (void) cc;
+            while(*dd != '\0') {
+                if(utf8len + meUTF8_LEN_MAX + 1 > utf8cap) {
+                    meUByte *nb = (meUByte *) meRealloc(utf8buf, utf8cap * 2);
+                    if(nb == NULL) { meFree(utf8buf); return NULL; }
+                    utf8buf = nb;
+                    utf8cap *= 2;
+                }
+                utf8len += meNativeCharToUtf8(&dd,utf8buf+utf8len);
+            }
+            continue;
+#endif
             while((cc = *dd++) != '\0') {
                 if(utf8len + 4 > utf8cap) {
                     meUByte *nb = (meUByte *) meRealloc(utf8buf, utf8cap * 2);
@@ -737,6 +833,70 @@ TTgetClipboard(int flag)
         return;
 
     /* ---- Convert UTF-8 clipboard text - ME kill buffer ---- */
+#if MEOPT_UNICODE
+    {
+        /* valid UTF-8 is copied, an invalid byte is kept as a raw byte (2 bytes), a line is split
+         * if longer than meLINE_ELEN_MAX bytes */
+        meUByte *ss, *dd, bb[meUTF8_LEN_MAX];
+        int len, rem, ll, cl, nn;
+        
+        ss = (meUByte *) utf8text;
+        rem = len = (int) strlen(utf8text);
+        if((len > 0) &&
+           ((kn = (meKillNode *) meMalloc(((size_t)(&(((meKillNode *)0)->data[1]))) +
+                                          (len*2) + ((len*2)/meLINE_ELEN_MAX) + 1)) != NULL))
+        {
+            dd = kn->data;
+            ll = 0;
+            while(rem > 0)
+            {
+                if((*ss == '\r') || (*ss == '\n'))
+                {
+                    if((*ss++ == '\r') && (rem > 1) && (*ss == '\n'))
+                    {
+                        ss++;
+                        rem--;
+                    }
+                    rem--;
+                    *dd++ = meCHAR_NL;
+                    ll = 0;
+                    continue;
+                }
+                if(*ss < 0x80)
+                    cl = nn = 1;
+                else if((cl = meUtf8SeqLen(ss,rem)) > 0)
+                    nn = cl;
+                else
+                {
+                    cl = 1;
+                    nn = meUtf8Encode(bb,meUNI_RAW_BASE + *ss);
+                }
+                if(ll + nn > meLINE_ELEN_MAX)
+                {
+                    *dd++ = meCHAR_NL;
+                    ll = 0;
+                }
+                if(nn == cl)
+                    memcpy(dd,ss,cl);
+                else
+                    memcpy(dd,bb,nn);
+                dd += nn;
+                ll += nn;
+                ss += cl;
+                rem -= cl;
+            }
+            *dd = '\0';
+            
+            /* Discard if identical to the current kill-buffer head */
+            if((klhead != NULL) && (klhead->kill != NULL) &&
+               (klhead->kill->next == NULL) &&
+               !meStrcmp(klhead->kill->data, kn->data)) {
+                meFree(kn);
+                kn = NULL;
+            }
+        }
+    }
+#else
     {
         const meUByte *ss;
         meUByte       *dd;
@@ -758,10 +918,12 @@ TTgetClipboard(int flag)
                 } else {
                     ll++;
                 }
-            } else if(c0 < 0xe0) {
-                ss += 2; ll++;
             } else {
-                ss += 3; ll++;
+                /* a lead byte and its continuation bytes, never past the end */
+                ss++;
+                while((*ss & 0xc0) == 0x80)
+                    ss++;
+                ll++;
             }
         }
         len += ll + (ll >> 15);
@@ -779,14 +941,23 @@ TTgetClipboard(int flag)
 
                 if(c0 < 0x80) {
                     uc = c0; ss++;
-                } else if(c0 < 0xe0) {
-                    uc = (meUShort)(((c0 & 0x1f) << 6) | (ss[1] & 0x3f));
-                    ss += 2;
                 } else {
-                    uc = (meUShort)(((c0 & 0x0f) << 12) |
-                                    ((ss[1] & 0x3f) << 6) |
-                                    (ss[2] & 0x3f));
-                    ss += 3;
+                    /* decode as the first pass steps, a char the code page cannot have (above
+                     * U+FFFF or malformed) becomes the undefined char */
+                    int nc=0;
+                    meUInt cp = c0;
+                    ss++;
+                    while((*ss & 0xc0) == 0x80) {
+                        cp = (cp << 6) | (*ss++ & 0x3f);
+                        nc++;
+                    }
+                    if((nc == 1) && ((c0 & 0xe0) == 0xc0))
+                        cp &= 0x7ff;
+                    else if((nc == 2) && ((c0 & 0xf0) == 0xe0))
+                        cp &= 0xffff;
+                    else
+                        cp = 0xfffd;
+                    uc = (meUShort) cp;
                 }
 
                 if(uc == '\r') {
@@ -819,6 +990,8 @@ TTgetClipboard(int flag)
             }
         }
     }
+
+#endif /* MEOPT_UNICODE */
 
     free(utf8text);     /* allocated by strdup() inside meNativeGetClipboard */
 
@@ -998,10 +1171,10 @@ TTahead(void)
     drainQueue();
 #if MEOPT_MOUSE
     if (isTimerExpired(MOUSE_TIMER_ID)) {
-        meUShort mc;
-        meUInt   arg;
+        meKey  mc;
+        meUInt arg;
         timerClearExpired(MOUSE_TIMER_ID);
-        mc = (meUShort)(ME_SPECIAL | mouseKeyState |
+        mc = (meKey)(ME_SPECIAL | mouseKeyState |
                         (SKEY_mouse_time + mouseKeys[mouseState & (MOUSE_STATE_LEFT|MOUSE_STATE_MIDDLE|MOUSE_STATE_RIGHT)]));
         if ((!TTallKeys && decode_key(mc, &arg) != -1) || (TTallKeys & 0x2)) {
             addKeyToBufferOnce(mc);
@@ -1020,9 +1193,9 @@ TTwaitForChar(void)
     /* If a mouse button is held and a mouse-time binding exists, start timer */
     if (!isTimerSet(MOUSE_TIMER_ID) && mouseState != 0)
     {
-        meUShort mc;
+        meKey mc;
         meUInt arg;
-        mc = (meUShort)(ME_SPECIAL | mouseKeyState |
+        mc = (meKey)(ME_SPECIAL | mouseKeyState |
                         (SKEY_mouse_time + mouseKeys[mouseButtonGetPick()]));
         if ((!TTallKeys && decode_key(mc, &arg) != -1) || (TTallKeys & 0x2))
             timerSet(MOUSE_TIMER_ID, -1, delayTime);
@@ -1387,7 +1560,8 @@ TTputs(int row, int col, int len)
 void
 meFrameSetWindowTitle(meFrame *frame, meUByte *str)
 {
-    char buf[meBUF_SIZE_MAX];
+    meUByte buf[meBUF_SIZE_MAX], tb[meBUF_SIZE_MAX*3], *ss;
+    int ll=0;
     
 #if MEOPT_EXTENDED
     if(frameTitle != NULL)
@@ -1400,7 +1574,13 @@ meFrameSetWindowTitle(meFrame *frame, meUByte *str)
         meStrcat(buf,": ");
         meStrcat(buf,str);
     }
-    meNativeViewSetTitle(frame->termData,(const char *) buf);
+    /* the title is internal text, Swift takes UTF-8; a char takes at most 3 times its internal
+     * length (an 8-bit build's code page char) */
+    ss = buf;
+    while(*ss != '\0')
+        ll += meNativeCharToUtf8(&ss,tb+ll);
+    tb[ll] = '\0';
+    meNativeViewSetTitle(frame->termData,(const char *) tb);
 }
 
 /* =========================================================================

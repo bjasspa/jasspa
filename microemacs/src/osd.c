@@ -142,6 +142,40 @@ static meUByte osdMenuFlags[]="baAtIcrHsSRMCNGnfioBD" ;
  * osdITEM
  * Contains the user definition of the menu item.
  */
+#if MEOPT_UNICODE
+/* a hot key is a code point, text from 0x80 is drawn as the display draws it (renderUniChar) */
+typedef meUInt osdKEY;
+#define osdKEY_RANGE 0x200000
+#define osdKeyGet(ss) osdKeyDecode(ss)
+#define osdKeyLower(kk) meUniCharToLower(kk)
+#define osdKeyUpper(kk) meUniCharToUpper(kk)
+
+static meUInt
+osdKeyDecode(const meUByte *ss)
+{
+    meUInt uc=*ss;
+    if(uc >= 0x80)
+        meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+    return uc;
+}
+
+/* Writes the cells of the char at ss (from 0x80) to dd (8 cells), returns the number and sets
+ * *bl to its length in bytes */
+static int
+osdCharCells(meFrameChar *dd, const meUByte *ss, int *bl)
+{
+    meUInt uc;
+    *bl = meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+    return renderUniChar(dd,uc);
+}
+#else
+typedef meUByte osdKEY;
+#define osdKEY_RANGE 256
+#define osdKeyGet(ss) (*(ss))
+#define osdKeyLower(kk) toLower(kk)
+#define osdKeyUpper(kk) toUpper(kk)
+#endif
+
 typedef struct osdITEM
 {
     struct osdITEM *next ;              /* Next menu item */
@@ -155,7 +189,7 @@ typedef struct osdITEM
     meShort  len;                       /* Rendered length of the menu */
     meShort  height;                    /* Rendered height of the menu */
     meUByte  iflags;                    /* internal flags */
-    meUByte  key;                       /* The actual key */
+    osdKEY   key;                       /* The actual key */
 } osdITEM;
 
 typedef struct osdDIALOG
@@ -248,9 +282,9 @@ typedef struct osdDISPLAY
     int        flags ;                  /* Current flags */
     int        area ;                   /* The storage area allocated */
     meScheme  *storeSchm ;              /* snap shot stored colp */
-    meUByte   *storeText ;              /* snap shot stored text */
+    meFrameChar *storeText ;              /* snap shot stored text */
     meScheme  *drawnSchm ;              /* snap shot drawn colp */
-    meUByte   *drawnText ;              /* snap shot drawn text */
+    meFrameChar *drawnText ;              /* snap shot drawn text */
     meShort    nbpContext;              /* Context number of the current notebook page */
     meShort    curContext;              /* Current context */
     meShort    defContext;              /* Default button context */
@@ -785,7 +819,7 @@ menuRenderArea(int x, int y, int len, int dep)
 #ifdef _DOS
     {
         meScheme *schmp, scheme ;
-        meUByte *textp ;
+        meFrameChar *textp ;
         meUByte  cc ;
         int   ii, xx ;
         
@@ -813,7 +847,7 @@ menuRenderArea(int x, int y, int len, int dep)
 #endif /* _ME_WINDOW */
     {
         meScheme *schmp, scheme ;
-        meUByte *textp ;
+        meFrameChar *textp ;
         WORD  cc ;
         int   ii, xx ;
         
@@ -861,8 +895,7 @@ menuRenderArea(int x, int y, int len, int dep)
 #ifdef _TCAP
         meScheme *schmp ;
         meScheme scheme ;
-        meUByte  cc ;
-        meUByte *textp ;
+        meFrameChar cc, *textp ;
         int   ii ;
         
         while(dep--)
@@ -912,11 +945,11 @@ osdDisplaySnapshotCreate(osdDISPLAY *md)
             return 1 ;
         meFree(md->storeSchm) ;
     }
-    if((md->storeSchm = meMalloc(area*2*(sizeof(meUByte)+sizeof(meUShort)))) == NULL)
+    if((md->storeSchm = meMalloc(meFrameLineAllocSize(area*2))) == NULL)
         return 0 ;
     
     md->drawnSchm = (md->storeSchm+area) ;
-    md->storeText = (meUByte *) (md->drawnSchm+area) ;
+    md->storeText = meFrameLineText(md->storeSchm,area*2) ;
     md->drawnText = (md->storeText+area) ;
     md->area = area ;
     return 1 ;
@@ -931,7 +964,7 @@ osdDisplaySnapshotStore(osdDISPLAY *md)
 {
     meFrameLine *flp ;
     meScheme  *colp ;
-    meUByte     *text ;
+    meFrameChar *text ;
     int depth, width, xx, yy ;
     
     /* Copy the region from the frame store into the buffer */
@@ -958,7 +991,7 @@ osdDisplaySnapshotStore(osdDISPLAY *md)
     for ( ; --depth >= 0 ; flp++,text+=width,colp+=width)
     {
         memcpy (colp,flp->scheme+xx,width*sizeof(meScheme));
-        memcpy (text,flp->text+xx,width*sizeof(meUByte));
+        memcpy (text,flp->text+xx,width*sizeof(meFrameChar));
     }
 }
 /*
@@ -970,7 +1003,7 @@ osdDisplaySnapshotRestore(osdDISPLAY *md)
 {
     meFrameLine *flp ;
     meScheme  *colp ;
-    meUByte     *text ;
+    meFrameChar *text ;
     int width, depth, xx, yy ;
     
     /* Restore the old area of the screen */
@@ -998,7 +1031,7 @@ osdDisplaySnapshotRestore(osdDISPLAY *md)
     for(; --depth >= 0 ; flp++,text+=width,colp+=width)
     {
         memcpy (flp->scheme+xx,colp, width*sizeof(meScheme));
-        memcpy (flp->text+xx,text, width*sizeof(meUByte));
+        memcpy (flp->text+xx,text, width*sizeof(meFrameChar));
     }
 }
 
@@ -1007,7 +1040,7 @@ osdDisplaySnapshotDraw(osdDISPLAY *md, int sx, int sy, int nx, int ny, int drawT
 {
     meFrameLine *flp ;
     meScheme  *colp ;
-    meUByte     *text ;
+    meFrameChar *text ;
     int width, ii ;
     
     /* Draw the osd dialog to the screen */
@@ -1047,7 +1080,7 @@ osdDisplaySnapshotDraw(osdDISPLAY *md, int sx, int sy, int nx, int ny, int drawT
     for (ii=ny ; --ii >= 0 ; flp++,text+=width,colp+=width)
     {
         memcpy (flp->scheme+sx, colp, nx*sizeof(meScheme));
-        memcpy (flp->text+sx, text, nx*sizeof(meUByte));
+        memcpy (flp->text+sx, text, nx*sizeof(meFrameChar));
     }
     if(drawToScreen)
         menuRenderArea(sx,sy,nx,ny) ;
@@ -1102,7 +1135,7 @@ menuSetItemLength (osdDIALOG *rp, osdITEM *mp)
     len = clen = 0 ;
     
     if(rp->flags & RF_FRSTLET)
-        mp->key = *p ;
+        mp->key = osdKeyGet(p) ;
     while((cc = *p++) != '\0')
     {
         if((cc == meCHAR_NL) && !(rp->flags & RF_NEWLINE))
@@ -1119,8 +1152,16 @@ menuSetItemLength (osdDIALOG *rp, osdITEM *mp)
             if(cc == meCHAR_TRAIL_LEADER)
                 clen++ ;
             else if(cc == meCHAR_TRAIL_HOTKEY)
-                mp->key = *p ;
+                mp->key = osdKeyGet(p) ;
         }
+#if MEOPT_UNICODE
+        else if(cc >= 0x80)
+        {
+            int bl;
+            clen += osdCharCells(NULL,p-1,&bl) ;
+            p += bl-1 ;
+        }
+#endif
         else
             clen++;
     }
@@ -1371,7 +1412,7 @@ initScrollBar(meSCROLLBAR *sb, int sbarLen, int flags)
 static void
 menuRenderChildScrollBar(meSCROLLBAR *sb, osdDISPLAY *md, osdCONTEXT *mcp)
 {
-    meUByte  *txtp1, *txtp2 ;
+    meFrameChar *txtp1, *txtp2 ;
     meUShort *colp1, *colp2 ;
     meUByte  *sbt1,  *sbt2 ;
     meUShort  scheme, mscheme ;
@@ -1456,7 +1497,7 @@ menuRenderChildMain(osdDISPLAY *md, osdCONTEXT *mcp, int flags)
     osdCHILD   *child ;
     osdITEM    *mp;                    /* Menu pointer */
     meScheme   *colp, *ccolp ;
-    meUByte      *txtp, *ctxtp ;
+    meFrameChar *txtp, *ctxtp ;
     int         width, depth ;
     int         mdw, cmdw ;
     
@@ -1482,7 +1523,7 @@ menuRenderChildMain(osdDISPLAY *md, osdCONTEXT *mcp, int flags)
     for( ; depth ; depth--,txtp+=mdw,colp+=mdw,ctxtp+=cmdw,ccolp+=cmdw)
     {
         memcpy (colp, ccolp, width * sizeof (meUShort));
-        memcpy (txtp, ctxtp, width * sizeof (meUByte));
+        memcpy (txtp, ctxtp, width * sizeof (meFrameChar));
     }
     /* Draw the text region to screen if required - draw the mcp width and height
      * so the scroll bars are also rendered
@@ -1496,7 +1537,7 @@ menuRenderChildBoarder (osdDISPLAY *md, osdCONTEXT *mcp)
 {
     osdCHILD *child;
     meScheme *colp1, *colp2, scheme ;
-    meUByte    *txtp1, *txtp2 ;
+    meFrameChar *txtp1, *txtp2 ;
     int       width, depth, ii ;
     int       hw, mdw ;
     
@@ -1624,8 +1665,74 @@ menuRenderChildBoarder (osdDISPLAY *md, osdCONTEXT *mcp)
     }
 }
 
+#if MEOPT_UNICODE
+/* Draws an entry line in cells, ww wide, a wide char cut by either end becomes a space. Returns
+ * the cursor column */
 static int
-osdRenderEntryLine(meUByte *txtp, meUByte *ss, int len, int cpos, int ww)
+osdRenderEntryLine(meFrameChar *txtp, meUByte *ss, int len, int cpos, int ww)
+{
+    meUByte  expbuf[meBUF_SIZE_MAX+1];
+    meFrameChar rb[12];
+    int start, col, tcells, lim, cc, dd, ii, jj, nn, bl ;
+    
+    if(len == 0)
+    {
+        for(ii=0 ; ii<ww ; ii++)
+            txtp[ii] = ' ' ;
+        return 0 ;
+    }
+    col = 0 ;
+    len = expandexp(len,ss,meBUF_SIZE_MAX,0,expbuf,cpos,&col,0) ;
+    if(cpos && !col)
+        col = len ;
+    col = meStrCells(expbuf,col) ;
+    tcells = meStrCells(expbuf,len) ;
+    ww-- ;
+    if(col > ww)
+    {
+        int div = ww >> 1 ;
+        
+        start = (((col - (div >> 1)) / div) * div) ;
+        col -= start-1 ;
+        *txtp++ = '$' ;
+        ww-- ;
+    }
+    else
+        start = 0 ;
+    lim = ((tcells - start) > ww) ? ww:(tcells - start) ;
+    for(ii=0, cc=0, dd=0 ; ii<len ; ii+=bl)
+    {
+        if(expbuf[ii] < 0x80)
+        {
+            rb[0] = expbuf[ii] ;
+            nn = bl = 1 ;
+        }
+        else
+            nn = osdCharCells(rb,expbuf+ii,&bl) ;
+        for(jj=0 ; jj<nn ; jj++, cc++)
+        {
+            if((cc >= start) && (cc < start+lim))
+            {
+                if(((rb[jj] == meFRAMECHAR_CONT) && (cc == start)) ||
+                   ((jj+1 < nn) && (rb[jj+1] == meFRAMECHAR_CONT) && (cc == start+lim-1)))
+                    txtp[dd++] = ' ' ;
+                else
+                    txtp[dd++] = rb[jj] ;
+            }
+        }
+    }
+    if((tcells - start) > ww)
+        txtp[dd++] = '$' ;
+    else
+    {
+        while(dd <= ww)
+            txtp[dd++] = ' ' ;
+    }
+    return col ;
+}
+#else
+static int
+osdRenderEntryLine(meFrameChar *txtp, meUByte *ss, int len, int cpos, int ww)
 {
     meUByte  expbuf[meBUF_SIZE_MAX+1], *s1 ;
     int start, col ;
@@ -1666,9 +1773,10 @@ osdRenderEntryLine(meUByte *txtp, meUByte *ss, int len, int cpos, int ww)
     }
     return col ;
 }
+#endif
 
 static int
-osdRenderEntry(meUByte *txtp, meUByte *ss, int flags, int cpos, 
+osdRenderEntry(meFrameChar *txtp, meUByte *ss, int flags, int cpos, 
                int totWidth, int ww, int dd, int *crow)
 {
     meUByte *s1, *s2 ;                        /* Current character */
@@ -1842,7 +1950,7 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
     {
         meScheme  scheme;             /* Colour information */
         meScheme *colp;               /* Colour pointer */
-        meUByte    *txtp;               /* Text pointer */
+        meFrameChar *txtp;               /* Text pointer */
         meUByte    *p;                  /* Local text pointer */
         meUByte     fill;               /* The fill char */
         meUByte     chkStr[6] ;         /* The checkbox string */
@@ -1976,6 +2084,25 @@ menuRenderItem (osdDISPLAY *md, int offset, int flags)
                         else if(scheme == (mp->scheme + meSCHEME_SELECT))
                             hilStop = 1 ;
                     }
+#if MEOPT_UNICODE
+                    else if(cc >= 0x80)
+                    {
+                        meFrameChar rb[12];
+                        int bl, nn, jj;
+                        nn = osdCharCells(rb,p-1,&bl) ;
+                        p += bl-1 ;
+                        for(jj=0 ; (jj < nn) && (curx < maxx) ; jj++)
+                        {
+                            if(hilStop)
+                                colp[curx] -= meSCHEME_SELECT ;
+                            *txtp++ = rb[jj] ;
+                            curx++ ;
+                        }
+                        if((jj < nn) && (rb[jj] == meFRAMECHAR_CONT))
+                            /* half a wide char does not fit */
+                            txtp[-1] = ' ' ;
+                    }
+#endif
                     else
                     {
                         if(hilStop)
@@ -2025,7 +2152,7 @@ osdDisp(meUByte *buf, meUByte *cont, int cpos)
     osdDISPLAY    *md=osdCurChild ;
     osdCONTEXT    *mcp;                    /* Menu context pointer */
     osdITEM       *mp;                     /* Menu pointer */
-    meUByte         *txtp;                   /* Text pointer */
+    meFrameChar     *txtp;                   /* Text pointer */
     int            xx, yy, ww, dd ;
     int            col, row ;
     
@@ -2122,7 +2249,7 @@ menuRenderLine(osdDISPLAY *md, int x, int y, meScheme scheme,
                int drawBoarder, int len, int type)
 {
     meUShort *colp ;
-    meUByte  *txtp ;
+    meFrameChar *txtp ;
     meUByte   cc ;
     
     colp = md->drawnSchm + (y*md->width) + x ;
@@ -2207,8 +2334,7 @@ menuRenderLine(osdDISPLAY *md, int x, int y, meScheme scheme,
 static void
 menuRenderItemGrid(osdDISPLAY *md, int x, int y, int width, int depth)
 {
-    meUByte  *txtp, *tt ;
-    meUByte   cc ;
+    meFrameChar *txtp, *tt, cc ;
     int ii ;
     
     txtp = md->drawnText + (y*md->width) + x ;
@@ -2265,7 +2391,7 @@ menuRenderItemGrid(osdDISPLAY *md, int x, int y, int width, int depth)
 static void
 menuRenderCorrectNoteBookPage(osdDISPLAY *md, osdCONTEXT *mcp)
 {
-    meUByte  *tt ;
+    meFrameChar *tt ;
     meUByte   cc ;
     int ii ;
     
@@ -2513,20 +2639,46 @@ menuRender (osdDISPLAY *md)
         menuRenderLine(md,1,0,scheme,1,colWidth,4) ;
         if((ss = md->dialog->strData) != NULL)
         {
-            meUByte *txtp ;
+            meFrameChar *txtp ;
             int   ll ;
             
             /* We know the color is correct so just splat in the text */
             txtp = md->drawnText;
+#if MEOPT_UNICODE
+            ll = meStrCells(ss,(int) meStrlen(ss));
+#else
             ll = (int) meStrlen(ss);
+#endif
             if(ll >= colWidth)
                 ll = colWidth-1;
             else if(md->flags & RF_CENTER)
                 txtp += (colWidth-ll) >> 1;
             else if(md->flags & RF_RIGHT)
                 txtp += colWidth-ll;
+#if MEOPT_UNICODE
+            while((ll > 0) && (*ss != '\0'))
+            {
+                if(*ss < 0x80)
+                {
+                    *txtp++ = *ss++;
+                    ll--;
+                }
+                else
+                {
+                    meFrameChar rb[12];
+                    int bl, nn, jj;
+                    nn = osdCharCells(rb,ss,&bl);
+                    ss += bl;
+                    for(jj=0 ; (jj < nn) && (ll > 0) ; jj++, ll--)
+                        *txtp++ = rb[jj];
+                    if((jj < nn) && (rb[jj] == meFRAMECHAR_CONT))
+                        txtp[-1] = ' ';
+                }
+            }
+#else
             while(ll--)
                 *txtp++ = *ss++;
+#endif
         }
     }
 }
@@ -4282,7 +4434,7 @@ osdDisplaySelect(int cc, osdDISPLAY *md)
             md->newContext = ii ;
             return 1 ;                 /* Found */
         }
-        else if ((toLower(mp->key) == toLower(cc)) && (best == -1))
+        else if ((osdKeyLower(mp->key) == osdKeyLower(cc)) && (best == -1))
             best = ii ;
     }
     if (best != -1)
@@ -4306,7 +4458,7 @@ osdDisplaySelectFirstLetter(int cc, osdDISPLAY *md)
     osdITEM *mp;                       /* Menu pointer */
     int ii, type, best=-1, bll=-1;
     
-    type = 259 ;
+    type = osdKEY_RANGE+3 ;
     for (mcp = md->context,ii=0; ii < md->numContexts; ii++, mcp++)
     {
         mp = mcp->menu ;
@@ -4314,11 +4466,11 @@ osdDisplaySelectFirstLetter(int cc, osdDISPLAY *md)
         {
             int dd, ll ;
             if (md->flags & RF_INSENSE)
-                dd = toUpper(cc) - toUpper(mp->key) ;
+                dd = (int) osdKeyUpper(cc) - (int) osdKeyUpper(mp->key) ;
             else
-                dd = cc - mp->key ;
+                dd = cc - (int) mp->key ;
             if(dd < 0)
-                dd += 256 ;
+                dd += osdKEY_RANGE ;
             if((ll = md->curContext - ii) < 0)
                 ll += md->numContexts ;
             if(dd == 0)
@@ -4981,7 +5133,7 @@ menuInteraction (int *retState)
             /*
              * Handle bounded keys
              */
-            ii = decode_key((meUShort)(cc), &arg) ;
+            ii = decode_key((meKey) cc, &arg) ;
             if(arg)
             {
                 f = 1 ;
@@ -5142,13 +5294,12 @@ execute_item:
             default:
                 if(cc == ' ')
                     goto execute_item ;
-                else if ((cc > ' ') && (cc < 256))
+                else if ((cc > ' ') && meKeyIsChar(cc))
                 {
                     if(osdCurChild->flags & RF_FRSTLET)
                         nit = osdDisplaySelectFirstLetter(cc,osdCurChild) ;
                     else if(((nit = osdDisplaySelect(cc,osdCurMd)) != 0) ||
-                            ((charKeyboardMap != NULL) &&
-                             ((cc=charKeyboardMap[cc]) != '\0') &&
+                            (((cc = meKeyboardMap(cc)) != 0) &&
                              ((nit = osdDisplaySelect(cc,osdCurMd)) != 0)))
                         state = meOSD_EXECUTE_MENU|meOSD_OPEN_MENU|meOSD_FOCUS_MENU|meOSD_ENTER_MENU ;
                 }
@@ -5666,7 +5817,7 @@ osd (int f, int n)
                     cc = txtbuf[ii++] ;
                     if(cc == meCHAR_TRAIL_SPECIAL)
                     {
-                        ii += 2 ;
+                        ii += meKeyStrSpecialLen(txtbuf+ii) ;
                         cc = '.' ;
                     }
                     else if(cc == meCHAR_TRAIL_HOTKEY)
@@ -5687,6 +5838,18 @@ osd (int f, int n)
                     else
                         cc = '.' ;
                 }
+#if MEOPT_UNICODE
+                else if(cc >= 0x80)
+                {
+                    /* a whole char, drawn as the display draws it */
+                    meUInt uc ;
+                    int ll = meUtf8Decode(txtbuf+ii-1,meUTF8_LEN_MAX,&uc) ;
+                    memcpy(dd+jj,txtbuf+ii-1,ll) ;
+                    jj += ll ;
+                    ii += ll-1 ;
+                    continue ;
+                }
+#endif
                 else if(!isPokable(cc) && ((cc != meCHAR_NL) || (rp->flags & RF_NEWLINE)))
                     cc = '.' ;
                 dd[jj++] = cc ;
@@ -5884,7 +6047,7 @@ osdMainMenuCheckKey(int cc)
                 best = ii ;
                 break ;
             }
-            else if ((toLower(mp->key) == toLower(cc)) && (best == -1))
+            else if ((osdKeyLower(mp->key) == osdKeyLower(cc)) && (best == -1))
                 best = ii ;
         }
         if (best != -1)

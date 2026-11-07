@@ -123,6 +123,11 @@ endif
 
 ifeq "$(BCOR)" "ne"
 
+ifeq "$(BENC)" "u"
+$(error ERROR: Unicode Utf8 encoding (-eu) is not supported by NanoEmacs)
+endif
+
+BENC = c
 BCOR_CDF = -D_NANOEMACS
 PRGLIBS  = 
 
@@ -171,18 +176,25 @@ endif
 BTYP_CDF = $(WINDOW_DEFS) -D_ME_WINDOW -D_ME_MACOSNW
 BTYP_LIB = $(WINDOW_LIBS) -lswiftCore -lswiftFoundation
 
-OUTDIR   = $(BOUTDIR)-$(BCOR)$(BTYP)
+ifeq "$(BENC)" "c"
+BENCD    = cdpg
+INSTPRG  = - echo No install - code-page encoding 
+else
+BENCD    = utf8
+CCDEFS  += -DMEOPT_UNICODE=1
+endif
+OUTDIR   = $(BOUTDIR)-$(BENCD)-$(BCOR)$(BTYP)
 PRGNAME  = $(BCOR)$(BTYP)
 PRGFILE  = $(PRGNAME)$(EXE)
 APPNAME  = MicroEmacs
 APPPATH  = $(APPNAME).app
-PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h evar.h evers.h eopt.h \
+PRGHDRS  = ebind.h edef.h eextrn.h efunc.h emain.h emode.h eprint.h esearch.h eskeys.h estruct.h evar.h evers.h eopt.h eunicode.h eunitbl.h \
 	   ebind.def efunc.def eprint.def evar.def etermcap.def emode.def eskeys.def macos$(BTYP).h $(MAKEFILE).mak $(TOPDIR)/etc/makeinc.ver
 PRGOBJS  = $(OUTDIR)/abbrev.o $(OUTDIR)/basic.o $(OUTDIR)/bind.o $(OUTDIR)/buffer.o $(OUTDIR)/crypt.o $(OUTDIR)/dirlist.o $(OUTDIR)/display.o \
 	   $(OUTDIR)/eval.o $(OUTDIR)/exec.o $(OUTDIR)/file.o $(OUTDIR)/fileio.o $(OUTDIR)/frame.o $(OUTDIR)/hash.o $(OUTDIR)/hilight.o $(OUTDIR)/history.o \
 	   $(OUTDIR)/input.o $(OUTDIR)/isearch.o $(OUTDIR)/key.o $(OUTDIR)/line.o $(OUTDIR)/macro.o $(OUTDIR)/main.o $(OUTDIR)/narrow.o $(OUTDIR)/next.o \
 	   $(OUTDIR)/osd.o $(OUTDIR)/print.o $(OUTDIR)/random.o $(OUTDIR)/regex.o $(OUTDIR)/region.o $(OUTDIR)/registry.o $(OUTDIR)/search.o $(OUTDIR)/sock.o \
-	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
+	   $(OUTDIR)/spawn.o $(OUTDIR)/spell.o $(OUTDIR)/tag.o $(OUTDIR)/termio.o $(OUTDIR)/time.o $(OUTDIR)/undo.o $(OUTDIR)/unicode.o $(OUTDIR)/window.o $(OUTDIR)/word.o \
 	   $(OUTDIR)/macos$(BTYP).o
 SWIFTSRC = $(NWDIR)/MEApplication.swift $(NWDIR)/MEAppDelegate.swift $(NWDIR)/MEWindowController.swift $(NWDIR)/MEView.swift $(NWDIR)/MEClipboard.swift
 SWIFTOBJ = $(OUTDIR)/swift_me.o

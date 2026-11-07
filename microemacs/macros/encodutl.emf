@@ -450,7 +450,7 @@ osd .osd.encoding 625 "hf" "  "
 osd .osd.encoding 630 "BthrfH" .scheme.osd-ebtt " \HCancel "  0 void
 osd .osd.encoding 640 "f" "  "
 
-; Get a list of display code pages
+; Get a list of 8-bit code pages
 0 execute-file "codepage"
 set-variable #l0 &lfind .change-font.cp-id &reg &spr "/history/%s/char-set" %platform "iso8859-1"
 #l0 change-encoding-set

@@ -60,18 +60,38 @@
 #define meCHAR_TRAIL_HILSTOP  0x05              /* trail of osd stop hilight (\}) */
 #define meCHAR_TRAIL_LEADER   meCHAR_LEADER     /* trail of a leader char (must be same char) */
 
-#define ME_SHIFT       0x0100                   /* special key shift            */
-#define ME_CONTROL     0x0200                   /* special key conrtol          */
-#define ME_ALT         0x0400                   /* special key alt              */
-#define ME_SPECIAL     0x0800                   /* special key (function keys)  */
-#define ME_PREFIX_NUM  16                       /* the number of prefixes       */
-#define ME_PREFIX_BIT  12                       /* the number of prefixes       */
-#define ME_PREFIX_MASK 0xf000                   /* the prefix bit mask          */
-#define ME_PREFIX1     0x1000                   /* prefix 1 flag, or'ed in      */
-#define ME_PREFIX2     0x2000                   /* prefix 2 flag, or'ed in      */
-#define ME_PREFIX3     0x3000                   /* prefix 3 flag, or'ed in      */
-#define ME_PREFIX4     0x4000                   /* prefix 4 flag, or'ed in      */
-#define ME_INVALID_KEY 0x0000                   /* an invalid key number        */
+/* A key is a char (or special key code) with modifier & prefix bits above it. In a Unicode
+ * build the char is a code point; the modifiers and prefix shifted down by ME_KEY_HIGH_SHIFT
+ * give the same byte in both builds, as used in key strings */
+#if MEOPT_UNICODE
+typedef meUInt meKey;
+#define ME_KEY_CHAR    0x001fffff               /* the char or special key code */
+#define ME_KEY_HIGH_SHIFT 21
+#else
+typedef meUShort meKey;
+#define ME_KEY_CHAR    0x00ff
+#define ME_KEY_HIGH_SHIFT 8
+#endif
+#define ME_SHIFT       (0x01 << ME_KEY_HIGH_SHIFT) /* special key shift          */
+#define ME_CONTROL     (0x02 << ME_KEY_HIGH_SHIFT) /* special key conrtol        */
+#define ME_ALT         (0x04 << ME_KEY_HIGH_SHIFT) /* special key alt            */
+#define ME_SPECIAL     (0x08 << ME_KEY_HIGH_SHIFT) /* special key (function keys) */
+#define ME_PREFIX_NUM  16                          /* the number of prefixes     */
+#define ME_PREFIX_BIT  (ME_KEY_HIGH_SHIFT+4)       /* the number of prefixes     */
+#define ME_PREFIX_MASK (0xf0 << ME_KEY_HIGH_SHIFT) /* the prefix bit mask        */
+#define ME_PREFIX1     (0x10 << ME_KEY_HIGH_SHIFT) /* prefix 1 flag, or'ed in    */
+#define ME_PREFIX2     (0x20 << ME_KEY_HIGH_SHIFT) /* prefix 2 flag, or'ed in    */
+#define ME_PREFIX3     (0x30 << ME_KEY_HIGH_SHIFT) /* prefix 3 flag, or'ed in    */
+#define ME_PREFIX4     (0x40 << ME_KEY_HIGH_SHIFT) /* prefix 4 flag, or'ed in    */
+#define ME_INVALID_KEY 0x0000                      /* an invalid key number      */
+#define meKeyIsChar(kk) (((kk) & ~ME_KEY_CHAR) == 0)
+/* a key char below this can be looked up in a byte string */
+#if MEOPT_UNICODE
+#define meKEY_BYTE_MAX  0x80
+#else
+#define meKEY_BYTE_MAX  0x100
+#endif
+#define meKEYSTR_LEN_MAX 8                      /* longest key in a key string  */
 
 /* Status defines */
 #define meABORT  -1                             /* Death, ^G, abort, etc.       */
@@ -210,6 +230,14 @@ typedef meUShort meLineFlag;                    /* In extended vers use 16 bits 
 typedef meUByte meLineFlag;
 #endif
 
+/* mode lines are 10 bytes longer than needed so small values can be splat in without overrun,
+ * a UTF-8 char can take 4 bytes per cell */
+#if MEOPT_UNICODE
+#define meModeLineAllocSize(ww) (((ww)*4)+10)
+#else
+#define meModeLineAllocSize(ww) ((ww)+10)
+#endif
+
 typedef struct meLine
 {
     struct meLine     *next;                    /* Link to the next line        */
@@ -232,6 +260,16 @@ typedef struct meLine
 #define meLINE_ANCHOR_OTHER     0x0008
 #define meLINE_ANCHOR           (meLINE_ANCHOR_AMARK|meLINE_ANCHOR_NARROW|meLINE_ANCHOR_OTHER)
 #define meLINE_NOEOL            0x0010          /* Save line with no \n or \0   */
+/* The line's terminator has (or lacks) a \r or \n when the buffer's cr or lf mode says
+ * otherwise, a line loaded from a file with inconsistent line endings saves unchanged */
+#if MEOPT_EXTENDED
+#define meLINE_EOLCR            0x0080
+#define meLINE_EOLLF            0x0100
+#else
+#define meLINE_EOLCR            0x0020
+#define meLINE_EOLLF            0x0040
+#endif
+#define meLINE_EOL_MASK         (meLINE_EOLCR|meLINE_EOLLF)
 #if MEOPT_EXTENDED
 #define meLINE_MARKUP           0x0020
 #define meLINE_PROTECT          0x0040
@@ -595,6 +633,7 @@ typedef struct meMacro {
 #define meMACRO_HIDE  meLINE_ANCHOR_AMARK       /* Hide the function            */
 #define meMACRO_EXEC  meLINE_ANCHOR_NARROW      /* Buffer is being executed     */
 #define meMACRO_FILE  meLINE_ANCHOR_OTHER       /* macro file define            */
+#define meMACRO_SOURCE meLINE_NOEOL             /* keeps its source, the head line's text is its file */
 
 
 /* An alphabetic mark is as follows. Alphabetic marks are implemented as a
@@ -730,7 +769,7 @@ typedef struct meCodePage {
 
 typedef struct  meBuffer {
     struct  meBuffer  *next;                    /* Link to next struct meBuffer */
-    meCodePage        *codePage;                /* code page current when the file was loaded */
+    meCodePage        *codePage;                /* code page of a single byte file, else NULL */
 #if MEOPT_ABBREV
     meAbbrev          *abbrevFile;              /* Abreviation file             */
 #endif
@@ -799,11 +838,14 @@ typedef struct  meBuffer {
     meUByte            lschemeNext;             /* Next line scheme index       */
 #endif
     meUByte            fileFlag;                /* file type & attrib flags     */
+    meUByte            fileKeep;                /* file checks to preserve, meFILEKEEP_* */
     meUByte            intFlag;                 /* internal buffer flags        */
     meUByte            windowCount;             /* Count of windows on buffer   */
 #if MEOPT_EXTENDED
     meUByte            isWordMask;              /* isWord lookup table bit mask */
-    meUByte            xlateFlag;               /* translate flags              */
+#endif
+#if MEOPT_UNICODE
+    meUByte            encoding;                /* file encoding, meENCODING_*  */
 #endif
 #if MEOPT_IPIPES
     meUByte            ipipeFlags;              /* ipipe creation flags         */
@@ -825,6 +867,12 @@ typedef struct  meBuffer {
 #define meBFFLAG_BINARY  0x02
 #define meBFFLAG_LTDIFF  0x04
 
+/* bp->fileKeep - file check conditions the user chose to preserve, cleared on re-read */
+#define meFILEKEEP_NUL   0x01
+#define meFILEKEEP_EOL   0x02
+#define meFILEKEEP_NOEOL 0x04
+#define meFILEKEEP_RAW   0x08
+
 
 #define BIFBLOW    0x01                         /* Buffer is to be blown away (bclear)  */
 #define BIFLOAD    0x02                         /* Used on a reload to check tim        */
@@ -833,6 +881,7 @@ typedef struct  meBuffer {
 #define BIFFILE    0x10                         /* The buffer is a file - used at creation only */
 #define BIFNODEL   0x20                         /* The buffer cannot be deleted         */
 #define BIFNOHOOK  0x40                         /* Don't apply any context file hook    */
+#define BIFREADMSG 0x80                         /* Show the read message, even in a macro */
 
 
 /*
@@ -850,7 +899,7 @@ typedef struct  {
 /* structure for the table of initial key bindings */
 
 typedef struct meBind {
-    meUShort           code;                    /* Key code                     */
+    meKey              code;                    /* Key code                     */
     meUShort           index;
     meUInt             arg;
 } meBind;
@@ -1131,11 +1180,25 @@ typedef struct meVideo
  * become invalid).
  */
 
+/* A screen cell - in a Unicode build a code point, the second cell of a wide character holds
+ * meFRAMECHAR_CONT. Values below 0x20 are special display chars (box & window chars) */
+#if MEOPT_UNICODE
+typedef meUInt meFrameChar;
+#define meFRAMECHAR_CONT 0x7fffffff
+#else
+typedef meUByte meFrameChar;
+#endif
+
 typedef struct
 {
-    meUByte           *text;                    /* Text held on the line. */
+    meFrameChar       *text;                    /* Text held on the line. */
     meScheme          *scheme;                  /* index to the Style (fore + back + font) of each cell */
 } meFrameLine;                                  /* Line of screen text */
+
+/* the line's text follows its schemes in one allocation, aligned for meFrameChar */
+#define meFrameLineSchemeSize(ww) (((ww)*sizeof(meScheme) + sizeof(meFrameChar) - 1) & ~(sizeof(meFrameChar) - 1))
+#define meFrameLineAllocSize(ww)  (meFrameLineSchemeSize(ww) + ((ww)*sizeof(meFrameChar)))
+#define meFrameLineText(scheme,ww) ((meFrameChar *) (((meUByte *) (scheme)) + meFrameLineSchemeSize(ww)))
 
 
 #define meFRAME_HIDDEN     0x01
@@ -1276,6 +1339,12 @@ typedef struct meIPipe {
     meUByte            ansiBg;    /* current bg colour, see meIPIPE_COL_* */
     meUByte            ansiSt;    /* current style, see meIPIPE_STY_* */
     meTime             oscSplit;  /* when an OSC ran out of data, 0 if not mid-OSC */
+#if MEOPT_UNICODE
+    meTime             utfSplit;  /* when a UTF-8 char ran out of data, 0 if none */
+    meShort            curCol;    /* cursor column at the end of the last read */
+    meUByte            utfPendLen;
+    meUByte            utfPend[3];/* the start of a UTF-8 char for the next read */
+#endif
 } meIPipe;
 
 #endif
@@ -1325,6 +1394,11 @@ typedef struct meUndoNarrow {
 #define meUNDO_SPECIAL       0x40
 #define meUNDO_CONTINUE      0x80
 
+/* on a delete node (special bit clear) the deleted text's '\0' is followed by a state char for
+ * each line end it deleted (meUndoEolState) and a '\0', so undo restores each line's ending */
+#define meUNDO_EOLS          0x20
+#define meUNDO_EOL_FLAGS     (meLINE_EOL_MASK|meLINE_NOEOL)
+
 /* when special bit is set the following flags are used for 0x3f bits */
 #define meUNDO_SET_EDIT      0x20
 #define meUNDO_UNSET_EDIT    0x01
@@ -1365,6 +1439,11 @@ typedef struct meRegister {
     meUByte           *commandName;
     meUByte           *execstr;
     meUByte           *nextArgStr;
+#if MEOPT_DEBUGM
+    meLine            *execHlp;         /* lines being run and a pointer to dobuf's current line, */
+    meLine           **execLp;          /* so the debugger can show a parent's line */
+    meUByte            execCompiled;
+#endif
     int                f;
     int                n;
     meUByte            force;
@@ -1522,9 +1601,9 @@ typedef struct meCookie {
 
 #endif
 
-#define meIOFLAG_NOTSET  0x0001
+#if !MEOPT_UNICODE
 #define meIOFLAG_BINARY  meBFFLAG_BINARY
-#define meIOFLAG_LTDIFF  meBFFLAG_LTDIFF
+#endif
 #define meIOFLAG_CR      0x0020
 #define meIOFLAG_LF      0x0040
 #define meIOFLAG_CTRLZ   0x0080
@@ -1548,6 +1627,17 @@ typedef struct meIo {
     meUByte    redirect;                /* Number of redirections - avoids spin */
 #endif
     meUShort   flags;                   /* Flags detailing content of file */
+#if MEOPT_UNICODE
+    meUByte    encoding;                /* meENCODING_* of the file being read or written */
+    meCodePage *codePage;               /* the code page of a single byte file */
+    meUByte    carryLen;                /* UTF-16/32 bytes carried to the next block */
+    meUByte    carry[4];
+    meInt      unrep;                   /* characters which could not be encoded */
+    meInt      nulCount;                /* NUL characters read */
+    meInt      rawCount;                /* bytes read which are invalid for the encoding */
+#endif
+    meInt      eolCount[3];             /* \r, \n & \r\n terminators read */
+    meInt      longCount;               /* lines split as longer than meLINE_LLEN_MAX */
     meUInt     offset;
 #ifdef _WIN32
     HANDLE     fp;                      /* File or pipe read/write pointer, all func. */

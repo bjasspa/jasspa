@@ -373,7 +373,7 @@ as an escape character. the escape sequences that are interpreted include:
 .br
 \fC\\n\fR \- A literal NEWLINE character.
 .br
-\fC\\xx\fR \- A hexadecimal character.
+\fC\\xx\fR \- A hexadecimal character, in a build with Unicode support the character U+00\fIxx\fR.
 .br
 \fC\\u\fIhhhh\fR \- The Unicode character U+\fIhhhh\fR, 1 to 4 hexadecimal digits (\fC\\U\fR takes up to 6). In a build
 without Unicode support it is the character of the current code page (see

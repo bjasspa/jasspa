@@ -21,11 +21,17 @@ including  the \fB\\n\fR  character.  When set then a \fB\\n\fR is included on
 each line  ending.  When  clear then  \fB\\n\fR  is not  included  in the line
 ending.
 .SH NOTES
-This mode only effects the style in which the buffer is written if
-.Ht auto 2m
-mode is enabled.  \fBlf\fR mode is used in conjunction with 
+\fBlf\fR mode is used in conjunction with
 .Ht cr 2m 
-to control the carriage return.
+to control the carriage return, \fBlf\fR alone giving Unix and both Windows line endings.
+.PP
+When a file is read every carriage return (\fB\\r\fR), line feed (\fB\\n\fR) or carriage return and line feed ends a
+line, each line keeping its own line ending, and the most common line ending sets the \fBcr\fR and \fBlf\fR modes.
+A line whose ending differs from the modes is written with its own ending so the file is saved unchanged, see
+.Ht $file-checks 5
+for the check made when such a file is saved. Changing either mode gives every line the new line ending. A typed or
+inserted line takes the buffer's line ending, see
+.Ht insert-file 2 .
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,

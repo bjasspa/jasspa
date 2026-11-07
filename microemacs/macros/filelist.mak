@@ -16,7 +16,7 @@
 EMFS=	2dos.emf	2mac.emf	2unix.emf	2win.emf	\
 	abbrev.emf	abbrlist.emf	aix.emf		arkanoid.emf	\
 	balls.emf	bintools.emf	bookmark.emf	brag.emf	\
-	buffinit.emf	bytecomp.emf	\
+	buffinit.emf	\
 	calc.emf	cc.emf		cfind.emf	cmacros.emf	\
 	codepage.emf	collapse.emf	comment.emf	\
 	cpascii.emf	cpcp1250.emf	cpcp1251.emf	cpcp1252.emf	\

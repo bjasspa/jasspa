@@ -79,6 +79,11 @@ set-variable #l0 &xrep #l0 "\\\\s +" " "
 ml-write #l0
 .CE 0
 .Me $ehf-scheme
+.SH NOTES
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) the search matches whole characters, and \fB&irep\fR and \fB&xirep\fR ignore case using Unicode
+case folding.
 .SH "SEE ALSO"
 .na
 .Hl "Operating Modes" Modes - ,

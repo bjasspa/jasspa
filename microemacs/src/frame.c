@@ -91,24 +91,24 @@ meFrameChangeWidth(meFrame *frame, int ww)
         meLine *ml;
         meUByte *mls;
 
-        if(((ml = meLineMalloc(ww,0)) == NULL) ||
-           ((mls = meMalloc(ww+1)) == NULL))
+        if(((ml = meLineMalloc(meModeLineAllocSize(ww),0)) == NULL) ||
+           ((mls = meMalloc(meModeLineAllocSize(ww)+1)) == NULL))
             return meFALSE;
             
         /* Fix up the frame store by growing the lines. Do a safe
          * grow where by we can recover if a malloc fails. */
         for (flp = loopFrame->store, ii = 0; ii < loopFrame->depthMax; ii++, flp++)
         {
-            if ((fl.scheme = meMalloc(ww*(sizeof(meUByte)+sizeof(meStyle)))) == NULL)
+            if ((fl.scheme = meMalloc(meFrameLineAllocSize(ww))) == NULL)
                 return meFALSE;
-            fl.text = (meUByte *) (fl.scheme+ww);
+            fl.text = meFrameLineText(fl.scheme,ww);
             
             /* Data structures allocated. Copy accross the new screen
              * information and pad endings with valid data. Strictly we
              * do not need to do this for all platforms, however if it
              * is safer if we make sure the data is valid. Resize is an
              * infrequent operation and time is not critical here */
-            memcpy(fl.text, flp->text, sizeof(meUByte) * loopFrame->widthMax);
+            memcpy(fl.text, flp->text, sizeof(meFrameChar) * loopFrame->widthMax);
             memcpy(fl.scheme, flp->scheme, sizeof(meScheme) * loopFrame->widthMax);
             jj = ww;
             while(--jj >= loopFrame->widthMax)
@@ -141,7 +141,7 @@ meFrameChangeWidth(meFrame *frame, int ww)
         while(wp != NULL)
         {
             /* make modeline 10 bytes longer so small values can be splat into modeline string without risk of overrun */
-            if((ml = meLineMalloc(ww+10,0)) == NULL)
+            if((ml = meLineMalloc(meModeLineAllocSize(ww),0)) == NULL)
                 return meFALSE;
             memcpy(ml,wp->modeLine,meLINE_SIZE+wp->modeLine->length);
             free(wp->modeLine);
@@ -215,10 +215,10 @@ meFrameChangeDepth(meFrame *frame, int dd)
         /* Allocate a new set of lines for the remainder of the space */
         for (flp += loopFrame->depthMax, ii = loopFrame->depthMax ; ii < dd ; ii++, flp++)
         {
-            if ((flp->scheme = meMalloc(loopFrame->widthMax*(sizeof(meUByte)+sizeof(meScheme)))) == NULL)
+            if ((flp->scheme = meMalloc(meFrameLineAllocSize(loopFrame->widthMax))) == NULL)
                 return meFALSE;
             
-            flp->text = (meUByte *) (flp->scheme+loopFrame->widthMax);
+            flp->text = meFrameLineText(flp->scheme,loopFrame->widthMax);
             /* Initialise the data to something valid */
             jj = loopFrame->widthMax;
             while(--jj >= 0)
@@ -386,8 +386,8 @@ meFrameInit(meFrame *sibling)
         return NULL;
     
     if(((frame->video.lineArray = meMalloc(frame->depthMax * sizeof(meVideoLine))) == NULL) ||
-       ((frame->mlLine = meLineMalloc(frame->widthMax,0)) == NULL) ||
-       ((frame->mlLineStore = meMalloc(frame->widthMax+1)) == NULL))
+       ((frame->mlLine = meLineMalloc(meModeLineAllocSize(frame->widthMax),0)) == NULL) ||
+       ((frame->mlLineStore = meMalloc(meModeLineAllocSize(frame->widthMax)+1)) == NULL))
         return NULL;
 
     /* Initialise the virtual video structure. */
@@ -415,9 +415,9 @@ meFrameInit(meFrame *sibling)
         return NULL;
     for (flp = frame->store, ii = 0; ii < frame->depthMax; ii++, flp++)
     {
-        if ((flp->scheme = meMalloc(frame->widthMax*(sizeof(meUByte)+sizeof(meStyle)))) == NULL)
+        if ((flp->scheme = meMalloc(meFrameLineAllocSize(frame->widthMax))) == NULL)
             return NULL;
-        flp->text = (meUByte *) (flp->scheme+frame->widthMax);
+        flp->text = meFrameLineText(flp->scheme,frame->widthMax);
         /* Fill with data */
         jj = frame->widthMax;
         while(--jj >= 0)
@@ -442,7 +442,7 @@ meFrameInitWindow(meFrame *frame, meBuffer *buffer)
     meLine   *lp, *off;
     
     /* make modeline 10 bytes longer so small values can be splat into modeline string without risk of overrun */
-    if(((wp = meMalloc(sizeof(meWindow))) == NULL) || ((lp = meLineMalloc(frame->widthMax+10,0)) == NULL) ||
+    if(((wp = meMalloc(sizeof(meWindow))) == NULL) || ((lp = meLineMalloc(meModeLineAllocSize(frame->widthMax),0)) == NULL) ||
        ((off= meLineMalloc(frame->widthMax,0)) == NULL))
         return meFALSE;
     

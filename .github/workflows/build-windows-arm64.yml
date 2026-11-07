@@ -52,7 +52,7 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=c BIT_SIZE=64 ARCHITEC=arm
-          .\.windows100-arm64-msvc18-release-mec\mec.exe -V
+          .\.windows100-arm64-msvc18-release-utf8-mec\mec.exe -V
         working-directory: ./microemacs/src
 
       - name: Compile windows-arm mew
@@ -62,7 +62,7 @@ jobs:
             | % { , ($_ -Split '=', 2) } `
             | % { [System.Environment]::SetEnvironmentVariable($_[0], $_[1]) }
           nmake -f winmsvc.mak BTYP=w BIT_SIZE=64 ARCHITEC=arm
-          .\.windows100-arm64-msvc18-release-mew\mew.exe -V
+          .\.windows100-arm64-msvc18-release-utf8-mew\mew.exe -V
         working-directory: ./microemacs/src
 
       - name: Create windows-arm bin download
@@ -75,14 +75,14 @@ jobs:
           Rename-Item -Path windows100-arm64-msvc18 -NewName windows100-arm64
           cd ..
           Rename-Item -Path release_readme.txt -NewName readme.txt
-          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @dev/ver.emf)
           Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_windows_arm_binaries
 
       - name: Create windows-arm openssl download
         shell: pwsh
         run: |
           cd .\microemacs
-          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @dev/ver.emf)
           cd .\3rdparty\openssl-3.5\arm64\bin
           mkdir -Path tfs\bin\windows100-arm64
           Copy-Item -Path libssl-3-arm64.dll -Destination tfs\bin\windows100-arm64
@@ -116,13 +116,13 @@ jobs:
         shell: pwsh
         run: |
           cd .\microemacs
-          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
-          cd .\mesingle
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @dev/ver.emf)
+          cd .\dev\mesingle
           mkdir -Path bin\windows100-arm64
-          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc18s\mec.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesc.exe
-          Copy-Item -Path ..\LICENSE -Destination .
-          Copy-Item -Path ..\readme.txt -Destination .
-          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesc
+          ..\..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\..\bin\windows100-arm64-msvc18s\mec.exe -t ..\..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesc.exe
+          Copy-Item -Path ..\..\LICENSE -Destination .
+          Copy-Item -Path ..\..\readme.txt -Destination .
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesc
 
       - name: Compile windows-arm static mew
         shell: pwsh
@@ -137,11 +137,11 @@ jobs:
         shell: pwsh
         run: |
           cd .\microemacs
-          $env:MEVER=$(.\bin\windows100-arm64\mec -p @contribs/ver.emf)
-          cd .\mesingle
+          $env:MEVER=$(.\bin\windows100-arm64\mec -p @dev/ver.emf)
+          cd .\dev\mesingle
           Remove-Item bin\windows100-arm64\mesc.exe
-          ..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\bin\windows100-arm64-msvc18s\mew.exe -t ..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesw.exe
-          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesw
+          ..\..\bin\windows100-arm64\mec.exe -p "@./mesgen" -f -p ..\..\bin\windows100-arm64-msvc18s\mew.exe -t ..\..\bin\windows100-arm64\tfs.exe -o bin\windows100-arm64\mesw.exe
+          Compress-Archive -Path bin,LICENSE,readme.txt -DestinationPath ..\..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_abin_windows_arm_mesw
 
       - name: Upload windows-intel downloads
         uses: actions/upload-artifact@v6

@@ -7,6 +7,7 @@
 .Id $Id: m2cmd104.2,v 2.7 2022/06/12 17:13:25 jon Exp $
 .Im MicroEmacs command|insert
 .ds C0 "(\fB\*cq\fR)\ \&
+.ds C1 "(\fB\*e\*cq\fR)\ \&
 .so me.tni
 .TH quote-char 2
 .XI quote-char - "\*(C0Insert literal character"
@@ -18,6 +19,10 @@ quote-char \- Insert literal character
 .I n
 .B quote-char
 "\fIkey\fR" \*(C0
+.br
+.I -n
+.B quote-char
+"\fIcode\fR" \*(C1
 .ad
 .SH DESCRIPTION
 .B quote-char
@@ -26,10 +31,44 @@ fact that it may be a command  character.  \fBquote-char\fR  obeys the current
 buffer setting of
 .Ht over 2m
 mode.
+.PP
+When \fIn\fR is negative the character is given by its code, \fBquote-char\fR prompts for the
+code and inserts the character -\fIn\fR times, e.g. an argument of \fC-1000\fR and the code
+\fC75\fR inserts 1000 '\fCu\fR's. The \fIcode\fR is one of:
+.IP "\fIhhhh\fR or \fCU+\fIhhhh\fR"
+The Unicode character U+\fIhhhh\fR, 1 to 6 hexadecimal digits. A version of \*(mS without
+Unicode support inserts the character of the current code page (see
+.Ht set-char-mask 2 ),
+nothing is inserted if the code page does not have it.
+.IP "\fCx\fIhh\fR"
+The character \fIhh\fR, 1 or 2 hexadecimal digits, of the current code page, so with a
+Western European code page \fCxe9\fR is an 'e' acute. Nothing is inserted if the code page does
+not have a character for the byte.
+.IP "\fCr\fIhh\fR"
+A raw byte, the byte \fIhh\fR is kept and written back to the file as it is whatever the
+buffer's
+.Ht $buffer-encoding 5 ,
+it is displayed as \fC\\x\fIhh\fR. A byte below 0x80 is its \s-1ASCII\s0 character. In a
+version of \*(mS without Unicode support it is the same as \fCx\fIhh\fR.
+.PP
+Only keys which keep the code valid are accepted, the reason a key is rejected being shown after the code, e.g.
+"\fC[not hex]\fR" or "\fC[too large, max FF]\fR". The backspace key deletes the last one and a yank adds a copied
+code, e.g. "\fCU+20AC\fR". \fBreturn\fR inserts the character, \fBesc\fR or an empty code inserts nothing, and an
+abort (\fCC-g\fR) aborts the command. From a macro the \fIcode\fR is the next argument.
+.PP
+\fBquote-char\fR is bound to \fB\*cq\fR and, with an argument of \fC-1\fR, to \fB\*e\*cq\fR. Both keys may also be used
+while entering a search string with
+.Ht isearch-forward 2
+and at a prompt, \fB\*cq\fR quoting the next key and \fB\*e\*cq\fR (or any key bound to \fBquote-char\fR with a
+negative argument) giving the character by its code. An abort while giving the code aborts the search or prompt too,
+while \fBesc\fR or an empty code returns to it. A version of \*(mS without Unicode support cannot hold a NUL character,
+so a code of 0 is refused.
 .SH "SEE ALSO"
 .na
 .Ht insert-string 2 ,
+.Ht isearch-forward 2 ,
 .Ht insert-symbol 3 .
 .ad
 .rm C0
+.rm C1
 .FH

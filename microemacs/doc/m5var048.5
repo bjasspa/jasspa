@@ -60,6 +60,13 @@ current  window.  Column  zero  is the  left  hand  edge.  This  differs  from
 \fB$window-acol\fR  in that \s-1TAB\s0 and special characters only count for 1
 character. \fB$window-col\fR is valid in the range 0 - \fIn\fR.
 .PP
+In a version of \*(mS with Unicode support (see
+.Ht &opt 4 ,
+label \fCuni\fR) \fB$window-col\fR and \fB$window-mark-col\fR are character
+indexes, so "\fC&mid @wl $window-col 1\fR" is the character at the cursor, see
+.Ht &blen 4
+for its byte offset.
+.PP
 .B  $window-acol
 is defined as the current  column of the cursor in the current  window. Column
 zero is the left  hand  edge.  This  differs  from  \fB$window-col\fR  in that

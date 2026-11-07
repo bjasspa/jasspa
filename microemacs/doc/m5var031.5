@@ -13,7 +13,7 @@
 $mode-line \- Mode line format
 .Me $a
 .SH SYNOPSIS
-\fB$mode-line\fR "\fIstring\fR"; Default is "\fC%s%r%u me (%e) - %l %b (%f) \fR"
+\fB$mode-line\fR "\fIstring\fR"; Default is "\fC%s%r%u%K %b %l of %n - %Y%-%m%-%d %H:%M (%O %- %e) - (%f) \fR"
 .SH DESCRIPTION
 .B $mode-line
 defines  the  format  of the mode line  printed  for every  window,  where the
@@ -26,6 +26,7 @@ character following a percent ('\fC%\fR') has the following effect:
 \fCb\fR Prints the current buffer's name.
 \fCc\fR Prints the current buffer's column number.
 \fCd\fR Prints the current day (01 to 31).
+\fCe\fR Prints the current buffer's encoding - see \s-1NOTES\s0.
 \fCf\fR Prints the current buffer's file name.
 \fCH\fR Prints the current hour of the day (00 to 23).
 \fCi\fR Prints the current day (1 to 31).
@@ -57,12 +58,18 @@ character  is  changed  to a  '\fC=\fR'  if it is  the  current  window.  If a
 The buffer modes shown by \fB%O\fR is controlled by system variable
 .Ht $show-modes 5 .
 .BU
+The encoding shown by \fB%e\fR is the buffer's
+.Ht $buffer-encoding 5 ,
+e.g. "\fCutf8\fR", "\fCutf16le-bom\fR" or the code page name of a single byte file such as
+"\fCcp1252\fR". In a version of \*(mS without Unicode support it is the buffer's code page.
+.BU
 A buffer can have its own  mode-line, and be uneffected be the global mode
 line, see
 .Ht $buffer-mode-line 5 .
 .BE 0
 .SH "SEE ALSO"
 .na
+.Ht $buffer-encoding 5 ,
 .Ht $buffer-mode-line 5 ,
 .Ht $mode-line-scheme 5 ,
 .Ht $show-modes 5 ,

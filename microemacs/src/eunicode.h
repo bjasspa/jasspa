@@ -1,0 +1,137 @@
+/* -*- c -*-
+ *
+ * JASSPA MicroEmacs - www.jasspa.com
+ * eunicode.h - Unicode character support definitions.
+ *
+ * Copyright (C) 2026 JASSPA (www.jasspa.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+/*
+ * Created:     Tue Oct 6 2026
+ * Synopsis:    Unicode character support definitions.
+ * Authors:     Steven Phillips
+ * Description:
+ *     Internal text is UTF-8 with two extensions which must never be written
+ *     out as is:
+ *       - A byte which is not part of a valid UTF-8 sequence is stored as an
+ *         overlong 2 byte escape, byte 0x80-0xff becomes 0xC0|((b>>6)&1),
+ *         0x80|(b&0x3f), and decodes to meUNI_RAW_BASE+b.
+ *       - A lone UTF-16 surrogate is stored in its 3 byte (WTF-8) form, so a
+ *         strictly valid UTF-8 file containing one must be escaped.
+ *       - U+0000 is stored as the overlong 0xE0,0x80,0x80 so internal text never
+ *         contains a 0x00 byte and remains a valid C string.
+ *       - A raw byte 0x00-0x7f, only produced by invalid UTF-16/32 data, is stored
+ *         as the overlong 0xE0,0x81+(b>>6),0x80|(b&0x3f).
+ */
+
+#ifndef __EUNICODE_H
+#define __EUNICODE_H
+
+#define meUNI_MAX           0x10ffff
+#define meUNI_REPLACE       0x00fffd
+#define meUNI_RAW_BASE      0x110000
+#define meUniIsRaw(uc)      ((uc) >= meUNI_RAW_BASE)
+#define meUniRawByte(uc)    ((meUByte) ((uc) - meUNI_RAW_BASE))
+
+#define meUTF8_LEN_MAX      4
+#define meUTF8_INT_LEN_MAX  3               /* longest internal form of a single byte */
+
+/* $buffer-encoding, bits 0x0f follow the old $buffer-xlate */
+#define meENCODING_LEGACY   0x00            /* Single byte, decoded via charToUnicode */
+#define meENCODING_UTF8     0x01
+#define meENCODING_UTF16    0x02
+#define meENCODING_UTF32    0x03
+#define meENCODING_TYPE     0x03
+#define meENCODING_BE       0x04
+#define meENCODING_BOM      0x08
+#define meENCODING_FORCE    0x10            /* Read with this encoding rather than detect */
+#define meENCODING_USER     0x1f            /* Bits visible through $buffer-encoding */
+#define meENCODING_DETECT   0x20            /* meIo only - UTF-8 or legacy still undecided */
+#define meENCODING_RAW      0x40            /* meIo only - bytes are not converted */
+#define meENCODING_START    0x80            /* meIo only - first block not yet read */
+
+/* Properties byte - bits 0-1 width, bit 2 White_Space, bits 3-7 general category */
+#define meUNIPROP_WIDTH     0x03
+#define meUNIPROP_SPACE     0x04
+#define meUNIPROP_GCSHIFT   3
+
+#define meUNIWIDTH_ZERO     0
+#define meUNIWIDTH_NARROW   1
+#define meUNIWIDTH_WIDE     2
+#define meUNIWIDTH_AMBIG    3
+
+/* Order must match GC_LIST in dev/mkunitbl.py */
+#define meUNIGC_Cn  0
+#define meUNIGC_Lu  1
+#define meUNIGC_Ll  2
+#define meUNIGC_Lt  3
+#define meUNIGC_Lm  4
+#define meUNIGC_Lo  5
+#define meUNIGC_Mn  6
+#define meUNIGC_Mc  7
+#define meUNIGC_Me  8
+#define meUNIGC_Nd  9
+#define meUNIGC_Nl  10
+#define meUNIGC_No  11
+#define meUNIGC_Pc  12
+#define meUNIGC_Pd  13
+#define meUNIGC_Ps  14
+#define meUNIGC_Pe  15
+#define meUNIGC_Pi  16
+#define meUNIGC_Pf  17
+#define meUNIGC_Po  18
+#define meUNIGC_Sm  19
+#define meUNIGC_Sc  20
+#define meUNIGC_Sk  21
+#define meUNIGC_So  22
+#define meUNIGC_Zs  23
+#define meUNIGC_Zl  24
+#define meUNIGC_Zp  25
+#define meUNIGC_Cc  26
+#define meUNIGC_Cf  27
+#define meUNIGC_Cs  28
+#define meUNIGC_Co  29
+
+#define meUniPropGC(pp)     ((pp) >> meUNIPROP_GCSHIFT)
+#define meUniPropWidth(pp)  ((pp) & meUNIPROP_WIDTH)
+#define meUniPropIsSpace(pp) ((pp) & meUNIPROP_SPACE)
+#define meUniPropIsAlpha(pp) ((meUInt) (meUniPropGC(pp) - meUNIGC_Lu) <= (meUNIGC_Lo - meUNIGC_Lu))
+#define meUniPropIsMark(pp) ((meUInt) (meUniPropGC(pp) - meUNIGC_Mn) <= (meUNIGC_Me - meUNIGC_Mn))
+#define meUniPropIsUpper(pp) ((meUniPropGC(pp) == meUNIGC_Lu) || (meUniPropGC(pp) == meUNIGC_Lt))
+#define meUniPropIsLower(pp) (meUniPropGC(pp) == meUNIGC_Ll)
+#define meUniPropIsDigit(pp) (meUniPropGC(pp) == meUNIGC_Nd)
+#define meUniPropIsWord(pp) (((meUInt) (meUniPropGC(pp) - meUNIGC_Lu) <= (meUNIGC_Nl - meUNIGC_Lu)) || (meUniPropGC(pp) == meUNIGC_Pc))
+
+extern  int     meUtf8SeqLen(const meUByte *ss, int len);
+extern  int     meUtf8Decode(const meUByte *ss, int len, meUInt *uc);
+extern  int     meUtf8DecodePat(const meUByte *ss, int len, meUInt *uc);
+extern  int     meUtf8Encode(meUByte *dd, meUInt uc);
+extern  int     meUtf8Next(const meUByte *text, int off, int len);
+extern  int     meUtf8Prev(const meUByte *text, int off);
+/* Inline ASCII fast paths for the hot loops, arguments may be evaluated more than once */
+#define meUtf8DecodeFast(ss,len,ucp)                                         \
+    (((ss)[0] < 0x80) ? (*(ucp) = (ss)[0], 1):meUtf8Decode((ss),(len),(ucp)))
+#define meUtf8NextFast(text,off,len)                                         \
+    ((((off) < (len)) && ((text)[off] < 0x80)) ? (off)+1:meUtf8Next((text),(off),(len)))
+extern  meUByte meUniProps(meUInt uc);
+extern  int     meUniWidth(meUInt uc, int ambigWide);
+extern  meUInt  meUniToLower(meUInt uc);
+extern  meUInt  meUniToUpper(meUInt uc);
+extern  meUInt  meUniFold(meUInt uc);
+extern  int     meUniFoldSources(meUInt fc, meUInt *cs, int max);
+extern  const char *meUniVersion(void);
+
+#endif /* __EUNICODE_H */

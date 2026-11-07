@@ -13,15 +13,16 @@ import Cocoa
 import CoreText
 
 // ---------------------------------------------------------------------------
-// MARK: - ME modifier bits  (from estruct.h via macosterm.h ME_MOD_* defines)
+// MARK: - ME modifier bits  (from estruct.h via the meNativeMods C global)
 // ---------------------------------------------------------------------------
-// Special-key codes are read from meSKeys (a C global) so they always match
-// the SKEY_* enum values in the current build.
+// Modifier bits and special-key codes are read from meNativeMods and meSKeys
+// (C globals) so they always match the current build, an ME key is 16 bits in
+// an 8-bit build and 32 bits in a Unicode build.
 
 private enum MEMod {
-    static let shift:   UInt16 = UInt16(ME_MOD_SHIFT)
-    static let control: UInt16 = UInt16(ME_MOD_CONTROL)
-    static let alt:     UInt16 = UInt16(ME_MOD_ALT)
+    static let shift:   UInt32 = meNativeMods.shift
+    static let control: UInt32 = meNativeMods.control
+    static let alt:     UInt32 = meNativeMods.alt
 }
 
 // NSEvent.keyCode values for function/nav keys (hardware scan codes, layout-independent)
@@ -69,11 +70,27 @@ private let kVKKPEnter:      UInt16 = 0x4C
 // ---------------------------------------------------------------------------
 
 /// One cell in the backing store: colour indices + attributes + character.
+/// ch is a code point (an 8-bit build's code page char), below 0x20 an ME
+/// special char, ME_FRAMECHAR_CONT the second cell of a wide char.
 private struct Cell {
-    var char8:  UInt8  = 0x20   // ISO-8859-1 value stored by ME
+    var ch:     UInt32 = 0x20
     var fg:     UInt8  = 0
     var bg:     UInt8  = 1
     var attrs:  UInt8  = 0
+}
+
+/// How a char is drawn. font is 0 for the cell font (the attrs variant), n > 0
+/// for MEView.fallbackFonts[n-1] and -1 when no font has the char (drawn as the
+/// unavailable char box). A wide or fallback glyph is drawn on its own, scaled by
+/// scale and offset by dx, dy from its cell's origin & baseline so it fits its
+/// cells.
+private struct GlyphRef {
+    var glyph:  CGGlyph = 0
+    var font:   Int32   = 0
+    var cells:  Int     = 1
+    var scale:  CGFloat = 1
+    var dx:     CGFloat = 0
+    var dy:     CGFloat = 0
 }
 
 // ---------------------------------------------------------------------------
@@ -87,12 +104,19 @@ final class MEView: NSView {
     private static var boldFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
     private static var italicFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
     private static var boldItalicFont: NSFont = NSFont.monospacedSystemFont(ofSize: 14, weight: .regular)
-    // ---- Glyph cache - pre-computed for all 256  chars ---------
-    // Built once per font change; shared across all windows.
-    private static var glyphs:           [CGGlyph] = Array(repeating: 0, count: 256)
-    private static var boldGlyphs:       [CGGlyph] = Array(repeating: 0, count: 256)
-    private static var italicGlyphs:     [CGGlyph] = Array(repeating: 0, count: 256)
-    private static var boldItalicGlyphs: [CGGlyph] = Array(repeating: 0, count: 256)
+    // ---- Glyph lookup - shared across all windows, reset on a font change ----
+    // Every char is drawn with its own glyph at its cell and never shaped with
+    // its neighbours, so a char is drawn the same whatever is drawn with it and
+    // moving the cursor cannot change it. A char the font lacks is drawn with
+    // CoreText's fallback font for it, fitted to its cells, or as the unavailable
+    // char box if no font has it (or ME_GLYPH_FALLBACK=0 is set).
+    private static var asciiGlyphs: [[CGGlyph]] = Array(repeating: Array(repeating: 0, count: 128), count: 4)
+    private static var glyphCache:  [[UInt32: GlyphRef]] = Array(repeating: [:], count: 4)
+    private static var fallbackFonts: [CTFont] = []
+    private static var fallbackIndex: [String: Int32] = [:]
+    private static let useFallback = ProcessInfo.processInfo.environment["ME_GLYPH_FALLBACK"] != "0"
+    // An 8-bit build's code page (charToUnicode) for chars 0x80 to 0xff
+    private static var codePage: [UInt32] = (0..<128).map { UInt32($0 + 128) }
     
     private var changeFontN: Int32 = 0
     private var fontPanelSemaphore: DispatchSemaphore? = nil
@@ -176,36 +200,40 @@ final class MEView: NSView {
             MEView.boldItalicFont = NSFontManager.shared.convert(MEView.boldFont, toHaveTrait: .italicFontMask);
             MEView.cellW = w;
             MEView.cellH = h;
+            MEView.resetGlyphs()
             MEView.updateCharset()
         }
     }
 
+    /// Called when the code page changes, only an 8-bit build's display uses it.
     static func updateCharset()
     {
-        var chars = (0..<256).map { UniChar($0) }
-        withUnsafeMutablePointer(to: &charToUnicode) { (tuplePtr) -> Void in
-                  tuplePtr.withMemoryRebound(to: UInt16.self, capacity: MemoryLayout.size(ofValue: charToUnicode)) {
-                      for ii in 0..<128 {
-                          chars[ii+128] = $0[ii];
-                      }
-                  }
+        if meNativeUnicode == 0, let cp = charToUnicode {
+            for ii in 0..<128 {
+                codePage[ii] = UInt32(cp[ii])
+            }
+            for wc in gWindowControllers {
+                wc.meView?.needsDisplay = true
+            }
         }
-        MEView.glyphs = MEView.makeGlyphTable(for: font,uchrSet: chars);
-        MEView.boldGlyphs = makeGlyphTable(for: MEView.boldFont,uchrSet: chars);
-        MEView.italicGlyphs = makeGlyphTable(for: MEView.italicFont,uchrSet: chars);
-        MEView.boldItalicGlyphs = makeGlyphTable(for: MEView.boldItalicFont,uchrSet: chars);
-    }
-    
-    private static func makeGlyphTable(for nsFont: NSFont, uchrSet: [UniChar]) -> [CGGlyph]
-    {
-        var g = [CGGlyph](repeating: 0, count: 256);
-        CTFontGetGlyphsForCharacters(nsFont as CTFont,uchrSet, &g, 256);
-        return g;
     }
 
-    private func ctFontVariant(attrs: UInt8) -> CTFont
+    private static func resetGlyphs()
     {
-        switch (attrs & 0x03)
+        var chars = (0..<128).map { UniChar($0) }
+        for vv in 0..<4 {
+            var g = [CGGlyph](repeating: 0, count: 128)
+            CTFontGetGlyphsForCharacters(ctFontVariant(vv), &chars, &g, 128)
+            asciiGlyphs[vv] = g
+            glyphCache[vv] = [:]
+        }
+        fallbackFonts = []
+        fallbackIndex = [:]
+    }
+
+    private static func ctFontVariant(_ vv: Int) -> CTFont
+    {
+        switch (vv & 0x03)
         {
         case 0:  return MEView.font as CTFont;
         case 1:  return MEView.italicFont as CTFont;
@@ -214,15 +242,135 @@ final class MEView: NSView {
         }
     }
 
-    private func glyphTable(for attrs: UInt8) -> [CGGlyph]
+    private func ctFontVariant(attrs: UInt8) -> CTFont
     {
-        switch(attrs & 0x03)
-        {
-        case 0:  return MEView.glyphs;
-        case 1:  return MEView.italicGlyphs;
-        case 2:  return MEView.boldGlyphs;
-        default: return MEView.boldItalicGlyphs;
+        return MEView.ctFontVariant(Int(attrs & 0x03))
+    }
+
+    private static func glyphFont(_ gr: GlyphRef, attrs: UInt8) -> CTFont
+    {
+        return (gr.font > 0) ? fallbackFonts[Int(gr.font) - 1] : ctFontVariant(Int(attrs & 0x03))
+    }
+
+    /// The code point of a cell's char, 0 if it has none (an 8-bit build's
+    /// undefined code page char)
+    private static func codePoint(_ ch: UInt32) -> UInt32
+    {
+        return ((ch < 0x80) || (meNativeUnicode != 0)) ? ch : codePage[Int(ch & 0x7f)]
+    }
+
+    /// How code point cp (0x20 or more) is drawn in cells cells with font variant attrs
+    private static func glyphRef(_ cp: UInt32, attrs: UInt8, cells: Int) -> GlyphRef
+    {
+        let vv = Int(attrs & 0x03)
+        if (cp < 0x80) && (cells == 1) {
+            return GlyphRef(glyph: asciiGlyphs[vv][Int(cp)])
         }
+        if let gr = glyphCache[vv][cp], gr.cells == cells {
+            return gr
+        }
+        var gr = GlyphRef(glyph: 0, font: -1, cells: cells)
+        if let us = Unicode.Scalar(cp) {
+            let str = String(Character(us))
+            var u16 = Array(str.utf16)
+            var gs = [CGGlyph](repeating: 0, count: u16.count)
+            let base = ctFontVariant(vv)
+            if CTFontGetGlyphsForCharacters(base, &u16, &gs, u16.count) && (gs[0] != 0) {
+                gr.glyph = gs[0]
+                gr.font = 0
+            } else if useFallback {
+                let fb = CTFontCreateForString(base, str as CFString, CFRange(location: 0, length: u16.count))
+                let name = CTFontCopyPostScriptName(fb) as String
+                // LastResort draws a placeholder for the char's block, the box is used instead
+                if (name != "LastResort") && !CFEqual(fb, base) &&
+                   CTFontGetGlyphsForCharacters(fb, &u16, &gs, u16.count) && (gs[0] != 0) {
+                    if let ii = fallbackIndex[name] {
+                        gr.font = ii
+                    } else {
+                        fallbackFonts.append(fb)
+                        gr.font = Int32(fallbackFonts.count)
+                        fallbackIndex[name] = gr.font
+                    }
+                    gr.glyph = gs[0]
+                }
+            }
+        }
+        if (gr.font > 0) || ((gr.font == 0) && (cells > 1)) {
+            fitGlyph(&gr, glyphFont(gr, attrs: attrs))
+        }
+        glyphCache[vv][cp] = gr
+        return gr
+    }
+
+    /// Sets the scale and offset that fit gr's glyph inside its cells: centred,
+    /// scaled down (keeping its shape) if its ink is wider than its cells or
+    /// taller than a cell, and moved up or down if it reaches out of the cell.
+    private static func fitGlyph(_ gr: inout GlyphRef, _ ft: CTFont)
+    {
+        var glyph = gr.glyph
+        var adv = CGSize.zero
+        CTFontGetAdvancesForGlyphs(ft, .horizontal, &glyph, &adv, 1)
+        let bb = CTFontGetBoundingRectsForGlyphs(ft, .horizontal, &glyph, nil, 1)
+        let ww = CGFloat(gr.cells * cellW)
+        let hh = CGFloat(cellH)
+        let desc = -font.descender
+        let asc = hh - desc
+        let left = bb.isNull ? 0 : min(0, bb.minX)
+        let right = bb.isNull ? adv.width : max(adv.width, bb.maxX)
+        var ss: CGFloat = 1
+        if right - left > ww {
+            ss = ww / (right - left)
+        }
+        if !bb.isNull && (bb.height > hh) && (hh / bb.height < ss) {
+            ss = hh / bb.height
+        }
+        gr.scale = ss
+        gr.dx = (ww - (right - left) * ss) / 2 - left * ss
+        gr.dy = 0
+        if !bb.isNull {
+            if bb.maxY * ss > asc {
+                gr.dy = asc - bb.maxY * ss
+            } else if bb.minY * ss < -desc {
+                gr.dy = -desc - bb.minY * ss
+            }
+        }
+    }
+
+    /// Draws a wide, fallback or unavailable char at x (its first cell) on the
+    /// baseline in colour, clipped to its cells
+    private func drawSingleGlyph(_ gr: GlyphRef, attrs: UInt8, x: CGFloat, cellY: CGFloat, baseline: CGFloat,
+                                 color: CGColor, in ctx: CGContext)
+    {
+        let rect = CGRect(x: x, y: cellY, width: CGFloat(gr.cells * MEView.cellW), height: CGFloat(MEView.cellH))
+        if gr.font < 0 {
+            drawUnavailable(rect, color: color, in: ctx)
+            return
+        }
+        ctx.saveGState()
+        ctx.setFillColor(color)
+        ctx.clip(to: rect)
+        ctx.translateBy(x: x + gr.dx, y: baseline + gr.dy)
+        ctx.scaleBy(x: gr.scale, y: gr.scale)
+        var glyph = gr.glyph
+        var pos = CGPoint.zero
+        CTFontDrawGlyphs(MEView.glyphFont(gr, attrs: attrs), &glyph, &pos, 1, ctx)
+        ctx.restoreGState()
+    }
+
+    /// The box with a diagonal drawn for a char no font has (as the Windows and X11
+    /// builds)
+    private func drawUnavailable(_ rect: CGRect, color: CGColor, in ctx: CGContext)
+    {
+        let x0 = rect.minX + 1.5, x1 = rect.maxX - 1.5
+        let y0 = rect.minY + 1.5, y1 = rect.maxY - 1.5
+        ctx.saveGState()
+        ctx.setStrokeColor(color)
+        ctx.setLineWidth(1.0)
+        ctx.stroke(CGRect(x: x0, y: y0, width: x1 - x0, height: y1 - y0))
+        ctx.move(to: CGPoint(x: x0, y: y0))
+        ctx.addLine(to: CGPoint(x: x1, y: y1))
+        ctx.strokePath()
+        ctx.restoreGState()
     }
 
     // MARK: - Geometry helpers
@@ -240,6 +388,13 @@ final class MEView: NSView {
     // Convenience overload using self.rows (safe for cursor/focus callers on main thread)
     private func cellRect(col: Int, row: Int) -> NSRect {
         cellRect(col: col, row: row, rows: rows)
+    }
+
+    // The cursor's cells to redraw, two in case it is on a wide char
+    private func cursorRect(col: Int, row: Int) -> NSRect {
+        var rr = cellRect(col: col, row: row, rows: rows)
+        rr.size.width *= 2
+        return rr
     }
 
     // MARK: - Drawing
@@ -265,6 +420,50 @@ final class MEView: NSView {
         }
 
         drawCursor(cols: snapCols, rows: snapRows, cells: snapCells, in: ctx)
+        drawMarkedText(cols: snapCols, rows: snapRows, cells: snapCells, in: ctx)
+    }
+
+    /// Whether an input method's char takes two cells (East Asian wide ranges)
+    private static func isWide(_ cp: UInt32) -> Bool {
+        switch cp {
+        case 0x1100...0x115f, 0x2e80...0x303e, 0x3041...0x33ff, 0x3400...0x4dbf, 0x4e00...0x9fff,
+             0xa000...0xa4cf, 0xac00...0xd7a3, 0xf900...0xfaff, 0xfe30...0xfe4f, 0xff00...0xff60,
+             0xffe0...0xffe6, 0x1f300...0x1f64f, 0x1f900...0x1f9ff, 0x20000...0x3fffd:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /// Draws an input method's uncommitted text over the cells from the cursor, underlined
+    private func drawMarkedText(cols: Int, rows: Int, cells: [Cell], in ctx: CGContext) {
+        guard !markedText.isEmpty, cursorRow >= 0, cursorRow < rows, cursorCol >= 0, cursorCol < cols else { return }
+        let idx = cursorRow * cols + cursorCol
+        let cell = (idx < cells.count) ? cells[idx] : Cell()
+        let fg = nsColor(index: Int(cell.fg)).cgColor
+        let bg = nsColor(index: Int(cell.bg)).cgColor
+        let cellY = CGFloat((rows - 1 - cursorRow) * MEView.cellH)
+        let baseline = cellY - CGFloat(MEView.font.descender)
+        var col = cursorCol
+        for us in markedText.unicodeScalars {
+            let nc = MEView.isWide(us.value) ? 2 : 1
+            guard (us.value >= 0x20) && (col + nc <= cols) else { break }
+            let rect = CGRect(x: CGFloat(col * MEView.cellW), y: cellY, width: CGFloat(nc * MEView.cellW), height: CGFloat(MEView.cellH))
+            ctx.setFillColor(bg)
+            ctx.fill(rect)
+            let gr = MEView.glyphRef(us.value, attrs: 0, cells: nc)
+            if (gr.font == 0) && (nc == 1) {
+                var glyph = gr.glyph
+                var pos = CGPoint(x: rect.minX, y: baseline)
+                ctx.setFillColor(fg)
+                CTFontDrawGlyphs(ctFontVariant(attrs: 0), &glyph, &pos, 1, ctx)
+            } else {
+                drawSingleGlyph(gr, attrs: 0, x: rect.minX, cellY: cellY, baseline: baseline, color: fg, in: ctx)
+            }
+            ctx.setFillColor(fg)
+            ctx.fill(CGRect(x: rect.minX, y: cellY + 1, width: rect.width, height: 1))
+            col += nc
+        }
     }
 
     private func drawRow(_ row: Int, cols: Int, rows: Int, cells: [Cell], in ctx: CGContext) {
@@ -290,13 +489,14 @@ final class MEView: NSView {
         // Batch consecutive cells with the same fg colour and font variant into
         // a single CTFontDrawGlyphs call.  Special chars and spaces do NOT break
         // the run, they simply contribute no glyph (their cell is already filled
-        // by pass 1 and will be drawn over in pass 3).
+        // by pass 1 and will be drawn over in pass 3). A wide, fallback or
+        // unavailable char is drawn on its own, fitted to its cells.
         col = 0
         while col < cols {
             let cell0  = cells[rowBase + col];
             let attrs0 = cell0.attrs & 0x03;   // bold + italic bits
             let fg0    = cell0.fg;
-            let gtable = glyphTable(for: attrs0);
+            let fgColor = nsColor(index: Int(fg0)).cgColor
 
             var runCount = 0;
             var c = col;
@@ -306,20 +506,29 @@ final class MEView: NSView {
                 if(((cell.attrs & 0x03) != attrs0) || (cell.fg != fg0)) {
                     break;
                 }
-                if(cell.char8 > 0x20)
+                if (cell.ch > 0x20) && (cell.ch != ME_FRAMECHAR_CONT)
                 {
-                    let g = gtable[Int(cell.char8)]
-                    if g != 0 {
-                        scratchGlyphs[runCount]    = g
-                        scratchPositions[runCount] = CGPoint(x: CGFloat(c * MEView.cellW), y: baseline)
-                        runCount += 1
+                    let cp = MEView.codePoint(cell.ch)
+                    let wide = (c + 1 < cols) && (cells[rowBase + c + 1].ch == ME_FRAMECHAR_CONT)
+                    if cp >= 0x20 {
+                        let gr = MEView.glyphRef(cp, attrs: attrs0, cells: wide ? 2 : 1)
+                        if (gr.font == 0) && !wide {
+                            if gr.glyph != 0 {
+                                scratchGlyphs[runCount]    = gr.glyph
+                                scratchPositions[runCount] = CGPoint(x: CGFloat(c * MEView.cellW), y: baseline)
+                                runCount += 1
+                            }
+                        } else {
+                            drawSingleGlyph(gr, attrs: attrs0, x: CGFloat(c * MEView.cellW), cellY: cellY,
+                                            baseline: baseline, color: fgColor, in: ctx)
+                        }
                     }
                 }
                 c += 1
             }
 
             if runCount > 0 {
-                ctx.setFillColor(nsColor(index: Int(fg0)).cgColor)
+                ctx.setFillColor(fgColor)
                 CTFontDrawGlyphs(ctFontVariant(attrs: attrs0),
                                  scratchGlyphs, scratchPositions, runCount, ctx)
             }
@@ -329,8 +538,8 @@ final class MEView: NSView {
         // ---- Pass 3: specials and underlines --------------------------------
         for col in 0..<cols {
             let cell = cells[rowBase + col];
-            if(cell.char8 < 0x20) {
-                drawSpecial(cell.char8,
+            if(cell.ch < 0x20) {
+                drawSpecial(UInt8(cell.ch),
                             rect: cellRect(col: col, row: row, rows: rows),
                             fg: Int(cell.fg), in: ctx)
             }
@@ -575,7 +784,15 @@ final class MEView: NSView {
         guard cursorCol >= 0 && cursorCol < cols &&
               cursorRow >= 0 && cursorRow < rows else { return }
 
-        let rect = cellRect(col: cursorCol, row: cursorRow, rows: rows);
+        // a wide char's cursor covers both its cells
+        let idx  = cursorRow * cols + cursorCol;
+        guard idx < cells.count else { return }
+        let cell = cells[idx];
+        let wide = (cell.ch != ME_FRAMECHAR_CONT) && (cursorCol + 1 < cols) && (cells[idx + 1].ch == ME_FRAMECHAR_CONT)
+        var rect = cellRect(col: cursorCol, row: cursorRow, rows: rows);
+        if wide {
+            rect.size.width *= 2
+        }
         let cursorNSColor = nsColor(index: Int(meNativeGetCursorColor(Unmanaged.passUnretained(self).toOpaque())));
 
         if(hasFocus)
@@ -583,22 +800,23 @@ final class MEView: NSView {
             // Focused: filled block, character redrawn in cell background colour
             ctx.setFillColor(cursorNSColor.cgColor);
             ctx.fill(rect);
-            let idx  = cursorRow * cols + cursorCol;
-            if(idx < cells.count)
+            let cp = MEView.codePoint(cell.ch)
+            if (cell.ch > 0x20) && (cell.ch != ME_FRAMECHAR_CONT) && (cp >= 0x20)
             {
-                let cell = cells[idx];
-                if (cell.char8 > 0x20)
-                {
-                    let g = glyphTable(for: cell.attrs)[Int(cell.char8)];
-                    if(g != 0)
-                    {
-                        let cellY    = CGFloat((rows - 1 - cursorRow) * MEView.cellH);
-                        let baseline = cellY - CGFloat(MEView.font.descender);
-                        var glyph    = g;
+                let gr = MEView.glyphRef(cp, attrs: cell.attrs, cells: wide ? 2 : 1)
+                let cellY    = CGFloat((rows - 1 - cursorRow) * MEView.cellH);
+                let baseline = cellY - CGFloat(MEView.font.descender);
+                let bgColor  = nsColor(index: Int(cell.bg)).cgColor
+                if (gr.font == 0) && !wide {
+                    if gr.glyph != 0 {
+                        var glyph    = gr.glyph;
                         var position = CGPoint(x: rect.minX, y: baseline);
-                        ctx.setFillColor(nsColor(index: Int(cell.bg)).cgColor);
+                        ctx.setFillColor(bgColor);
                         CTFontDrawGlyphs(ctFontVariant(attrs: cell.attrs),&glyph,&position,1,ctx);
                     }
+                } else {
+                    drawSingleGlyph(gr, attrs: cell.attrs, x: rect.minX, cellY: cellY, baseline: baseline,
+                                    color: bgColor, in: ctx)
                 }
             }
         }
@@ -617,13 +835,13 @@ final class MEView: NSView {
 
     func startCursorBlink() {
         hasFocus = true;
-        setNeedsDisplay(cellRect(col: cursorCol, row: cursorRow));
+        setNeedsDisplay(cursorRect(col: cursorCol, row: cursorRow));
         meNativeViewFocusGained(Unmanaged.passUnretained(self).toOpaque());
     }
 
     func stopCursorBlink() {
         hasFocus = false;
-        setNeedsDisplay(cellRect(col: cursorCol, row: cursorRow));
+        setNeedsDisplay(cursorRect(col: cursorCol, row: cursorRow));
         meNativeViewFocusLost(Unmanaged.passUnretained(self).toOpaque());
     }
 
@@ -649,7 +867,7 @@ final class MEView: NSView {
             let ce = Int(colEnd[row])
             guard cs < ce else { continue }
 
-            guard let textPtr   = meNativeGetRowText(Int32(row)),
+            guard let textPtr   = meNativeGetRowChars(Int32(row)),
                   let schemePtr = meNativeGetRowScheme(Int32(row)) else { continue }
 
             let rowBase = row * cols
@@ -663,7 +881,7 @@ final class MEView: NSView {
                 // meSCHEME_NOFONT (0x1000) suppresses font styling (bold/italic/underline)
                 // for trailing spaces and other positions where ME strips font attributes.
                 cells[rowBase + col] = Cell(
-                    char8:  ch,
+                    ch:     ch,
                     fg:     UInt8(st & 0xff),
                     bg:     UInt8((st >> 8) & 0xff),
                     attrs:  (sc & 0x1000) != 0 ? 0 : UInt8((st >> 16) & 0xff));
@@ -686,11 +904,11 @@ final class MEView: NSView {
         // Called from ME engine thread - dispatch UI work to main thread
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.setNeedsDisplay(self.cellRect(col: self.cursorCol, row: self.cursorRow))
+            self.setNeedsDisplay(self.cursorRect(col: self.cursorCol, row: self.cursorRow))
             self.cursorCol = col
             self.cursorRow = row
             self.cursorOn  = true   // TTshowCur - cursor visible
-            self.setNeedsDisplay(self.cellRect(col: self.cursorCol, row: self.cursorRow))
+            self.setNeedsDisplay(self.cursorRect(col: self.cursorCol, row: self.cursorRow))
         }
     }
 
@@ -699,7 +917,7 @@ final class MEView: NSView {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.cursorOn = false   // TThideCur - blink-off phase
-            self.setNeedsDisplay(self.cellRect(col: self.cursorCol, row: self.cursorRow))
+            self.setNeedsDisplay(self.cursorRect(col: self.cursorCol, row: self.cursorRow))
         }
     }
 
@@ -810,6 +1028,11 @@ final class MEView: NSView {
     // MARK: - Keyboard events
 
     override func keyDown(with event: NSEvent) {
+        // While an input method is composing every key goes to it
+        if hasMarkedText() {
+            interpretKeyEvents([event])
+            return
+        }
         let keyCode   = event.keyCode
         let modifiers = event.modifierFlags
 
@@ -819,14 +1042,14 @@ final class MEView: NSView {
 
         // ME_SHIFT / ME_CONTROL / ME_ALT for special keys only.
         // For printable chars shift is encoded in the character value itself.
-        var specialMod: UInt16 = 0
+        var specialMod: UInt32 = 0
         if isShift { specialMod |= MEMod.shift }
         if isCtrl  { specialMod |= MEMod.control }
         if isAlt   { specialMod |= MEMod.alt }
 
         // ---- Function / navigation keys (layout-independent) -------------
         // SKEY values come from meSKeys (C global) - correct for this build.
-        let specialKey: UInt16?
+        let specialKey: UInt32?
         switch keyCode {
         case kVKUpArrow:        specialKey = meSKeys.up
         case kVKDownArrow:      specialKey = meSKeys.down
@@ -874,8 +1097,14 @@ final class MEView: NSView {
         }
 
         // ---- Regular character keys --------------------------------------
-        // For Ctrl/Alt use charactersIgnoringModifiers to get the base letter.
-        // For plain/shift keys use characters - shift is already in the char.
+        // Plain and shifted keys go through the text input system so dead keys,
+        // input methods and the character viewer work, the chars arrive in
+        // insertText. For Ctrl/Alt use charactersIgnoringModifiers to get the base
+        // letter; Cmd keys not taken by a menu are typed as before.
+        if !isCtrl && !isAlt && !modifiers.contains(.command) {
+            interpretKeyEvents([event])
+            return
+        }
         guard let chars = (isCtrl || isAlt)
                 ? event.charactersIgnoringModifiers
                 : event.characters,
@@ -885,19 +1114,19 @@ final class MEView: NSView {
         let code = scalar.value
 
         if code >= 0x20 && code <= 0x7e {
-            let keyVal: UInt16
+            let keyVal: UInt32
             if isCtrl && code >= 0x61 && code <= 0x7a {
                 // Ctrl+a-z -> C0 codes 0x01-0x1a, Alt may combine
-                keyVal = UInt16(code ^ 0x60) | (specialMod & MEMod.alt)
+                keyVal = (code ^ 0x60) | (specialMod & MEMod.alt)
             } else if isCtrl && code >= 0x40 && code <= 0x5f {
                 // Ctrl+@, A-Z, [, \, ], ^, _ -> C0 codes 0x00-0x1f
-                keyVal = UInt16(code ^ 0x40) | (specialMod & MEMod.alt)
+                keyVal = (code ^ 0x40) | (specialMod & MEMod.alt)
             } else if isCtrl {
                 // Ctrl+punctuation/digits: keep ME_CONTROL, strip ME_SHIFT
-                keyVal = UInt16(code) | MEMod.control | (specialMod & MEMod.alt)
+                keyVal = code | MEMod.control | (specialMod & MEMod.alt)
             } else {
                 // Plain or Alt+char: shift already in character, never add ME_SHIFT
-                keyVal = UInt16(code) | (specialMod & MEMod.alt)
+                keyVal = code | (specialMod & MEMod.alt)
             }
             meNativePushKey(keyVal)
             return
@@ -905,13 +1134,22 @@ final class MEView: NSView {
 
         if code < 0x20 {
             // C0 from OS (defensive - shouldn't happen with Ctrl using ignoringModifiers)
-            meNativePushKey(UInt16(code) | (specialMod & MEMod.alt))
+            meNativePushKey(code | (specialMod & MEMod.alt))
             return
         }
 
-        if code <= 0xFFFF {
-            meNativePushKey(UInt16(code) | (specialMod & MEMod.alt))
-        }
+        // A non-ASCII char (e.g. Alt with a national key), the C side converts it
+        meNativePushChar(code, specialMod & (MEMod.control | MEMod.alt))
+    }
+
+    // MARK: - Text input (NSTextInputClient)
+    // Typed text arrives in insertText. An input method's uncommitted (marked)
+    // text is drawn at the cursor until it is committed or cancelled.
+
+    private var markedText: String = ""
+
+    override func doCommand(by selector: Selector) {
+        // Keys are handled in keyDown, nothing to do (and no beep)
     }
 
     // MARK: - Mouse events
@@ -967,8 +1205,8 @@ final class MEView: NSView {
         return (col, row, dX, dY)
     }
 
-    private func meModifiers(_ event: NSEvent) -> UInt16 {
-        var m: UInt16 = 0
+    private func meModifiers(_ event: NSEvent) -> UInt32 {
+        var m: UInt32 = 0
         let f = event.modifierFlags
         if f.contains(.shift)   { m |= MEMod.shift }
         if f.contains(.control) { m |= MEMod.control }
@@ -1020,6 +1258,67 @@ final class MEView: NSView {
         window?.makeKeyAndOrderFront(nil)
         window?.makeFirstResponder(self)
         return true
+    }
+}
+
+extension MEView: NSTextInputClient {
+
+    func insertText(_ string: Any, replacementRange: NSRange) {
+        let text = (string as? NSAttributedString)?.string ?? (string as? String) ?? ""
+        if !markedText.isEmpty {
+            markedText = ""
+            setNeedsDisplay(bounds)
+        }
+        for us in text.unicodeScalars {
+            switch us.value {
+            case 0x0a, 0x0d: meNativePushKey(meSKeys.ret)
+            case 0x09:       meNativePushKey(meSKeys.tab)
+            case 0..<0x20:   meNativePushKey(us.value)
+            default:         meNativePushChar(us.value, 0)
+            }
+        }
+    }
+
+    func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
+        markedText = (string as? NSAttributedString)?.string ?? (string as? String) ?? ""
+        setNeedsDisplay(bounds)
+    }
+
+    func unmarkText() {
+        markedText = ""
+        setNeedsDisplay(bounds)
+    }
+
+    func hasMarkedText() -> Bool {
+        return !markedText.isEmpty
+    }
+
+    func markedRange() -> NSRange {
+        return markedText.isEmpty ? NSRange(location: NSNotFound, length: 0)
+                                  : NSRange(location: 0, length: (markedText as NSString).length)
+    }
+
+    func selectedRange() -> NSRange {
+        return NSRange(location: 0, length: 0)
+    }
+
+    func validAttributesForMarkedText() -> [NSAttributedString.Key] {
+        return []
+    }
+
+    func attributedSubstring(forProposedRange range: NSRange, actualRange: NSRangePointer?) -> NSAttributedString? {
+        return nil
+    }
+
+    func characterIndex(for point: NSPoint) -> Int {
+        return NSNotFound
+    }
+
+    /// The cursor's cell on the screen, where the input method puts its window
+    func firstRect(forCharacterRange range: NSRange, actualRange: NSRangePointer?) -> NSRect {
+        let rr = cellRect(col: cursorCol, row: cursorRow)
+        guard let win = window else { return rr }
+        return win.convertToScreen(convert(rr, to: nil))
     }
 }
 

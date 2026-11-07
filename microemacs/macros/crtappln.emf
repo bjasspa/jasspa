@@ -31,7 +31,7 @@ define-macro create-app
     set-variable $file-names "/usr/share/applications/.*\\.desktop"
     !iif &seq $file-names ""  -10 ml-write "Error: Unknown Linux desktop type, cannot create app launcher."
     find-buffer "*ca"
-    insert-string "[Desktop Entry]\nVersion=1.0\nName=MicroEmacs\nGenericName=Text Editor\nComment=Jasspa MicroEmacs - emacs style text editor and so much more \nMimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;\nTryExec="
+    insert-string "[Desktop Entry]\nVersion=1.0\nName=MicroEmacs\nGenericName=Text Editor\nComment=Jasspa MicroEmacs - emacs style text editor and so much more\nMimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;\nTryExec="
     insert-string .about.arg0
     insert-string "\nExec="
     insert-string .about.arg0

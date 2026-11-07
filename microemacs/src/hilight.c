@@ -1160,11 +1160,47 @@ get_scheme:
 }
 
 
+#if MEOPT_UNICODE
+/* An ASCII char in the same classes as the char at ss (from 0x80), so the byte class tests
+ * work on whole chars */
+static meUByte
+hilCharProxy(const meUByte *ss, int *len)
+{
+    meUInt uc;
+    meUByte pp;
+    *len = meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+    if(meUniIsRaw(uc) || (uc == 0))
+        return '.';
+    pp = meUniProps(uc);
+    if(meUniPropIsUpper(pp))
+        return 'A';
+    if(meUniPropIsAlpha(pp))
+        return 'a';
+    if(meUniPropIsWord(pp))
+        return '_';
+    return (meUniPropIsSpace(pp)) ? ' ':'.';
+}
+#define hilNextCharProxy(ss) ((*(ss) < 0x80) ? *(ss):hilCharProxy((ss),&__hcl))
+/* a class test or . on a char from 0x80 tests its proxy and takes the whole char */
+#define hilCharTestDecl int __hcl=1;
+#define hilCharTestStart(ftctcc,srcText,tokTest)                             \
+    if((ftctcc >= 0x80) && ((tokTest & meHIL_TEST_MASK) >= meHIL_TEST_SPACE)) \
+        ftctcc = hilCharProxy(srcText-1,&__hcl)
+#define hilCharTestMatch(srcText) (srcText += __hcl-1)
+#else
+#define hilNextCharProxy(ss) (*(ss))
+#define hilCharTestDecl
+#define hilCharTestStart(ftctcc,srcText,tokTest)
+#define hilCharTestMatch(srcText) ((void) 0)
+#endif
+
 #define findTokenCharTest(ret,lastChar,srcText,tokTest,testStr)              \
 do {                                                                         \
     meUByte *__ts, ftctcc;                                                   \
+    hilCharTestDecl                                                          \
     lastChar='\0';                                                           \
     if((ftctcc=*srcText++) == '\0') ftctcc=meCHAR_NL;                        \
+    hilCharTestStart(ftctcc,srcText,tokTest);                                \
     switch(tokTest & meHIL_TEST_MASK)                                        \
     {                                                                        \
     case meHIL_TEST_BACKREF:                                                 \
@@ -1248,7 +1284,7 @@ do {                                                                         \
         }                                                                    \
         tokTest = 0 ;                                                        \
     }                                                                        \
-    else if((lastChar=ftctcc) == meCHAR_NL)                                  \
+    else if(hilCharTestMatch(srcText),(lastChar=ftctcc) == meCHAR_NL)        \
         tokTest = 0 ;                                                        \
     else if(tokTest & meHIL_TEST_MATCH_MULTI)                                \
     {                                                                        \
@@ -1313,6 +1349,9 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     meHilight *nn, *node ;
     meUByte  cc, *s1, *s2;
     int status;
+#if MEOPT_UNICODE
+    int __hcl;
+#endif
     int hi, low, mid ;
     meUShort type ;
 
@@ -1410,7 +1449,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
                 ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
                  findTokenSingleCharTest(' ',nn->tknSttTst))) &&
-               findTokenSingleCharTest(*s1,nn->tknEndTst))
+               findTokenSingleCharTest(hilNextCharProxy(s1),nn->tknEndTst))
             {
                 *len = (meUShort) (s1-text);
                 return nn ;
@@ -1486,7 +1525,7 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
                        (findTokenSingleCharTest(lastChar,nn->tknSttTst) ||
                         ((mode & meHIL_MODETOKEWS) && (mode & meHIL_MODETOKEND) &&
                          findTokenSingleCharTest(' ',nn->tknSttTst))) &&
-                       findTokenSingleCharTest(*s1,nn->tknEndTst))
+                       findTokenSingleCharTest(hilNextCharProxy(s1),nn->tknEndTst))
                     {
                         *len = (meUShort) (s1-text);
                         return nn ;
@@ -1498,16 +1537,9 @@ findToken(meHilight *root, meUByte *text, meUByte mode,
     return NULL ;
 }
 
-#define __hilCopyChar(dstPos,cc,tw)                                          \
+#define __hilCopyAscii(dstPos,cc,tw)                                         \
 do                                                                           \
 {                                                                            \
-    /* the largest character size is a tab which is user definable */        \
-    if(dstPos >= disLineSize)                                                \
-    {                                                                        \
-        disLineSize += 512 ;                                                 \
-        if((disLineBuff = meRealloc(disLineBuff,disLineSize+32)) == NULL)    \
-           meDie();                                                          \
-    }                                                                        \
     if(isDisplayable(cc))                                                    \
     {                                                                        \
         if(cc == ' ')                                                        \
@@ -1537,6 +1569,108 @@ do                                                                           \
         disLineBuff[dstPos++] = hexdigits[cc/0x10] ;                         \
         disLineBuff[dstPos++] = hexdigits[cc%0x10] ;                         \
     }                                                                        \
+}                                                                            \
+while(0)
+
+#if MEOPT_UNICODE
+/* The hilighting copies a line a byte at a time, the bytes of a UTF-8 char are collected until
+ * complete. An incomplete sequence is flushed as raw bytes when a byte which cannot continue it
+ * arrives or at the end of the line */
+typedef struct {
+    meUByte buf[meUTF8_LEN_MAX];
+    meUByte len;
+    meUByte need;
+} hilUtf8Acc;
+
+static hilUtf8Acc hilCopyAcc, hilOffAcc;
+
+/* Adds a byte, returns the number of chars completed into ucs */
+static int
+hilUtf8Add(hilUtf8Acc *acc, meUByte cc, meUInt *ucs)
+{
+    int nn=0, ii, ll;
+    
+    if(acc->len)
+    {
+        if(((cc & 0xc0) == 0x80) && (acc->len < acc->need))
+        {
+            acc->buf[acc->len++] = cc;
+            if(acc->len < acc->need)
+                return 0;
+            for(ii=0 ; ii<acc->len ; ii+=ll)
+                ll = meUtf8Decode(acc->buf+ii,acc->len-ii,ucs+nn++);
+            acc->len = 0;
+            return nn;
+        }
+        for(ii=0 ; ii<acc->len ; ii++)
+            ucs[nn++] = meUNI_RAW_BASE + acc->buf[ii];
+        acc->len = 0;
+    }
+    if(cc < 0xc0)
+        ucs[nn++] = (cc < 0x80) ? cc:(meUNI_RAW_BASE + cc);
+    else if(cc >= 0xf8)
+        ucs[nn++] = meUNI_RAW_BASE + cc;
+    else
+    {
+        acc->buf[0] = cc;
+        acc->len = 1;
+        acc->need = (cc >= 0xf0) ? 4:(cc >= 0xe0) ? 3:2;
+    }
+    return nn;
+}
+
+static int
+hilUtf8Flush(hilUtf8Acc *acc, meUInt *ucs)
+{
+    int nn;
+    for(nn=0 ; nn<acc->len ; nn++)
+        ucs[nn] = meUNI_RAW_BASE + acc->buf[nn];
+    acc->len = 0;
+    return nn;
+}
+
+static int
+hilCopyUtf8(int dstPos, meUByte cc, int tw)
+{
+    meUInt ucs[meUTF8_LEN_MAX+1], uc;
+    int nn, ii;
+    
+    nn = hilUtf8Add(&hilCopyAcc,cc,ucs);
+    for(ii=0 ; ii<nn ; ii++)
+    {
+        if((uc = ucs[ii]) < 0x80)
+        {
+            cc = (meUByte) uc;
+            __hilCopyAscii(dstPos,cc,tw);
+        }
+        else
+            dstPos += renderUniChar(disLineBuff+dstPos,uc);
+    }
+    return dstPos;
+}
+#endif
+
+#if MEOPT_UNICODE
+#define __hilCopyNonAscii(dstPos,cc,tw)                                      \
+    if((cc & 0x80) || hilCopyAcc.len)                                        \
+        dstPos = hilCopyUtf8(dstPos,cc,tw);                                  \
+    else
+#else
+#define __hilCopyNonAscii(dstPos,cc,tw)
+#endif
+
+#define __hilCopyChar(dstPos,cc,tw)                                          \
+do                                                                           \
+{                                                                            \
+    /* the largest character size is a tab which is user definable */        \
+    if(dstPos >= disLineSize)                                                \
+    {                                                                        \
+        disLineSize += 512 ;                                                 \
+        if((disLineBuff = meRealloc(disLineBuff,(disLineSize+32)*sizeof(meFrameChar))) == NULL)    \
+           meDie();                                                          \
+    }                                                                        \
+    __hilCopyNonAscii(dstPos,cc,tw)                                          \
+    __hilCopyAscii(dstPos,cc,tw);                                            \
 }                                                                            \
 while(0)
 
@@ -1745,6 +1879,9 @@ hilightLine(meVideoLine *vp1, meUByte mode)
 {
     meUByte *srcText=vp1->line->text ;
     meUByte  hilno = vp1->hilno, cc=meCHAR_NL ;
+#if MEOPT_UNICODE
+    int hcl;
+#endif
     meHilight *node;
     meUShort len ;
     register int srcWid=vp1->line->length, dstPos=0 ;
@@ -1758,6 +1895,9 @@ hilightLine(meVideoLine *vp1, meUByte mode)
     hd.srcOff = 0xffff;                 /* No callback required */
     hd.blkp = hilBlock + 1;             /* block pointer */
     hd.tabWidth = vp1->wind->buffer->tabWidth;
+#if MEOPT_UNICODE
+    hilCopyAcc.len = 0;
+#endif
 
     /* Determine if we are processing a forground or hilighted line.
      * Determined by the current line flag */
@@ -1835,6 +1975,11 @@ hilightLine(meVideoLine *vp1, meUByte mode)
                 break ;
             node = meHilightGetColumnHilight(node);
         }
+#if MEOPT_UNICODE
+        /* the char before a token is tested by its class, see hilCharProxy */
+        if((hd.srcPos > 0) && (srcText[hd.srcPos-1] >= 0x80))
+            cc = hilCharProxy(srcText+meUtf8Prev(srcText,hd.srcPos),&hcl);
+#endif
         if((node = findToken(hd.root,srcText+hd.srcPos,mode,cc,&len)) != NULL)
         {
 column_token:
@@ -2053,6 +2198,15 @@ advance_char:
         }
     }
 
+#if MEOPT_UNICODE
+    if(hilCopyAcc.len)
+    {
+        meUInt ucs[meUTF8_LEN_MAX];
+        int nn = hilUtf8Flush(&hilCopyAcc,ucs), ii;
+        for(ii=0 ; ii<nn ; ii++)
+            dstPos += renderUniChar(disLineBuff+dstPos,ucs[ii]);
+    }
+#endif
     if(hd.blkp->column != dstPos)
         hd.blkp->column = dstPos ;
     node = NULL ;
@@ -2087,9 +2241,42 @@ hiline_exit:
     return hd.noColChng ;
 }
 
+#if MEOPT_UNICODE
+/* Returns the width of the chars completed by byte cc, which is held against cc in the offsets */
+static int
+hilOffsetUtf8(meUByte cc, int dstPos, int tw)
+{
+    meUInt ucs[meUTF8_LEN_MAX+1], uc;
+    int nn, ii, ww=0;
+    
+    nn = hilUtf8Add(&hilOffAcc,cc,ucs);
+    for(ii=0 ; ii<nn ; ii++)
+    {
+        if((uc = ucs[ii]) >= 0x80)
+            ww += renderUniChar(NULL,uc);
+        else if(isDisplayable(uc))
+            ww++;
+        else if(uc == meCHAR_TAB)
+            ww += get_tab_pos(dstPos+ww,tw) + 1;
+        else if(uc < 0x20)
+            ww += 2;
+        else
+            ww += 4;
+    }
+    return ww;
+}
+#define __hilOffsetNonAscii(ii,cc,dstPos,tw)                                 \
+    if((cc & 0x80) || hilOffAcc.len)                                         \
+        ii = hilOffsetUtf8(cc,dstPos,tw);                                    \
+    else
+#else
+#define __hilOffsetNonAscii(ii,cc,dstPos,tw)
+#endif
+
 #define hilOffsetChar(off,dstPos,dstJmp,cc,tw)                               \
 {                                                                            \
     int ii ;                                                                 \
+    __hilOffsetNonAscii(ii,cc,dstPos,tw)                                     \
     if(isDisplayable(cc))                                                    \
         ii = 1 ;                                                             \
     else if(cc == meCHAR_TAB)                                                \
@@ -2176,11 +2363,17 @@ hilightCurLineOffsetEval(meWindow *wp)
     meUByte *srcText=wp->dotLine->text ;
     meUByte *off=wp->dotCharOffset->text ;
     meUByte  hilno=wp->buffer->hilight, cc=meCHAR_NL, mode ;
+#if MEOPT_UNICODE
+    int hcl;
+#endif
     meUByte  tw = wp->buffer->tabWidth;
     meHilight *node, *root ;
     meUShort len ;
     register int srcWid=wp->dotLine->length, srcPos=0, dstPos=0 ;
     int dstJmp=0 ;
+#if MEOPT_UNICODE
+    hilOffAcc.len = 0;
+#endif
 
     root = hilights[hilno];          /* Root of the hilighting */
 
@@ -2207,6 +2400,10 @@ hilightCurLineOffsetEval(meWindow *wp)
                 break ;
             node = meHilightGetColumnHilight(node) ;
         }
+#if MEOPT_UNICODE
+        if((srcPos > 0) && (srcText[srcPos-1] >= 0x80))
+            cc = hilCharProxy(srcText+meUtf8Prev(srcText,srcPos),&hcl);
+#endif
         if((node = findToken(root,srcText+srcPos,mode,cc,&len)) != NULL)
         {
 column_token:
@@ -2394,6 +2591,14 @@ advance_char:
         }
     }
 hiline_exit:
+#if MEOPT_UNICODE
+    if(hilOffAcc.len && (off > wp->dotCharOffset->text))
+    {
+        meUInt ucs[meUTF8_LEN_MAX];
+        int nn = hilUtf8Flush(&hilOffAcc,ucs);
+        off[-1] += (meUByte) (nn*4);
+    }
+#endif
     *off = '\0' ;
 }
 
@@ -2884,7 +3089,8 @@ indentLine(int *inComment)
     meHilight **bhilights;
     meVideoLine vps[2];
     meUShort noColChng, fnoz, ii;
-    meUByte *ss, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace;
+    meFrameChar *ss;
+    meUByte *ts, indent, lindent, bdisplayTab, bdisplayNewLine, bdisplaySpace;
     meLine *lp;
     int lb, ind, cind, coff;
 
@@ -3096,10 +3302,10 @@ indentLine(int *inComment)
     displaySpace = bdisplaySpace;
 
     /*    printf("\nIndent line to %d\n\n",ind) ;*/
-    ss = wp->dotLine->text;
-    while((*ss == ' ') || (*ss == '\t'))
-        ss++;
-    coff = (int) (ss - wp->dotLine->text);
+    ts = wp->dotLine->text;
+    while((*ts == ' ') || (*ts == '\t'))
+        ts++;
+    coff = (int) (ts - wp->dotLine->text);
     /* change the current position to the indent position if to the left */
     if(wp->dotOffset < coff)
         wp->dotOffset = coff;

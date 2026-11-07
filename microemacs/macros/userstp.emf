@@ -27,7 +27,7 @@ set-variable %hscroll-names "|Fast, One line & Reset|Default, One line|Scroll Al
 set-variable %vscroll-names "|Default, Half screen|Smooth, Single line|"
 set-variable %scrollb-names "|Disabled|Narrow, no splitter|Narrow with splitter|Wide, no splitter|Wide with splitter|"
 set-variable %scrollb-value "|0|0x13e|0x1be|0x13f|0x1bf|"
-; Get a list of display code pages, keyboards & schemes
+; Get a list of 8-bit code pages, keyboards & schemes
 0 execute-file "codepage"
 0 execute-file "keyboard"
 0 execute-file "schemes"
@@ -528,7 +528,7 @@ set-variable .user-set-mouse.A ""
       0 define-macro user-set-xftfont
         set-position "\x82"
         !force 0 delete-buffer "*xftl-tmp*"
-        !force 66 pipe-shell-command &cat "fc-list :spacing=100:lang=" &lef &cat &con &exi .spell.language .spell.language "" "en" 2 "*xftl-tmp*"
+        !force 66 pipe-shell-command &rep "fc-list :spacing=100:lang=XX & fc-list :spacing=90:lang=XX" "XX" &lef &cat &con &exi .spell.language .spell.language "" "en" 2 "*xftl-tmp*"
         !if &set #l1 $result
           osd-dialog "User Setup Error" &spr "  Failed to run fc-lst, system returned error (%d).  " #l1 "  \HOK  "
           set-variable #l1 0
@@ -784,7 +784,7 @@ set-variable .user-set-mouse.A ""
 osd .osd.user-plat 0   "s" 55 18 -1 -1
 ; draw the common parts first
 osd .osd.user-plat 10  ""
-osd .osd.user-plat 300 "Sfh" "  \HDisplay Code Page: " 310
+osd .osd.user-plat 300 "Sfh" "  \H8-bit Code Page:   " 310
 osd .osd.user-plat 310 "OtxmsfhHzR" .scheme.osd-entry 31 1 "" .osd.tmp user-setup-code-page
 osd .osd.user-plat 311 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 310
 osd .osd.user-plat 400 "fh" "    "
@@ -853,7 +853,7 @@ osd .osd.user-plat 821 "BdxfHR" .scheme.osd-ebtt &mid $window-chars 10 1 820
   osd .osd.user-plat 530 "Ctfxph" &cat .osd.checkbox-chars "\} DOS File Names" 0x400 user-set-system
   osd .osd.user-plat 540 "f" " "
   !if &band $system 0x01
-    osd .osd.user-plat 340 "fh" "   "
+    osd .osd.user-plat 340 "fh" "    "
     osd .osd.user-plat 350 "Ctfxp" &cat .osd.checkbox-chars "\} \HExtend Char Set" 2 user-set-cpfcheckbox
     osd .osd.user-plat 360 "fh" "    "
     osd .osd.user-plat 370 "Ctfxph" &cat .osd.checkbox-chars "\} Termca\Hp Color" 0x04 user-set-system

@@ -603,7 +603,7 @@ adjustStartTime(meTime tim)
 meTRANSKEY TTtransKey={0,250,0,ME_INVALID_KEY,NULL} ;
 
 /* Keyboard buffer */
-meUShort TTkeyBuf [KEYBUFSIZ]={0};
+meKey    TTkeyBuf [KEYBUFSIZ]={0};
 meUByte  TTnextKeyIdx = KEYBUFSIZ;
 meUByte  TTlastKeyIdx = KEYBUFSIZ;
 meUByte  TTnoKeys = 0;
@@ -689,7 +689,7 @@ TTfreeTranslateKey(void)
 #endif
 
 void
-translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meUShort *key, meUShort map)
+translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meKey *key, meKey map)
 {
     if(--count < 0)
     {
@@ -698,7 +698,7 @@ translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meUShort *key, meUShor
     }
     else
     {
-        meUShort cc=*key++ ;
+        meKey cc=*key++ ;
         int ii ;
         
         for(ii=0 ; ii<tcapKeys->count ; ii++)
@@ -721,7 +721,7 @@ translateKeyAdd(meTRANSKEY *tcapKeys, int count,int time, meUShort *key, meUShor
 }
 
 int
-keyListToShorts(meUShort *sl, meUByte *kl)
+keyListToShorts(meKey *sl, meUByte *kl)
 {
     meUByte dd ;
     int ii=0 ;
@@ -741,13 +741,13 @@ keyListToShorts(meUShort *sl, meUByte *kl)
 }
 
 int
-charListToShorts(meUShort *sl, meUByte *cl)
+charListToShorts(meKey *sl, meUByte *cl)
 {
     meUByte cc ;
     int ii=0 ;
     
     while((cc=*cl++) != 0)
-        sl[ii++] = (meUShort) cc ;
+        sl[ii++] = (meKey) cc ;
     return ii ;
 }
 
@@ -794,7 +794,7 @@ int
 translateKey(int f, int n)
 {
     static meUByte tnkyPrompt[]="translate-key code" ;
-    meUShort c_from[20], c_to[20];
+    meKey    c_from[20], c_to[20];
     meUByte buf[128];
     int ii;
     
@@ -865,7 +865,7 @@ translateKey(int f, int n)
     return meTRUE;
 }
 
-meUShort
+meKey
 TTgetc(void)
 {
     meTRANSKEY *tt, *tk;
@@ -874,7 +874,7 @@ TTgetc(void)
 #ifdef _USE_NCURSES
     int bp=0;
 #endif
-    meUShort cc;
+    meKey cc;
     
     do {
         if(!TTahead())
@@ -954,7 +954,11 @@ TTgetc(void)
                     else
                     {
                         do
+#if MEOPT_UNICODE
+                            bp += meUtf8Encode(ffbuf+bp,TTkeyBuf[--TTnextKeyIdx] & ME_KEY_CHAR);
+#else
                             ffbuf[bp++] = TTkeyBuf[--TTnextKeyIdx];
+#endif
                         while(--kl);
                     }
                     continue;
@@ -1115,12 +1119,21 @@ TTgetc(void)
             {
                 /* In the middle of a bracketed paste - one gotcha, a new-line is sent as a 0x0d (i.e. 'return' key)
                  * rather than 0x0a which is what ME uses as a new-line char (i.e. meCHAR_NL) */
+#if MEOPT_UNICODE
+                meKey cc;
+#else
                 meUByte cc;
+#endif
                 if(!TTnextKeyIdx)
                     TTnextKeyIdx = KEYBUFSIZ;
                 if((cc = TTkeyBuf[--TTnextKeyIdx]) == 0x0d)
                     cc = meCHAR_NL;
+#if MEOPT_UNICODE
+                /* the keys are chars, the paste becomes internal text; bp is left on its last byte */
+                bp += meUtf8Encode(ffbuf+bp,cc & ME_KEY_CHAR) - 1;
+#else
                 ffbuf[bp] = cc;
+#endif
                 if(bp > (meFIOBUFSIZ>>1))
                 {
                     /* Unlikely to happen but if very large paste then avoid ffbuf overrun */
@@ -1206,7 +1219,7 @@ doIdleDropEvent(void)
  * Add a new keyboard character to the keyboard buffer.
  */
 void
-addKeyToBuffer(meUShort cc)
+addKeyToBuffer(meKey cc)
 {
     if(cc == breakc)
     {
@@ -1253,7 +1266,7 @@ addKeyToBuffer(meUShort cc)
  * be many and we only need a single mouse move event.
  */
 void 
-addKeyToBufferOnce (meUShort cc)
+addKeyToBufferOnce (meKey cc)
 {
     /* Add the key to the buffer if the buffer is empty or the key code is
      * different from the last key code. */
@@ -1280,7 +1293,7 @@ TTallKeysFlush(void)
             nidx = KEYBUFSIZ ;
         else
             nidx = TTnextKeyIdx - 1 ;
-        cc = (TTkeyBuf[nidx] & (ME_SPECIAL|0x0ff)) ;
+        cc = (TTkeyBuf[nidx] & (ME_SPECIAL|ME_KEY_CHAR)) ;
         if((cc < (ME_SPECIAL|SKEY_mouse_move)) || (cc > (ME_SPECIAL|SKEY_mouse_move_5)))
             break;
         TTnextKeyIdx = nidx ;

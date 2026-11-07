@@ -210,8 +210,125 @@ static meSpellRule   *sfwRp3;
 #define SPELL_CASE_CUPPER     0x04
 #define SPELL_CASE_CLOWER     0x08
 
+#if MEOPT_UNICODE
+/* Dictionaries and rules hold bytes of the spelling code page set by set-char-mask "S" (a byte
+ * it has no char for is Latin-1), words from the buffer and prompts are converted to and from
+ * them. A char the code page lacks becomes spellBYTE_NONE, which no word holds */
+#define spellBYTE_NONE  0x01
+static meUShort *spellCp=NULL;
+static meUByte  spellLowerTbl[256];
+static meUByte  spellToggleTbl[256];
+static meUByte  spellUpperFlg[256];
+static meUInt   spellCodePageSum=0xffffffff;
+
+#define toLatinLower(c)       (spellLowerTbl[(meUByte) (c)])
+#define toggleLatinCase(c)    (spellToggleTbl[(meUByte) (c)])
+
+static meUInt
+spellByteToUni(meUByte cc)
+{
+    meUInt uc;
+    if((cc < 0x80) || ((uc = spellCp[cc-128]) == 0))
+        return cc;
+    return uc;
+}
+
+static int
+spellUniToByte(meUInt uc)
+{
+    int ii;
+    if(uc < 0x80)
+        return (int) uc;
+    for(ii=127 ; ii>=0 ; ii--)
+        if(spellCp[ii] == uc)
+            return ii+128;
+    if((uc < 0x100) && (spellCp[uc-128] == 0))
+        return (int) uc;
+    return spellBYTE_NONE;
+}
+
+/* Rebuilds the byte case tables when the code page has changed, fails if none is set */
+static int
+spellCaseTblInit(void)
+{
+    meUInt sum=0, uc, lc;
+    int ii, jj;
+    if(codePageSpell == NULL)
+        return mlwrite(MWABORT,(meUByte *)"[No spelling code page]");
+    spellCp = codePageSpell->chrToUni;
+    for(ii=0 ; ii<128 ; ii++)
+        sum = (sum * 31) + spellCp[ii];
+    if(sum == spellCodePageSum)
+        return meTRUE;
+    spellCodePageSum = sum;
+    for(ii=0 ; ii<256 ; ii++)
+    {
+        uc = spellByteToUni((meUByte) ii);
+        lc = (uc < 0x80) ? toLower(uc):meUniToLower(uc);
+        spellUpperFlg[ii] = (meUByte) ((uc < 0x80) ? (isUpper(uc) != 0):(lc != uc));
+        spellLowerTbl[ii] = spellToggleTbl[ii] = (meUByte) ii;
+        if(spellUpperFlg[ii])
+            jj = spellUniToByte(lc);
+        else if((lc = ((uc < 0x80) ? toUpper(uc):meUniToUpper(uc))) != uc)
+            jj = spellUniToByte(lc);
+        else
+            continue;
+        if(jj != spellBYTE_NONE)
+        {
+            spellToggleTbl[ii] = (meUByte) jj;
+            if(spellUpperFlg[ii])
+                spellLowerTbl[ii] = (meUByte) jj;
+        }
+    }
+    return meTRUE;
+}
+
+/* Writes dictionary bytes ss (len bytes) to dd as UTF-8, returns the length written */
+static int
+spellBytesToUtf8(meUByte *dd, const meUByte *ss, int len)
+{
+    meUByte *d0=dd;
+    while(--len >= 0)
+        dd += meUtf8Encode(dd,spellByteToUni(*ss++));
+    *dd = '\0';
+    return (int) (dd-d0);
+}
+
+/* Converts UTF-8 ss to dictionary bytes in dd, returns the length */
+static int
+spellUtf8ToBytes(meUByte *dd, const meUByte *ss, int max)
+{
+    meUByte *d0=dd;
+    meUInt uc;
+    while((*ss != '\0') && (--max >= 0))
+    {
+        ss += meUtf8Decode(ss,meUTF8_LEN_MAX,&uc);
+        *dd++ = (meUByte) spellUniToByte(uc);
+    }
+    *dd = '\0';
+    return (int) (dd-d0);
+}
+
+static void
+spellInsertWord(int len, meUByte *wd)
+{
+    meUByte buff[meWORD_SIZE_MAX*meUTF8_LEN_MAX+1];
+    lineInsertString(spellBytesToUtf8(buff,wd,len),buff);
+}
+
+static int
+spellMaskCmp(meUByte *wd)
+{
+    meUByte buff[meWORD_SIZE_MAX*meUTF8_LEN_MAX+1];
+    spellBytesToUtf8(buff,wd,(int) meStrlen(wd));
+    return regexStrCmp(buff,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE);
+}
+#else
 #define toLatinLower(c)       (isUpper(toDisplayCharset(c)) ? toInternalCharset(toggleCase(toDisplayCharset(c))):(c))
 #define toggleLatinCase(c)    toInternalCharset(toggleCase(toDisplayCharset(c)))
+#define spellInsertWord(len,wd) lineInsertString((len),(wd))
+#define spellMaskCmp(wd)      regexStrCmp((wd),sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE)
+#endif
 
 #define meEntryGetAddr(ed)       (((ed)[0] << 16) | ((ed)[1] << 8) | (ed)[2])
 #define meEntrySetAddr(ed,off)   (((ed)[0] = (meUByte) ((off)>>16)),((ed)[1] = (meUByte) ((off)>> 8)),((ed)[2] = (meUByte) (off)))
@@ -473,6 +590,10 @@ meSpellInitDictionaries(void)
     dict = dictHead;
     if(dict == NULL)
         return mlwrite(MWABORT,(meUByte *)"[No dictionaries]");
+#if MEOPT_UNICODE
+    if(spellCaseTblInit() <= 0)
+        return meFALSE;
+#endif
     if(!meRuleMax)
     {
         meSpellRule *rr;
@@ -604,14 +725,21 @@ meDictionaryFind(int flag)
 static void
 meDictWordDump(meDictWord *ent, meUByte *buff)
 {
-    meUByte cc, *ss=meWordGetWord(ent), *dd=buff;
+    meUByte *ss=meWordGetWord(ent), *dd=buff;
+#if !MEOPT_UNICODE
+    meUByte cc;
+#endif
     int len;
 
     len = meWordGetWordLen(ent);
+#if MEOPT_UNICODE
+    dd += spellBytesToUtf8(dd,ss,len);
+#else
     do {
         cc = *ss++;
         *dd++ = toDisplayCharset(cc);
     } while(--len > 0);
+#endif
 
     len = meWordGetFlagLen(ent);
     if(meWordGetErrorFlag(ent))
@@ -623,10 +751,14 @@ meDictWordDump(meDictWord *ent, meUByte *buff)
     if(len)
     {
         ss = meWordGetFlag(ent);
+#if MEOPT_UNICODE
+        dd += spellBytesToUtf8(dd,ss,len);
+#else
         do {
             cc = *ss++;
             *dd++ = toDisplayCharset(cc);
         } while(--len > 0);
+#endif
     }
     *dd = '\0';
 }
@@ -774,6 +906,13 @@ spellRuleAdd(int f, int n)
             else
                 return mlwrite(MWABORT,(meUByte *)"[Invalid spell special rule flag]");
         }
+#if MEOPT_UNICODE
+        /* a flag is a byte of the spelling code page */
+        else if(spellCaseTblInit() <= 0)
+            return meABORT;
+        else if((rule >= 0x80) && ((rule = spellUniToByte(rule)) == spellBYTE_NONE))
+            return mlwrite(MWABORT,(meUByte *)"[Invalid spell rule flag]");
+#endif
         else if((rule < SPELLRULE_FIRST) || (rule > SPELLRULE_LAST))
             return mlwrite(MWABORT,(meUByte *)"[Invalid spell rule flag]");
         else
@@ -789,6 +928,21 @@ spellRuleAdd(int f, int n)
                ((al = (meUByte) meStrlen(buff+ll+rl)),
                 (meGetString((meUByte *)"Sub-rules",MLNOSPACE,0,buff+ll+rl+al,meWORD_FLAG_MAX) <= 0)))
                 return meABORT;
+#if MEOPT_UNICODE
+            {
+                /* the strings to the dictionary's bytes */
+                meUByte rs[meAFFIX_SIZE_MAX+1], as[meAFFIX_SIZE_MAX+1], sr[meWORD_FLAG_MAX+1];
+                memcpy(rs,buff+ll,rl);
+                rs[rl] = '\0';
+                memcpy(as,buff+ll+rl,al);
+                as[al] = '\0';
+                meStrcpy(sr,buff+ll+rl+al);
+                ll = spellUtf8ToBytes(buff,buff,255) + 1;
+                rl = (meUByte) spellUtf8ToBytes(buff+ll,rs,meAFFIX_SIZE_MAX);
+                al = (meUByte) spellUtf8ToBytes(buff+ll+rl,as,meAFFIX_SIZE_MAX);
+                spellUtf8ToBytes(buff+ll+rl+al,sr,meWORD_FLAG_MAX);
+            }
+#endif
 
             ss = buff;
             bb = 0;
@@ -977,6 +1131,9 @@ meDictionarySave(meDictionary *dict, int n)
     if(ffWriteFileOpen(&meiow,dict->fname,meRWFLAG_WRITE,NULL) > 0)
     {
         meUByte header[8];
+#if MEOPT_UNICODE
+        meiow.encoding = meENCODING_RAW;
+#endif
 
         header[0] = 0xED;
         header[1] = 0xF1;
@@ -1120,6 +1277,58 @@ dictionaryDelete(int f, int n)
 }
 
 
+#if MEOPT_UNICODE
+/* The class of the char at off: 2 a letter, 1 a digit or other word char, 0 not a word char */
+static int
+spellLineCharClass(meLine *lp, int off)
+{
+    meUInt uc=meLineGetChar(lp,off);
+    meUByte pp;
+    if(uc < 0x80)
+        return (isAlpha(uc)) ? 2:((isAlphaNum(uc)) ? 1:0);
+    meUtf8Decode(lp->text+off,lp->length-off,&uc);
+    if(meUniIsRaw(uc) || (uc == 0))
+        return 0;
+    pp = meUniProps(uc);
+    return (meUniPropIsAlpha(pp)) ? 2:((meUniPropIsWord(pp)) ? 1:0);
+}
+#define spellLineIsAlphaNum(lp,off) (spellLineCharClass((lp),(off)) != 0)
+#define spellLineIsSpllWord(lp,off) ((meLineGetChar((lp),(off)) < 0x80) ? isSpllWord(meLineGetChar((lp),(off))):spellLineIsAlphaNum((lp),(off)))
+
+static int
+meSpellGetCurrentWord(meUByte *word)
+{
+    meWindow *cwp=frameCur->windowCur;
+    meLine *lp=cwp->dotLine;
+    meUByte *dp=word, cc;
+    int cl, ll, alnm, nalnm=1, alphaCnt=0;
+    
+    for(;;)
+    {
+        alnm = nalnm;
+        cc = meLineGetChar(lp,cwp->dotOffset);
+        cl = spellLineCharClass(lp,cwp->dotOffset);
+        if(!cl && !(alnm && isSpllExt(cc)))
+            break;
+        ll = meLineNextChar(lp,cwp->dotOffset) - cwp->dotOffset;
+        if((ll == 0) || ((dp-word)+ll >= meWORD_SIZE_MAX))
+            break;
+        if(cl == 2)
+            alphaCnt = 1;
+        nalnm = cl;
+        memcpy(dp,lp->text+cwp->dotOffset,ll);
+        dp += ll;
+        cwp->dotOffset += ll;
+    }
+    *dp = 0;
+    if(!alphaCnt)
+        return -1;
+    return (int) (dp - word);
+}
+#else
+#define spellLineIsAlphaNum(lp,off) isAlphaNum(meLineGetChar((lp),(off)))
+#define spellLineIsSpllWord(lp,off) isSpllWord(meLineGetChar((lp),(off)))
+
 static int
 meSpellGetCurrentWord(meUByte *word)
 {
@@ -1146,6 +1355,7 @@ meSpellGetCurrentWord(meUByte *word)
 
     return sz - 1;
 }
+#endif
 
 #define wordPrefixRuleAdd(bwd,rr)         memcpy((bwd),(rr)->append,(rr)->appendLen);
 #define wordPrefixRuleRemove(bwd,rr)                                             \
@@ -1711,11 +1921,18 @@ wordTrySpecialRules(meUByte *word, int wlen)
     if((rr = meRuleTable[SPELLRULE_REGEX]) != NULL)
     {
         /* Now try all the special rules - e.g. [0-9]*1st for 1st, 21st etc */
+#if MEOPT_UNICODE
+        /* the rule is a regex of chars, compare the word's chars */
+        meUByte buff[meWORD_SIZE_MAX*meUTF8_LEN_MAX+1], *ww=buff;
+        spellBytesToUtf8(buff,word,wlen);
+#else
+        meUByte *ww=word;
+#endif
         cc = word[wlen];
         word[wlen] = '\0';
         while(rr != NULL)
         {
-            if(regexStrCmp(word,rr->ending,meRSTRCMP_WHOLE) > 0)
+            if(regexStrCmp(ww,rr->ending,meRSTRCMP_WHOLE) > 0)
             {
                 word[wlen] = cc;
                 return meTRUE;
@@ -2356,6 +2573,45 @@ wordGuessGetList(meUByte *word, int olen, meWordBuf *words)
 #define SPELLWORD_DELETE  0x200      /* Delete the given word */
 #define SPELLWORD_NOSGGST 0x400      /* Accept word as correct but don't use in suggest list */
 
+#if MEOPT_UNICODE
+static int
+spellWordToInternalCharset(meUByte *db, meUByte *ss)
+{
+    meUByte *dd;
+    int len, ii;
+    len = spellUtf8ToBytes(db,ss,meWORD_SIZE_MAX);
+    caseFlags = 0;
+    for(dd=db, ii=0 ; ii<len ; ii++, dd++)
+    {
+        if(spellUpperFlg[*dd])
+            caseFlags |= (ii) ? SPELL_CASE_CUPPER:SPELL_CASE_FUPPER;
+        else if(spellToggleTbl[*dd] != *dd)
+            caseFlags |= (ii) ? SPELL_CASE_CLOWER:SPELL_CASE_FLOWER;
+    }
+    return len;
+}
+
+/* Converts dictionary word ss to UTF-8 in dd (which may be ss) with the case of the checked
+ * word, returns the length */
+static int
+spellWordToDisplayCharset(meUByte *dd, meUByte *ss)
+{
+    meUByte buff[meWORD_SIZE_MAX+1], cc;
+    int ii, len;
+    for(ii=0 ; ((cc = ss[ii]) != '\0') && (ii < meWORD_SIZE_MAX) ; ii++)
+    {
+        if((caseFlags == (SPELL_CASE_FUPPER|SPELL_CASE_CUPPER)) ||
+           ((ii == 0) && ((caseFlags & SPELL_CASE_FUPPER) || (caseFlags == (SPELL_CASE_FLOWER|SPELL_CASE_CUPPER)))))
+        {
+            if(!spellUpperFlg[cc])
+                cc = spellToggleTbl[cc];
+        }
+        buff[ii] = cc;
+    }
+    len = spellBytesToUtf8(dd,buff,ii);
+    return len;
+}
+#else
 static int
 spellWordToInternalCharset(meUByte *db, meUByte *ss)
 {
@@ -2381,10 +2637,10 @@ spellWordToInternalCharset(meUByte *db, meUByte *ss)
 }
 
 
-static void
+static int
 spellWordToDisplayCharset(meUByte *dd, meUByte *ss)
 {
-    meUByte cc;
+    meUByte cc, *d0=dd;
 
     cc = *ss++;
     cc = toDisplayCharset(cc);
@@ -2399,7 +2655,9 @@ spellWordToDisplayCharset(meUByte *dd, meUByte *ss)
         *dd++ = cc;
     }
     *dd = '\0';
+    return (int) (dd-d0);
 }
+#endif
 
 int
 spellWord(int f, int n)
@@ -2426,12 +2684,12 @@ spellWord(int f, int n)
 
         chkDbl = (n & SPELLWORD_DOUBLE);
         curDbl = 0;
-        while((cwp->dotOffset > 0) && isAlphaNum(meLineGetChar(cwp->dotLine,cwp->dotOffset)))
-            cwp->dotOffset--;
+        while((cwp->dotOffset > 0) && spellLineIsAlphaNum(cwp->dotLine,cwp->dotOffset))
+            cwp->dotOffset = meLinePrevChar(cwp->dotLine,cwp->dotOffset);
         for(;;)
         {
             while(((cc = meLineGetChar(cwp->dotLine,cwp->dotOffset)) != '.') &&
-                  !isAlphaNum(cc))
+                  !spellLineIsAlphaNum(cwp->dotLine,cwp->dotOffset))
             {
                 if(!isSpace(cc))
                     curDbl = 0;
@@ -2469,36 +2727,34 @@ spellWord(int f, int n)
     else
     {
         meWindow *cwp=frameCur->windowCur;
-        meUByte  cc;
         meUShort off, soff, eoff;
 
         soff = off = cwp->dotOffset;
-        for(;;soff--)
+        for(;;soff=meLinePrevChar(cwp->dotLine,soff))
         {
-            cc = meLineGetChar(cwp->dotLine,soff);
-            if((soff==0) || isSpllWord(cc))
+            if((soff==0) || spellLineIsSpllWord(cwp->dotLine,soff))
                 break;
         }
-        if(!isSpllWord(cc))
+        if(!spellLineIsSpllWord(cwp->dotLine,soff))
             return meFALSE;
         while(soff > 0)
         {
-            --soff;
-            cc = meLineGetChar(cwp->dotLine,soff);
-            if(!isSpllWord(cc))
+            meUShort poff=soff;
+            soff = meLinePrevChar(cwp->dotLine,soff);
+            if(!spellLineIsSpllWord(cwp->dotLine,soff))
             {
-                soff++;
+                soff = poff;
                 break;
             }
-            if(!isAlphaNum(cc) &&
-               ((soff == 0) || !isAlphaNum(meLineGetChar(cwp->dotLine,soff-1))))
+            if(!spellLineIsAlphaNum(cwp->dotLine,soff) &&
+               ((soff == 0) || !spellLineIsAlphaNum(cwp->dotLine,meLinePrevChar(cwp->dotLine,soff))))
                 break;
         }
         /* if the first character is not alphanumeric or a '.' then move
          * on one, this stops misspellings of 'quoted words'
          */
-        if(((cc = meLineGetChar(cwp->dotLine,soff)) != '.') && !isAlphaNum(cc))
-            soff++;
+        if((meLineGetChar(cwp->dotLine,soff) != '.') && !spellLineIsAlphaNum(cwp->dotLine,soff))
+            soff = meLineNextChar(cwp->dotLine,soff);
         cwp->dotOffset = soff;
         len = meSpellGetCurrentWord((meUByte *) resultStr+1);
         eoff = cwp->dotOffset;
@@ -2523,7 +2779,11 @@ spellWord(int f, int n)
 
         if(meGetString((meUByte *)"Enter flags", MLNOSPACE,0,wd,meWORD_FLAG_MAX) <= 0)
             return meABORT;
+#if MEOPT_UNICODE
+        len = spellUtf8ToBytes(wd,wd,meWORD_FLAG_MAX);
+#else
         len = (int) meStrlen(wd);
+#endif
         memcpy(meWordGetFlag(dw),wd,len);
         /* set flag len directly to clear the ERROR flag */
         dw->flagLen = len;
@@ -2570,7 +2830,7 @@ spellWord(int f, int n)
 
             if(wordCheck(wd,len) > 0)
             {
-                lineInsertString(len,wd);
+                spellInsertWord(len,wd);
                 lineInsertNewline(0);
             }
             ii = meRuleMax;
@@ -2591,7 +2851,7 @@ spellWord(int f, int n)
                             
                             if(wordCheck(wd,slen) > 0)
                             {
-                                lineInsertString(slen,wd);
+                                spellInsertWord(slen,wd);
                                 lineInsertNewline(0);
                             }
 
@@ -2610,7 +2870,7 @@ spellWord(int f, int n)
                                                 sslen = slen + ssr->changeLen;
                                                 if(wordCheck(wd,sslen) > 0)
                                                 {
-                                                    lineInsertString(sslen,wd);
+                                                    spellInsertWord(sslen,wd);
                                                     lineInsertNewline(0);
                                                 }
                                                 psi = rr->subRuleLen-1;
@@ -2625,7 +2885,7 @@ spellWord(int f, int n)
                                                                 /* got P1(S1)<base>S1(bs)S2(S1) */
                                                                 if(wordCheck(pwd,sslen+psr->changeLen) > 0)
                                                                 {
-                                                                    lineInsertString(sslen+psr->changeLen,pwd);
+                                                                    spellInsertWord(sslen+psr->changeLen,pwd);
                                                                     lineInsertNewline(0);
                                                                 }
                                                                 wordPrefixRuleRemove(wd,psr);
@@ -2648,7 +2908,7 @@ spellWord(int f, int n)
                                                                     /* got P1(S2)<base>S1(bs)S2(S1) */
                                                                     if(wordCheck(pwd,sslen+psr->changeLen) > 0)
                                                                     {
-                                                                        lineInsertString(sslen+psr->changeLen,pwd);
+                                                                        spellInsertWord(sslen+psr->changeLen,pwd);
                                                                         lineInsertNewline(0);
                                                                     }
                                                                     wordPrefixRuleRemove(wd,psr);
@@ -2673,7 +2933,7 @@ spellWord(int f, int n)
                                                                     /* got P1(bs)<base>S1(bs)S2(S1) */
                                                                     if(wordCheck(pwd,sslen+psr->changeLen) > 0)
                                                                     {
-                                                                        lineInsertString(sslen+psr->changeLen,pwd);
+                                                                        spellInsertWord(sslen+psr->changeLen,pwd);
                                                                         lineInsertNewline(0);
                                                                     }
                                                                     wordPrefixRuleRemove(wd,psr);
@@ -2697,7 +2957,7 @@ spellWord(int f, int n)
                                                 /* got P1(S1)<base>S1(bs) */
                                                 if(wordCheck(pwd,slen+ssr->changeLen) > 0)
                                                 {
-                                                    lineInsertString(slen+ssr->changeLen,pwd);
+                                                    spellInsertWord(slen+ssr->changeLen,pwd);
                                                     lineInsertNewline(0);
                                                 }
                                                 wordPrefixRuleRemove(wd,ssr);
@@ -2722,7 +2982,7 @@ spellWord(int f, int n)
                                                 /* got P1(bs)<base>S1(bs) */
                                                 if(wordCheck(pwd,slen+psr->changeLen) > 0)
                                                 {
-                                                    lineInsertString(slen+psr->changeLen,pwd);
+                                                    spellInsertWord(slen+psr->changeLen,pwd);
                                                     lineInsertNewline(0);
                                                 }
                                                 wordPrefixRuleRemove(wd,psr);
@@ -2747,7 +3007,7 @@ spellWord(int f, int n)
                             int psi, plen=len+rr->changeLen;
                             if(wordCheck(nwd,plen) > 0)
                             {
-                                lineInsertString(plen,nwd);
+                                spellInsertWord(plen,nwd);
                                 lineInsertNewline(0);
                             }
                             if((psi=rr->subRuleLen) > 0)
@@ -2768,7 +3028,7 @@ spellWord(int f, int n)
                                                 pslen = plen + psr->changeLen;
                                                 if(wordCheck(nwd,pslen) > 0)
                                                 {
-                                                    lineInsertString(pslen,nwd);
+                                                    spellInsertWord(pslen,nwd);
                                                     lineInsertNewline(0);
                                                 }
                                                 if((ssi=psr->subRuleLen) > 0)
@@ -2785,7 +3045,7 @@ spellWord(int f, int n)
                                                                     /* got P1(bs)<base>S1(P1)S2(S1) */
                                                                     if(wordCheck(nwd,pslen+ssr->changeLen) > 0)
                                                                     {
-                                                                        lineInsertString(pslen+ssr->changeLen,nwd);
+                                                                        spellInsertWord(pslen+ssr->changeLen,nwd);
                                                                         lineInsertNewline(0);
                                                                     }
                                                                     wordSuffixRuleRemove(sswd,ssr);
@@ -2854,9 +3114,9 @@ spellWord(int f, int n)
         *dd++ = '|';
         cw = 0;
         ll = meBUF_SIZE_MAX-3;
-        while((cw < nw) && ((ii=(int) meStrlen((ss=words[cw++]))) < ll))
+        while((cw < nw) && (((ii=(int) meStrlen((ss=words[cw++])))*meCHAR_LEN_MAX) < ll))
         {
-            spellWordToDisplayCharset(dd,ss);
+            ii = spellWordToDisplayCharset(dd,ss);
             dd += ii;
             *dd++ = '|';
             ll -= ii+1;
@@ -2903,11 +3163,16 @@ findWordsInit(meUByte *mask)
     sfwWfl = 0;
     if((sfwMsk = meMalloc(meStrlen(mask)+1)) != NULL)
     {
+#if MEOPT_UNICODE
+        /* words are compared as UTF-8, see spellMaskCmp */
+        meStrcpy(sfwMsk,mask);
+#else
         meUByte *ww, cc;
         ww = sfwMsk;
         while((cc = *mask++) != '\0')
             *ww++ = toInternalCharset(cc);
         *ww = '\0';
+#endif
     }
     return meTRUE;
 }
@@ -2994,7 +3259,7 @@ findWordsNext(void)
                     wl = meWordGetWordLen(sfwWrd);
                     memcpy(wp,ww,wl);
                     wp[wl] = '\0';
-                    if(regexStrCmp(wp,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                    if(spellMaskCmp(wp) > 0)
                     {
                         spellWordToDisplayCharset(wp,wp);
                         return wp;
@@ -3019,7 +3284,7 @@ sfwJumpBase:
                                             sfwRp1->rule = wFl0;
                                             wRl1 = wl + sfwRp1->changeLen;
                                             wRs1[wRl1] = '\0';
-                                            if(regexStrCmp(wRs1,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                            if(spellMaskCmp(wRs1) > 0)
                                             {
                                                 spellWordToDisplayCharset(wRs1,wRs1);
                                                 return wRs1;
@@ -3039,7 +3304,7 @@ sfwJumpP1bsBase:
                                                                 sfwRp2->rule = wFl1;
                                                                 wRl2 = wRl1 + sfwRp2->changeLen;
                                                                 wRs1[wRl2] = '\0';
-                                                                if(regexStrCmp(wRs1,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                if(spellMaskCmp(wRs1) > 0)
                                                                 {
                                                                     /* got P1(bs)<base>S1(P1) */
                                                                     spellWordToDisplayCharset(wRs1,wRs1);
@@ -3058,7 +3323,7 @@ sfwJumpP1bsBaseS1p1:
                                                                                 if((wRs3 = wordApplySuffixRule(wRs1,wRl2,sfwRp3)) != NULL)
                                                                                 {
                                                                                     wRs1[wRl2+sfwRp3->changeLen] = '\0';
-                                                                                    if(regexStrCmp(wRs1,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                                    if(spellMaskCmp(wRs1) > 0)
                                                                                     {
                                                                                         /* got P1(bs)<base>S1(P1)S2(S1) */
                                                                                         sfwRp3->rule = wFl2;
@@ -3094,7 +3359,7 @@ sfwJumpP1bsBaseS1p1S2s1:
                                             sfwRp1->rule = wFl0;
                                             wRl1 = wl + sfwRp1->changeLen;
                                             wp[wRl1] = '\0';
-                                            if(regexStrCmp(wp,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                            if(spellMaskCmp(wp) > 0)
                                             {
                                                 /* got <base>S1(bs) */
                                                 spellWordToDisplayCharset(wp,wp);
@@ -3115,7 +3380,7 @@ sfwJumpBaseS1bs:
                                                             if((wRs3 = wordApplyPrefixRule(wp,wRl1,sfwRp3)) != NULL)
                                                             {
                                                                 wRs3[wRl1+sfwRp3->changeLen] = '\0';
-                                                                if(regexStrCmp(wRs3,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                if(spellMaskCmp(wRs3) > 0)
                                                                 {
                                                                     /* got P1(bs)<base>S1(bs) */
                                                                     sfwRp3->rule = wFl2;
@@ -3142,7 +3407,7 @@ sfwJumpP1bsBaseS1bs:
                                                             if((wRs2 = wordApplyPrefixRule(wp,wRl1,sfwRp2)) != NULL)
                                                             {
                                                                 wRs2[wRl1+sfwRp2->changeLen] = '\0';
-                                                                if(regexStrCmp(wRs2,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                if(spellMaskCmp(wRs2) > 0)
                                                                 {
                                                                     /* got P1(S1)<base>S1(bs) */
                                                                     sfwRp2->rule = wFl1;
@@ -3164,7 +3429,7 @@ sfwJumpP1s1BaseS1bs:
                                                                 sfwRp2->rule = wFl1;
                                                                 wRl2 = wRl1 + sfwRp2->changeLen;
                                                                 wp[wRl2] = '\0';
-                                                                if(regexStrCmp(wp,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                if(spellMaskCmp(wp) > 0)
                                                                 {
                                                                     /* got <base>S1(bs)S2(S1) */
                                                                     spellWordToDisplayCharset(wp,wp);
@@ -3185,7 +3450,7 @@ sfwJumpBaseS1bsS2s1:
                                                                                 if((wRs3 = wordApplyPrefixRule(wp,wRl2,sfwRp3)) != NULL)
                                                                                 {
                                                                                     wRs3[wRl2+sfwRp3->changeLen] = '\0';
-                                                                                    if(regexStrCmp(wRs3,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                                    if(spellMaskCmp(wRs3) > 0)
                                                                                     {
                                                                                         /* got P1(bs)<base>S1(bs)S2(S1) */
                                                                                         sfwPlc = 0;
@@ -3212,7 +3477,7 @@ sfwJumpP1bsBaseS1bsS2s1:
                                                                             if((wRs3 = wordApplyPrefixRule(wp,wRl2,sfwRp3)) != NULL)
                                                                             {
                                                                                 wRs3[wRl2+sfwRp3->changeLen] = '\0';
-                                                                                if(regexStrCmp(wRs3,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                                if(spellMaskCmp(wRs3) > 0)
                                                                                 {
                                                                                     /* got P1(S1)<base>S1(bs)S2(S1) */
                                                                                     sfwPlc = 1;
@@ -3239,7 +3504,7 @@ sfwJumpP1s1BaseS1bsS2s1:
                                                                                 if((wRs3 = wordApplyPrefixRule(wp,wRl2,sfwRp3)) != NULL)
                                                                                 {
                                                                                     wRs3[wRl2+sfwRp3->changeLen] = '\0';
-                                                                                    if(regexStrCmp(wRs3,sfwMsk,meRSTRCMP_ICASE|meRSTRCMP_WHOLE) > 0)
+                                                                                    if(spellMaskCmp(wRs3) > 0)
                                                                                     {
                                                                                         /* got P1(S2)<base>S1(bs)S2(S1) */
                                                                                         sfwPlc = 2;

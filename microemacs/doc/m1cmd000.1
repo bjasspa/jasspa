@@ -255,11 +255,16 @@ Assign the  \*(mS  \fIvariable\fR  with  \fIstring\fR.  The assignment is
 performed before the buffers are loaded. Typically used to change the start-up
 characteristics of the startup file(s).
 .IP \fB\-V\fR
-Print the name and version of \*(mS. i.e.
+Print the name, version and build of \*(mS, i.e.
 .IP
-\fCorac% me -V\fR
+\fCpc% me -V\fR
 .br
-\fCMicroEmacs 06 - Date 2006/08/10 - sunos\fR
+\fCMicroEmacs 26 - Date 2026-10-02 - linux64-utf8\fR
+.IP
+The build gives the platform (see
+.Ht $platform 5 ),
+whether it is a 32 or 64 bit build, \fCutf8\fR for a version with Unicode support or \fCcdpg\fR for an 8-bit code
+page version, and \fC-debug\fR for a debug build.
 .IP \fB\-x\fR
 \s-1UNIX\s0  environments. Disable the capture of signals. \fB\*(mS\fR by
 default  captures  an handles  all illicit  signal  interrupts.  The option is

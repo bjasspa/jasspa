@@ -61,6 +61,9 @@ is not executed).
 .IP \fB0x20\fR
 Disables  loss of work  checks,  if this bit is set then the  contents  of the
 buffer is destroyed without any user prompts (useful in macros).
+.IP \fB0x40\fR
+If this bit is set the message reporting the file read, e.g. "\fC[Read 12 lines - 2 NULs]\fR", is shown even when
+the command is run from a macro, where it is not normally shown.
 .SH "SEE ALSO"
 .na
 .Ht reread-file 3 ,

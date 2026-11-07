@@ -65,8 +65,8 @@
 typedef struct meTRANSKEY {
     int      count;
     int      time;
-    meUShort key;
-    meUShort map;
+    meKey    key;
+    meKey    map;
     struct meTRANSKEY *child;
 } meTRANSKEY;
 
@@ -77,7 +77,7 @@ typedef struct meTRANSKEY {
 extern meTRANSKEY TTtransKey;           /* A translated key             */
 extern meUShort   TTwidthDefault;       /* Default no. of cols per frame*/
 extern meUShort   TTdepthDefault;       /* Default no. of rows per frame*/
-extern meUShort   TTkeyBuf[KEYBUFSIZ];  /* Key beuffer/pending keys     */
+extern meKey      TTkeyBuf[KEYBUFSIZ];  /* Key beuffer/pending keys     */
 extern meUByte  ttSpeChars[TTSPECCHARS];/* Special characters           */
 #if (defined _UNIX) || (defined _WIN32)
 #ifdef _ME_CONSOLE
@@ -91,7 +91,7 @@ extern meUByte    TTbreakFlag;          /* Break outstanding on input   */
 extern meUByte    TTallKeys;            /* Report all keys              */
 extern meUShort   TTbreakCnt;           /* Number breaks outsanding     */
 
-extern meUShort   TTgetc(void);
+extern meKey      TTgetc(void);
 extern void       TThandleBlink(int initFlag);
 extern void       TTmove(int r, int c);
 extern void       TTwaitForChar(void);
@@ -100,8 +100,8 @@ extern void       TTsleep(int msec, int intable, meVariable **waitVarList);
 extern int        TTahead(void);
 #endif
 #define TTinflush()   (TTahead(),TTlastKeyIdx=TTnextKeyIdx,TTnoKeys=0)
-extern void       addKeyToBuffer(meUShort cc);
-extern void       addKeyToBufferOnce(meUShort cc);
+extern void       addKeyToBuffer(meKey cc);
+extern void       addKeyToBufferOnce(meKey cc);
 #if MEOPT_MOUSE
 extern void       TTallKeysFlush(void);
 #else
@@ -200,7 +200,7 @@ extern void TCAPmove(int row, int col);
 #define TCAPputc(c)    putchar(c)
 #define TCAPflush()    fflush(stdout)
 extern void TCAPinitDrawChar(void);
-extern void TCAPdrawChar(meUByte c);
+extern void TCAPdrawChar(meFrameChar c);
 extern void TCAPoscCopyKill(void);
 extern void TCAPhideCur(void);
 extern void TCAPshowCur(void);
@@ -358,6 +358,13 @@ do {                                                                            
         XftDrawRect(meFrameGetXftDraw(ff),meFrameGetFgColor(ff),cl,(rw)+mecm.underline,colToClient(ll),1); \
 } while(0)
 #define meFrameXftDrawSpecialChar meFrameXTermDrawSpecialChar
+#if MEOPT_UNICODE
+#define meFrameXftDrawString32(ff,cl,rw,ss,ll)                                     \
+    XftDrawString32(meFrameGetXftDraw(ff),meFrameGetFgColor(ff),meFrameGetXftFont(ff),(cl),(rw)+mecm.ascent,(const FcChar32 *) (ss),(ll))
+#endif
+#endif
+#if MEOPT_UNICODE
+extern void meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len);
 #endif
 
 extern int  XTERMstart(void);
@@ -447,7 +454,7 @@ extern int TTopen(void);
 
 #ifdef _ME_CONSOLE
 extern BOOL ConsolePaint(void);
-extern void ConsoleDrawString(meUByte *s, WORD wAttribute, int x, int y, int len);
+extern void ConsoleDrawString(meFrameChar *s, WORD wAttribute, int x, int y, int len);
 #define TTcolorSet(f,b) ((f) | ((b) << 4))
 #define TTschemeSet(scheme) \
 TTcolorSet(colTable[meStyleGetFColor(meSchemeGetStyle(scheme))], \
