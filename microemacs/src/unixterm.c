@@ -69,6 +69,30 @@ struct  termio  otermio;        /* original terminal characteristics */
 struct  termio  ntermio;        /* charactoristics to use inside */
 typedef struct termio *meTermio ;
 #endif /* _TERMIOS */
+
+/* Control character defaults normally provided by <sys/ttydefaults.h>,
+ * which some libcs (e.g. musl) don't pull in via termios.h */
+#ifndef CQUIT
+#define CQUIT   ('\\' - '@')    /* FS, C-\ */
+#endif
+#ifndef CEOF
+#define CEOF    ('D' - '@')
+#endif
+#ifndef CLNEXT
+#define CLNEXT  ('V' - '@')
+#endif
+#ifndef CDSUSP
+#define CDSUSP  ('Y' - '@')
+#endif
+#ifndef CSUSP
+#define CSUSP   ('Z' - '@')
+#endif
+#ifndef CSTART
+#define CSTART  ('Q' - '@')
+#endif
+#ifndef CSTOP
+#define CSTOP   ('S' - '@')
+#endif
 #endif /* _USG */
 
 #ifdef _BSD                             /* BSD */
@@ -3129,10 +3153,10 @@ TCAPgetattr(meTermio p, int isX)
         
         /* Terminal special characters */
         p->c_cc [VINTR] = 'C' - '@';    /* C-c : CINTR */
-        p->c_cc [VQUIT] = '\\' - '@';  /* FS, cntl | */
+        p->c_cc [VQUIT] = CQUIT;        /* FS, cntl | */
         p->c_cc [VERASE] = 'H' - '@';   /* Backspace or '#' 0x7f */
         p->c_cc [VKILL] = 'K' - '@';    /* C-k */
-        p->c_cc [VEOF] = 'D' - '@';     /* C-d */
+        p->c_cc [VEOF] = CEOF;          /* C-d */
         p->c_cc [VEOL] = 'J' - '@';     /* C-j */
         p->c_cc [VMIN] = 1;
         p->c_cc [VTIME] = 0;
@@ -3140,13 +3164,13 @@ TCAPgetattr(meTermio p, int isX)
 #ifdef VWERASE
         p->c_cc [VWERASE] = 'W' - '@';  /* C-w */
 #endif
-        p->c_cc [VLNEXT] = 'V' - '@';   /* C-v */
+        p->c_cc [VLNEXT] = CLNEXT;      /* C-v */
 #ifdef VDSUSP
         p->c_cc [VDSUSP] = CDSUSP;      /* C-y */
 #endif
-        p->c_cc [VSUSP] = 'Z' - '@';    /* C-z */
-        p->c_cc [VSTART] = 'Q' - '@';   /* C-q */
-        p->c_cc [VSTOP]  = 'S' - '@';   /* C-s */
+        p->c_cc [VSUSP] = CSUSP;        /* C-z */
+        p->c_cc [VSTART] = CSTART;      /* C-q */
+        p->c_cc [VSTOP]  = CSTOP;       /* C-s */
 #endif
     }
     else if (isX != 0)
