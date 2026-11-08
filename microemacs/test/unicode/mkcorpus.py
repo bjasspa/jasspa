@@ -58,6 +58,12 @@ def main():
     write(outDir, 'utf8_noeol.txt', MULTI.rstrip('\n').encode('utf-8'))
     write(outDir, 'utf8_late_invalid.txt', (MULTI * 200).encode('utf-8') + b'late[\xe9]\n')  # F6
     write(outDir, 'latin1_late.txt', (asciiText * 2000).encode('ascii') + 'late é\n'.encode('latin-1'))  # F6
+    # one invalid byte means not UTF-8, however many valid sequences there are: cp1252 text with an
+    # accidental valid pair (\xc9\xbb) and UTF-8 text with an early cp1252 stray both read as a code page
+    write(outDir, 'cp1252_utf8_pair.txt', b'\xabCAF\xc9\xbb\n')
+    write(outDir, 'utf8_early_invalid.txt', b'caf\xc3\xa9 caf\xe9 na\xc3\xafve\n')
+    # a lead byte at the end of a line is invalid, a line ending cannot continue a sequence
+    write(outDir, 'utf8_eol_invalid.txt', b'caf\xc3\xa9 caf\xe9\n')
     write(outDir, 'utf8_malformed.txt', b'\n'.join(MALFORMED) + b'\n')                   # F4
     write(outDir, 'utf8_malformed_eof.txt', b'truncated at EOF [\xf0\x9f\x98')           # F4
 

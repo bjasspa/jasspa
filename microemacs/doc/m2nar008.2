@@ -133,7 +133,8 @@ A version of \*(mS with Unicode support (see
 label \fCuni\fR) holds all text as Unicode:
 .BS
 When a file is read its encoding is detected, UTF-8, UTF-16 or UTF-32 (little or big endian, with or without a byte
-order mark), any other file is read with the current 8-bit code page. The buffer's encoding is given by
+order mark), any other file is read with the current 8-bit code page. A file is only taken as UTF-8 when its text is
+valid UTF-8, so a file with a stray byte, e.g. a \fCcp1252\fR accented letter, is read with the code page. The buffer's encoding is given by
 .Ht $buffer-encoding 5 ,
 which can be set to save the buffer in another encoding or to re-read it with a different one, and is shown on the mode
 line (see

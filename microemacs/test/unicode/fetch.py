@@ -32,8 +32,9 @@ FILES = {
     'noeol.txt': ('one\ntwó'.encode('utf-8'), 1, [('one', '\n'), ('twó', '')]),
     'long.txt': (('é' * 30000 + '\nend\n').encode('utf-8'), 1, [('é' * 30000, '\n'), ('end', '\n')]),
 }
-# a raw byte is kept as its 2 byte escape in the buffer, &bhex gives the byte back
-INVALID = (b'caf\xc3\xa9 caf\xe9\n', 1, '636166c3a920636166e9')
+# one invalid byte means not UTF-8, so a stray byte makes the file read with the code page
+# (Latin-1 here), its UTF-8 'é' then being two chars
+INVALID = (b'caf\xc3\xa9 caf\xe9\n', 0, '636166c383c2a920636166c3a9')
 
 
 class Quiet(http.server.SimpleHTTPRequestHandler):

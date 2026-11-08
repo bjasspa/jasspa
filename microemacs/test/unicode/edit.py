@@ -456,6 +456,9 @@ def build(ss, asciiOnly):
         open(raw, 'wb').write(b'x\xc3\xa9\xe9y\x00z\n')
         L('!force 0 delete-buffer "*t*"')
         L('find-file "%s"' % raw)
+        # a stray byte means a code page file, force UTF-8 to have raw bytes in a UTF-8 buffer
+        for ll in ('set-variable $buffer-encoding "utf8"', '-1 buffer-mode "edit"', '1 read-file $buffer-fname'):
+            L(ll)
         for ii, (col, acol) in enumerate(((1, 1), (2, 2), (3, 6), (4, 7), (5, 9), (6, 10))):
             L('forward-char')
             ss.line('-2 ml-write &spr "R:%%s=%%d|%%d" "raw%d" $window-col $window-acol' % ii)

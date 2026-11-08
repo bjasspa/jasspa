@@ -91,7 +91,9 @@ def main():
     buffer('b.noeol', 'noeol.txt', sha(b'a\nb'))
     buffer('b.ctrlz', 'ctrlz.txt', sha(b'a\nb\n'))
     buffer('b.utf8', 'utf8.txt', sha(files['utf8.txt']))
-    buffer('b.invalid', 'invalid.txt', sha(files['invalid.txt']))
+    # a stray byte means a code page file, force UTF-8 (a build without Unicode ignores it)
+    buffer('b.invalid', 'invalid.txt', sha(files['invalid.txt']),
+           pre=('!force set-variable $buffer-encoding "utf8"', '-1 buffer-mode "edit"', '1 read-file $buffer-fname'))
     buffer('b.long', 'long.txt', sha(LONG))
     buffer('b.latin1', 'latin1.txt', sha('café\n'.encode()), uni=True)
     buffer('b.nul', 'nul_ascii.txt', sha(files['nul_ascii.txt']), uni=True)

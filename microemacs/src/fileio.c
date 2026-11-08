@@ -1793,7 +1793,9 @@ ffgetBlock(meIo *io)
      (((ss)[0] > 0xe0) && ((ss)[0] < 0xf0) && ((ss)[0] != 0xed) && (((se)-(ss)) >= 3) && \
       (((ss)[1] & 0xc0) == 0x80) && (((ss)[2] & 0xc0) == 0x80)) ? 3:meUtf8SeqLen((ss),(int) ((se)-(ss))))
 
-static void
+/* Counts the valid UTF-8 sequences, stopping at the first invalid byte, returns 1 if the last
+ * sequence is cut short by the end of the data */
+static int
 ffDecideEncoding(meUByte *ss, int len, int *valid, int *invalid)
 {
     int ll;
@@ -1804,15 +1806,17 @@ ffDecideEncoding(meUByte *ss, int len, int *valid, int *invalid)
         else if((ll = meUtf8SeqLen(ss,len)) > 0)
             (*valid)++;
         else if(ll < 0)
-            break;
+            return 1;
         else
         {
+            /* one invalid byte means it is not UTF-8 */
             (*invalid)++;
-            ll = 1;
+            break;
         }
         ss += ll;
         len -= ll;
     }
+    return 0;
 }
 
 /* Converts a UTF-8 or legacy line read from the file to internal text. The choice between
@@ -1832,17 +1836,21 @@ ffDecodeLine(meIo *io, meLine *lp)
         return lp;
     if(io->encoding & meENCODING_DETECT)
     {
-        /* decided at the first non-ASCII byte, a NUL before it does not count */
+        /* decided at the first non-ASCII byte, a NUL before it does not count; UTF-8 only if the
+         * rest of the line and of the block hold a valid UTF-8 sequence and no invalid byte, as a
+         * code page file seldom forms only valid sequences but a UTF-8 file always does */
         meUByte *fs=ss;
         while((fs < se) && (*fs < 0x80))
             fs++;
         if(fs < se)
         {
             int valid=0, invalid=0;
-            ffDecideEncoding(fs,(int) (se-fs),&valid,&invalid);
-            if(ffremain > 0)
+            if(ffDecideEncoding(fs,(int) (se-fs),&valid,&invalid) && (lp->flag & meLINE_EOL_MASK))
+                /* a line ending cannot continue a sequence, only a split long line or the end of the file */
+                invalid++;
+            if((ffremain > 0) && (invalid == 0))
                 ffDecideEncoding(ffcur,ffremain,&valid,&invalid);
-            io->encoding = ((valid > 0) && (invalid <= valid)) ? meENCODING_UTF8:meENCODING_LEGACY;
+            io->encoding = ((valid > 0) && (invalid == 0)) ? meENCODING_UTF8:meENCODING_LEGACY;
         }
     }
     utf8 = ((io->encoding & (meENCODING_TYPE|meENCODING_DETECT)) == meENCODING_UTF8);

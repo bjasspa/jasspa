@@ -109,6 +109,9 @@ def build(ss):
     open(raw, 'wb').write(b'x\xc3\xa9\xa9y\n')
     L('!force 0 delete-buffer "*t*"')
     L('find-file "%s"' % raw)
+    # a stray byte means a code page file, force UTF-8 to have a raw byte in a UTF-8 buffer
+    for ll in ('set-variable $buffer-encoding "utf8"', '-1 buffer-mode "edit"', '1 read-file $buffer-fname'):
+        L(ll)
     L('1 buffer-mode "exact"')
     L('-1 buffer-mode "magic"')
     # a byte in a pattern is the char of that value (here ©), a raw byte is found by [[:raw:]]

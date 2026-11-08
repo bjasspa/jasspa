@@ -170,6 +170,9 @@ def main():
                             ('raw byte', b'rff', text.replace(b'\xff', b'\xffX'))):
         rr = Run(mec, macros, text)
         rr.keys(ESC + b'xexecute-line\rset-variable $file-checks 0x55\r')
+        # the raw byte makes it a code page file, force UTF-8 to have a raw byte in a UTF-8 buffer
+        for ll in (b'set-variable $buffer-encoding "utf8"', b'-1 buffer-mode "edit"', b'1 read-file $buffer-fname'):
+            rr.keys(ESC + b'xexecute-line\r' + ll + b'\r')
         rr.keys(b'\x13', ESC + b'\x11', code + b'\r', b'\r', b'X')
         check('I5 isearch by code %s' % tag, rr.saved() == want, repr(open(rr.fname, 'rb').read()))
         rr.finish()

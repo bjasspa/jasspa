@@ -21,6 +21,7 @@ DETECT = {
     'eol_mixed_lf.txt': 1, 'utf8.txt': 1, 'utf8_bom.txt': 9, 'utf8_cjk.txt': 1, 'utf8_cr.txt': 1,
     'utf8_crlf.txt': 1, 'utf8_late_invalid.txt': 1, 'utf8_long_line.txt': 1, 'utf8_noeol.txt': 1,
     'latin1.txt': 0, 'latin1_late.txt': 0, 'cp1252.txt': 0, 'cp1252_undef.txt': 0,
+    'cp1252_utf8_pair.txt': 0, 'utf8_early_invalid.txt': 0, 'utf8_eol_invalid.txt': 0,
     'sjis.txt': 0, 'eucjp.txt': 0, 'gbk.txt': 0, 'big5.txt': 0, 'euckr.txt': 0,
     'utf16le.txt': 2, 'utf16be.txt': 6, 'utf16le_bom.txt': 10, 'utf16be_bom.txt': 14,
     'utf16le_lone_surrogate.txt': 10,
