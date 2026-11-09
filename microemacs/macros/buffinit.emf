@@ -185,7 +185,7 @@ define-macro-file hktlsosd major-mode-tools-setup
   !iif &exi &ind &spr ".%s.lint1" $buffer-fhook  buffer-bind-create "b" "C-c l" "" file-lint
   !if &not &sin "s" #l0
   !elif &exi .spell.language
-    !iif &reg "/history/spell/autospell" "0"  1 auto-spell
+    !iif &reg "/history/spell/autospell" "0"  !force 1 auto-spell
   !endif
   !if &not &seq #l9 ""
     !iif &set #l1 &xseq #l9 ".*tab-width[ \t]*:[ \t]*\\([0-9]+\\)[ \t]*[-;].*"  set-variable $buffer-tab-width @s1
