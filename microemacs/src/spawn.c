@@ -152,6 +152,7 @@ meShell(int f, int n)
 #ifdef _LINUX
             "gnome-terminal",NULL,
             "konsole",NULL,
+            "xfce4-terminal",NULL,
 #endif
 #ifdef _MACOS
             "open","-a","Terminal","$P",NULL,
