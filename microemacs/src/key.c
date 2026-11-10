@@ -264,27 +264,21 @@ insert_key(register meKey code, meUShort index, meUInt arg)
 /*  code - Code to add to key table. */
 /* index - Index for the code. */
 {
-    register meBind *ktp;		/* Keyboard character array */
     register int i;			/* Index counter */
 
     /* Is there room in the table */
     if(keyTableSize >= meBIND_MAX-1)		/* No space in table ?? */
         return meFALSE;                         /* No - return error. */
 
-    /*--- Go backwards down table finding place in table and moving rest back. */
-    i = keyTableSize++;
-    ktp = &keytab[i];
-    do {
-        memcpy(ktp+1,ktp,sizeof(meBind));
-        if((--ktp)->code <= code)
-            break;
-    } while(--i > 0);
-
-    /*---	Fill in the new code at new position */
-    ktp++;
-    ktp->index = index;		/* Add new index */
-    ktp->code = code;		/* Add new function code */
-    ktp->arg = arg;		/* Add new argument */
+    /* Find the insertion point, then move the trailing bindings and sentinel. */
+    i = keyTableSize;
+    while((i > 0) && (keytab[i-1].code > code))
+        i--;
+    memmove(&keytab[i+1],&keytab[i],(keyTableSize-i+1)*sizeof(meBind));
+    keyTableSize++;
+    keytab[i].index = index;		/* Add new index */
+    keytab[i].code = code;		/* Add new function code */
+    keytab[i].arg = arg;		/* Add new argument */
 
     return meTRUE;
 }	/* End of "insert_key" () */

@@ -153,6 +153,8 @@ DEFSKEY ("x-line",       NULL,    NULL, NULL,      SKEY_x_line )
 
 DEFSSKEY (SKEY_delete,   "kDC",   "*4" )
 DEFSSKEY (SKEY_end,      "kEND",  "*7" )
+DEFSSKEY (SKEY_f3,       "kf15",  "F5" )
+DEFSSKEY (SKEY_f6,       "kf18",  "F8" )
 DEFSSKEY (SKEY_home,     "kHOM",  "#2" )
 DEFSSKEY (SKEY_insert,   "kIC",   "#3" )
 DEFSSKEY (SKEY_left,     "kLFT",  "#4" )
