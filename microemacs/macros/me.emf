@@ -138,7 +138,7 @@ define-macro-file ftp
 9 major-mode "iss" "Inno Setup Script"
 5 major-mode "java" ".java .jav"
 9 major-mode "js" "JavaScript"
-13 major-mode "json" ".json" "JSON" json-parse
+13 major-mode "json" ".json .ipynb" "JSON" json-parse
 1 major-mode "jsp"
 1 major-mode "jst"
 5 major-mode "julia" ".jl"
