@@ -2640,11 +2640,15 @@ ipipe_read_end:
     ipipeCheckWins("end");
 #ifdef _UNIX
 #if MEOPT_CLIENTSERVER
-    /* the unix client server trashed the rfd at the top of this function due
-     * to the way sockets are handled. But the read handle is the same as the write
-     * so its trivial to restore */
+    /* the unix client server trashed the rfd at the top of this function due to the way sockets
+     * are handled. The accepted connection has been read until the client closed it so close it,
+     * the read handle is the same as the write so its trivial to restore */
     if(ipipe->pid == 0)
+    {
+        if(ipipe->rfd >= 0)
+            close(ipipe->rfd);
         ipipe->rfd = ipipe->outWfd;
+    }
 #endif
 #endif
     
