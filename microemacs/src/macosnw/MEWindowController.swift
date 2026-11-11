@@ -7,6 +7,23 @@
 
 import Cocoa
 
+/// NSWindow subclass that squares off the window corners.
+///
+/// macOS rounds the corners of every titled window (16pt on macOS 26+) which
+/// crops the first/last characters of the bottom line. There is no public API
+/// to change this, so these override AppKit's private corner radius getters
+/// (Swift cannot see them, so no 'override' keyword; the ObjC selectors
+/// replace AppKit's at runtime). Note that a radius of exactly 0 is treated as
+/// 'use the default', so a tiny non-zero value must be returned. If a future
+/// macOS drops these selectors the methods are simply never called and the
+/// window falls back to normal rounded corners.
+final class MEWindow: NSWindow {
+    private static let squareRadius: CGFloat = 4.0
+    @objc func _cornerRadius()       -> CGFloat { return MEWindow.squareRadius }
+    @objc func _topCornerRadius()    -> CGFloat { return MEWindow.squareRadius }
+    @objc func _bottomCornerRadius() -> CGFloat { return MEWindow.squareRadius }
+}
+
 final class MEWindowController: NSWindowController, NSWindowDelegate {
 
     // ---- Configuration ---------------------------------------------------
@@ -33,7 +50,7 @@ final class MEWindowController: NSWindowController, NSWindowDelegate {
         // Build NSWindow programmatically - no nib required
         let contentRect = NSRect(x: 0, y: 0, width: 640, height: 800)
         let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .resizable]
-        let win = NSWindow(contentRect: contentRect,
+        let win = MEWindow(contentRect: contentRect,
                            styleMask: style,
                            backing: .buffered,
                            defer: false)
