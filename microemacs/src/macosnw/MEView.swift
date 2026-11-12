@@ -1350,12 +1350,10 @@ func nsColor(index: Int) -> NSColor {
     var gg: CGFloat = 0;
     var bb: CGFloat = 0;
     
-    withUnsafeMutablePointer(to: &meColorTable) { (tuplePtr) -> Void in
-              tuplePtr.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: meColorTable)) {
-                  rr = CGFloat($0[idx]);
-                  gg = CGFloat($0[idx+1]);
-                  bb = CGFloat($0[idx+2]);
-              }
+    withUnsafeBytes(of: &meColorTable) { (tbl) -> Void in
+        rr = CGFloat(tbl[idx]);
+        gg = CGFloat(tbl[idx+1]);
+        bb = CGFloat(tbl[idx+2]);
     }
     let c = NSColor(srgbRed: rr/255.0,green: gg/255.0,blue: bb/255.0,alpha: 1.0);
     colorCache[index] = c;

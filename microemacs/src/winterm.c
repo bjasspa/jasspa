@@ -552,7 +552,8 @@ TTopenClientServer(void)
             meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
         }
         /* Set up the window dimensions - default to having auto wrap */
-        ipipe->flag = 0;
+        /* Clients send a bare LF which must return to column 0 or the next message is indented and ignored by server-input */
+        ipipe->flag = meIPIPE_LFISNL;
         ipipe->strRow = 0;
         ipipe->strCol = 0;
         ipipe->noRows = 0;
