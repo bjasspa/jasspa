@@ -354,7 +354,7 @@ getprefixchar(int f, int n, int ctlc, int flag)
     }
     c = tgetc();
     if(!(c & (ME_SHIFT|ME_CONTROL|ME_ALT|ME_SPECIAL)))
-        c = toLower(c);
+        c = meUniCharToLower(c);
     return c;
 }
 
