@@ -182,6 +182,10 @@ spaces  are drawn  using  spaces  ('\fC \fR')  which  means the user  cannot  di
 determine the last character of the line by merely looking at the display. When enabled \*(mS uses visible  characters
 to draw the white spaces, the characters used are set with the variable
 .Ht $window-chars 5 .
+In a version of \*(mS with Unicode support every other character which is not what it looks like is then drawn as a
+dotted circle (U+25CC) in the same cells, i.e. a space other than the ASCII space (e.g. a no-break space), a combining
+mark (the mark being drawn on the circle in an X11 window) and a zero width or format character, so the text does not
+move when this is toggled.
 .IP \fB0x100000\fR
 Enables  hiding \*(mS  generated  backup files. On Windows and Dos platforms the Hidden file attribute is used to hide
 the file, whereas on UNIX the backup file name is prepended with a '\fC.\fR'.

@@ -146,8 +146,19 @@ unchanged, see
 .Ht $file-checks 5
 for the checks made when a file is saved.
 .BU
-Each character is drawn in one cell, or two for a wide character, a combining mark or other zero width or format
-character is drawn as \fC\\u\fIhhhh\fR so every character can be seen. A terminal is assumed to use UTF-8 when its
+Each character is drawn in one cell, or two for a wide character, so every character can be seen. A combining mark is
+a character of its own and is never drawn over the character before it, it is drawn as its spacing form, e.g. an
+\fCe\fR followed by a combining acute accent (U+0301) is drawn as an \fCe\fR and an acute accent, two cells for the two characters, as it
+behaves as two characters; it then looks the same as an \fCe\fR followed by an acute accent character (U+00B4), see
+.Ht buffer-info 2
+for the difference. A zero width or format character is drawn as a one cell stand-in: a zero width joiner as
+\fC+\fR, a non-joiner as a broken bar, a zero width space as the displayed space character of
+.Ht $window-chars 5 ,
+a soft hyphen as \fC-\fR and the others, e.g. an emoji variation selector, as a multiply sign. The bidirectional text
+controls, which can make source code display in an order other than how it runs, and a combining mark with no spacing
+form are drawn as \fC\\u\fIhhhh\fR. With the show white space bit of
+.Ht $system 5
+set, each of these stand-ins, spacing forms and non-ASCII spaces is drawn as a dotted circle instead. Text copied from the screen by the terminal itself, rather than by \*(mS, is the text as drawn. A terminal is assumed to use UTF-8 when its
 locale does, otherwise the current 8-bit code page. Use
 .Ht buffer-info 2
 to get the details of the character at the cursor.

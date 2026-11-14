@@ -41,7 +41,8 @@ def cases():
     out['mixed.txt'] = (b'a1\r\nb2\nc3\rd4\r\n', 'utf8', b'Za1\r\nb2\nc3\rd4\r\n')
     out['noeol.txt'] = (b'one\ntwo', 'utf8', b'Zone\ntwo')
     out['nul_ascii.txt'] = (b'a\x00b\n\x00\n', 'utf8', b'Za\x00b\n\x00\n')
-    out['invalid.txt'] = (b'caf\xc3\xa9 caf\xe9\n', 'utf8', b'Zcaf\xc3\xa9 caf\xe9\n')
+    # a stray byte means a code page file, its bytes kept either way
+    out['invalid.txt'] = (b'caf\xc3\xa9 caf\xe9\n', 'C', b'Zcaf\xc3\xa9 caf\xe9\n')
     return out
 
 

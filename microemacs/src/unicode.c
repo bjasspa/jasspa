@@ -270,6 +270,49 @@ meUniProps(meUInt uc)
     return (meUByte) meUniPropRuns[lo];
 }
 
+/* Returns the spacing form a combining mark is drawn as in its own cell, 0 if it has none */
+meUInt
+meUniSpacingMark(meUInt uc)
+{
+    int lo=0, hi=meUniTblSize(meUniSpacingMarks)-1, mid;
+
+    if((uc < meUniSpacingMarks[0][0]) || (uc > meUniSpacingMarks[hi][0]))
+        return 0;
+    while(lo <= hi)
+    {
+        mid = (lo + hi) >> 1;
+        if(meUniSpacingMarks[mid][0] == uc)
+            return meUniSpacingMarks[mid][1];
+        if(meUniSpacingMarks[mid][0] < uc)
+            lo = mid + 1;
+        else
+            hi = mid - 1;
+    }
+    return 0;
+}
+
+/* Returns the stand-in kind (meUNIIGN_*) of a default ignorable char, 0 if not one or a bidi
+ * control */
+int
+meUniIgnorable(meUInt uc)
+{
+    int lo=0, hi=meUniTblSize(meUniIgnorables)-1, mid;
+
+    if((uc < meUniIgnorables[0][0]) || (uc > (meUniIgnorables[hi][1] & 0xffffff)))
+        return 0;
+    while(lo <= hi)
+    {
+        mid = (lo + hi) >> 1;
+        if(uc < meUniIgnorables[mid][0])
+            hi = mid - 1;
+        else if(uc > (meUniIgnorables[mid][1] & 0xffffff))
+            lo = mid + 1;
+        else
+            return (int) (meUniIgnorables[mid][1] >> 24);
+    }
+    return 0;
+}
+
 int
 meUniWidth(meUInt uc, int ambigWide)
 {

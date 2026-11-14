@@ -41,8 +41,8 @@ Test ids refer to `unicode_acceptance_tests.md` in the repository root.
 | `compiled.py <mec> [macros-dir]` | Compiled macros, what is new by design: `insert-macro` of a macro defined with `$debug` 0 fails and with `$debug` set gives its lines, its error names the file and line, `name-kbd-macro`'s macro keeps its source; in a pseudo terminal stepping runs a compiled macro as one step and C-g breaks into a compiled loop saying it is compiled |
 | `editdiff.py <mec> <mec>...` | Runs one ASCII editing script on several builds and reports differences, e.g. the original `src.old` build, an 8-bit build (`./build.sh -d -ec -t c`) and the Unicode build (`./build.sh -d -t c`) |
 
-`<ucd-dir>` must hold `UnicodeData.txt`, `EastAsianWidth.txt`, `CaseFolding.txt` and
-`PropList.txt` from <https://www.unicode.org/Public/UCD/latest/ucd/>. Regenerate the
+`<ucd-dir>` must hold `UnicodeData.txt`, `EastAsianWidth.txt`, `CaseFolding.txt`,
+`PropList.txt` and `DerivedCoreProperties.txt` from <https://www.unicode.org/Public/UCD/latest/ucd/>. Regenerate the
 shipped table with `python3 -I dev/mkunitbl.py <ucd-dir>` (it writes `src/eunitbl.h`).
 
 `roundtrip.sh` runs only its own start-up macro, not `me.emf`, so no file hooks or

@@ -344,14 +344,18 @@ showRegion(int f, int n)
 #endif
 
 #if MEOPT_UNICODE
-/* Display rules for a non-ASCII char, raw byte or internal NUL: invisible chars (zero width,
- * controls, surrogates & line/paragraph separators) are shown as \uXXXX or \UXXXXXX, raw bytes as
- * \xXX and NUL as ^@. Returns the number of cells, which are written to dd if not NULL */
+/* Display rules for a non-ASCII char, raw byte or internal NUL: a combining mark with a spacing
+ * form is drawn as that form, a default ignorable char as a stand-in, other invisible chars (zero
+ * width, bidi controls, controls, surrogates & line/paragraph separators) are shown as \uXXXX or
+ * \UXXXXXX, raw bytes as \xXX and NUL as ^@; with show white space a mark, stand-in or non-ASCII
+ * space is a dotted circle in the same cells, so no width changes. Returns the number of cells,
+ * which are written to dd if not NULL */
 int
 renderUniChar(meFrameChar *dd, meUInt uc)
 {
+    meFrameChar cc=0;
     meUByte pp, gc;
-    int ww, nn;
+    int ww, nn, circle=0;
     
     if(meUniIsRaw(uc))
     {
@@ -376,9 +380,32 @@ renderUniChar(meFrameChar *dd, meUInt uc)
     }
     pp = meUniProps(uc);
     gc = meUniPropGC(pp);
+    if((gc == meUNIGC_Mn) && ((nn = meUniSpacingMark(uc)) != 0))
+    {
+        /* a combining mark is a char of its own, drawn as its spacing form in its own cell(s), with
+         * show white space as the mark on a dotted circle */
+        if(!(meSystemCfg & meSYSTEM_SHOWWHITE))
+            cc = nn;
+        else
+        {
+            cc = (meFRAMECHAR_CIRCLE_MARK) ? (uc|meFRAMECHAR_CIRCLE):meUNI_CIRCLE;
+            circle = 1;
+        }
+        pp = meUniProps(nn);
+    }
     if(((ww = meUniPropWidth(pp)) == meUNIWIDTH_ZERO) || (gc == meUNIGC_Cc) || (gc == meUNIGC_Cs) ||
        (gc == meUNIGC_Zl) || (gc == meUNIGC_Zp))
     {
+        if((ww == meUNIWIDTH_ZERO) && ((nn = meUniIgnorable(uc)) != 0))
+        {
+            /* a default ignorable char is drawn as a one cell stand-in, a dotted circle with show
+             * white space (the bidi controls are not in the table so keep their escape) */
+            if(dd != NULL)
+                dd[0] = (meSystemCfg & meSYSTEM_SHOWWHITE) ? meUNI_CIRCLE:(nn == meUNIIGN_JOIN) ? '+':
+                        (nn == meUNIIGN_NONJOIN) ? 0xa6:(nn == meUNIIGN_SEP) ? windowChars[WCDISPSPACE]:
+                        (nn == meUNIIGN_SHY) ? '-':0xd7;
+            return 1;
+        }
         nn = (uc > 0xffff) ? 6:4;
         if(dd != NULL)
         {
@@ -389,11 +416,18 @@ renderUniChar(meFrameChar *dd, meUInt uc)
         }
         return nn+2;
     }
+    if(meUniPropIsSpace(pp) && (meSystemCfg & meSYSTEM_SHOWWHITE))
+    {
+        /* a non-ASCII space, e.g. NBSP, with show white space */
+        cc = meUNI_CIRCLE;
+        circle = 1;
+    }
     if(dd != NULL)
     {
-        dd[0] = uc;
+        dd[0] = (cc) ? cc:uc;
         if(ww == meUNIWIDTH_WIDE)
-            dd[1] = meFRAMECHAR_CONT;
+            /* a circle is narrow, so a wide char's circle has a blank second cell */
+            dd[1] = (circle) ? ' ':meFRAMECHAR_CONT;
     }
     return (ww == meUNIWIDTH_WIDE) ? 2:1;
 }

@@ -33,6 +33,9 @@ def width(text):
     return sum(charWidth(ch) for ch in text)
 
 
+BS = chr(92)
+
+
 def rowText(mm, row):
     # continuation cells are '' so joining gives the characters as typed
     return ''.join(mm.screen.cells[row]).rstrip()
@@ -69,8 +72,10 @@ def main():
     tabline = mm.screen.cells[7]
     col = ''.join(cc if cc else '\0' for cc in tabline).find('Ambig')
     check('D4 tab after wide char', col == 24, 'Ambig at %d' % col)
-    check('D11 zero width shown', '\\u200B' in rowText(mm, 7), repr(rowText(mm, 7)))
-    check('D11 combining shown', 'e\\u0301' in rowText(mm, 6), repr(rowText(mm, 6)))
+    # a zero width space is drawn as the space marker, a real space being blank
+    check('D11 zero width shown', 'ZW[.]' in rowText(mm, 7), repr(rowText(mm, 7)))
+    # a combining mark is a char of its own, drawn as its spacing form (U+0301 as U+00B4)
+    check('D9 combining as spacing form', 'e' + chr(0xb4) + ' a' + chr(0xa8) in rowText(mm, 6), repr(rowText(mm, 6)))
     # cursor columns - end of the CJK line, then back over the wide chars with the column count
     mm.keys(b'\x0e\x0e\x0e\x05')
     check('D2 cursor at end of wide line', mm.cursor == (4, width(cjk)), 'cursor %r expected %r' % (mm.cursor, (4, width(cjk))))
@@ -83,6 +88,50 @@ def main():
     mline = [rowText(mm, rr) for rr in range(mm.screen.rows) if rowText(mm, rr).startswith('MLCOL=')]
     check('E7 mode line char column', mline and mline[0].startswith('MLCOL=%d=' % len(cjk)), repr(mline))
     finish(mm, home)
+
+    # D9 - a mark with no spacing form (a Hebrew point) stays an escape, and each mark is a cursor stop
+    tdir = tempfile.mkdtemp()
+    fname = os.path.join(tdir, 'marks.txt')
+    open(fname, 'w', encoding='utf-8').write('e' + chr(0x301) + chr(0x308) + 'x ' + chr(0x5d1) + chr(0x5b4) + 'y\n')
+    mm, home = run(mec, macros, [fname])
+    row = rowText(mm, 1)
+    check('D9 marks in their own cells', row.startswith('e' + chr(0xb4) + chr(0xa8) + 'x '), repr(row))
+    check('D9 mark without a spacing form', (chr(0x5d1) + BS + 'u05B4y') in row, repr(row))
+    mm.keys(b'\x06\x06\x06')
+    check('D9 a mark is a cursor stop', mm.cursor == (1, 3), 'cursor %r' % (mm.cursor,))
+    finish(mm, home)
+    shutil.rmtree(tdir, ignore_errors=True)
+
+    # D11, D18, D19 - default ignorable chars are one cell stand-ins, the bidi controls stay escapes,
+    # and show white space draws every stand-in, mark and non-ASCII space as a dotted circle in the
+    # same cells, so nothing moves
+    tdir = tempfile.mkdtemp()
+    fname = os.path.join(tdir, 'ign.txt')
+    open(fname, 'w', encoding='utf-8').write('J[a' + chr(0x200d) + 'b] N[a' + chr(0x200c) + 'b] V[*' + chr(0xfe0f) +
+                                             '] H[a' + chr(0xad) + 'b] S[a' + chr(0xa0) + 'b] I[a' + chr(0x3000) +
+                                             'b] M[e' + chr(0x301) + '] B[a' + chr(0x202e) + 'b] end\n')
+    mm, home = run(mec, macros, [fname])
+    row = rowText(mm, 1)
+    check('D18 stand-ins', row.startswith('J[a+b] N[a' + chr(0xa6) + 'b] V[*' + chr(0xd7) + '] H[a-b] S[a' + chr(0xa0) + 'b] I[a' +
+                                          chr(0x3000) + 'b] M[e' + chr(0xb4) + ']'), repr(row))
+    check('D18 bidi control escaped', ('B[a' + BS + 'u202Eb]') in row, repr(row))
+    # columns are cells, the emulator keeps a mark in its base's cell
+    endCol = lambda cl: next((ii for ii in range(len(cl) - 2) if cl[ii:ii + 3] == ['e', 'n', 'd']), -1)
+    normalEnd = endCol(list(mm.screen.cells[1]))
+    mm.raw = b''
+    mm.keys(b'\x1bxexecute-line\rset-variable $system &bor $system 0x80000\r')
+    cells = mm.screen.cells[1]
+    row = rowText(mm, 1)
+    circ = chr(0x25cc)
+    check('D19 show white space circles', all(('%s[a%sb]' % (kk, circ)) in row for kk in 'JNHS') and
+          ('V[*' + circ + ']') in row and ('I[a' + circ + ' b]') in row, repr(row))
+    # a terminal is sent the circle alone, where it would draw a mark after it depends on its font
+    check('D19 mark as a circle', ('M[e' + circ + ']') in row and (chr(0x301).encode() not in mm.raw), repr(row))
+    check('D19 bidi control still escaped', ('B[a' + BS + 'u202Eb]') in row, repr(row))
+    showEnd = endCol(list(cells))
+    check('D19 nothing moves', (normalEnd > 0) and (showEnd == normalEnd), 'end at %d, %d' % (normalEnd, showEnd))
+    finish(mm, home)
+    shutil.rmtree(tdir, ignore_errors=True)
 
     # D3 - wide chars at the right edge '$' and with a horizontal scroll
     tdir = tempfile.mkdtemp()

@@ -2228,6 +2228,9 @@ gtarg(meUByte *tkn)
             {
 #if MEOPT_UNICODE
                 meFrameChar fc=frameCur->store[row].text[col];
+                if(meFrameCharIsCircle(fc))
+                    /* show white space's mark on a circle is the mark */
+                    fc &= ~meFRAMECHAR_CIRCLE;
                 if(fc == meFRAMECHAR_CONT)
                     /* second cell of a wide char */
                     evalResult[0] = 0;

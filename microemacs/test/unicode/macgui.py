@@ -148,8 +148,7 @@ class App:
     """Runs the app with a start-up macro (instead of me.emf) that loads fname and then runs each
     step: its commands, a screen update, then it makes the marker directory and waits until it
     is removed. steps() yields each step's capture, taken when the marker appears. No keys, timers
-    or client-server are used; the native build's sleep and client-server do not work in a macro
-    (see macos-native-sleep-hang.md)"""
+    or client-server are used. To wait in a macro use command-wait (ME has no sleep command)"""
 
     def __init__(self, app, macros, fname, steps):
         self.home = tempfile.mkdtemp()

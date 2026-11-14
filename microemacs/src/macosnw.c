@@ -414,6 +414,22 @@ meNativeGetRowChars(int row)
 #endif
 }
 
+/* The spacing form of combining mark uc, 0 if it has none, and the cells it takes */
+uint32_t
+meNativeSpacingMark(uint32_t uc, int32_t *cells)
+{
+    *cells = 1;
+#if MEOPT_UNICODE
+    if((uc = meUniSpacingMark(uc)) != 0)
+    {
+        if(meUniPropWidth(meUniProps(uc)) == meUNIWIDTH_WIDE)
+            *cells = 2;
+        return uc;
+    }
+#endif
+    return 0;
+}
+
 const uint16_t *
 meNativeGetRowScheme(int row)
 {
@@ -1725,6 +1741,20 @@ TCAPgetattr(meTermio p, int isX)
 
 int meCSSock=-1;
 int meCCSSock=-1;
+
+/* Set up the client-server socket address (/tmp/mesrv<uid>) and return its length. The length must
+ * include all bytes before sun_path, on BSD systems (macOS) these are sun_len and sun_family so
+ * sizeof(sun_family) is too short and the kernel would drop the last character of the path */
+static int
+meCSSockAddr(struct sockaddr_un *cssa)
+{
+    int ll;
+    memset(cssa,0,sizeof(struct sockaddr_un));
+    cssa->sun_family = AF_UNIX;
+    ll = sprintf(cssa->sun_path,"/tmp/mesrv%d",(int) meUid);
+    return (int) (((char *) cssa->sun_path) - ((char *) cssa)) + ll;
+}
+
 void
 TTopenClientServer(void)
 {
@@ -1741,9 +1771,7 @@ TTopenClientServer(void)
             meSystemCfg &= ~meSYSTEM_CLNTSRVR;
             return;
         }
-        ii = sprintf(cssa.sun_path,"/tmp/mesrv%d",(int) meUid);
-        ii += sizeof(cssa.sun_family);
-        cssa.sun_family = AF_UNIX;
+        ii = meCSSockAddr(&cssa);
 
         if(!meTestExist(cssa.sun_path) &&
            (connect(meCSSock,(struct sockaddr *)&cssa,ii) >= 0))
@@ -1798,7 +1826,8 @@ TTopenClientServer(void)
             bp->dotLineNo = bp->lineCount-1;
             meAnchorSet(bp,'I',bp->dotLine,bp->dotLineNo,bp->dotOffset,1);
         }
-        ipipe->flag = 0;
+        /* Clients send a bare LF which must return to column 0 or the next message is indented and ignored by server-input */
+        ipipe->flag = meIPIPE_LFISNL;
         ipipe->strRow = 0;
         ipipe->strCol = 0;
         ipipe->noRows = 0;
@@ -1815,7 +1844,7 @@ TTkillClientServer(void)
     if(meCSSock != -1)
     {
         meIPipe *ipipe;
-        char fname[meBUF_SIZE_MAX];
+        struct sockaddr_un cssa;
 
         ipipe = ipipes;
         while(ipipe != NULL)
@@ -1831,14 +1860,14 @@ TTkillClientServer(void)
         }
         else
             close(meCSSock);
-        sprintf(fname,"/tmp/mesrv%d",(int) meUid);
-        meUnlinkNT(fname);
+        meCSSockAddr(&cssa);
+        meUnlinkNT(cssa.sun_path);
         meSystemCfg &= ~meSYSTEM_CLNTSRVR;
         meCSSock = -1;
     }
     if(meCCSSock != -1)
     {
-        close(meCSSock);
+        close(meCCSSock);
         meCCSSock = -1;
     }
 }
@@ -1853,9 +1882,7 @@ TTconnectClientServer(void)
 
         if((meCCSSock=socket(AF_UNIX,SOCK_STREAM, 0)) < 0)
             return 0;
-        ii = sizeof(cssa.sun_family);
-        ii += sprintf(cssa.sun_path,"/tmp/mesrv%d",(int) meUid);
-        cssa.sun_family = AF_UNIX;
+        ii = meCSSockAddr(&cssa);
         if(connect(meCCSSock,(struct sockaddr *)&cssa,ii) < 0)
         {
             close(meCCSSock);

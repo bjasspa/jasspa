@@ -113,7 +113,7 @@ getTranslationLen (meFrameChar *str, int n)
         {
             meUByte bb[meUTF8_LEN_MAX];
             if(cc != meFRAMECHAR_CONT)
-                len += meUtf8Encode(bb,cc);
+                len += meUtf8Encode(bb,cc & ~meFRAMECHAR_CIRCLE);
             continue;
         }
 #endif
@@ -143,7 +143,7 @@ doTranslation (meUByte *dest, meFrameChar *str, int n)
         if(cc >= 0x80)
         {
             if(cc != meFRAMECHAR_CONT)
-                len += meUtf8Encode(dest+len,cc);
+                len += meUtf8Encode(dest+len,cc & ~meFRAMECHAR_CIRCLE);
             continue;
         }
 #endif

@@ -194,7 +194,10 @@ void meNativeViewChangeFont(void *viewPtr, int n, const char *name, float size);
  *                               below 0x20 is a special char, ME_FRAMECHAR_CONT
  *                               the second cell of a wide char. A Unicode build
  *                               (meNativeUnicode) gives code points, an 8-bit
- *                               build its code page chars (see charToUnicode)
+ *                               build its code page chars (see charToUnicode).
+ *                               With show white space a combining mark is
+ *                               flagged ME_FRAMECHAR_CIRCLE, drawn as its
+ *                               spacing form on a dotted circle
  *  meNativeGetRowScheme(row)  - pointer to frameCur->store[row].scheme
  *                               (uint16_t scheme indices)
  *  meNativeGetFrameCols()     - frameCur->width
@@ -202,14 +205,18 @@ void meNativeViewChangeFont(void *viewPtr, int n, const char *name, float size);
  *                               Entry layout: fg=bits[7:0], bg=bits[15:8],
  *                               attrs=bits[23:16] (ME_ATTR_* flags)
  *                               Index with: scheme & 0x0fff
+ *  meNativeSpacingMark(uc, &n) - the spacing form of combining mark uc, 0
+ *                               if none, n set to the cells it takes
  * ---------------------------------------------------------------------- */
 #define ME_FRAMECHAR_CONT 0x7fffffffu
+#define ME_FRAMECHAR_CIRCLE 0x40000000u
 extern const int meNativeUnicode;
 const uint32_t *meNativeGetRowChars(int row);
 const uint16_t *meNativeGetRowScheme(int row);
 int             meNativeGetFrameCols(void);
 uint8_t         meNativeGetCursorColor(void *viewPtr);
 const uint32_t *meNativeGetStyleTable(void);
+uint32_t        meNativeSpacingMark(uint32_t uc, int32_t *cells);
 
 /* -------------------------------------------------------------------------
  * C - Swift: flush view dirty rows to the render buffer.

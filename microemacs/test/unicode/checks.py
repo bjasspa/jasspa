@@ -19,6 +19,8 @@ LATIN1_TABLE = ''.join('%04X' % cc for cc in range(0x80, 0x100))
 MIXED = b'one\ntwo\r\nthree\nfour\r\n'
 # a UTF-8 file (it has a valid sequence) with a NUL, mixed endings, no final newline and an invalid byte
 ALL = b'NUL[\x00] \xc3\xa9t\xc3\xa9 caf\xe9\r\nline two\nend'
+# forces a file with stray bytes, which reads as a code page, to be a UTF-8 buffer
+UTF8 = ['set-variable $buffer-encoding "utf8"', '-1 buffer-mode "edit"', '1 read-file $buffer-fname']
 # Greek alpha and beta as ME string escapes, which the Latin-1 code page does not have
 BS = chr(92)
 GREEK = BS + 'u03B1' + BS + 'u03B2'
@@ -93,19 +95,20 @@ def main():
     case('noeol.p', 'noeol.txt', ['p'], b'first\nlast')
     case('noeol.a', 'noeol.txt', ['a'], b'first\nlast\n')
     # check 4 - invalid bytes in a UTF-8 file
-    case('raw.p', 'invalid.txt', ['p'], files['invalid.txt'])
-    case('raw.c', 'invalid.txt', ['c'], b'caf\xc3\xa9 and caf\xc3\xa9\n')
-    case('raw.r', 'invalid.txt', ['r'], b'caf\xc3\xa9 and caf\xef\xbf\xbd\n')
+    # a stray byte means a code page file, so these force UTF-8 to have invalid bytes in a UTF-8 buffer
+    case('raw.p', 'invalid.txt', ['p'], files['invalid.txt'], pre=UTF8)
+    case('raw.c', 'invalid.txt', ['c'], b'caf\xc3\xa9 and caf\xc3\xa9\n', pre=UTF8)
+    case('raw.r', 'invalid.txt', ['r'], b'caf\xc3\xa9 and caf\xef\xbf\xbd\n', pre=UTF8)
     # all four in order: NULs, line endings, final newline, invalid bytes
-    case('all.fix', 'all.txt', ['s', 'u', 'a', 'c'], b'NUL[] \xc3\xa9t\xc3\xa9 caf\xc3\xa9\nline two\nend\n')
-    case('all.keep', 'all.txt', ['p', 'p', 'p', 'p'], ALL)
+    case('all.fix', 'all.txt', ['s', 'u', 'a', 'c'], b'NUL[] \xc3\xa9t\xc3\xa9 caf\xc3\xa9\nline two\nend\n', pre=UTF8)
+    case('all.keep', 'all.txt', ['p', 'p', 'p', 'p'], ALL, pre=UTF8)
     # $file-checks - 1 always preserve, 2 always fix, no prompts so no answers given
-    case('fc.keep', 'all.txt', [], ALL, pre=['set-variable $file-checks 0x55'], post=['set-variable $file-checks 0'])
+    case('fc.keep', 'all.txt', [], ALL, pre=UTF8 + ['set-variable $file-checks 0x55'], post=['set-variable $file-checks 0'])
     # one CRLF and one LF ending - a tie gives LF as the buffer style
     case('fc.fix', 'all.txt', [], b'NUL[] \xc3\xa9t\xc3\xa9 caf\xc3\xa9\nline two\nend\n',
-         pre=['set-variable $file-checks 0xaa'], post=['set-variable $file-checks 0'])
+         pre=UTF8 + ['set-variable $file-checks 0xaa'], post=['set-variable $file-checks 0'])
     # a preserve answer is remembered, so a second save does not prompt
-    case('remember', 'all.txt', ['p', 'p', 'p', 'p'], ALL,
+    case('remember', 'all.txt', ['p', 'p', 'p', 'p'], ALL, pre=UTF8,
          post=['!force write-buffer "%s"' % os.path.join(out, 'remember2'),
                '-2 ml-write &cat "status:remember2=" $status'])
     expected['remember2'] = ALL
