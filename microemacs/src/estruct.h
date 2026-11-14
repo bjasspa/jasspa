@@ -1189,7 +1189,7 @@ typedef meUInt meFrameChar;
 #define meFRAMECHAR_CONT 0x7fffffff
 #define meFRAMECHAR_CIRCLE 0x40000000
 #define meFrameCharIsCircle(cc) (((cc) & meFRAMECHAR_CIRCLE) && ((cc) != meFRAMECHAR_CONT))
-#if ((defined _WIN32) && !(defined _ME_WINDOW)) || (defined _ME_MACOSNW)
+#if (defined _WIN32) && !(defined _ME_WINDOW)
 #define meFRAMECHAR_CIRCLE_MARK 0
 #else
 #define meFRAMECHAR_CIRCLE_MARK 1

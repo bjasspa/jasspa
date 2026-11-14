@@ -71,7 +71,8 @@ private let kVKKPEnter:      UInt16 = 0x4C
 
 /// One cell in the backing store: colour indices + attributes + character.
 /// ch is a code point (an 8-bit build's code page char), below 0x20 an ME
-/// special char, ME_FRAMECHAR_CONT the second cell of a wide char.
+/// special char, ME_FRAMECHAR_CONT the second cell of a wide char, a char
+/// flagged ME_FRAMECHAR_CIRCLE a combining mark drawn on a dotted circle.
 private struct Cell {
     var ch:     UInt32 = 0x20
     var fg:     UInt8  = 0
@@ -259,6 +260,12 @@ final class MEView: NSView {
         return ((ch < 0x80) || (meNativeUnicode != 0)) ? ch : codePage[Int(ch & 0x7f)]
     }
 
+    /// Whether a cell's char is a combining mark drawn on a dotted circle
+    private static func isCircleMark(_ ch: UInt32) -> Bool
+    {
+        return ((ch & ME_FRAMECHAR_CIRCLE) != 0) && (ch != ME_FRAMECHAR_CONT)
+    }
+
     /// How code point cp (0x20 or more) is drawn in cells cells with font variant attrs
     private static func glyphRef(_ cp: UInt32, attrs: UInt8, cells: Int) -> GlyphRef
     {
@@ -354,6 +361,46 @@ final class MEView: NSView {
         var glyph = gr.glyph
         var pos = CGPoint.zero
         CTFontDrawGlyphs(MEView.glyphFont(gr, attrs: attrs), &glyph, &pos, 1, ctx)
+        ctx.restoreGState()
+    }
+
+    /// Draws a char's glyph as drawSingleGlyph, but a U+25CC no font has as special
+    /// char 0x05 rather than the box
+    private func drawGlyphOrCircle(_ gr: GlyphRef, cp: UInt32, attrs: UInt8, x: CGFloat, cellY: CGFloat,
+                                   baseline: CGFloat, color: CGColor, in ctx: CGContext)
+    {
+        if (gr.font < 0) && (cp == 0x25cc) {
+            drawSpecial(0x05, rect: CGRect(x: x, y: cellY, width: CGFloat(MEView.cellW), height: CGFloat(MEView.cellH)),
+                        color: color, in: ctx)
+        } else {
+            drawSingleGlyph(gr, attrs: attrs, x: x, cellY: cellY, baseline: baseline, color: color, in: ctx)
+        }
+    }
+
+    /// Draws the mark of a cell flagged ME_FRAMECHAR_CIRCLE over its circle as its
+    /// spacing form, drawn as it is with show white space off so it does not move
+    /// when that is toggled, clipped to at most clipCells cells
+    private func drawCircleMark(_ ch: UInt32, attrs: UInt8, x: CGFloat, cellY: CGFloat, baseline: CGFloat,
+                                color: CGColor, clipCells: Int, in ctx: CGContext)
+    {
+        var nc: Int32 = 1
+        let sm = meNativeSpacingMark(ch & ~ME_FRAMECHAR_CIRCLE, &nc)
+        guard sm >= 0x20 else { return }
+        let gr = MEView.glyphRef(sm, attrs: attrs, cells: Int(nc))
+        guard gr.font >= 0 else { return }
+        ctx.saveGState()
+        ctx.clip(to: CGRect(x: x, y: cellY, width: CGFloat(min(gr.cells, clipCells) * MEView.cellW),
+                            height: CGFloat(MEView.cellH)))
+        if (gr.font == 0) && (gr.cells == 1) {
+            if gr.glyph != 0 {
+                var glyph = gr.glyph
+                var pos = CGPoint(x: x, y: baseline)
+                ctx.setFillColor(color)
+                CTFontDrawGlyphs(ctFontVariant(attrs: attrs), &glyph, &pos, 1, ctx)
+            }
+        } else {
+            drawSingleGlyph(gr, attrs: attrs, x: x, cellY: cellY, baseline: baseline, color: color, in: ctx)
+        }
         ctx.restoreGState()
     }
 
@@ -500,6 +547,7 @@ final class MEView: NSView {
 
             var runCount = 0;
             var c = col;
+            var circleCount = 0;
             while((c < cols) && (runCount < scratchGlyphs.count))
             {
                 let cell = cells[rowBase + c];
@@ -508,7 +556,11 @@ final class MEView: NSView {
                 }
                 if (cell.ch > 0x20) && (cell.ch != ME_FRAMECHAR_CONT)
                 {
-                    let cp = MEView.codePoint(cell.ch)
+                    var cp = MEView.codePoint(cell.ch)
+                    if MEView.isCircleMark(cell.ch) {
+                        cp = 0x25cc
+                        circleCount += 1
+                    }
                     let wide = (c + 1 < cols) && (cells[rowBase + c + 1].ch == ME_FRAMECHAR_CONT)
                     if cp >= 0x20 {
                         let gr = MEView.glyphRef(cp, attrs: attrs0, cells: wide ? 2 : 1)
@@ -519,8 +571,8 @@ final class MEView: NSView {
                                 runCount += 1
                             }
                         } else {
-                            drawSingleGlyph(gr, attrs: attrs0, x: CGFloat(c * MEView.cellW), cellY: cellY,
-                                            baseline: baseline, color: fgColor, in: ctx)
+                            drawGlyphOrCircle(gr, cp: cp, attrs: attrs0, x: CGFloat(c * MEView.cellW), cellY: cellY,
+                                              baseline: baseline, color: fgColor, in: ctx)
                         }
                     }
                 }
@@ -532,6 +584,12 @@ final class MEView: NSView {
                 CTFontDrawGlyphs(ctFontVariant(attrs: attrs0),
                                  scratchGlyphs, scratchPositions, runCount, ctx)
             }
+            if circleCount > 0 {
+                for cc in col..<c where MEView.isCircleMark(cells[rowBase + cc].ch) {
+                    drawCircleMark(cells[rowBase + cc].ch, attrs: attrs0, x: CGFloat(cc * MEView.cellW), cellY: cellY,
+                                   baseline: baseline, color: fgColor, clipCells: cols - cc, in: ctx)
+                }
+            }
             col = c
         }
 
@@ -541,7 +599,7 @@ final class MEView: NSView {
             if(cell.ch < 0x20) {
                 drawSpecial(UInt8(cell.ch),
                             rect: cellRect(col: col, row: row, rows: rows),
-                            fg: Int(cell.fg), in: ctx)
+                            color: nsColor(index: Int(cell.fg)).cgColor, in: ctx)
             }
             if((cell.attrs & 0x10) != 0)
             {
@@ -554,10 +612,9 @@ final class MEView: NSView {
     }
 
     /// Draw ME internal special glyphs (box drawing, arrows, etc.)
-    private func drawSpecial(_ code: UInt8, rect: NSRect, fg: Int, in ctx: CGContext) {
-        let fgColor = nsColor(index: fg);
-        ctx.setStrokeColor(fgColor.cgColor);
-        ctx.setFillColor(fgColor.cgColor);
+    private func drawSpecial(_ code: UInt8, rect: NSRect, color: CGColor, in ctx: CGContext) {
+        ctx.setStrokeColor(color);
+        ctx.setFillColor(color);
         ctx.setLineWidth(1.0);
 
         let mx = rect.midX, my = rect.midY;
@@ -587,6 +644,16 @@ final class MEView: NSView {
             ctx.addLine(to: CGPoint(x: x1-2, y: y1-3));
             ctx.strokePath();
         
+        case 0x05:          /* dotted circle, for a font with no U+25CC, never stored in the frame */
+            let rr = floor((min(w, rect.height) - 2) / 2)
+            let nd = (rr < 5) ? 8 : 12
+            let dd: CGFloat = (rr > 7) ? 2 : 1
+            for kk in 0..<nd {
+                let aa = CGFloat(kk) * 2 * CGFloat.pi / CGFloat(nd)
+                ctx.fill(CGRect(x: (mx + rr * sin(aa) - dd / 2).rounded(), y: (my + rr * cos(aa) - dd / 2).rounded(),
+                                width: dd, height: dd))
+            }
+
         case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
             ctx.move(to: CGPoint(x: mx, y: y0));
             ctx.addLine(to: CGPoint(x: x1, y: my));
@@ -800,7 +867,8 @@ final class MEView: NSView {
             // Focused: filled block, character redrawn in cell background colour
             ctx.setFillColor(cursorNSColor.cgColor);
             ctx.fill(rect);
-            let cp = MEView.codePoint(cell.ch)
+            let circleMark = MEView.isCircleMark(cell.ch)
+            let cp = circleMark ? 0x25cc : MEView.codePoint(cell.ch)
             if (cell.ch > 0x20) && (cell.ch != ME_FRAMECHAR_CONT) && (cp >= 0x20)
             {
                 let gr = MEView.glyphRef(cp, attrs: cell.attrs, cells: wide ? 2 : 1)
@@ -815,8 +883,12 @@ final class MEView: NSView {
                         CTFontDrawGlyphs(ctFontVariant(attrs: cell.attrs),&glyph,&position,1,ctx);
                     }
                 } else {
-                    drawSingleGlyph(gr, attrs: cell.attrs, x: rect.minX, cellY: cellY, baseline: baseline,
-                                    color: bgColor, in: ctx)
+                    drawGlyphOrCircle(gr, cp: cp, attrs: cell.attrs, x: rect.minX, cellY: cellY, baseline: baseline,
+                                      color: bgColor, in: ctx)
+                }
+                if circleMark {
+                    drawCircleMark(cell.ch, attrs: cell.attrs, x: rect.minX, cellY: cellY, baseline: baseline,
+                                   color: bgColor, clipCells: 1, in: ctx)
                 }
             }
         }
