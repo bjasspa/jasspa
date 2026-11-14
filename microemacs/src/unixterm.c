@@ -1405,7 +1405,36 @@ meFrameXTermDrawSpecialChar(meFrame *frame, int x, int y, meUByte cc)
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x+mecm.fwidth-3, y+2, x+mecm.fwidth-3, y+mecm.fdepth-4);
         break;
         
-        /* 0x03 to 0x06 no longer used */
+        /* 0x03, 0x04 and 0x06 no longer used */
+        
+    case 0x05:          /* dotted circle, for a font with no U+25CC, never stored in the frame */
+        {
+            /* cos of 0, 15 .. 90 degrees, x1024 */
+            static const short cosq[7]={1024,989,887,724,512,265,0};
+            XRectangle dots[12];
+            int rr, kk, st, dd, px, py, nd=0;
+            
+            rr = (((mecm.fwidth < mecm.fdepth) ? mecm.fwidth:mecm.fdepth) - 2) >> 1;
+            st = (rr < 5) ? 3:2;
+            dd = (rr > 7) ? 2:1;
+            for(kk=0 ; kk<24 ; kk+=st)
+            {
+                ii = (kk > 12) ? 24-kk:kk;
+                px = (ii <= 6) ? cosq[ii]:-cosq[12-ii];
+                ii = (kk+18) % 24;
+                ii = (ii > 12) ? 24-ii:ii;
+                py = (ii <= 6) ? cosq[ii]:-cosq[12-ii];
+                px = (px >= 0) ? ((rr*px+512) >> 10):-((512-rr*px) >> 10);
+                py = (py >= 0) ? ((rr*py+512) >> 10):-((512-rr*py) >> 10);
+                dots[nd].x = (short) (x+mecm.fhwidth+px);
+                dots[nd].y = (short) (y+mecm.fhdepth+py);
+                dots[nd].width = dots[nd].height = (unsigned short) dd;
+                nd++;
+            }
+            XFillRectangles(mecm.xdisplay,meFrameGetXWindow(frame),meFrameGetXGC(frame),dots,nd);
+        }
+        break;
+        
         
     case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
         XDrawLine(mecm.xdisplay, meFrameGetXWindow(frame), meFrameGetXGC(frame), x, y + mecm.fhdepth, x + mecm.fhwidth, y);
@@ -1633,38 +1662,18 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
 #if MEOPT_XFT
     if(meXftUsed())
     {
-        FcChar32 wb[meFRAME_WIDTH_MAX];
-        int nn=0, ss=0, wide, na;
+        FcChar32 wb[meFRAME_WIDTH_MAX], ch;
+        int nn=0, ss=0, wide, na, cm=0;
         
         for(ii=0 ; ii<len ; ii++)
         {
-            cc = cells[ii];
-            wide = ((ii+1 < len) && (cells[ii+1] == meFRAMECHAR_CONT));
-            if(meFrameCharIsCircle(cc))
+            if(meFrameCharIsCircle(cc = cells[ii]))
             {
-                /* show white space's combining mark on a dotted circle: fonts place a mark's ink
-                 * differently, so it is centred on the circle's cell(s) by its measured ink */
-                FcChar32 ch=meUNI_CIRCLE;
-                XGlyphInfo gi;
-                if(nn)
-                {
-                    meFrameXftDrawString32(frame,colToClient(col+ss),y,wb,nn);
-                    nn = 0;
-                }
-                if(!XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),ch))
-                    meFrameXDrawUnavailableChar(frame,colToClient(col+ii),y,(wide) ? 2:1);
-                else
-                {
-                    meFrameXftDrawString32(frame,colToClient(col+ii),y,&ch,1);
-                    ch = cc & ~meFRAMECHAR_CIRCLE;
-                    if(XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),ch))
-                    {
-                        XftTextExtents32(mecm.xdisplay,meFrameGetXftFont(frame),&ch,1,&gi);
-                        meFrameXftDrawString32(frame,colToClient(col+ii)+((mecm.fwidth*((wide) ? 2:1))-gi.width)/2+gi.x,y,&ch,1);
-                    }
-                }
-                continue;
+                /* show white space's combining mark: the circle is drawn in the run, the mark after */
+                cc = meUNI_CIRCLE;
+                cm++;
             }
+            wide = ((ii+1 < len) && (cells[ii+1] == meFRAMECHAR_CONT));
             na = ((cc >= 0x80) && (cc != meFRAMECHAR_CONT) && !XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),cc));
             if((cc < 0x20) || (cc == meFRAMECHAR_CONT) || wide || na)
             {
@@ -1676,7 +1685,12 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
                 if(cc < 0x20)
                     meFrameXftDrawSpecialChar(frame,colToClient(col+ii),y,(meUByte) cc);
                 else if(na)
-                    meFrameXDrawUnavailableChar(frame,colToClient(col+ii),y,(wide) ? 2:1);
+                {
+                    if(cc == meUNI_CIRCLE)
+                        meFrameXftDrawSpecialChar(frame,colToClient(col+ii),y,0x05);
+                    else
+                        meFrameXDrawUnavailableChar(frame,colToClient(col+ii),y,(wide) ? 2:1);
+                }
                 else if(cc != meFRAMECHAR_CONT)
                     meFrameXftDrawString32(frame,colToClient(col+ii),y,&cc,1);
             }
@@ -1689,6 +1703,15 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
         }
         if(nn)
             meFrameXftDrawString32(frame,colToClient(col+ss),y,wb,nn);
+        if(cm)
+        {
+            /* each circled mark as its spacing form, the glyph drawn without show white space, so
+             * it does not move when that is toggled */
+            for(ii=0 ; ii<len ; ii++)
+                if(meFrameCharIsCircle(cells[ii]) && ((ch = meUniSpacingMark(cells[ii] & ~meFRAMECHAR_CIRCLE)) != 0) &&
+                   XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),ch))
+                    meFrameXftDrawString32(frame,colToClient(col+ii),y,&ch,1);
+        }
         if(meFrameGetXGCFont(frame) & meFONT_UNDERLINE)
             XftDrawRect(meFrameGetXftDraw(frame),meFrameGetFgColor(frame),colToClient(col),y+mecm.underline,colToClient(len),1);
         return;
@@ -1700,9 +1723,11 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
         
         for(ii=0 ; ii<len ; ii++)
         {
+            /* a circle is the special char dotted circle drawn after, over a circled mark's spacing form */
             if(meFrameCharIsCircle(cc = cells[ii]))
-                /* core fonts are drawn in the code page, so a circled mark as its spacing form */
                 cc = meUniSpacingMark(cc & ~meFRAMECHAR_CIRCLE);
+            else if(cc == meUNI_CIRCLE)
+                cc = ' ';
             if((cc < 0x20) || (cc == meFRAMECHAR_CONT))
                 buff[ii] = ' ';
             else if(cc < 0x80)
@@ -1717,8 +1742,12 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
         }
         meFrameXTermDrawString(frame,colToClient(col),y,buff,len);
         for(ii=0 ; ii<len ; ii++)
+        {
             if(cells[ii] < 0x20)
                 meFrameXTermDrawSpecialChar(frame,colToClient(col+ii),y,(meUByte) cells[ii]);
+            else if(meFrameCharIsCircle(cells[ii]) || (cells[ii] == meUNI_CIRCLE))
+                meFrameXTermDrawSpecialChar(frame,colToClient(col+ii),y,0x05);
+        }
     }
 }
 #endif
