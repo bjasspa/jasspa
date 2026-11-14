@@ -1,0 +1,63 @@
+.\" -*- nroff -*-
+.\" Copyright (C) 2026 JASSPA (www.jasspa.com)
+.\"
+.\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
+.\" copying information.
+.\"
+.Id $Id: m2cmd204.2,v 1.1 2026/11/14 00:00:00 steve Exp $
+.Im MicroEmacs command|region
+.so me.tni
+.TH accents-compose-region 2
+.XI accents-compose-region - "Compose the accents in the region (Unicode NFC)"
+.XI accents-decompose-region - "Decompose the accents in the region (Unicode NFD)"
+.SH NAME
+.Me "|accents-compose-region"
+accents-compose-region \- Compose the accents in the region (Unicode NFC)
+.Me $a
+.br
+.Me "|accents-decompose-region"
+accents-decompose-region \- Decompose the accents in the region (Unicode NFD)
+.Me $a
+.SH SYNOPSIS
+.na
+\fBaccents-compose-region\fR
+.br
+\fBaccents-decompose-region\fR
+.ad
+.SH DESCRIPTION
+An accented letter can be held in a file as a single character, e.g. an \fCe\fR with an acute accent (U+00E9), or as
+the letter followed by a combining mark, an \fCe\fR (U+0065) and a combining acute accent (U+0301). The two forms look
+the same in most programs, but they are different text: one does not find the other in a search, they sort, compare
+and spell check differently, and a file name in one form does not match the other. \*(mS shows what is there, drawing a
+combining mark as a character of its own (an \fCe\fR followed by an acute accent), see
+.Hl "Locale Support" localeSupport 2 .
+.PP
+.B accents-compose-region
+changes the text in the region to the single character form wherever there is one, Unicode's Normalization Form C
+(NFC), the form most files, keyboards and web pages use.
+.B accents-decompose-region
+changes it to the letter and combining mark form, Normalization Form D (NFD), the form macOS file names use.
+.PP
+Both put a letter's combining marks in Unicode's standard order and change only the text which differs, so the rest of
+the region, and any mark in it, is left as it was. As well as accents they change a few other characters to their
+standard form, e.g. the Angstrom sign (U+212B) to the letter A with a ring above (U+00C5), the Ohm sign (U+2126) to
+the Greek capital Omega (U+03A9), and Korean letters to syllables (NFC) or syllables to letters (NFD). They do not apply
+the compatibility forms (NFKC and NFKD), e.g. a ligature is left as it is. A raw byte (see
+.Ht $buffer-encoding 5 )
+is left as it is.
+.PP
+A combining mark is only composed with a letter in the same region, and the region is changed a line at a time. A line
+whose text would become longer than the line length limit is not changed and the command fails at it. The change can
+be undone with
+.Ht undo 2 .
+.PP
+These commands are only available in a version of \*(mS with Unicode support.
+.SH "SEE ALSO"
+.na
+.Ht buffer-info 2 ,
+.Hl "Locale Support" localeSupport 2 ,
+.Ht lower-case-region 2 ,
+.Ht upper-case-region 2 ,
+.Ht $buffer-encoding 5 .
+.ad
+.FH

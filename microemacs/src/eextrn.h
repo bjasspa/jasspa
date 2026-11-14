@@ -730,6 +730,9 @@ extern	int	meLineCharOffset(meLine *lp, int nn);
 #define meLineCharOffset(lp,nn) (((nn) > (lp)->length) ? -1:(nn))
 #endif
 extern	int	lineReplaceChar(meUInt cc);
+#if MEOPT_UNICODE
+extern	int	lineReplaceBytes(int ol, meUByte *ss, int nl);
+#endif
 #define meBUFINSFLAG_UNDOCALL   0x01
 #define meBUFINSFLAG_LITERAL    0x02
 extern	int	lineInsertNewline(meInt flags);
@@ -976,6 +979,13 @@ extern	int	killRegion(int f, int n);
 extern	int	copyRegion(int f, int n);
 extern	int	lowerRegion(int f, int n);
 extern	int	upperRegion(int f, int n);
+#if MEOPT_UNICODE
+extern	int	accentsComposeRegion(int f, int n);
+extern	int	accentsDecomposeRegion(int f, int n);
+#else
+#define accentsComposeRegion notAvailable
+#define accentsDecomposeRegion notAvailable
+#endif
 #if MEOPT_EXTENDED
 extern	int	killRectangle(int f, int n);
 extern	int	yankRectangle(int f, int n);

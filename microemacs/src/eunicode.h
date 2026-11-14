@@ -137,6 +137,10 @@ extern  int     meUtf8Prev(const meUByte *text, int off);
 extern  meUByte meUniProps(meUInt uc);
 extern  meUInt  meUniSpacingMark(meUInt uc);
 extern  int     meUniIgnorable(meUInt uc);
+extern  int     meUniCombClass(meUInt uc);
+/* the most chars one char's canonical decomposition can give, checked against eunitbl.h */
+#define meUNI_NORMAL_MAX    4
+extern  int     meUniNormalize(const meUInt *cs, int len, meUInt *dd, int compose);
 extern  int     meUniWidth(meUInt uc, int ambigWide);
 extern  meUInt  meUniToLower(meUInt uc);
 extern  meUInt  meUniToUpper(meUInt uc);

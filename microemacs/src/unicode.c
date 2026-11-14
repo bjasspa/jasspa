@@ -313,6 +313,150 @@ meUniIgnorable(meUInt uc)
     return 0;
 }
 
+/* Unicode normalisation (UAX #15), canonical forms only: Hangul syllables by arithmetic, other
+ * chars by the one level decompositions and composing pairs of meUniDecomps */
+#define meUNI_SBASE 0xac00
+#define meUNI_LBASE 0x1100
+#define meUNI_VBASE 0x1161
+#define meUNI_TBASE 0x11a7
+#define meUNI_LCOUNT 19
+#define meUNI_VCOUNT 21
+#define meUNI_TCOUNT 28
+#define meUNI_NCOUNT (meUNI_VCOUNT*meUNI_TCOUNT)
+#define meUNI_SCOUNT (meUNI_LCOUNT*meUNI_NCOUNT)
+#if meUNI_DECOMP_MAX > meUNI_NORMAL_MAX
+#error meUNI_NORMAL_MAX must be raised to the longest decomposition in eunitbl.h
+#endif
+
+int
+meUniCombClass(meUInt uc)
+{
+    int lo=0, hi=meUniTblSize(meUniCombClassRuns)-1, mid;
+
+    if((uc < 0x300) || (uc > meUNI_MAX))
+        return 0;
+    while(lo < hi)
+    {
+        mid = (lo + hi + 1) >> 1;
+        if((meUniCombClassRuns[mid] >> 8) <= uc)
+            lo = mid;
+        else
+            hi = mid - 1;
+    }
+    return (int) (meUniCombClassRuns[lo] & 0xff);
+}
+
+/* Writes the full canonical decomposition of uc to dd (room for meUNI_NORMAL_MAX), returns the
+ * number of chars */
+static int
+meUniDecompose(meUInt uc, meUInt *dd)
+{
+    int lo, hi, mid, nn;
+
+    if((uc >= meUNI_SBASE) && (uc < meUNI_SBASE+meUNI_SCOUNT))
+    {
+        uc -= meUNI_SBASE;
+        dd[0] = meUNI_LBASE + (uc / meUNI_NCOUNT);
+        dd[1] = meUNI_VBASE + ((uc % meUNI_NCOUNT) / meUNI_TCOUNT);
+        if((uc %= meUNI_TCOUNT) == 0)
+            return 2;
+        dd[2] = meUNI_TBASE + uc;
+        return 3;
+    }
+    if((uc >= meUniDecomps[0][0]) && (uc <= meUNI_MAX))
+    {
+        lo = 0;
+        hi = meUniTblSize(meUniDecomps)-1;
+        while(lo <= hi)
+        {
+            mid = (lo + hi) >> 1;
+            if(meUniDecomps[mid][0] == uc)
+            {
+                nn = meUniDecompose(meUniDecomps[mid][1],dd);
+                if(meUniDecomps[mid][2] != 0)
+                    nn += meUniDecompose(meUniDecomps[mid][2],dd+nn);
+                return nn;
+            }
+            if(meUniDecomps[mid][0] < uc)
+                lo = mid + 1;
+            else
+                hi = mid - 1;
+        }
+    }
+    dd[0] = uc;
+    return 1;
+}
+
+/* Returns the char the pair aa, bb composes to, 0 if none */
+static meUInt
+meUniCompose(meUInt aa, meUInt bb)
+{
+    const meUInt *ee;
+    int lo, hi, mid;
+
+    if((aa >= meUNI_LBASE) && (aa < meUNI_LBASE+meUNI_LCOUNT) && (bb >= meUNI_VBASE) && (bb < meUNI_VBASE+meUNI_VCOUNT))
+        return meUNI_SBASE + (((aa - meUNI_LBASE) * meUNI_VCOUNT) + (bb - meUNI_VBASE)) * meUNI_TCOUNT;
+    if((aa >= meUNI_SBASE) && (aa < meUNI_SBASE+meUNI_SCOUNT) && (((aa - meUNI_SBASE) % meUNI_TCOUNT) == 0) &&
+       (bb > meUNI_TBASE) && (bb < meUNI_TBASE+meUNI_TCOUNT))
+        return aa + (bb - meUNI_TBASE);
+    lo = 0;
+    hi = meUniTblSize(meUniComposeIdx)-1;
+    while(lo <= hi)
+    {
+        mid = (lo + hi) >> 1;
+        ee = meUniDecomps[meUniComposeIdx[mid]];
+        if((ee[1] == aa) && (ee[2] == bb))
+            return ee[0];
+        if((ee[1] < aa) || ((ee[1] == aa) && (ee[2] < bb)))
+            lo = mid + 1;
+        else
+            hi = mid - 1;
+    }
+    return 0;
+}
+
+/* Writes the NFC (compose set) or NFD of the len chars of cs to dd, which must have room for
+ * len*meUNI_NORMAL_MAX chars, returns the number of chars */
+int
+meUniNormalize(const meUInt *cs, int len, meUInt *dd, int compose)
+{
+    meUInt uc, ch;
+    int ii, jj, nn=0, cc, lc, sp;
+
+    for(ii=0 ; ii<len ; ii++)
+        nn += meUniDecompose(cs[ii],dd+nn);
+    /* canonical order, a stable sort of each run of marks by combining class */
+    for(ii=1 ; ii<nn ; ii++)
+    {
+        if((cc = meUniCombClass(uc = dd[ii])) == 0)
+            continue;
+        for(jj=ii ; (jj > 0) && (meUniCombClass(dd[jj-1]) > cc) ; jj--)
+            dd[jj] = dd[jj-1];
+        dd[jj] = uc;
+    }
+    if(!compose || (nn == 0))
+        return nn;
+    /* compose each char with the last starter unless blocked by a char of the same or higher class */
+    sp = 0;
+    if((lc = meUniCombClass(dd[0])) != 0)
+        lc = 256;
+    for(ii=jj=1 ; ii<nn ; ii++)
+    {
+        uc = dd[ii];
+        cc = meUniCombClass(uc);
+        if(((lc < cc) || (lc == 0)) && ((ch = meUniCompose(dd[sp],uc)) != 0))
+            dd[sp] = ch;
+        else
+        {
+            if(cc == 0)
+                sp = jj;
+            lc = cc;
+            dd[jj++] = uc;
+        }
+    }
+    return jj;
+}
+
 int
 meUniWidth(meUInt uc, int ambigWide)
 {

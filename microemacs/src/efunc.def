@@ -37,6 +37,10 @@
 
 DEFFUNC ("abort-command",               0x42, 0x8fad2cc4, ctrlg,                CK_ABTCMD, &__cmdArray[CK_ABTCMD+1], 0)
 DEFFUNC ("about",                       0x42, 0x0712edbb, meAbout,              CK_ABOUT, &__cmdArray[CK_ABOUT+1], 0)
+#if MEOPT_CMDHASH || MEOPT_UNICODE
+DEFFUNC ("accents-compose-region",      0x04, 0xf43ead15, accentsComposeRegion, CK_ACCCOMP, &__cmdArray[CK_ACCCOMP+1], 0)
+DEFFUNC ("accents-decompose-region",    0x04, 0x5de2699e, accentsDecomposeRegion, CK_ACCDECOMP, &__cmdArray[CK_ACCDECOMP+1], 0)
+#endif
 #if MEOPT_CMDHASH || MEOPT_COLOR
 DEFFUNC ("add-color",                   0x00, 0xeed40b15, addColor,             CK_ADDCOL, &__cmdArray[CK_ADDCOL+1], 0)
 DEFFUNC ("add-color-scheme",            0x42, 0x49584d17, addColorScheme,       CK_ADDCOLSCHM, &__cmdArray[CK_ADDCOLSCHM+1], 0)
