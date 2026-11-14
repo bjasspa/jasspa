@@ -93,7 +93,8 @@ bit 0x80000 is set). Default is '\fB\\\fR'.
 .IP "Index 56"
 Displayed space character (used when
 .Ht $system 5
-bit 0x80000 is set). Default is '\fB.\fR'.
+bit 0x80000 is set). Default is '\fB.\fR'. In a version of \*(mS with Unicode support a zero width space or other zero
+width separator is always drawn with this character, so it can be told from a real space.
 .IP "Index 57"
 Displayed  truncated  text to left  character  (used when the current  line is
 scrolled to the right). Default is '\fB$\fR'.

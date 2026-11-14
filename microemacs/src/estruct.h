@@ -1181,10 +1181,19 @@ typedef struct meVideo
  */
 
 /* A screen cell - in a Unicode build a code point, the second cell of a wide character holds
- * meFRAMECHAR_CONT. Values below 0x20 are special display chars (box & window chars) */
+ * meFRAMECHAR_CONT. Values below 0x20 are special display chars (box & window chars). With show
+ * white space a combining mark is flagged meFRAMECHAR_CIRCLE, to be drawn on a dotted circle, in
+ * the builds which can draw that (X11 and terminals), the others are given the circle alone */
 #if MEOPT_UNICODE
 typedef meUInt meFrameChar;
 #define meFRAMECHAR_CONT 0x7fffffff
+#define meFRAMECHAR_CIRCLE 0x40000000
+#define meFrameCharIsCircle(cc) (((cc) & meFRAMECHAR_CIRCLE) && ((cc) != meFRAMECHAR_CONT))
+#if (defined _WIN32) || (defined _ME_MACOSNW)
+#define meFRAMECHAR_CIRCLE_MARK 0
+#else
+#define meFRAMECHAR_CIRCLE_MARK 1
+#endif
 #else
 typedef meUByte meFrameChar;
 #endif

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Regenerates the Unicode tables with a dump, builds and runs the unicode.c unit tests.
 # Usage: run_unitest.sh <ucd-dir> [src-dir]
-# <ucd-dir> holds UnicodeData.txt, EastAsianWidth.txt, CaseFolding.txt & PropList.txt
+# <ucd-dir> holds UnicodeData.txt, EastAsianWidth.txt, CaseFolding.txt, PropList.txt & DerivedCoreProperties.txt
 set -e
 if [ $# -lt 1 ] ; then
     echo "Usage: $0 <ucd-dir> [src-dir]"
