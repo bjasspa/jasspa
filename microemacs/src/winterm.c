@@ -781,6 +781,10 @@ ConsoleDrawString(meFrameChar *ss, WORD wAttribute, int x, int y, int len)
             uc = ttSpeUChars[cc];
         else if(cc == meFRAMECHAR_CONT)
             uc = meCONSOLE_CONT;
+#if meFRAMECHAR_CIRCLE_MARK
+        else if(meFrameCharIsCircle(cc))
+            uc = meUNI_CIRCLE;
+#endif
         else if(cc > 0xffff)
             /* a cell holds one UTF-16 unit, as the console does a wide char shows as a wide U+FFFD */
             uc = meUNI_REPLACE;
@@ -1177,9 +1181,43 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         MoveToEx(hdc,x+cm->sizeX-3,y+2,NULL);
         LineTo(hdc,x+cm->sizeX-3,y+cm->sizeY-3);
         break;
-    
-        /* 0x03 to 0x06 no longer used */
         
+        /* 0x03 to 0x04 no longer used */
+
+    case 0x05:          /* dotted circle, for a font with no U+25CC, never stored in the frame */
+        {
+            /* cos of 0, 15 .. 90 degrees, x1024 */
+            static const short cosq[7]={1024,989,887,724,512,265,0};
+            int rr, kk, ss, dd, cx, cy, px, py;
+
+            rr = ((cm->sizeX < cm->sizeY) ? cm->sizeX:cm->sizeY) - 2;
+            rr >>= 1;
+            ss = (rr < 5) ? 3:2;
+            dd = (rr > 7) ? 2:1;
+            cx = x + cm->midX;
+            cy = y + cm->midY;
+            for(kk=0 ; kk<24 ; kk+=ss)
+            {
+                ii = (kk > 12) ? 24-kk:kk;
+                px = (ii <= 6) ? cosq[ii]:-cosq[12-ii];
+                ii = (kk+18) % 24;
+                ii = (ii > 12) ? 24-ii:ii;
+                py = (ii <= 6) ? cosq[ii]:-cosq[12-ii];
+                px = (px >= 0) ? ((rr*px+512) >> 10):-((512-rr*px) >> 10);
+                py = (py >= 0) ? ((rr*py+512) >> 10):-((512-rr*py) >> 10);
+                SetPixel(hdc,cx+px,cy+py,fcol);
+                if(dd > 1)
+                {
+                    SetPixel(hdc,cx+px+1,cy+py,fcol);
+                    SetPixel(hdc,cx+px,cy+py+1,fcol);
+                    SetPixel(hdc,cx+px+1,cy+py+1,fcol);
+                }
+            }
+        }
+        break;
+
+        /* 0x06 no longer used */
+
     case 0x07:          /* meCHAR_UNDEF, undefined char - can be generated during X11 clipboard get or charset change <+> */
         MoveToEx(hdc, x, y + cm->midY, NULL);
         LineTo(hdc, x + cm->midX,  y);
@@ -1484,19 +1522,47 @@ WinGlyphIndices(HDC hdc, meFrameChar *ss, int len, WORD *gi, meUByte *na)
     }
     return nn;
 }
+
+/* WinCircleMark; Draws show white space's combining mark cc over its circle as the mark's spacing
+ * form, as drawn without show white space so the mark does not move, in the text colour and font,
+ * clipped to rr (widened for a wide form). Nothing is drawn if the font has no glyph for it */
+static void
+WinCircleMark(HDC hdc, int x, int y, RECT *rr, meFrameChar cc)
+{
+    RECT cr;
+    WCHAR wc;
+    WORD gi;
+    int bm;
+
+    if(((cc = meUniSpacingMark(cc & ~meFRAMECHAR_CIRCLE)) == 0) || (cc > 0xffff))
+        return;
+    wc = (WCHAR) cc;
+    if((GetGlyphIndicesW(hdc,&wc,1,&gi,GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) || (gi == 0xffff))
+        return;
+    cr = *rr;
+    if(meUniPropWidth(meUniProps(cc)) == meUNIWIDTH_WIDE)
+        cr.right += eCellMetrics.cell.sizeX;
+    /* else the glyph's background is filled, wiping out the circle */
+    bm = SetBkMode(hdc,TRANSPARENT);
+    ExtTextOutW(hdc,x,y,ETO_CLIPPED|ETO_GLYPH_INDEX,&cr,(LPCWSTR) &gi,1,NULL);
+    SetBkMode(hdc,bm);
+}
 #endif
 
 #if MEOPT_UNICODE
 /* WinCursorUnavailableChar; Draws the unavailable char box for the cursor in colour fcol, rr is the
- * char's cells from its top */
+ * char's cells from its top, or the dotted circle if circle */
 static void
-WinCursorUnavailableChar(HDC hdc, RECT *rr, COLORREF fcol)
+WinCursorUnavailableChar(HDC hdc, RECT *rr, COLORREF fcol, int circle)
 {
     HPEN pen, oldpen;
     
     pen = CreatePen(PS_SOLID, 0, fcol);
     oldpen = SelectObject(hdc, pen);
-    WinUnavailableChar(hdc,rr->left,rr->top,rr->right-rr->left,eCellMetrics.cell.sizeY);
+    if(circle)
+        WinSpecialChar(hdc,&eCellMetrics.cell,rr->left,rr->top,0x05,fcol);
+    else
+        WinUnavailableChar(hdc,rr->left,rr->top,rr->right-rr->left,eCellMetrics.cell.sizeY);
     SelectObject(hdc, oldpen);
     DeleteObject(pen);
 }
@@ -1520,6 +1586,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
     meColor cCol;
 #if MEOPT_UNICODE
     meUByte na=0;                       /* char is unavailable in the font */
+    meFrameChar mc=0;                   /* show white space's mark drawn on the circle */
 #endif
 
     /* Set up the drawing borders. */
@@ -1541,6 +1608,11 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
 #if MEOPT_UNICODE
     if(cc == meFRAMECHAR_CONT)
         cc = ' ';
+    else if(meFrameCharIsCircle(cc))
+    {
+        mc = cc;
+        cc = meUNI_CIRCLE;
+    }
 #endif
 
     /* Check the current character set and select the special font or convert
@@ -1634,7 +1706,9 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
                 dx);
 #if MEOPT_UNICODE
     if(na)
-        WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel);
+        WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel,(cc == meUNI_CIRCLE));
+    if(mc)
+        WinCircleMark(hdc,clientCol,clientRow,&rline,mc);
 #endif
     
     if(frame->flags & meFRAME_NOT_FOCUS)
@@ -1663,8 +1737,13 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
             rline.top--;
             rline.left--;
             rline.right++;
-            WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetFColor(style)].cpixel);
+            WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetFColor(style)].cpixel,(cc == meUNI_CIRCLE));
+            rline.top++;
+            rline.left++;
+            rline.right--;
         }
+        if(mc)
+            WinCircleMark(hdc,clientCol,clientRow,&rline,mc);
 #endif
     }
 }
@@ -1812,7 +1891,7 @@ meFrameDraw(meFrame *frame)
         WORD tgi[meFRAME_WIDTH_MAX+1];
         meShort tcl[meFRAME_WIDTH_MAX];
         meUByte tna[meFRAME_WIDTH_MAX];
-        int ii, ll, naFlag;
+        int ii, ll, naFlag, cmFlag;
 #else
         WCHAR uc, tbp[meFRAME_WIDTH_MAX];
         meUByte cc, *ftext;
@@ -1920,6 +1999,7 @@ meFrameDraw(meFrame *frame)
             /* a wide char's advance covers both its cells */
             length = 0;
             ll = 0;
+            cmFlag = 0;
             for(ii=col ; ii<=tcol ; ii++)
             {
                 if((cc = ftext[ii]) == meFRAMECHAR_CONT)
@@ -1937,7 +2017,14 @@ meFrameDraw(meFrame *frame)
                     cc = ' ';
                 }
                 else if(cc >= 0x80)
+                {
                     ll = 1;
+                    if(meFrameCharIsCircle(cc))
+                    {
+                        cmFlag++;
+                        cc = meUNI_CIRCLE;
+                    }
+                }
                 tfc[length] = cc;
                 tcl[length] = ii;
                 tdx[length++] = eCellMetrics.cell.sizeX;
@@ -2013,7 +2100,7 @@ meFrameDraw(meFrame *frame)
 
             /* Special characters */
 #if MEOPT_UNICODE
-            if((spFlag != 0) || (naFlag != 0))
+            if((spFlag != 0) || (naFlag != 0) || (cmFlag != 0))
 #else
             if(spFlag != 0)
 #endif
@@ -2048,8 +2135,25 @@ meFrameDraw(meFrame *frame)
                 {
                     if(tna[ii])
                     {
-                        WinUnavailableChar(ps.hdc,eCellMetrics.cellColPos[tcl[ii]],rline.top,tdx[ii],eCellMetrics.cell.sizeY);
+                        if(tfc[ii] == meUNI_CIRCLE)
+                            WinSpecialChar(ps.hdc,&eCellMetrics.cell,eCellMetrics.cellColPos[tcl[ii]],
+                                           rline.top,0x05,eCellMetrics.pInfo.cPal[fcol].cpixel);
+                        else
+                            WinUnavailableChar(ps.hdc,eCellMetrics.cellColPos[tcl[ii]],rline.top,tdx[ii],eCellMetrics.cell.sizeY);
                         naFlag--;
+                    }
+                }
+                for(ii=0 ; cmFlag > 0 ; ii++)
+                {
+                    if(meFrameCharIsCircle(ftext[tcl[ii]]))
+                    {
+                        RECT rr;
+                        rr.left = eCellMetrics.cellColPos[tcl[ii]];
+                        rr.right = eCellMetrics.cellColPos[tcl[ii]+1];
+                        rr.top = rline.top;
+                        rr.bottom = rline.bottom;
+                        WinCircleMark(ps.hdc,rr.left,clientRow,&rr,ftext[tcl[ii]]);
+                        cmFlag--;
                     }
                 }
                 if(spFlag != 0)

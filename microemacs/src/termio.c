@@ -86,7 +86,7 @@ meUShort ttSpeUChars[TTSPECCHARS] =
     0x25c6, /*  2/0x02 - Unicode tag - 5 byte encode */
     ' ',    /*  3/0x03 - Not used */
     ' ',    /*  4/0x04 - Not used */
-    ' ', /*  5/0x05 - Not used */
+    0x25cc, /*  5/0x05 - Dotted circle used for display whitespaces */
     ' ',    /*  6/0x06 - Not used */
     0xfffd, /*  7/0x07 - unsupported/undefined char meCHAR_UNDEF (i.e. \uFFFD) */
     0x00b7, /*  8/0x08 - backspace char, used for visible space */
