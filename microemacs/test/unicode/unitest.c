@@ -344,6 +344,86 @@ compareWcwidth(void)
     printf("INFO %d assigned code points differ from glibc wcwidth\n",diff);
 }
 
+/* Unicode's NormalizationTest.txt: c2 = NFC(c1..c3), c4 = NFC(c4, c5), c3 = NFD(c1..c3) and
+ * c5 = NFD(c4, c5); and every code point not in part 1 is unchanged by both */
+static int
+normalField(char **pp, meUInt *cs)
+{
+    char *ss=*pp, *ee;
+    int nn=0;
+    while(*ss != ';')
+    {
+        cs[nn++] = (meUInt) strtoul(ss,&ee,16);
+        ss = ee;
+        while(*ss == ' ')
+            ss++;
+    }
+    *pp = ss+1;
+    return nn;
+}
+
+static int
+normalSame(const meUInt *cs, int cl, int compose, const meUInt *ws, int wl)
+{
+    meUInt dd[32*meUNI_NORMAL_MAX];
+    int nn=meUniNormalize(cs,cl,dd,compose);
+    return (nn == wl) && !memcmp(dd,ws,nn*sizeof(meUInt));
+}
+
+static void
+testNormalization(const char *path)
+{
+    static meUByte part1[meUNI_MAX+1];
+    FILE *fp;
+    char line[2048], *pp;
+    meUInt cs[5][32];
+    int cl[5], part=0, ii, jj, lines=0;
+    meUInt uc, dd[meUNI_NORMAL_MAX];
+    
+    if((fp = fopen(path,"r")) == NULL)
+    {
+        printf("SKIP normalization, no %s\n",path);
+        return;
+    }
+    while(fgets(line,sizeof(line),fp) != NULL)
+    {
+        if(line[0] == '@')
+        {
+            part = atoi(line+5);
+            continue;
+        }
+        if((line[0] == '#') || (line[0] == '\n'))
+            continue;
+        pp = line;
+        for(ii=0 ; ii<5 ; ii++)
+            cl[ii] = normalField(&pp,cs[ii]);
+        if((part == 1) && (cl[0] == 1))
+            part1[cs[0][0]] = 1;
+        for(ii=0 ; ii<3 ; ii++)
+        {
+            CHECK(normalSame(cs[ii],cl[ii],1,cs[1],cl[1]),"NFC of c%d of %04X",ii+1,cs[0][0]);
+            CHECK(normalSame(cs[ii],cl[ii],0,cs[2],cl[2]),"NFD of c%d of %04X",ii+1,cs[0][0]);
+        }
+        for(ii=3 ; ii<5 ; ii++)
+        {
+            CHECK(normalSame(cs[ii],cl[ii],1,cs[3],cl[3]),"NFC of c%d of %04X",ii+1,cs[0][0]);
+            CHECK(normalSame(cs[ii],cl[ii],0,cs[4],cl[4]),"NFD of c%d of %04X",ii+1,cs[0][0]);
+        }
+        lines++;
+    }
+    fclose(fp);
+    for(uc=0 ; uc<=meUNI_MAX ; uc++)
+    {
+        if(part1[uc] || ((uc >= 0xd800) && (uc <= 0xdfff)))
+            continue;
+        jj = meUniNormalize(&uc,1,dd,1);
+        CHECK((jj == 1) && (dd[0] == uc),"NFC changes U+%04X",uc);
+        jj = meUniNormalize(&uc,1,dd,0);
+        CHECK((jj == 1) && (dd[0] == uc),"NFD changes U+%04X",uc);
+    }
+    printf("INFO %d normalization test lines\n",lines);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -357,6 +437,10 @@ main(int argc, char *argv[])
     else
         printf("SKIP table cross-check, no dump file given\n");
     compareWcwidth();
+    if(argc > 2)
+        testNormalization(argv[2]);
+    else
+        printf("SKIP normalization, no NormalizationTest.txt given\n");
     printf("%d checks, %d failures\n",checkCount,failCount);
     return (failCount != 0);
 }

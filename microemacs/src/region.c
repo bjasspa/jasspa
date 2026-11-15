@@ -332,6 +332,124 @@ upperRegion(int f, int n)
     return regionChangeCase(1);
 }
 
+#if MEOPT_UNICODE
+/* Normalises the region to NFC (compose) or NFD a line at a time, as a combining sequence never
+ * spans a line, replacing only the chars which change so text either side keeps any marks. Dot
+ * is restored from the region start or left at its end */
+static int
+regionNormalize(int compose)
+{
+    meWindow *cwp=frameCur->windowCur;
+    meRegion region;
+    meUInt *cs=NULL, *ns=NULL;
+    meUByte *bb=NULL, *tt;
+    int *offs=NULL;
+    meInt size;
+    int ret, dotStart, off, ll, cl, nn, pp, ss, bl, ii, alloc=0;
+    
+    if((ret=getregion(&region)) <= 0)
+        return ret;
+    if((ret=bufferSetEdit()) <= 0)
+        return ret;
+    dotStart = ((cwp->dotLine == region.line) && (cwp->dotOffset == region.offset));
+    cwp->dotLine = region.line;
+    cwp->dotOffset = region.offset;
+    cwp->dotLineNo = region.lineNo;
+    size = region.size;
+    for(;;)
+    {
+        off = cwp->dotOffset;
+        if((ll = meLineGetLength(cwp->dotLine) - off) > size)
+            ll = size;
+        size -= ll;
+        tt = meLineGetText(cwp->dotLine) + off;
+        for(ii=0 ; (ii < ll) && (tt[ii] < 0x80) ; ii++)
+            ;
+        if(ii < ll)
+        {
+            if(ll > alloc)
+            {
+                meNullFree(cs);
+                meNullFree(ns);
+                meNullFree(bb);
+                meNullFree(offs);
+                alloc = ll;
+                cs = meMalloc(alloc*sizeof(meUInt));
+                ns = meMalloc(alloc*meUNI_NORMAL_MAX*sizeof(meUInt));
+                bb = meMalloc(alloc*meUNI_NORMAL_MAX*meUTF8_LEN_MAX);
+                offs = meMalloc((alloc+1)*sizeof(int));
+                if((cs == NULL) || (ns == NULL) || (bb == NULL) || (offs == NULL))
+                {
+                    ret = meFALSE;
+                    break;
+                }
+            }
+            for(ii=cl=0 ; ii<ll ; cl++)
+            {
+                offs[cl] = ii;
+                ii += meUtf8Decode(tt+ii,ll-ii,cs+cl);
+            }
+            offs[cl] = ll;
+            nn = meUniNormalize(cs,cl,ns,compose);
+            for(pp=0 ; (pp < cl) && (pp < nn) && (cs[pp] == ns[pp]) ; pp++)
+                ;
+            if((pp < cl) || (pp < nn))
+            {
+                for(ss=0 ; (ss < cl-pp) && (ss < nn-pp) && (cs[cl-1-ss] == ns[nn-1-ss]) ; ss++)
+                    ;
+                for(ii=pp, bl=0 ; ii<nn-ss ; ii++)
+                    bl += meUtf8Encode(bb+bl,ns[ii]);
+                cwp->dotOffset = off + offs[pp];
+                if(lineReplaceBytes(offs[cl-ss]-offs[pp],bb,bl) <= 0)
+                {
+                    ret = meFALSE;
+                    break;
+                }
+                ll += bl - (offs[cl-ss] - offs[pp]);
+            }
+        }
+        if(size <= 0)
+        {
+            cwp->dotOffset = off + ll;
+            break;
+        }
+        cwp->dotLine = meLineGetNext(cwp->dotLine);
+        cwp->dotOffset = 0;
+        cwp->dotLineNo++;
+        size--;
+    }
+    meNullFree(cs);
+    meNullFree(ns);
+    meNullFree(bb);
+    meNullFree(offs);
+    if(dotStart)
+    {
+        while(cwp->dotLineNo > region.lineNo)
+        {
+            cwp->dotLine = meLineGetPrev(cwp->dotLine);
+            cwp->dotLineNo--;
+        }
+        cwp->dotOffset = region.offset;
+    }
+    cwp->updateFlags |= WFMOVEL;
+    return ret;
+}
+
+/* Composes the accents in the region, Unicode NFC */
+int
+accentsComposeRegion(int f, int n)
+{
+    return regionNormalize(1);
+}
+
+/* Decomposes the accents in the region, Unicode NFD */
+int
+accentsDecomposeRegion(int f, int n)
+{
+    return regionNormalize(0);
+}
+#endif
+
 #if MEOPT_EXTENDED
 int
 killRectangle(int f, int n)

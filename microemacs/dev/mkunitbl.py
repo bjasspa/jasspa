@@ -10,8 +10,8 @@
 # --dump writes the per code point properties (0x110000 bytes) followed by the lower, upper and
 # fold mappings as text lines of "<from> <to>" in hex, used by test/unicode/unitest.c
 #
-# <ucd-dir> must contain UnicodeData.txt, EastAsianWidth.txt, CaseFolding.txt, DerivedCoreProperties.txt
-# and PropList.txt, from https://www.unicode.org/Public/UCD/latest/ucd/
+# <ucd-dir> must contain UnicodeData.txt, EastAsianWidth.txt, CaseFolding.txt, DerivedCoreProperties.txt,
+# DerivedNormalizationProps.txt and PropList.txt, from https://www.unicode.org/Public/UCD/latest/ucd/
 #
 # Copyright (C) 2026 JASSPA (www.jasspa.com)
 #
@@ -91,6 +91,8 @@ def readUnicodeData(ucd):
     upper = {}
     lower = {}
     spacing = {}                         # space + mark decompositions, mark -> its spacing forms
+    ccc = {}                             # canonical combining class, when not 0
+    decomp = {}                          # canonical decomposition, one level
     first = None
     for ff in ucdLines(os.path.join(ucd, 'UnicodeData.txt')):
         cp = int(ff[0], 16)
@@ -104,14 +106,18 @@ def readUnicodeData(ucd):
             first = None
             continue
         gc[cp] = gg
+        if ff[3] != '0':
+            ccc[cp] = int(ff[3])
         dd = ff[5].split()
+        if dd and not dd[0].startswith('<'):
+            decomp[cp] = [int(xx, 16) for xx in dd]
         if (len(dd) == 3) and (dd[0] in ('<compat>', '<isolated>')) and (dd[1] == '0020'):
             spacing.setdefault(int(dd[2], 16), []).append(cp)
         if ff[12]:
             upper[cp] = int(ff[12], 16)
         if ff[13]:
             lower[cp] = int(ff[13], 16)
-    return gc, upper, lower, spacing
+    return gc, upper, lower, spacing, ccc, decomp
 
 
 def readEastAsianWidth(ucd):
@@ -267,6 +273,47 @@ def writeIgnorables(out, runs):
     out.append('};\n')
 
 
+def normalTables(ccc, decomp, excl):
+    """the canonical combining class runs, the one level canonical decompositions by char and the
+    indexes of the decompositions which compose, by their pair, and the longest full decomposition"""
+    cccRuns = [(0, 0)]
+    for cp in range(1, UNI_MAX + 1):
+        if ccc.get(cp, 0) != cccRuns[-1][1]:
+            cccRuns.append((cp, ccc.get(cp, 0)))
+    decs = sorted(decomp.items())
+    for cp, dd in decs:
+        assert (len(dd) in (1, 2)) and all(xx <= UNI_MAX for xx in dd), 'decomposition U+%04X' % cp
+
+    def full(cp):
+        return [yy for xx in decomp[cp] for yy in full(xx)] if cp in decomp else [cp]
+    longest = max(len(full(cp)) for cp in decomp)
+    comp = sorted((ii for ii, (cp, dd) in enumerate(decs) if (len(dd) == 2) and (cp not in excl)),
+                  key=lambda ii: decs[ii][1])
+    assert len(decs) < 0x10000
+    return cccRuns, decs, comp, longest
+
+
+def writeNormalTables(out, cccRuns, decs, comp, longest):
+    out.append('/* the longest full canonical decomposition of a char, Hangul syllables are 3 */')
+    out.append('#define meUNI_DECOMP_MAX %d\n' % longest)
+    out.append('/* (start << 8) | canonical combining class, one per run */')
+    out.append('static const meUInt meUniCombClassRuns[%d] =\n{' % len(cccRuns))
+    for ii in range(0, len(cccRuns), 8):
+        out.append('    ' + ','.join('0x%08x' % ((rr[0] << 8) | rr[1]) for rr in cccRuns[ii:ii + 8]) + ',')
+    out.append('};\n')
+    out.append('/* {char, first, second (0 for a singleton)}, by char, one level canonical decompositions */')
+    out.append('static const meUInt meUniDecomps[%d][3] =\n{' % len(decs))
+    for ii in range(0, len(decs), 4):
+        out.append('    ' + ' '.join('{0x%05x,0x%05x,0x%05x},' % (cp, dd[0], dd[1] if len(dd) > 1 else 0)
+                                     for cp, dd in decs[ii:ii + 4]))
+    out.append('};\n')
+    out.append('/* indexes into meUniDecomps of the pairs which compose (no composition exclusion), by pair */')
+    out.append('static const meUShort meUniComposeIdx[%d] =\n{' % len(comp))
+    for ii in range(0, len(comp), 12):
+        out.append('    ' + ','.join('%4d' % xx for xx in comp[ii:ii + 12]) + ',')
+    out.append('};\n')
+
+
 def writeIndex(out, name, index):
     out.append('static const meUByte %s[%d] =\n{' % (name, len(index)))
     for ii in range(0, len(index), 16):
@@ -283,11 +330,12 @@ def main():
     ucd = args.ucd
     outPath = args.out
 
-    gc, upper, lower, spacing = readUnicodeData(ucd)
+    gc, upper, lower, spacing, ccc, decomp = readUnicodeData(ucd)
     eaw, version = readEastAsianWidth(ucd)
     space = readPropList(ucd, 'White_Space')
     pcm = readPropList(ucd, 'Prepended_Concatenation_Mark')
     ign = readPropList(ucd, 'Default_Ignorable_Code_Point', 'DerivedCoreProperties.txt')
+    excl = readPropList(ucd, 'Full_Composition_Exclusion', 'DerivedNormalizationProps.txt')
     fold = readCaseFolding(ucd)
     if version is None:
         sys.exit('Failed to find the Unicode version in EastAsianWidth.txt')
@@ -346,6 +394,8 @@ def main():
     writeSpacingMarks(out, marks)
     ignRuns = ignorables(ign)
     writeIgnorables(out, ignRuns)
+    cccRuns, decs, comp, longest = normalTables(ccc, decomp, excl)
+    writeNormalTables(out, cccRuns, decs, comp, longest)
 
     with open(outPath, 'w', encoding='ascii', newline='\n') as fp:
         fp.write('\n'.join(out))
@@ -356,8 +406,10 @@ def main():
                 fp.write(('%s %d\n' % (name, len(mapping))).encode('ascii'))
                 for src in sorted(mapping):
                     fp.write(('%x %x\n' % (src, mapping[src])).encode('ascii'))
-    sys.stderr.write('Unicode %s: %d property runs, %d lower, %d upper, %d fold case runs, %d spacing marks, %d ignorable runs\n'
-                     % (version, len(propRuns), len(lowerRuns), len(upperRuns), len(foldRuns), len(marks), len(ignRuns)))
+    sys.stderr.write('Unicode %s: %d property runs, %d lower, %d upper, %d fold case runs, %d spacing marks, %d ignorable runs, '
+                     '%d combining class runs, %d decompositions, %d compositions\n'
+                     % (version, len(propRuns), len(lowerRuns), len(upperRuns), len(foldRuns), len(marks), len(ignRuns),
+                        len(cccRuns), len(decs), len(comp)))
 
 
 if __name__ == '__main__':

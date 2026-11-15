@@ -46,6 +46,7 @@ count_key_table(void)
     keyTableSize = (meUShort) ii ;
 }
 
+#if MEOPT_EXTENDED
 /* Returns the Latin char a non-Latin keyboard's key cc maps to, 0 if none; the map never holds an
  * ASCII key */
 meUByte
@@ -69,6 +70,7 @@ meKeyboardMapChar(meUInt cc)
     return (cc < 256) ? charKeyboardMap[cc]:0;
 #endif
 }
+#endif
 
 /*****************************************************************************
 *								x.

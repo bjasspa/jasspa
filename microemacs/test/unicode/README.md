@@ -7,6 +7,7 @@ Test ids refer to `unicode_acceptance_tests.md` in the repository root.
 | `run_unitest.sh <ucd-dir>` | Regenerates the tables with a dump, builds and runs `unitest.c` against `src/unicode.c` |
 | `mkcorpus.py [dir]` | Regenerates `corpus/`, one file per encoding/edge case |
 | `roundtrip.sh <mec>` | Loads and saves every `corpus/*.txt` headlessly, reports files not saved byte identical |
+| `normalize.py <mec>` | `accents-compose-region` (NFC) and `accents-decompose-region` (NFD): the whole buffer both ways against Python's `unicodedata`, a region within lines, a raw byte kept, undo, and a line which would grow past the line limit left as it is; the full conformance test (`NormalizationTest.txt`) is in `unitest.c` |
 | `checks.py <mec>` | Checks the save file checks: every prompt answer, `$file-checks`, remembered answers and undo of a fix, check 5 for chars a code page file cannot hold (asked first, never remembered); the binary flag (`$buffer-fmod` 0x20000), the line endings `insert-file` gives and `buffer-info` at each kind of line end (run with `python3 -I`) |
 | `hash.py <mec>` | `generate-hash`: key and data strings as bytes (a NUL, `&hexb` bytes above 0x7f), text buffers hashed as their text with `\n` line ends (CRLF, CR, mixed, no final newline, `ctrlz`, a long line split on load, regions), UTF-8 and invalid UTF-8 files, `rbin` byte for byte; the Unicode build also a Latin-1 file as UTF-8 and a NUL (run with `python3 -I`) |
 | `display.py <mec>` | Runs `mec` in a pseudo terminal (`screen.py` emulates the screen) and checks the cells: text, wide chars, tabs, truncation, escapes, mode line, a code page terminal, the load messages and `screen-poke`, including a poke over half of a wide char |
@@ -42,7 +43,8 @@ Test ids refer to `unicode_acceptance_tests.md` in the repository root.
 | `editdiff.py <mec> <mec>...` | Runs one ASCII editing script on several builds and reports differences, e.g. the original `src.old` build, an 8-bit build (`./build.sh -d -ec -t c`) and the Unicode build (`./build.sh -d -t c`) |
 
 `<ucd-dir>` must hold `UnicodeData.txt`, `EastAsianWidth.txt`, `CaseFolding.txt`,
-`PropList.txt` and `DerivedCoreProperties.txt` from <https://www.unicode.org/Public/UCD/latest/ucd/>. Regenerate the
+`PropList.txt`, `DerivedCoreProperties.txt`, `DerivedNormalizationProps.txt` and, for the normalization
+conformance test, `NormalizationTest.txt` from <https://www.unicode.org/Public/UCD/latest/ucd/>. Regenerate the
 shipped table with `python3 -I dev/mkunitbl.py <ucd-dir>` (it writes `src/eunitbl.h`).
 
 `roundtrip.sh` runs only its own start-up macro, not `me.emf`, so no file hooks or

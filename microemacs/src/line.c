@@ -567,6 +567,29 @@ meLineIsWord(meLine *lp, int off)
 
 #endif
 
+#if MEOPT_UNICODE
+/* Replaces the ol bytes at dot with the nl bytes of ss, dot is left at their start. They are
+ * inserted before deleting so a mark just after the old bytes stays after the new */
+int
+lineReplaceBytes(int ol, meUByte *ss, int nl)
+{
+    meWindow *wp=frameCur->windowCur;
+    int off=wp->dotOffset;
+    
+    if(lineInsertString(nl,ss) <= 0)
+        return meFALSE;
+#if MEOPT_UNDO
+    meUndoAddReplaceBgn(wp->dotLine,(meUShort) (off+nl+ol));
+#endif
+    mldelete(ol,NULL);
+#if MEOPT_UNDO
+    meUndoAddReplaceEnd(nl);
+#endif
+    wp->dotOffset = off;
+    return meTRUE;
+}
+#endif
+
 /* Replaces the char at dot with cc, which may differ in length, dot is left at its start */
 int
 lineReplaceChar(meUInt cc)
