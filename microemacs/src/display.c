@@ -1160,6 +1160,17 @@ hideLineJump:
             if((len = ii-col) > 0)
                 meFrameXftDrawBackground(frameCur,colToClient(scol+col),row,len);
             col = cno = 0;
+#if MEOPT_UNICODE
+            /* the whole line is stored first, a block's drawing reads the cells either side */
+            do {
+                for(ii=blkp[cno].column ; col<ii ; col++)
+                {
+                    fstp[col] = s1[col];
+                    fssp[col] = blkp[cno].scheme;
+                }
+            } while(++cno < noColChng);
+            col = cno = 0;
+#endif
             do {
                 scheme = blkp->scheme;
                 meFrameXTermSetScheme(frameCur,scheme);
@@ -1167,11 +1178,6 @@ hideLineJump:
 #if MEOPT_UNICODE
                 if((len = ii-col) > 0)
                 {
-                    for(ll=0 ; ll<len ; ll++)
-                    {
-                        *fstp++ = s1[col+ll];
-                        *fssp++ = scheme;
-                    }
                     meFrameXDrawCells(frameCur,scol+col,row,s1+col,len);
                     col += len;
                 }

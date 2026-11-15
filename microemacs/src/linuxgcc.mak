@@ -181,7 +181,7 @@ else
 
 ifeq (0,$(shell $(PKG_CONFIG) --exists xft; echo $$? ))
 WINDOW_DEFS += -DMEOPT_XFT=1 $(shell $(PKG_CONFIG) --cflags xft)  
-WINDOW_LIBS += $(shell $(PKG_CONFIG) --libs xft)
+WINDOW_LIBS += $(shell $(PKG_CONFIG) --libs xft fontconfig)
 endif
 ifeq (0,$(shell $(PKG_CONFIG) --exists xpm; echo $$? ))
 WINDOW_DEFS += -D_XPM 

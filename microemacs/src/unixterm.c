@@ -1211,11 +1211,11 @@ TCAPoscCopyKill(void)
 
 #if MEOPT_XFT
 
-XftFont *
-__meXftFontGet(meUByte font)
+/* Writes the Xft name of the font variant (meXFONT_*) to buff, returns 0 if it is the base font */
+static int
+meXftFontName(char *buff, meUByte font)
 {
-    char *fn=(char *) mecm.fontName, buff[256], *bf, *ss;
-    XftFont *ftFont;
+    char *fn=(char *) mecm.fontName, *bf, *ss;
     int ll;
     
     ll = meStrlen(fn);
@@ -1241,7 +1241,17 @@ __meXftFontGet(meUByte font)
         ss += 13;
     }
     *ss = '\0';
-    if((ss == bf) || ((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,buff)) == NULL))
+    return (ss != bf);
+}
+
+XftFont *
+__meXftFontGet(meUByte font)
+{
+    char buff[256];
+    XftFont *ftFont;
+    int ll;
+    
+    if(!meXftFontName(buff,font) || ((ftFont = XftFontOpenName(mecm.xdisplay,xscreen,buff)) == NULL))
         ftFont = mecm.ftFontTbl[0];
     else
     {
@@ -1263,6 +1273,303 @@ __meXftFontGet(meUByte font)
 }
 #define meXftFontGet(font) \
 ((mecm.ftFontTbl[font] == NULL) ? __meXftFontGet(font):mecm.ftFontTbl[font])
+
+#if MEOPT_UNICODE
+/* Which sides of its cells a glyph's ink overflows (meXFTOVER_*), worked out once per char and font
+ * variant. A span of cells is drawn clipped to them, with the glyphs either side drawn too when
+ * they overflow into it, so each cell always shows its glyph and its neighbours' overhang into it
+ * (e.g. an italic's) whatever is drawn, a full line or just the cursor's cell */
+#define meXFTOVER_LEFT  0x01
+#define meXFTOVER_RIGHT 0x02
+#define meXFTOVER_HASH  1024
+static meUInt  xftOverKey[meXFTOVER_HASH];
+static meUByte xftOverVal[meXFTOVER_HASH];
+static meUByte xftOverAscii[meXFONT_MAX][128];
+
+static void
+meXftOverClear(void)
+{
+    memset(xftOverKey,0,sizeof(xftOverKey));
+    memset(xftOverAscii,0,sizeof(xftOverAscii));
+}
+
+static int
+meXftOverflow(meUByte font, XftFont *xf, FcChar32 cc, int cells)
+{
+    meUByte *vp;
+    XGlyphInfo gi;
+    meUInt key;
+    int hh;
+    
+    if(cc < 0x80)
+        vp = &(xftOverAscii[font][cc]);
+    else
+    {
+        key = (cc | (((meUInt) font) << 24)) + 1;
+        hh = (int) ((cc ^ (cc >> 10) ^ font) & (meXFTOVER_HASH-1));
+        if(xftOverKey[hh] != key)
+        {
+            xftOverKey[hh] = key;
+            xftOverVal[hh] = 0;
+        }
+        vp = &(xftOverVal[hh]);
+    }
+    if(*vp == 0)
+    {
+        XftTextExtents32(mecm.xdisplay,xf,&cc,1,&gi);
+        *vp = 0x80 | ((gi.x > 0) ? meXFTOVER_LEFT:0) | (((gi.width - gi.x) > (cells * mecm.fwidth)) ? meXFTOVER_RIGHT:0);
+    }
+    return (*vp & (meXFTOVER_LEFT|meXFTOVER_RIGHT));
+}
+
+/* Sets the frame's Xft clip to rr, none if NULL */
+static void
+meXftSetClip(meFrame *frame, const XRectangle *rr)
+{
+    if(rr == NULL)
+        XftDrawSetClip(meFrameGetXftDraw(frame),NULL);
+    else
+        XftDrawSetClipRectangles(meFrameGetXftDraw(frame),0,0,rr,1);
+}
+
+/* Draws char cc at client x, y clipped to its cells, then sets the clip back to restore */
+static void
+meFrameXftDrawClipped(meFrame *frame, int x, int y, FcChar32 *cc, int cells, const XRectangle *restore)
+{
+    XRectangle rr;
+    
+    rr.x = x;
+    rr.y = y;
+    rr.width = cells * mecm.fwidth;
+    rr.height = mecm.fdepth;
+    meXftSetClip(frame,&rr);
+    meFrameXftDrawString32(frame,x,y,cc,1);
+    meXftSetClip(frame,restore);
+}
+
+/* Draws the glyph of cell nc of frame line flp, in its own scheme, if its ink overflows on side,
+ * for the part of it in the current clip */
+static void
+meXftDrawNeighbour(meFrame *frame, meFrameLine *flp, int nc, int y, int side)
+{
+    meFrameChar cc=flp->text[nc];
+    meScheme schm;
+    meStyle style;
+    XftFont *xf;
+    meUByte ff;
+    int cells;
+    
+    if(meFrameCharIsCircle(cc))
+        cc = meUNI_CIRCLE;
+    if((cc <= ' ') || (cc == meFRAMECHAR_CONT))
+        return;
+    cells = ((nc+1 < frame->width) && (flp->text[nc+1] == meFRAMECHAR_CONT)) ? 2:1;
+    schm = flp->scheme[nc];
+    style = meSchemeGetStyle(schm);
+    ff = (meSchemeTestNoFont(schm)) ? 0:(meStyleGetXFontWithUnderline(style) & meXFONT_MASK);
+    xf = meXftFontGet(ff);
+    /* a fallback glyph is drawn within its own cells, so never overflows */
+    if(XftCharExists(mecm.xdisplay,xf,cc) && (meXftOverflow(ff,xf,cc,cells) & side))
+        XftDrawString32(meFrameGetXftDraw(frame),meXftColorGet(meStyleGetFColor(style)),xf,colToClient(nc),y+mecm.ascent,&cc,1);
+}
+#endif
+
+#if MEOPT_FONTFALLBACK
+/* Font fallback: a char the font lacks is drawn from the first font fontconfig sorts for the
+ * font's name that has it, opened at a size which fits the glyph in the char's cells, centred and
+ * clipped to them, as the macOS native build does. A char's font and offset, or that no font has
+ * it, are kept per font variant; the fonts are shared and kept until the font changes */
+typedef struct meXftFallFont
+{
+    struct meXftFallFont *next;
+    XftFont  *font;
+    FcChar8  *file;
+    int       index;
+    double    pixel;
+} meXftFallFont;
+
+typedef struct meXftFallChar
+{
+    struct meXftFallChar *next;
+    meUInt         key;                 /* char | (font variant << 24) */
+    meXftFallFont *ff;                  /* NULL if no font has the char */
+    short          dx, dy;
+} meXftFallChar;
+
+#define meXFTFALL_HASH 256
+static meXftFallChar *xftFallHash[meXFTFALL_HASH];
+static meXftFallFont *xftFallFonts;
+
+static void
+meXftFallClear(void)
+{
+    meXftFallChar *fc;
+    meXftFallFont *ff;
+    int ii;
+    
+    for(ii=0 ; ii<meXFTFALL_HASH ; ii++)
+    {
+        while((fc = xftFallHash[ii]) != NULL)
+        {
+            xftFallHash[ii] = fc->next;
+            free(fc);
+        }
+    }
+    while((ff = xftFallFonts) != NULL)
+    {
+        xftFallFonts = ff->next;
+        XftFontClose(mecm.xdisplay,ff->font);
+        free(ff->file);
+        free(ff);
+    }
+}
+
+/* Opens (or shares) the font of pattern pp at pixel size px, pp is destroyed */
+static meXftFallFont *
+meXftFallOpen(FcPattern *pp, double px)
+{
+    meXftFallFont *ff;
+    FcChar8 *file;
+    XftFont *xf;
+    int index;
+    
+    if((FcPatternGetString(pp,FC_FILE,0,&file) != FcResultMatch) ||
+       (FcPatternGetInteger(pp,FC_INDEX,0,&index) != FcResultMatch))
+        index = -1;
+    if(index >= 0)
+    {
+        for(ff=xftFallFonts ; ff != NULL ; ff=ff->next)
+            if((ff->index == index) && (ff->pixel == px) && !strcmp((char *) ff->file,(char *) file))
+            {
+                FcPatternDestroy(pp);
+                return ff;
+            }
+    }
+    FcPatternDel(pp,FC_PIXEL_SIZE);
+    FcPatternAddDouble(pp,FC_PIXEL_SIZE,px);
+    if((ff = malloc(sizeof(meXftFallFont))) == NULL)
+    {
+        FcPatternDestroy(pp);
+        return NULL;
+    }
+    ff->file = (FcChar8 *) strdup((index >= 0) ? (char *) file:"");
+    ff->index = index;
+    ff->pixel = px;
+    /* XftFontOpenPattern takes the pattern, even on failure */
+    if((ff->file == NULL) || ((xf = XftFontOpenPattern(mecm.xdisplay,pp)) == NULL))
+    {
+        free(ff->file);
+        free(ff);
+        return NULL;
+    }
+    ff->font = xf;
+    ff->next = xftFallFonts;
+    xftFallFonts = ff;
+    return ff;
+}
+
+/* Returns the fallback for char uc in variant font, drawn in cells cells */
+static meXftFallChar *
+meXftFallGet(meUByte font, FcChar32 uc, int cells)
+{
+    meXftFallChar *fc;
+    meUInt key=uc|(((meUInt) font) << 24);
+    FcPattern *pp, *mp;
+    FcFontSet *fs;
+    FcCharSet *cs;
+    FcResult res;
+    XGlyphInfo gi;
+    char buff[256];
+    double px;
+    meUByte up;
+    int ii, ww, hh, left, right, top, tries;
+    
+    for(fc=xftFallHash[uc & (meXFTFALL_HASH-1)] ; fc != NULL ; fc=fc->next)
+        if(fc->key == key)
+            return fc;
+    if((fc = malloc(sizeof(meXftFallChar))) == NULL)
+        return NULL;
+    fc->key = key;
+    fc->ff = NULL;
+    fc->dx = fc->dy = 0;
+    fc->next = xftFallHash[uc & (meXFTFALL_HASH-1)];
+    xftFallHash[uc & (meXFTFALL_HASH-1)] = fc;
+    
+    meXftFontName(buff,font);
+    if((pp = FcNameParse((FcChar8 *) buff)) == NULL)
+        return fc;
+    /* an emoji like char (a wide symbol) prefers a colour font, as is expected */
+    up = meUniProps(uc);
+    if((meUniPropGC(up) == meUNIGC_So) && (meUniPropWidth(up) == meUNIWIDTH_WIDE))
+        FcPatternAddBool(pp,FC_COLOR,FcTrue);
+    FcConfigSubstitute(NULL,pp,FcMatchPattern);
+    XftDefaultSubstitute(mecm.xdisplay,xscreen,pp);
+    mp = NULL;
+    if((fs = FcFontSort(NULL,pp,FcTrue,NULL,&res)) != NULL)
+    {
+        for(ii=0 ; ii<fs->nfont ; ii++)
+            if((FcPatternGetCharSet(fs->fonts[ii],FC_CHARSET,0,&cs) == FcResultMatch) && FcCharSetHasChar(cs,uc))
+            {
+                mp = FcFontRenderPrepare(NULL,pp,fs->fonts[ii]);
+                break;
+            }
+        FcFontSetDestroy(fs);
+    }
+    FcPatternDestroy(pp);
+    if((mp == NULL) || (FcPatternGetDouble(mp,FC_PIXEL_SIZE,0,&px) != FcResultMatch))
+    {
+        if(mp != NULL)
+            FcPatternDestroy(mp);
+        return fc;
+    }
+    /* fit the glyph's advance and ink in its cells, opening smaller until it does */
+    ww = cells * mecm.fwidth;
+    hh = mecm.fdepth;
+    for(tries=0 ; ; tries++)
+    {
+        if((fc->ff = meXftFallOpen(FcPatternDuplicate(mp),px)) == NULL)
+            break;
+        XftTextExtents32(mecm.xdisplay,fc->ff->font,&uc,1,&gi);
+        left = (gi.x > 0) ? -gi.x:0;
+        right = (gi.xOff > gi.width-gi.x) ? gi.xOff:gi.width-gi.x;
+        if((((right - left) <= ww) && (gi.height <= hh)) || (tries >= 4) || (px <= 4.0))
+            break;
+        ii = ((right - left) * hh > gi.height * ww) ? ((ww * 100) / (right - left)):((hh * 100) / gi.height);
+        px = px * ((ii < 95) ? ii:95) / 100.0;
+    }
+    FcPatternDestroy(mp);
+    if(fc->ff != NULL)
+    {
+        fc->dx = (short) ((ww - (right - left)) / 2 - left);
+        top = mecm.ascent - gi.y;
+        if(top < 0)
+            fc->dy = (short) -top;
+        else if(top + gi.height > hh)
+            fc->dy = (short) (hh - top - gi.height);
+    }
+    return fc;
+}
+
+/* Draws char uc from its fallback font clipped to its cells, then sets the clip back to restore,
+ * returns 0 if no font has it */
+static int
+meXftFallDraw(meFrame *frame, int x, int y, FcChar32 uc, int cells, const XRectangle *restore)
+{
+    meXftFallChar *fc;
+    XRectangle rr;
+    
+    if(((fc = meXftFallGet(meFrameGetXGCFont(frame) & meXFONT_MASK,uc,cells)) == NULL) || (fc->ff == NULL))
+        return 0;
+    rr.x = x;
+    rr.y = y;
+    rr.width = cells * mecm.fwidth;
+    rr.height = mecm.fdepth;
+    meXftSetClip(frame,&rr);
+    XftDrawString32(meFrameGetXftDraw(frame),meFrameGetFgColor(frame),fc->ff->font,x+fc->dx,y+mecm.ascent+fc->dy,&uc,1);
+    meXftSetClip(frame,restore);
+    return 1;
+}
+#endif
 
 #endif
 
@@ -1663,8 +1970,28 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
     if(meXftUsed())
     {
         FcChar32 wb[meFRAME_WIDTH_MAX], ch;
-        int nn=0, ss=0, wide, na, cm=0;
+        XRectangle span;
+        meFrameLine *flp;
+        int nn=0, ss=0, wide, na, cm=0, row;
         
+        /* the span is clipped to its cells, the glyphs either side are drawn for their overhang into it */
+        span.x = colToClient(col);
+        span.y = y;
+        span.width = colToClient(len);
+        span.height = mecm.fdepth;
+        meXftSetClip(frame,&span);
+        if((row = clientToRow(y)) <= frame->depth)
+        {
+            flp = frame->store + row;
+            if((ii = col-1) >= 0)
+            {
+                if((flp->text[ii] == meFRAMECHAR_CONT) && (ii > 0))
+                    ii--;
+                meXftDrawNeighbour(frame,flp,ii,y,meXFTOVER_RIGHT);
+            }
+            if(col+len < frame->width)
+                meXftDrawNeighbour(frame,flp,col+len,y,meXFTOVER_LEFT);
+        }
         for(ii=0 ; ii<len ; ii++)
         {
             if(meFrameCharIsCircle(cc = cells[ii]))
@@ -1686,6 +2013,11 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
                     meFrameXftDrawSpecialChar(frame,colToClient(col+ii),y,(meUByte) cc);
                 else if(na)
                 {
+#if MEOPT_FONTFALLBACK
+                    if(meXftFallDraw(frame,colToClient(col+ii),y,cc,(wide) ? 2:1,&span))
+                        ;
+                    else
+#endif
                     if(cc == meUNI_CIRCLE)
                         meFrameXftDrawSpecialChar(frame,colToClient(col+ii),y,0x05);
                     else
@@ -1708,12 +2040,19 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
             /* each circled mark as its spacing form, the glyph drawn without show white space, so
              * it does not move when that is toggled */
             for(ii=0 ; ii<len ; ii++)
-                if(meFrameCharIsCircle(cells[ii]) && ((ch = meUniSpacingMark(cells[ii] & ~meFRAMECHAR_CIRCLE)) != 0) &&
-                   XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),ch))
-                    meFrameXftDrawString32(frame,colToClient(col+ii),y,&ch,1);
+                if(meFrameCharIsCircle(cells[ii]) && ((ch = meUniSpacingMark(cells[ii] & ~meFRAMECHAR_CIRCLE)) != 0))
+                {
+                    if(XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),ch))
+                        meFrameXftDrawClipped(frame,colToClient(col+ii),y,&ch,meUniWidth(ch,0),&span);
+#if MEOPT_FONTFALLBACK
+                    else
+                        meXftFallDraw(frame,colToClient(col+ii),y,ch,meUniWidth(ch,0),&span);
+#endif
+                }
         }
         if(meFrameGetXGCFont(frame) & meFONT_UNDERLINE)
             XftDrawRect(meFrameGetXftDraw(frame),meFrameGetFgColor(frame),colToClient(col),y+mecm.underline,colToClient(len),1);
+        meXftSetClip(frame,NULL);
         return;
     }
 #endif
@@ -4262,6 +4601,12 @@ XTERMsetFont(int n, char *fontName)
              * previously loaded fonts */
             if(mecm.ftFontTbl[0] != NULL)
             {
+#if MEOPT_UNICODE
+                meXftOverClear();
+#endif
+#if MEOPT_FONTFALLBACK
+                meXftFallClear();
+#endif
                 ii = meXFONT_MAX-1 ;
                 do {
                     if((mecm.ftFontTbl[ii] != NULL) && (mecm.ftFontTbl[ii] != mecm.ftFontTbl[0]))
@@ -4399,6 +4744,12 @@ XTERMsetFont(int n, char *fontName)
 #if MEOPT_XFT
     if(mecm.ftFontTbl[0] != NULL)
     {
+#if MEOPT_UNICODE
+        meXftOverClear();
+#endif
+#if MEOPT_FONTFALLBACK
+        meXftFallClear();
+#endif
         ii = meXFONT_MAX-1 ;
         do {
             if((mecm.ftFontTbl[ii] != NULL) && (mecm.ftFontTbl[ii] != mecm.ftFontTbl[0]))
@@ -4775,6 +5126,12 @@ XTERMend(void)
     if(mecm.ftFontTbl[0] != NULL)
     {
         int ii = meXFONT_MAX-1 ;
+#if MEOPT_UNICODE
+        meXftOverClear();
+#endif
+#if MEOPT_FONTFALLBACK
+        meXftFallClear();
+#endif
         do {
             if((mecm.ftFontTbl[ii] != NULL) && (mecm.ftFontTbl[ii] != mecm.ftFontTbl[0]))
                 XftFontClose(mecm.xdisplay,mecm.ftFontTbl[ii]);
