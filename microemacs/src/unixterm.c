@@ -1279,6 +1279,11 @@ __meXftFontGet(meUByte font)
  * variant. A span of cells is drawn clipped to them, with the glyphs either side drawn too when
  * they overflow into it, so each cell always shows its glyph and its neighbours' overhang into it
  * (e.g. an italic's) whatever is drawn, a full line or just the cursor's cell */
+#if MEOPT_FONTFALLBACK
+#define meXftIsMark(cc) (((cc) >= 0x300) && (meUniPropGC(meUniProps(cc)) == meUNIGC_Mn))
+#else
+#define meXftIsMark(cc) 0
+#endif
 #define meXFTOVER_LEFT  0x01
 #define meXFTOVER_RIGHT 0x02
 #define meXFTOVER_HASH  1024
@@ -1368,8 +1373,8 @@ meXftDrawNeighbour(meFrame *frame, meFrameLine *flp, int nc, int y, int side)
     style = meSchemeGetStyle(schm);
     ff = (meSchemeTestNoFont(schm)) ? 0:(meStyleGetXFontWithUnderline(style) & meXFONT_MASK);
     xf = meXftFontGet(ff);
-    /* a fallback glyph is drawn within its own cells, so never overflows */
-    if(XftCharExists(mecm.xdisplay,xf,cc) && (meXftOverflow(ff,xf,cc,cells) & side))
+    /* a fallback glyph or mark is drawn within its own cells, so never overflows */
+    if(XftCharExists(mecm.xdisplay,xf,cc) && !meXftIsMark(cc) && (meXftOverflow(ff,xf,cc,cells) & side))
         XftDrawString32(meFrameGetXftDraw(frame),meXftColorGet(meStyleGetFColor(style)),xf,colToClient(nc),y+mecm.ascent,&cc,1);
 }
 #endif
@@ -1377,7 +1382,8 @@ meXftDrawNeighbour(meFrame *frame, meFrameLine *flp, int nc, int y, int side)
 #if MEOPT_FONTFALLBACK
 /* Font fallback: a char the font lacks is drawn from the first font fontconfig sorts for the
  * font's name that has it, opened at a size which fits the glyph in the char's cells, centred and
- * clipped to them, as the macOS native build does. A char's font and offset, or that no font has
+ * clipped to them, as the macOS native build does. A combining mark is drawn this way too, from
+ * the font itself when it has it (sorted first), its ink centred as it has no advance. A char's font and offset, or that no font has
  * it, are kept per font variant; the fonts are shared and kept until the font changes */
 typedef struct meXftFallFont
 {
@@ -1482,8 +1488,8 @@ meXftFallGet(meUByte font, FcChar32 uc, int cells)
     char buff[256];
     double px;
     meUByte up;
-    int ii, ww, hh, left, right, top, tries;
-    
+    int ii, ww, hh, left, right, top, tries, mark;
+
     for(fc=xftFallHash[uc & (meXFTFALL_HASH-1)] ; fc != NULL ; fc=fc->next)
         if(fc->key == key)
             return fc;
@@ -1502,6 +1508,7 @@ meXftFallGet(meUByte font, FcChar32 uc, int cells)
     up = meUniProps(uc);
     if((meUniPropGC(up) == meUNIGC_So) && (meUniPropWidth(up) == meUNIWIDTH_WIDE))
         FcPatternAddBool(pp,FC_COLOR,FcTrue);
+    mark = (meUniPropGC(up) == meUNIGC_Mn);
     FcConfigSubstitute(NULL,pp,FcMatchPattern);
     XftDefaultSubstitute(mecm.xdisplay,xscreen,pp);
     mp = NULL;
@@ -1531,7 +1538,11 @@ meXftFallGet(meUByte font, FcChar32 uc, int cells)
             break;
         XftTextExtents32(mecm.xdisplay,fc->ff->font,&uc,1,&gi);
         left = (gi.x > 0) ? -gi.x:0;
-        right = (gi.xOff > gi.width-gi.x) ? gi.xOff:gi.width-gi.x;
+        right = gi.width-gi.x;
+        if(mark)
+            left = -gi.x;
+        else if(gi.xOff > right)
+            right = gi.xOff;
         if((((right - left) <= ww) && (gi.height <= hh)) || (tries >= 4) || (px <= 4.0))
             break;
         ii = ((right - left) * hh > gi.height * ww) ? ((ww * 100) / (right - left)):((hh * 100) / gi.height);
@@ -2001,7 +2012,10 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
                 cm++;
             }
             wide = ((ii+1 < len) && (cells[ii+1] == meFRAMECHAR_CONT));
-            na = ((cc >= 0x80) && (cc != meFRAMECHAR_CONT) && !XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),cc));
+            /* a combining mark (only stored where it has no spacing form) has no advance and its ink is
+             * placed over a base char, so it is drawn centred in its cell as the fallback draws */
+            na = ((cc >= 0x80) && (cc != meFRAMECHAR_CONT) &&
+                  (!XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),cc) || meXftIsMark(cc)));
             if((cc < 0x20) || (cc == meFRAMECHAR_CONT) || wide || na)
             {
                 if(nn)
@@ -2037,10 +2051,16 @@ meFrameXDrawCells(meFrame *frame, int col, int y, meFrameChar *cells, int len)
             meFrameXftDrawString32(frame,colToClient(col+ss),y,wb,nn);
         if(cm)
         {
-            /* each circled mark as its spacing form, the glyph drawn without show white space, so
-             * it does not move when that is toggled */
+            /* each circled mark as drawn without show white space, so it does not move when that is
+             * toggled: its spacing form, else the mark itself centred */
             for(ii=0 ; ii<len ; ii++)
-                if(meFrameCharIsCircle(cells[ii]) && ((ch = meUniSpacingMark(cells[ii] & ~meFRAMECHAR_CIRCLE)) != 0))
+                if(!meFrameCharIsCircle(cells[ii]))
+                    ;
+#if MEOPT_FONTFALLBACK
+                else if((ch = meUniSpacingMarkExact(cells[ii] & ~meFRAMECHAR_CIRCLE)) == 0)
+                    meXftFallDraw(frame,colToClient(col+ii),y,cells[ii] & ~meFRAMECHAR_CIRCLE,1,&span);
+#endif
+                else if((ch = meUniSpacingMark(cells[ii] & ~meFRAMECHAR_CIRCLE)) != 0)
                 {
                     if(XftCharExists(mecm.xdisplay,meFrameGetXftFont(frame),ch))
                         meFrameXftDrawClipped(frame,colToClient(col+ii),y,&ch,meUniWidth(ch,0),&span);

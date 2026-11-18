@@ -1196,11 +1196,17 @@ typedef meUInt meFrameChar;
 #endif
 /* A window build which can draw a combining mark with no spacing form on its own, its ink centred
  * in a cell, is given the mark, others its lookalike or \uXXXX */
-#if (defined _WIN32) && (defined _ME_WINDOW) && MEOPT_FONTFALLBACK
-#ifdef _ME_CONSOLE
-#define meFrameDrawsMark() (!(meSystemCfg & meSYSTEM_CONSOLE))
+#if MEOPT_FONTFALLBACK
+#ifdef _WIN32
+#define meFrameDrawsMarkWindow() 1
 #else
-#define meFrameDrawsMark() 1
+/* X11 core fonts are drawn in the code page */
+#define meFrameDrawsMarkWindow() meXftUsed()
+#endif
+#ifdef _ME_CONSOLE
+#define meFrameDrawsMark() (!(meSystemCfg & meSYSTEM_CONSOLE) && meFrameDrawsMarkWindow())
+#else
+#define meFrameDrawsMark() meFrameDrawsMarkWindow()
 #endif
 #else
 #define meFrameDrawsMark() 0

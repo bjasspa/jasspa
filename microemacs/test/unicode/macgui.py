@@ -42,10 +42,32 @@ def check(name, cond, detail=''):
         print('FAIL %s %s' % (name, detail))
 
 
+def readMarkTables():
+    # the mark and stand-in tables of src/eunitbl.h: {mark: spacing form or lookalike} and the
+    # default ignorable ranges, which are drawn as a one cell stand-in
+    text = open(os.path.join(TDIR, '..', '..', 'src', 'eunitbl.h'), encoding='ascii').read()
+
+    def table(name):
+        body = re.search(name + r'\[\d+\]\[2\] =\s*\{(.*?)\};', text, re.S).group(1)
+        return [(int(aa, 16), int(bb, 16)) for aa, bb in re.findall(r'\{0x([0-9a-f]+),0x([0-9a-f]+)\}', body)]
+    forms = dict(table('meUniLookalikeMarks'))
+    forms.update(table('meUniSpacingMarks'))
+    return forms, [(aa, bb & 0xffffff) for aa, bb in table('meUniIgnorables')]
+
+
+MARK_FORMS, IGNORABLES = readMarkTables()
+
+
 def meCells(ch):
-    # cells ME gives a char: a zero width char is shown as a \uXXXX escape
-    if unicodedata.category(ch) in ('Mn', 'Me', 'Cf'):
-        return 6
+    # cells ME gives a char. The native build does not draw a combining mark on its own (Windows and
+    # X11 do, in one cell), so a mark is drawn as its spacing form or a lookalike, else as an escape
+    cp = ord(ch)
+    if cp in MARK_FORMS:
+        ch = chr(MARK_FORMS[cp])
+    elif any(aa <= cp <= bb for aa, bb in IGNORABLES):
+        return 1
+    elif unicodedata.category(ch) in ('Mn', 'Me', 'Cf'):
+        return 6 if cp <= 0xffff else 8
     return 2 if unicodedata.east_asian_width(ch) in ('W', 'F') else 1
 
 
