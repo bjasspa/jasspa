@@ -165,14 +165,48 @@ bash build.sh -t w
 ### the executables are now in a folder .linux-PLATFORM-GCCVERSION-release-meX
 ### and in a folder bin in the parent directory
 ### create a standalone executable with embedded macro files
-cd ../mesingle
-PATH=`pwd`/../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
-    -p ../bin/linux6-intel64-gcc14/mec -o mesc
-PATH=`pwd`/../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
-    -p ../bin/linux6-intel64-gcc14/mew -o mesw
+cd ../dev/mesingle
+PATH=`pwd`/../../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
+    -t ../../3rdparty/tfs/.linux6-intel64-gcc14-release/tfs \
+    -p ../../bin/linux6-intel64-gcc14/mec -o mesc
+PATH=`pwd`/../../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
+    -t ../../3rdparty/tfs/.linux6-intel64-gcc14-release/tfs \
+    -p ../../bin/linux6-intel64-gcc14/mew -o mesw
 ```
 
-You should replace the LINUX-PLATFORM-GCC part with your kernel, platform and GCC versions you are usng
+You should replace the LINUX-PLATFORM-GCC part with your kernel, platform and GCC versions you are using.
+
+## Compilation on MacOS
+
+One  way to  compile  the  code  yourself  on a  MacOS  system  is to use  the
+[macports](https://ports.macports.org/)  package  manager  and to install  the
+[XQuartz](https://www.xquartz.org/)  system for MacOS to run X11  applications
+on MacOS.
+
+Here are the required install commands after intalling MacPorts and XQuartz:
+
+```bash
+sudo port install git curl fontconfig pkgconfig gcc15 ncurses Xft2 openssl xorg-libX11
+git clone https://github.com/bjasspa/jasspa.git
+### compile the barebone executables
+cd jasspa/microemacs/src
+### the following commands should create executable files 
+### within the jasspa/microemacs/bin folder
+bash build.sh -t c   ## Console version
+bash build.sh -t w   ## X11 version
+bash build.sh -t nw  ## Native MacOS version
+### the executables are as well in a folder .macosVERSION-intel64-GCCVERSION-release-meX
+### and in a folder bin in the parent directory
+### create a standalone executable with embedded macro files Console and X11 version
+cd ../dev/mesingle
+## change macos12 and cc14 against your OS and gcc/cc version:
+PATH=`pwd`/../../bin/macos12-intel64-cc14:$PATH bash mesgen.sh \
+    -t ../../3rdparty/tfs/.macos12-intel64-cc14-release/tfs \
+    -p ../../src/.macos12-intel64-cc14/mec -o mesc
+PATH=`pwd`/../../bin/macos12-intel64-cc14:$PATH bash mesgen.sh \
+    -t ../../3rdparty/tfs/.macos12-intel64-cc14-release/tfs \
+    -p ../../src/.macos12-intel64-cc14/mew -o mesw
+```
 
 ## Documentation & Help
 
