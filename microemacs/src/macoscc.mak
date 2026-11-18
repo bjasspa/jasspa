@@ -135,6 +135,8 @@ else ifneq "$(wildcard /opt/homebrew/opt/openssl/include/openssl/ssl.h)" ""
 OPENSSLP = /opt/homebrew/opt/openssl
 else ifneq "$(wildcard /usr/include/openssl/ssl.h)" ""
 OPENSSLP = /usr/include
+else ifneq "$(wildcard /System/Volumes/Data/opt/local/libexec/openssl3/include/openssl/ssl.h)" ""
+OPENSSLP = /System/Volumes/Data/opt/local/libexec/openssl3
 endif
 ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
