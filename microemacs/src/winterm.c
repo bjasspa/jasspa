@@ -1498,9 +1498,10 @@ WinUnavailableChar(HDC hdc, int x, int y, int w, int h)
 }
 
 /* WinGlyphIndices; Converts the len chars in ss to glyph indices of the selected font in gi. A
- * char the font has no glyph for, and one above U+FFFF which GDI cannot look up, is given the
- * space glyph and flagged in na. Returns the number unavailable. Drawing by glyph index stops GDI
- * shaping the text, so a char is drawn the same whatever is drawn with it */
+ * char the font has no glyph for, one above U+FFFF which GDI cannot look up, and a combining mark
+ * are given the space glyph and flagged in na, to be drawn on their own. Returns the number
+ * flagged. Drawing by glyph index stops GDI shaping the text, so a char is drawn the same
+ * whatever is drawn with it */
 static int
 WinGlyphIndices(HDC hdc, meFrameChar *ss, int len, WORD *gi, meUByte *na)
 {
@@ -1514,7 +1515,10 @@ WinGlyphIndices(HDC hdc, meFrameChar *ss, int len, WORD *gi, meUByte *na)
         memset(gi,0xff,(len+1)*sizeof(WORD));
     for(ii=0 ; ii<len ; ii++)
     {
-        if((na[ii] = (gi[ii] == 0xffff)) != 0)
+        /* a combining mark (only stored where it has no spacing form) has no advance and its ink is
+         * placed over a base char, so it is drawn centred in its cell as the fallback draws */
+        na[ii] = ((gi[ii] == 0xffff) || ((ss[ii] >= 0x300) && (meUniPropGC(meUniProps(ss[ii])) == meUNIGC_Mn)));
+        if(na[ii])
         {
             gi[ii] = gi[len];
             nn++;
@@ -1523,25 +1527,438 @@ WinGlyphIndices(HDC hdc, meFrameChar *ss, int len, WORD *gi, meUByte *na)
     return nn;
 }
 
-/* WinCircleMark; Draws show white space's combining mark cc over its circle as the mark's spacing
- * form, as drawn without show white space so the mark does not move, in the text colour and font,
- * clipped to rr (widened for a wide form). Nothing is drawn if the font has no glyph for it */
+#if MEOPT_FONTFALLBACK
+/* Font fallback: a char the font lacks is drawn from the first font that has it, trying the font
+ * itself for a char above U+FFFF (which GetGlyphIndicesW cannot look up), the font's FontLink
+ * SystemLink entries (so a user can add their own), then fonts shipped with Windows. The font is
+ * created at a size which fits the glyph's advance and ink in the char's cells (smaller until it
+ * does), drawn by glyph index centred and clipped to them, as the X11 and macOS builds do. A char's
+ * font, glyph and offset, or that no font has it, are kept per font variant; the fonts are kept
+ * until the font changes */
+#define WINFALL_VARIANT (meFONT_BOLD|meFONT_ITALIC|meFONT_LIGHT)
+#define WINFALL_HASH    256
+#define WINFALL_FACES   64
+#define WINFALL_CMAP    0x70616d63      /* 'cmap' as GetFontData takes a table tag */
+
+typedef struct WinFallFont
+{
+    struct WinFallFont *next;
+    HFONT    font;
+    BYTE    *cmap;                      /* format 12 groups, read for a char above U+FFFF */
+    DWORD    cmapGroups;
+    int      face;
+    int      height;
+    int      ascent;
+    meUByte  variant;
+    meUByte  cmapRead;
+} WinFallFont;
+
+typedef struct WinFallChar
+{
+    struct WinFallChar *next;
+    meUInt       key;                   /* char | (font variant << 24) */
+    WinFallFont *ff;                    /* NULL if no font has the char */
+    WORD         gi;
+    short        dx, dy;
+} WinFallChar;
+
+typedef struct
+{
+    char    name[LF_FACESIZE];
+    meUByte missing;
+} WinFallFace;
+
+static WinFallChar *winFallHash[WINFALL_HASH];
+static WinFallFont *winFallFonts;
+static WinFallFace  winFallFaces[WINFALL_FACES];
+static int winFallFaceCount=-1;         /* -1 until the list is built for the font */
+static int winFallEmoji;
+
 static void
-WinCircleMark(HDC hdc, int x, int y, RECT *rr, meFrameChar cc)
+WinFallClear(void)
+{
+    WinFallChar *fc;
+    WinFallFont *ff;
+    int ii;
+    
+    for(ii=0 ; ii<WINFALL_HASH ; ii++)
+    {
+        while((fc = winFallHash[ii]) != NULL)
+        {
+            winFallHash[ii] = fc->next;
+            free(fc);
+        }
+    }
+    while((ff = winFallFonts) != NULL)
+    {
+        winFallFonts = ff->next;
+        DeleteObject(ff->font);
+        free(ff->cmap);
+        free(ff);
+    }
+    winFallFaceCount = -1;
+}
+
+static void
+WinFallAddFace(const char *name, int len)
+{
+    int ii;
+    
+    if((len <= 0) || (len >= LF_FACESIZE) || (winFallFaceCount >= WINFALL_FACES))
+        return;
+    memcpy(winFallFaces[winFallFaceCount].name,name,len);
+    winFallFaces[winFallFaceCount].name[len] = '\0';
+    for(ii=0 ; ii<winFallFaceCount ; ii++)
+        if(!lstrcmpiA(winFallFaces[ii].name,winFallFaces[winFallFaceCount].name))
+            return;
+    winFallFaces[winFallFaceCount++].missing = 0;
+}
+
+/* Builds the list of fonts tried, the font itself first */
+static void
+WinFallFaces(void)
+{
+    static const char *faces[] = {
+        "Consolas", "Courier New", "Segoe UI", "Segoe UI Symbol", "Cambria Math", "Segoe UI Emoji",
+        "Segoe UI Historic", "Nirmala UI", "Ebrima", "Gadugi", "Leelawadee UI", "Khmer UI", "Lao UI",
+        "Myanmar Text", "Javanese Text", "Mongolian Baiti", "Microsoft Himalaya", "Microsoft Yi Baiti",
+        "Microsoft New Tai Lue", "Microsoft Tai Le", "Microsoft PhagsPa", "Sylfaen", NULL, "SimSun-ExtB",
+        "SimSun-ExtG" };
+    /* in the order the user's language prefers, as their Han glyphs differ; they go at the NULL */
+    static const char *cjk[4][5] = {
+        { "MS Gothic", "Yu Gothic", "Microsoft YaHei", "Microsoft JhengHei", "Malgun Gothic" },
+        { "Microsoft YaHei", "SimSun", "Microsoft JhengHei", "MS Gothic", "Malgun Gothic" },
+        { "Microsoft JhengHei", "MingLiU", "Microsoft YaHei", "MS Gothic", "Malgun Gothic" },
+        { "Malgun Gothic", "GulimChe", "MS Gothic", "Microsoft YaHei", "Microsoft JhengHei" } };
+    char buff[4096], *ss, *tt, *ee;
+    DWORD len, type;
+    HKEY hk;
+    LANGID lang;
+    int ii, jj;
+    
+    winFallFaceCount = 0;
+    WinFallAddFace(ttlogfont.lfFaceName,(int) strlen(ttlogfont.lfFaceName));
+    /* each entry is "FILE.TTF,Face[,scale,scale]" */
+    if(RegOpenKeyExA(HKEY_LOCAL_MACHINE,"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\FontLink\\SystemLink",
+                     0,KEY_READ,&hk) == ERROR_SUCCESS)
+    {
+        len = sizeof(buff) - 2;
+        if((RegQueryValueExA(hk,ttlogfont.lfFaceName,NULL,&type,(LPBYTE) buff,&len) == ERROR_SUCCESS) &&
+           (type == REG_MULTI_SZ))
+        {
+            buff[len] = buff[len+1] = '\0';
+            for(ss=buff ; *ss != '\0' ; ss+=strlen(ss)+1)
+            {
+                if((tt = strchr(ss,',')) != NULL)
+                {
+                    for(ee=++tt ; (*ee != ',') && (*ee != '\0') ; ee++)
+                        ;
+                    WinFallAddFace(tt,(int) (ee-tt));
+                }
+            }
+        }
+        RegCloseKey(hk);
+    }
+    lang = GetUserDefaultUILanguage();
+    if(PRIMARYLANGID(lang) == LANG_KOREAN)
+        jj = 3;
+    else if(PRIMARYLANGID(lang) != LANG_CHINESE)
+        jj = 0;
+    else if((SUBLANGID(lang) == SUBLANG_CHINESE_SIMPLIFIED) || (SUBLANGID(lang) == SUBLANG_CHINESE_SINGAPORE))
+        jj = 1;
+    else
+        jj = 2;
+    for(ii=0 ; ii<(int) (sizeof(faces)/sizeof(faces[0])) ; ii++)
+    {
+        if(faces[ii] != NULL)
+            WinFallAddFace(faces[ii],(int) strlen(faces[ii]));
+        else
+        {
+            for(len=0 ; len<5 ; len++)
+                WinFallAddFace(cjk[jj][len],(int) strlen(cjk[jj][len]));
+        }
+    }
+    for(winFallEmoji=0 ; winFallEmoji<winFallFaceCount ; winFallEmoji++)
+        if(!lstrcmpiA(winFallFaces[winFallEmoji].name,"Segoe UI Emoji"))
+            break;
+}
+
+/* Creates (or shares) font face at em height -height, NULL if it is not installed */
+static WinFallFont *
+WinFallOpen(HDC hdc, int face, meUByte variant, int height)
+{
+    WinFallFont *ff;
+    TEXTMETRIC tm;
+    LOGFONT lf;
+    HFONT hf, of;
+    char name[LF_FACESIZE];
+    
+    if(winFallFaces[face].missing)
+        return NULL;
+    for(ff=winFallFonts ; ff != NULL ; ff=ff->next)
+        if((ff->face == face) && (ff->variant == variant) && (ff->height == height))
+            return ff;
+    memcpy(&lf,&ttlogfont,sizeof(LOGFONT));
+    lf.lfHeight = height;
+    lf.lfWidth = 0;
+    lf.lfWeight = (variant & meFONT_BOLD) ? FW_BOLD:(variant & meFONT_LIGHT) ? FW_EXTRALIGHT:FW_NORMAL;
+    lf.lfItalic = (variant & meFONT_ITALIC) ? meTRUE:meFALSE;
+    lf.lfUnderline = lf.lfStrikeOut = 0;
+    lf.lfCharSet = DEFAULT_CHARSET;
+    lf.lfPitchAndFamily = DEFAULT_PITCH|FF_DONTCARE;
+    strcpy(lf.lfFaceName,winFallFaces[face].name);
+    if((hf = CreateFontIndirect(&lf)) == NULL)
+        return NULL;
+    of = SelectObject(hdc,hf);
+    /* the font mapper gives another font for one not installed */
+    if(!GetTextFaceA(hdc,sizeof(name),name) || lstrcmpiA(name,lf.lfFaceName) ||
+       !GetTextMetrics(hdc,&tm) || ((ff = malloc(sizeof(WinFallFont))) == NULL))
+    {
+        winFallFaces[face].missing = 1;
+        SelectObject(hdc,of);
+        DeleteObject(hf);
+        return NULL;
+    }
+    SelectObject(hdc,of);
+    ff->font = hf;
+    ff->cmap = NULL;
+    ff->cmapGroups = 0;
+    ff->cmapRead = 0;
+    ff->face = face;
+    ff->height = height;
+    ff->ascent = tm.tmAscent;
+    ff->variant = variant;
+    ff->next = winFallFonts;
+    winFallFonts = ff;
+    return ff;
+}
+
+#define WinFallBE16(pp) ((((DWORD) (pp)[0]) << 8) | (pp)[1])
+#define WinFallBE32(pp) ((WinFallBE16(pp) << 16) | WinFallBE16((pp)+2))
+
+/* Returns the glyph of char uc in font ff (selected in hdc), 0xffff if it has none. A char above
+ * U+FFFF is looked up in the font's format 12 cmap, read on first use */
+static WORD
+WinFallGlyph(HDC hdc, WinFallFont *ff, meUInt uc)
+{
+    BYTE hd[16], *gp;
+    DWORD nn, ii, off=0, lo, hi;
+    WCHAR wc;
+    WORD gi;
+    
+    if(uc <= 0xffff)
+    {
+        wc = (WCHAR) uc;
+        if(GetGlyphIndicesW(hdc,&wc,1,&gi,GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR)
+            gi = 0xffff;
+        return gi;
+    }
+    if(!ff->cmapRead)
+    {
+        ff->cmapRead = 1;
+        if(GetFontData(hdc,WINFALL_CMAP,0,hd,4) != 4)
+            return 0xffff;
+        nn = WinFallBE16(hd+2);
+        for(ii=0 ; ii<nn ; ii++)
+        {
+            if(GetFontData(hdc,WINFALL_CMAP,4+ii*8,hd,8) != 8)
+                return 0xffff;
+            lo = WinFallBE16(hd);
+            hi = WinFallBE16(hd+2);
+            off = WinFallBE32(hd+4);
+            if(((lo == 3) && (hi == 10)) || ((lo == 0) && ((hi == 4) || (hi == 6))))
+            {
+                if((GetFontData(hdc,WINFALL_CMAP,off,hd,16) == 16) && (WinFallBE16(hd) == 12))
+                    break;
+            }
+        }
+        if((ii == nn) || ((nn = WinFallBE32(hd+12)) == 0) || (nn > 0x100000) ||
+           ((ff->cmap = malloc(nn*12)) == NULL))
+            return 0xffff;
+        if(GetFontData(hdc,WINFALL_CMAP,off+16,ff->cmap,nn*12) != nn*12)
+        {
+            free(ff->cmap);
+            ff->cmap = NULL;
+            return 0xffff;
+        }
+        ff->cmapGroups = nn;
+    }
+    /* the groups are sorted, each start char, end char, start glyph */
+    lo = 0;
+    hi = ff->cmapGroups;
+    while(lo < hi)
+    {
+        gp = ff->cmap + ((ii = (lo + hi) >> 1) * 12);
+        if(uc < WinFallBE32(gp))
+            hi = ii;
+        else if(uc > WinFallBE32(gp+4))
+            lo = ii + 1;
+        else
+        {
+            ii = WinFallBE32(gp+8) + (uc - WinFallBE32(gp));
+            return (WORD) (((ii == 0) || (ii >= 0xffff)) ? 0xffff:ii);
+        }
+    }
+    return 0xffff;
+}
+
+/* Returns the fallback for char uc in font variant, drawn in cells cells, the variant's font being
+ * selected in hdc. A combining mark is also drawn this way, from the font itself if it has it, its
+ * ink centred as it has no advance of its own */
+static WinFallChar *
+WinFallGet(HDC hdc, meUByte variant, meUInt uc, int cells)
+{
+    static const MAT2 mat={{0,1},{0,0},{0,0},{0,1}};
+    WinFallChar *fc;
+    WinFallFont *ff=NULL;
+    meUInt key=uc|(((meUInt) variant) << 24);
+    GLYPHMETRICS gm;
+    TEXTMETRIC tm;
+    HFONT of;
+    DWORD gr;
+    WORD gi;
+    meUByte up;
+    int ii, face, emoji, mark, height, ww, hh, left, right, top, tries;
+    
+    for(fc=winFallHash[uc & (WINFALL_HASH-1)] ; fc != NULL ; fc=fc->next)
+        if(fc->key == key)
+            return fc;
+    if((fc = malloc(sizeof(WinFallChar))) == NULL)
+        return NULL;
+    fc->key = key;
+    fc->ff = NULL;
+    fc->dx = fc->dy = 0;
+    fc->next = winFallHash[uc & (WINFALL_HASH-1)];
+    winFallHash[uc & (WINFALL_HASH-1)] = fc;
+    
+    if(winFallFaceCount < 0)
+        WinFallFaces();
+    /* an emoji like char (a wide symbol) prefers the emoji font, as is expected */
+    up = meUniProps(uc);
+    emoji = ((meUniPropGC(up) == meUNIGC_So) && (meUniPropWidth(up) == meUNIWIDTH_WIDE) && (winFallEmoji < winFallFaceCount));
+    mark = (meUniPropGC(up) == meUNIGC_Mn);
+    if(!GetTextMetrics(hdc,&tm))
+        return fc;
+    /* the same em size as the font, a negative height */
+    height = tm.tmInternalLeading - tm.tmHeight;
+    gi = 0xffff;
+    for(ii=(emoji) ? -1:0 ; ii<winFallFaceCount ; ii++)
+    {
+        if(ii < 0)
+            face = winFallEmoji;
+        else if(((face = ii) == winFallEmoji) && emoji)
+            continue;
+        /* the font itself lacks a BMP char other than a mark, else it would not be here */
+        if(((face == 0) && (uc <= 0xffff) && !mark) || ((ff = WinFallOpen(hdc,face,variant,height)) == NULL))
+            continue;
+        of = SelectObject(hdc,ff->font);
+        gi = WinFallGlyph(hdc,ff,uc);
+        SelectObject(hdc,of);
+        if(gi != 0xffff)
+            break;
+    }
+    if(gi == 0xffff)
+        return fc;
+    /* fit the glyph's advance and ink in its cells, creating smaller until it does */
+    ww = cells * eCellMetrics.cell.sizeX;
+    hh = eCellMetrics.cell.sizeY;
+    for(tries=0 ; ; tries++)
+    {
+        of = SelectObject(hdc,ff->font);
+        gr = GetGlyphOutlineW(hdc,gi,GGO_METRICS|GGO_GLYPH_INDEX,&gm,0,NULL,&mat);
+        SelectObject(hdc,of);
+        if(gr == GDI_ERROR)
+        {
+            left = top = 0;
+            right = ww;
+            gm.gmBlackBoxY = 0;
+            gm.gmptGlyphOrigin.y = ff->ascent;
+            break;
+        }
+        right = gm.gmptGlyphOrigin.x + (int) gm.gmBlackBoxX;
+        if(mark)
+            left = gm.gmptGlyphOrigin.x;
+        else
+        {
+            left = (gm.gmptGlyphOrigin.x < 0) ? gm.gmptGlyphOrigin.x:0;
+            if(right < gm.gmCellIncX)
+                right = gm.gmCellIncX;
+        }
+        if((((right - left) <= ww) && ((int) gm.gmBlackBoxY <= hh)) || (tries >= 4) || (height >= -4))
+            break;
+        ii = ((right - left) * hh > (int) gm.gmBlackBoxY * ww) ? ((ww * 100) / (right - left)):((hh * 100) / (int) gm.gmBlackBoxY);
+        height = (height * ((ii < 95) ? ii:95)) / 100;
+        if((ff = WinFallOpen(hdc,ff->face,variant,height)) == NULL)
+            return fc;
+    }
+    fc->ff = ff;
+    fc->gi = gi;
+    fc->dx = (short) ((ww - (right - left)) / 2 - left);
+    /* on the font's baseline, moved to keep the ink within the line */
+    fc->dy = (short) (tm.tmAscent - ff->ascent);
+    top = tm.tmAscent - gm.gmptGlyphOrigin.y;
+    if(top < 0)
+        fc->dy -= (short) top;
+    else if(top + (int) gm.gmBlackBoxY > hh)
+        fc->dy += (short) (hh - top - (int) gm.gmBlackBoxY);
+    return fc;
+}
+
+/* WinFallDraw; Draws char cc at x, y in the text colour from its fallback font, clipped to rr, its
+ * cells cells, the font variant's font being selected. Returns 0 if no font has it */
+static int
+WinFallDraw(HDC hdc, meUByte variant, meUInt cc, int x, int y, RECT *rr, int cells)
+{
+    WinFallChar *fc;
+    HFONT of;
+    int bm;
+    
+    if(((fc = WinFallGet(hdc,(meUByte) (variant & WINFALL_VARIANT),cc,cells)) == NULL) || (fc->ff == NULL))
+        return 0;
+    /* the cells' background is already drawn */
+    bm = SetBkMode(hdc,TRANSPARENT);
+    of = SelectObject(hdc,fc->ff->font);
+    ExtTextOutW(hdc,x+fc->dx,y+fc->dy,ETO_CLIPPED|ETO_GLYPH_INDEX,rr,(LPCWSTR) &fc->gi,1,NULL);
+    SelectObject(hdc,of);
+    SetBkMode(hdc,bm);
+    return 1;
+}
+#endif
+
+/* WinCircleMark; Draws show white space's combining mark cc over its circle as it is drawn without
+ * show white space, so the mark does not move: its spacing form, else the mark itself centred, in
+ * the text colour and font variant, clipped to rr (widened for a wide form). Nothing is drawn if
+ * no font has a glyph for it */
+static void
+WinCircleMark(HDC hdc, int x, int y, RECT *rr, meFrameChar cc, meUByte font)
 {
     RECT cr;
     WCHAR wc;
     WORD gi;
-    int bm;
+    int bm, wide;
 
-    if(((cc = meUniSpacingMark(cc & ~meFRAMECHAR_CIRCLE)) == 0) || (cc > 0xffff))
+#if MEOPT_FONTFALLBACK
+    meFrameChar mc=cc & ~meFRAMECHAR_CIRCLE;
+    if((cc = meUniSpacingMarkExact(mc)) == 0)
+    {
+        WinFallDraw(hdc,font,mc,x,y,rr,1);
         return;
-    wc = (WCHAR) cc;
-    if((GetGlyphIndicesW(hdc,&wc,1,&gi,GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) || (gi == 0xffff))
+    }
+#else
+    if((cc = meUniSpacingMark(cc & ~meFRAMECHAR_CIRCLE)) == 0)
         return;
+#endif
     cr = *rr;
-    if(meUniPropWidth(meUniProps(cc)) == meUNIWIDTH_WIDE)
+    if((wide = (meUniPropWidth(meUniProps(cc)) == meUNIWIDTH_WIDE)) != 0)
         cr.right += eCellMetrics.cell.sizeX;
+    wc = (WCHAR) cc;
+    if((cc > 0xffff) || (GetGlyphIndicesW(hdc,&wc,1,&gi,GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) || (gi == 0xffff))
+    {
+#if MEOPT_FONTFALLBACK
+        WinFallDraw(hdc,font,cc,x,y,&cr,(wide) ? 2:1);
+#endif
+        return;
+    }
     /* else the glyph's background is filled, wiping out the circle */
     bm = SetBkMode(hdc,TRANSPARENT);
     ExtTextOutW(hdc,x,y,ETO_CLIPPED|ETO_GLYPH_INDEX,&cr,(LPCWSTR) &gi,1,NULL);
@@ -1705,10 +2122,14 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
                 1,                        /* Length of string */
                 dx);
 #if MEOPT_UNICODE
-    if(na)
+    if(na
+#if MEOPT_FONTFALLBACK
+       && !WinFallDraw(hdc,meStyleGetFont(style),cc,clientCol,clientRow,&rline,cw)
+#endif
+       )
         WinCursorUnavailableChar(hdc,&rline,eCellMetrics.pInfo.cPal[meStyleGetBColor(style)].cpixel,(cc == meUNI_CIRCLE));
     if(mc)
-        WinCircleMark(hdc,clientCol,clientRow,&rline,mc);
+        WinCircleMark(hdc,clientCol,clientRow,&rline,mc,meStyleGetFont(style));
 #endif
     
     if(frame->flags & meFRAME_NOT_FOCUS)
@@ -1732,7 +2153,11 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
                     1,              /* Length of string */
                     dx);
 #if MEOPT_UNICODE
-        if(na)
+        if(na
+#if MEOPT_FONTFALLBACK
+           && !WinFallDraw(hdc,meStyleGetFont(style),cc,clientCol,clientRow,&rline,cw)
+#endif
+           )
         {
             rline.top--;
             rline.left--;
@@ -1743,7 +2168,7 @@ meFrameDrawCursor(meFrame *frame, HDC hdc)
             rline.right--;
         }
         if(mc)
-            WinCircleMark(hdc,clientCol,clientRow,&rline,mc);
+            WinCircleMark(hdc,clientCol,clientRow,&rline,mc,meStyleGetFont(style));
 #endif
     }
 }
@@ -2135,6 +2560,16 @@ meFrameDraw(meFrame *frame)
                 {
                     if(tna[ii])
                     {
+#if MEOPT_FONTFALLBACK
+                        RECT rr;
+                        rr.left = eCellMetrics.cellColPos[tcl[ii]];
+                        rr.right = rr.left + tdx[ii];
+                        rr.top = rline.top;
+                        rr.bottom = rline.bottom;
+                        if(WinFallDraw(ps.hdc,(meUByte) font,tfc[ii],rr.left,clientRow,&rr,tdx[ii]/eCellMetrics.cell.sizeX))
+                            ;
+                        else
+#endif
                         if(tfc[ii] == meUNI_CIRCLE)
                             WinSpecialChar(ps.hdc,&eCellMetrics.cell,eCellMetrics.cellColPos[tcl[ii]],
                                            rline.top,0x05,eCellMetrics.pInfo.cPal[fcol].cpixel);
@@ -2152,7 +2587,7 @@ meFrameDraw(meFrame *frame)
                         rr.right = eCellMetrics.cellColPos[tcl[ii]+1];
                         rr.top = rline.top;
                         rr.bottom = rline.bottom;
-                        WinCircleMark(ps.hdc,rr.left,clientRow,&rr,ftext[tcl[ii]]);
+                        WinCircleMark(ps.hdc,rr.left,clientRow,&rr,ftext[tcl[ii]],(meUByte) font);
                         cmFlag--;
                     }
                 }
@@ -4566,6 +5001,9 @@ TTchangeFont(int n, int fontType, meUByte *fontName, int fontWeight, int fontHei
     /* Delete the exisiting font */
     if(eCellMetrics.fontdef[0] != NULL)
     {
+#if MEOPT_FONTFALLBACK
+        WinFallClear();
+#endif
         int ii;
         /* Iterate over the font face table and locate duplicated fonts */
         for(ii = 1; ii < meFONT_MAX; ii++)
@@ -4742,6 +5180,59 @@ changeFont(int f, int n)
 }
 #undef FONTBUFSIZ
 
+#ifdef _ME_WINDOW
+/* TTapplyPending; Gives the area of frame to repaint, gathered by TTaddPending, to Windows. It is
+ * gathered and given once, before a paint or a wait: an InvalidateRect per screen poke made the
+ * update region thousands of rectangles, slow to build and to paint through */
+void
+TTapplyPending(meFrame *frame)
+{
+    RECT *pr=&meFrameGetWinPendRect(frame);
+
+    if(pr->right > pr->left)
+    {
+        InvalidateRect(meFrameGetWinHandle(frame),pr,meFALSE);
+        pr->left = pr->right = 0;
+    }
+}
+
+/* TTapplyPendingAll; Gives every frame's area to repaint to Windows, before a wait or handling
+ * all messages, so it is painted */
+static void
+TTapplyPendingAll(void)
+{
+#ifdef _ME_CONSOLE
+    if(meSystemCfg & meSYSTEM_CONSOLE)
+        return;
+#endif /* _ME_CONSOLE */
+    meFrameLoopBegin();
+    if(loopFrame->termData != NULL)
+        TTapplyPending(loopFrame);
+    meFrameLoopEnd();
+}
+
+/* Adds rr to the area of frame to repaint */
+static void
+TTaddPending(meFrame *frame, RECT *rr)
+{
+    RECT *pr=&meFrameGetWinPendRect(frame);
+
+    if(pr->right <= pr->left)
+        *pr = *rr;
+    else
+    {
+        if(pr->left > rr->left)
+            pr->left = rr->left;
+        if(pr->top > rr->top)
+            pr->top = rr->top;
+        if(pr->right < rr->right)
+            pr->right = rr->right;
+        if(pr->bottom < rr->bottom)
+            pr->bottom = rr->bottom;
+    }
+}
+#endif /* _ME_WINDOW */
+
 /*
  * meFrameHideCursor - hide the cursor
  */
@@ -4804,7 +5295,7 @@ meFrameHideCursor(meFrame *frame)
             rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+cw] + 1;
             rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
             rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
-            InvalidateRect(meFrameGetWinHandle(frame), &rect, meFALSE);
+            TTaddPending(frame,&rect);
         }
 #endif /* _ME_WINDOW */
     }
@@ -4872,7 +5363,7 @@ meFrameShowCursor(meFrame *frame)
             rect.right  = eCellMetrics.cellColPos[frame->cursorColumn+cw] + 1;
             rect.top    = eCellMetrics.cellRowPos[frame->cursorRow];
             rect.bottom = eCellMetrics.cellRowPos[frame->cursorRow+1];
-            InvalidateRect(meFrameGetWinHandle(frame), &rect, meFALSE);
+            TTaddPending(frame,&rect);
         }
 #endif /* _ME_WINDOW */
     }
@@ -4899,6 +5390,10 @@ TTcolour(int fcol, int bcol)
 static int
 meGetMessage(MSG *msg, int mode)
 {
+#ifdef _ME_WINDOW
+    /* so the area waiting to be repainted is painted when idle */
+    TTapplyPendingAll();
+#endif
 #if MEOPT_IPIPES || (defined _ME_CONSOLE)
     if(
 #ifdef _ME_CONSOLE
@@ -5214,7 +5709,7 @@ TTputs(int row, int col, int len)
         rect.right  = eCellMetrics.cellColPos[col+len] + 1;
         rect.top    = eCellMetrics.cellRowPos[row];
         rect.bottom = eCellMetrics.cellRowPos[row+1];
-        InvalidateRect(meFrameGetWinHandle(frameCur), &rect, meFALSE);
+        TTaddPending(frameCur,&rect);
     }
 }
 
@@ -5241,7 +5736,7 @@ TTapplyArea(void)
         ttRect.right  = eCellMetrics.cellColPos[ttRect.right] + 1;
         ttRect.top    = eCellMetrics.cellRowPos[ttRect.top];
         ttRect.bottom = eCellMetrics.cellRowPos[ttRect.bottom];
-        InvalidateRect(meFrameGetWinHandle(frameCur), &ttRect, meFALSE);
+        TTaddPending(frameCur,&ttRect);
     }
 }
 
@@ -5646,6 +6141,11 @@ int
 TTaheadFlush(void)
 {
     MSG msg;                            /* Local message buffer */
+    
+#ifdef _ME_WINDOW
+    /* all messages are handled, a paint included */
+    TTapplyPendingAll();
+#endif
     
 #ifdef _ME_CONSOLE
 #ifdef _ME_WINDOW
@@ -6519,6 +7019,7 @@ meFrameGainFocus(meFrame *frame)
                 frameCur = frame;
                 pokeScreen(0x13,frame->depth,(frame->width >> 1)-5,&scheme,(meUByte *) "[NOT FOCUS]");
                 frameCur = fc;
+                TTapplyPending(frame);
                 UpdateWindow(meFrameGetWinHandle(frame));
             }
         }
@@ -6558,6 +7059,7 @@ meFrameKillFocus(meFrame *frame)
                 frameCur = frame;
                 pokeScreen(0x03,frameCur->depth,(frameCur->width >> 1)-5,&scheme,(meUByte *) "           ");
                 frameCur = fc;
+                TTapplyPending(frame);
                 UpdateWindow(meFrameGetWinHandle(frame));
             }
         }

@@ -1194,6 +1194,17 @@ typedef meUInt meFrameChar;
 #else
 #define meFRAMECHAR_CIRCLE_MARK 1
 #endif
+/* A window build which can draw a combining mark with no spacing form on its own, its ink centred
+ * in a cell, is given the mark, others its lookalike or \uXXXX */
+#if (defined _WIN32) && (defined _ME_WINDOW) && MEOPT_FONTFALLBACK
+#ifdef _ME_CONSOLE
+#define meFrameDrawsMark() (!(meSystemCfg & meSYSTEM_CONSOLE))
+#else
+#define meFrameDrawsMark() 1
+#endif
+#else
+#define meFrameDrawsMark() 0
+#endif
 #else
 typedef meUByte meFrameChar;
 #endif

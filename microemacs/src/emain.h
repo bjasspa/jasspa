@@ -524,9 +524,9 @@
 
 #endif /* _NANOEMACS */
 
-/* Xft font fallback: a char the font lacks is drawn from another font, fitted to its cells. Set
- * MEOPT_FONTFALLBACK to 0 for the unavailable char box instead */
-#if MEOPT_XFT && MEOPT_UNICODE
+/* Xft and Windows font fallback: a char the font lacks is drawn from another font, fitted to its
+ * cells. Set MEOPT_FONTFALLBACK to 0 for the unavailable char box instead */
+#if (MEOPT_XFT || (defined(_WIN32) && defined(_ME_WINDOW))) && MEOPT_UNICODE
 #ifndef MEOPT_FONTFALLBACK
 #define MEOPT_FONTFALLBACK 1
 #endif

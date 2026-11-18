@@ -465,7 +465,9 @@ extern int TTend(void);
 
 #ifdef _ME_WINDOW
 
-#define TTflush()   ((meSystemCfg & meSYSTEM_CONSOLE) ? ConsolePaint () : UpdateWindow (meFrameGetWinHandle(frameCur)))
+/* the area gathered to repaint is given to Windows, then painted */
+extern void TTapplyPending(meFrame *frame);
+#define TTflush()   ((meSystemCfg & meSYSTEM_CONSOLE) ? ConsolePaint () : (TTapplyPending(frameCur), UpdateWindow (meFrameGetWinHandle(frameCur))))
 
 #else
 
@@ -481,9 +483,10 @@ extern int TTend(void);
  * Because of the delayed nature of the windows display perform the
  * flush by processing any outstanding PAINT messages ONLY. This
  * will update the display leaving the remaining messages on the
- * input queue.
+ * input queue. The area gathered to repaint is given to Windows first.
  */
-#define TTflush()   UpdateWindow (meFrameGetWinHandle(frameCur))
+extern void TTapplyPending(meFrame *frame);
+#define TTflush()   (TTapplyPending(frameCur), UpdateWindow (meFrameGetWinHandle(frameCur)))
 #endif
 
 #ifdef _ME_WINDOW
@@ -501,6 +504,7 @@ typedef struct
     int      paintDepth;                /* Screen paint depth */
     meShort *paintStartCol;             /* Screen paint start col */
     meShort *paintEndCol;               /* Screen paint end col */
+    RECT     pendRect;                  /* Area to repaint not yet given to Windows, empty if none */
 } meFrameData;
 
 #define meFrameGetWinHandle(ff)         (((meFrameData *) (ff)->termData)->hwnd)
@@ -510,6 +514,7 @@ typedef struct
 #define meFrameGetWinPaintDepth(ff)     (((meFrameData *) (ff)->termData)->paintDepth)
 #define meFrameGetWinPaintStartCol(ff)  (((meFrameData *) (ff)->termData)->paintStartCol)
 #define meFrameGetWinPaintEndCol(ff)    (((meFrameData *) (ff)->termData)->paintEndCol)
+#define meFrameGetWinPendRect(ff)       (((meFrameData *) (ff)->termData)->pendRect)
 
 extern void TTputs(int row, int col, int len);
 

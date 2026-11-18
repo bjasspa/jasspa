@@ -380,10 +380,24 @@ renderUniChar(meFrameChar *dd, meUInt uc)
     }
     pp = meUniProps(uc);
     gc = meUniPropGC(pp);
-    if((gc == meUNIGC_Mn) && ((nn = meUniSpacingMark(uc)) != 0))
+    if(gc == meUNIGC_Mn)
     {
-        /* a combining mark is a char of its own, drawn as its spacing form in its own cell(s), with
-         * show white space as the mark on a dotted circle */
+        /* a combining mark is a char of its own, drawn in its own cell(s) as its spacing form, else
+         * as the mark itself where the window can draw it alone, else as a char like it */
+        if(!meFrameDrawsMark())
+            nn = meUniSpacingMark(uc);
+        else if((nn = meUniSpacingMarkExact(uc)) == 0)
+        {
+            if(dd != NULL)
+                dd[0] = (meSystemCfg & meSYSTEM_SHOWWHITE) ? (uc|meFRAMECHAR_CIRCLE):uc;
+            return 1;
+        }
+    }
+    else
+        nn = 0;
+    if(nn != 0)
+    {
+        /* with show white space the mark is drawn on a dotted circle */
         if(!(meSystemCfg & meSYSTEM_SHOWWHITE))
             cc = nn;
         else

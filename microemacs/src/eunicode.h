@@ -136,6 +136,7 @@ extern  int     meUtf8Prev(const meUByte *text, int off);
     ((((off) < (len)) && ((text)[off] < 0x80)) ? (off)+1:meUtf8Next((text),(off),(len)))
 extern  meUByte meUniProps(meUInt uc);
 extern  meUInt  meUniSpacingMark(meUInt uc);
+extern  meUInt  meUniSpacingMarkExact(meUInt uc);
 extern  int     meUniIgnorable(meUInt uc);
 extern  int     meUniCombClass(meUInt uc);
 /* the most chars one char's canonical decomposition can give, checked against eunitbl.h */
