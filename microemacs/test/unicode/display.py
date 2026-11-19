@@ -12,7 +12,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from screen import Mec, mecEnv, charWidth  # noqa: E402
+from screen import Mec, mecEnv, charWidth, UTF8_LANG  # noqa: E402
 
 TDIR = os.path.dirname(os.path.abspath(__file__))
 CORPUS = os.path.join(TDIR, 'corpus')
@@ -41,7 +41,7 @@ def rowText(mm, row):
     return ''.join(mm.screen.cells[row]).rstrip()
 
 
-def run(mec, macros, args, lang='C.UTF-8', keys=()):
+def run(mec, macros, args, lang=UTF8_LANG, keys=()):
     home = tempfile.mkdtemp()
     mm = Mec(mec, args, env=mecEnv(home, macros, lang))
     for kk in keys:

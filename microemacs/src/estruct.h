@@ -1208,6 +1208,9 @@ typedef meUInt meFrameChar;
 #else
 #define meFrameDrawsMark() meFrameDrawsMarkWindow()
 #endif
+#elif (defined _ME_MACOSNW)
+/* the macOS native build has CoreText's font fallback */
+#define meFrameDrawsMark() 1
 #else
 #define meFrameDrawsMark() 0
 #endif

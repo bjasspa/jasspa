@@ -414,13 +414,14 @@ meNativeGetRowChars(int row)
 #endif
 }
 
-/* The spacing form of combining mark uc, 0 if it has none, and the cells it takes */
+/* The spacing form of combining mark uc, 0 if it has none (the mark is then drawn itself), and
+ * the cells it takes */
 uint32_t
 meNativeSpacingMark(uint32_t uc, int32_t *cells)
 {
     *cells = 1;
 #if MEOPT_UNICODE
-    if((uc = meUniSpacingMark(uc)) != 0)
+    if((uc = meUniSpacingMarkExact(uc)) != 0)
     {
         if(meUniPropWidth(meUniProps(uc)) == meUNIWIDTH_WIDE)
             *cells = 2;
@@ -428,6 +429,16 @@ meNativeSpacingMark(uint32_t uc, int32_t *cells)
     }
 #endif
     return 0;
+}
+
+int
+meNativeCharIsMark(uint32_t uc)
+{
+#if MEOPT_UNICODE
+    return ((uc >= 0x300) && (meUniPropGC(meUniProps(uc)) == meUNIGC_Mn));
+#else
+    return 0;
+#endif
 }
 
 const uint16_t *

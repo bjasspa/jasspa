@@ -165,7 +165,7 @@ def p5Steps(path):
 
 def p5Display(mec, wdir, path, enc, macros):
     """times redrawing the long line in a pseudo terminal: 50 x end/beginning of line with updates"""
-    from screen import Mec, mecEnv
+    from screen import Mec, mecEnv, UTF8_LANG
     res = os.path.join(wdir, 'disp.res')
     body = stampLines([('disp', ['set-variable #l0 0', '!while &les #l0 50', 'end-of-line', 'screen-update',
                                  'beginning-of-line', 'screen-update', 'set-variable #l0 &add #l0 1', '!done'])])
@@ -179,7 +179,7 @@ def p5Display(mec, wdir, path, enc, macros):
     macroFile(mpath, mac, enc)
     if os.path.exists(res):
         os.remove(res)
-    mm = Mec(mec, ['@' + mpath[:-4]], env=mecEnv(wdir, macros, 'C.UTF-8' if enc == 'utf-8' else 'C'))
+    mm = Mec(mec, ['@' + mpath[:-4]], env=mecEnv(wdir, macros, UTF8_LANG if enc == 'utf-8' else 'C'))
     end = time.time() + 120
     while not os.path.exists(res) and time.time() < end:
         mm.settle(1.0)

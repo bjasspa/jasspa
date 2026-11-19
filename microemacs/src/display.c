@@ -383,10 +383,11 @@ renderUniChar(meFrameChar *dd, meUInt uc)
     if(gc == meUNIGC_Mn)
     {
         /* a combining mark is a char of its own, drawn in its own cell(s) as its spacing form, else
-         * as the mark itself where the window can draw it alone, else as a char like it */
+         * as the mark itself where the window can draw it alone, else as a char like it; a default
+         * ignorable mark (a variation selector) keeps its stand-in */
         if(!meFrameDrawsMark())
             nn = meUniSpacingMark(uc);
-        else if((nn = meUniSpacingMarkExact(uc)) == 0)
+        else if(((nn = meUniSpacingMarkExact(uc)) == 0) && !meUniIgnorable(uc))
         {
             if(dd != NULL)
                 dd[0] = (meSystemCfg & meSYSTEM_SHOWWHITE) ? (uc|meFRAMECHAR_CIRCLE):uc;

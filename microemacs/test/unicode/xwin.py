@@ -3,7 +3,7 @@
 # xwin.py - X11 window build tests: runs a window build (mew) on its own Xvfb server (or a given
 # display), types with XTest and captures the window with XGetImage, all through ctypes.
 #  - Input: typed non-ASCII and non-BMP chars, Return and the saved bytes, with the locale unset,
-#    C and C.UTF-8.
+#    C and UTF-8 (C.UTF-8, en_US.UTF-8 on macOS).
 #  - Title: a non-ASCII file name in _NET_WM_NAME (UTF8_STRING) and a WM_NAME that is not UTF-8
 #    bytes in a Latin-1 STRING.
 #  - Clipboard: a region copied in ME is offered as UTF8_STRING, a UTF8_STRING selection owned by
@@ -33,6 +33,8 @@ import unicodedata
 import zlib
 
 TDIR = os.path.dirname(os.path.abspath(__file__))
+# a UTF-8 locale the platform has (macOS has no C.UTF-8), as screen.py
+UTF8_LANG = 'en_US.UTF-8' if sys.platform == 'darwin' else 'C.UTF-8'
 
 c_int, c_uint, c_long, c_ulong, c_char_p, c_void_p = ctypes.c_int, ctypes.c_uint, ctypes.c_long, ctypes.c_ulong, ctypes.c_char_p, ctypes.c_void_p
 Window = Atom = KeySym = c_ulong
@@ -558,7 +560,7 @@ def testInput(disp, kbd, mec, macros, shots, lang):
 
 
 def testClipboard(disp, kbd, mec, macros, shots):
-    mm = Mew(disp, kbd, mec, macros, [CLIP_ME, 'end'], 'clip.txt', 'C.UTF-8')
+    mm = Mew(disp, kbd, mec, macros, [CLIP_ME, 'end'], 'clip.txt', UTF8_LANG)
     try:
         if mm.win is None:
             check('clipboard window found', False)
@@ -609,7 +611,7 @@ def testRendering(disp, kbd, mec, macros, shots):
     lines = [tt + ' ' * (endCol - sum(meCells(ch) for ch in tt)) + '|' for tt in RENDER_TEXTS]
     pairLines = ['P: ' + pp for _, pp in RENDER_PAIRS]
     # an ASCII first line for the geometry, drawn the same however the rest is drawn
-    mm = Mew(disp, kbd, mec, macros, ['ASCII: 0123456789 abc'] + lines + pairLines + ['end'], 'render.txt', 'C.UTF-8')
+    mm = Mew(disp, kbd, mec, macros, ['ASCII: 0123456789 abc'] + lines + pairLines + ['end'], 'render.txt', UTF8_LANG)
     try:
         if mm.win is None:
             check('render window found', False)
@@ -766,7 +768,7 @@ def main():
     chars = ''.join(INPUT_TYPED + INPUT_TYPED2) + 'abcdefghijklmnopqrstuvwxyz'
     kbd.addChars(chars)
     try:
-        for lang in (None, 'C', 'C.UTF-8'):
+        for lang in (None, 'C', UTF8_LANG):
             testInput(disp, kbd, mec, macros, shots, lang)
         testClipboard(disp, kbd, mec, macros, shots)
         testRendering(disp, kbd, mec, macros, shots)
