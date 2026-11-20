@@ -146,6 +146,7 @@ set-variable .fhook-python.format2 "\b%v[com]\b%\"%v[com]%\" -m yapf -h\b0\b\b%\
 set-variable .fhook-python.format3 "\b%v[com]\b%\"%v[com]%\" -m black -h\b0\b\b%\"%v[com]%\" -m black -q %\"%p%f%\"\bBlack\b"
 set-variable .fhook-python.lint1   "\bruff\bruff -h\b0\b\bruff check %\"%f%\"\bRuff\b"
 set-variable .fhook-python.lint2   "\b%v[com]\b%\"%v[com]%\" -m pylint -h\b0\b\b%\"%v[com]%\" -m pylint %\"%p%f%\"\bPylint\b:\\d+:\\d+: E\\d+:\b:\\d+:\\d+: W\\d+:\b:\\d+:\\d+: [CR]\\d+:\b"
+set-variable .fhook-python.lint2   "\b%v[com]\b%\"%v[com]%\" -m py_compile -h\b0\b\b%\"%v[com]%\" -m py_compile %\"%p%f%\"\bPyCompile\b"
 
 ; Setup py-doc
 define-macro fhook-py-doc
