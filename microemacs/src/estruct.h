@@ -1194,6 +1194,26 @@ typedef meUInt meFrameChar;
 #else
 #define meFRAMECHAR_CIRCLE_MARK 1
 #endif
+/* A window build which can draw a combining mark with no spacing form on its own, its ink centred
+ * in a cell, is given the mark, others its lookalike or \uXXXX */
+#if MEOPT_FONTFALLBACK
+#ifdef _WIN32
+#define meFrameDrawsMarkWindow() 1
+#else
+/* X11 core fonts are drawn in the code page */
+#define meFrameDrawsMarkWindow() meXftUsed()
+#endif
+#ifdef _ME_CONSOLE
+#define meFrameDrawsMark() (!(meSystemCfg & meSYSTEM_CONSOLE) && meFrameDrawsMarkWindow())
+#else
+#define meFrameDrawsMark() meFrameDrawsMarkWindow()
+#endif
+#elif (defined _ME_MACOSNW)
+/* the macOS native build has CoreText's font fallback */
+#define meFrameDrawsMark() 1
+#else
+#define meFrameDrawsMark() 0
+#endif
 #else
 typedef meUByte meFrameChar;
 #endif

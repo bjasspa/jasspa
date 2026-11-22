@@ -270,25 +270,43 @@ meUniProps(meUInt uc)
     return (meUByte) meUniPropRuns[lo];
 }
 
-/* Returns the spacing form a combining mark is drawn as in its own cell, 0 if it has none */
-meUInt
-meUniSpacingMark(meUInt uc)
+static meUInt
+meUniMarkFind(const meUShort (*tbl)[2], int nn, meUInt uc)
 {
-    int lo=0, hi=meUniTblSize(meUniSpacingMarks)-1, mid;
+    int lo=0, hi=nn-1, mid;
 
-    if((uc < meUniSpacingMarks[0][0]) || (uc > meUniSpacingMarks[hi][0]))
+    if((uc < tbl[0][0]) || (uc > tbl[hi][0]))
         return 0;
     while(lo <= hi)
     {
         mid = (lo + hi) >> 1;
-        if(meUniSpacingMarks[mid][0] == uc)
-            return meUniSpacingMarks[mid][1];
-        if(meUniSpacingMarks[mid][0] < uc)
+        if(tbl[mid][0] == uc)
+            return tbl[mid][1];
+        if(tbl[mid][0] < uc)
             lo = mid + 1;
         else
             hi = mid - 1;
     }
     return 0;
+}
+
+/* Returns the spacing form a combining mark is drawn as in its own cell, 0 if it has none */
+meUInt
+meUniSpacingMarkExact(meUInt uc)
+{
+    return meUniMarkFind(meUniSpacingMarks,meUniTblSize(meUniSpacingMarks),uc);
+}
+
+/* Returns the spacing form a combining mark is drawn as in its own cell, else a spacing char which
+ * looks like it, for where the mark cannot be drawn itself, 0 if neither */
+meUInt
+meUniSpacingMark(meUInt uc)
+{
+    meUInt ff;
+
+    if((ff = meUniMarkFind(meUniSpacingMarks,meUniTblSize(meUniSpacingMarks),uc)) == 0)
+        ff = meUniMarkFind(meUniLookalikeMarks,meUniTblSize(meUniLookalikeMarks),uc);
+    return ff;
 }
 
 /* Returns the stand-in kind (meUNIIGN_*) of a default ignorable char, 0 if not one or a bidi

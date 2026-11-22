@@ -12,7 +12,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from screen import Mec, mecEnv, charWidth  # noqa: E402
+from screen import Mec, mecEnv, charWidth, UTF8_LANG  # noqa: E402
 
 TDIR = os.path.dirname(os.path.abspath(__file__))
 ESC = b'\x1b'
@@ -41,7 +41,7 @@ def u8(text):
 class Run:
     """mec editing a scratch file with the given content"""
 
-    def __init__(self, mec, macros, content=b'x\n', lang='C.UTF-8'):
+    def __init__(self, mec, macros, content=b'x\n', lang=UTF8_LANG):
         self.home = tempfile.mkdtemp()
         self.fname = os.path.join(self.home, 'in.txt')
         open(self.fname, 'wb').write(content)

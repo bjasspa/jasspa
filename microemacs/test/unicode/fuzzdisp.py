@@ -21,7 +21,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fuzz import generate, macroString  # noqa: E402
-from screen import Mec, mecEnv  # noqa: E402
+from screen import Mec, mecEnv, UTF8_LANG  # noqa: E402
 
 EXTS = ['.c', '.py', '.html', '.md', '.txt', '.sh', '.emf', '.java', '.xml', '.tex']
 
@@ -116,7 +116,7 @@ def main():
     bad = runs = 0
     for start in range(0, args.n, args.b):
         batch = [generate(rng) for _ in range(min(args.b, args.n - start))]
-        lang = 'C.UTF-8' if runs % 2 == 0 else 'C'
+        lang = UTF8_LANG if runs % 2 == 0 else 'C'
         runs += 1
         wdir = tempfile.mkdtemp()
         fails = runBatch(args, rng, batch, wdir, lang)

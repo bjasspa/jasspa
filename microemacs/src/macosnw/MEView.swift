@@ -82,16 +82,19 @@ private struct Cell {
 
 /// How a char is drawn. font is 0 for the cell font (the attrs variant), n > 0
 /// for MEView.fallbackFonts[n-1] and -1 when no font has the char (drawn as the
-/// unavailable char box). A wide or fallback glyph is drawn on its own, scaled by
-/// scale and offset by dx, dy from its cell's origin & baseline so it fits its
-/// cells.
+/// unavailable char box). A wide or fallback glyph, or a combining mark (its ink
+/// centred as it has no advance), is drawn on its own, scaled by scale and offset
+/// by dx, dy from its cell's origin & baseline so it fits its cells.
 private struct GlyphRef {
     var glyph:  CGGlyph = 0
     var font:   Int32   = 0
     var cells:  Int     = 1
+    var mark:   Bool    = false
     var scale:  CGFloat = 1
     var dx:     CGFloat = 0
     var dy:     CGFloat = 0
+    /// Drawn in a run of the cell font at its cell's origin
+    var inRun:  Bool { (font == 0) && (cells == 1) && !mark }
 }
 
 // ---------------------------------------------------------------------------
@@ -276,7 +279,7 @@ final class MEView: NSView {
         if let gr = glyphCache[vv][cp], gr.cells == cells {
             return gr
         }
-        var gr = GlyphRef(glyph: 0, font: -1, cells: cells)
+        var gr = GlyphRef(glyph: 0, font: -1, cells: cells, mark: meNativeCharIsMark(cp) != 0)
         if let us = Unicode.Scalar(cp) {
             let str = String(Character(us))
             var u16 = Array(str.utf16)
@@ -302,14 +305,15 @@ final class MEView: NSView {
                 }
             }
         }
-        if (gr.font > 0) || ((gr.font == 0) && (cells > 1)) {
+        if (gr.font > 0) || ((gr.font == 0) && !gr.inRun) {
             fitGlyph(&gr, glyphFont(gr, attrs: attrs))
         }
         glyphCache[vv][cp] = gr
         return gr
     }
 
-    /// Sets the scale and offset that fit gr's glyph inside its cells: centred,
+    /// Sets the scale and offset that fit gr's glyph inside its cells: centred (a
+    /// mark's ink, else its advance and ink),
     /// scaled down (keeping its shape) if its ink is wider than its cells or
     /// taller than a cell, and moved up or down if it reaches out of the cell.
     private static func fitGlyph(_ gr: inout GlyphRef, _ ft: CTFont)
@@ -322,8 +326,8 @@ final class MEView: NSView {
         let hh = CGFloat(cellH)
         let desc = -font.descender
         let asc = hh - desc
-        let left = bb.isNull ? 0 : min(0, bb.minX)
-        let right = bb.isNull ? adv.width : max(adv.width, bb.maxX)
+        let left = bb.isNull ? 0 : gr.mark ? bb.minX : min(0, bb.minX)
+        let right = bb.isNull ? adv.width : gr.mark ? bb.maxX : max(adv.width, bb.maxX)
         var ss: CGFloat = 1
         if right - left > ww {
             ss = ww / (right - left)
@@ -378,20 +382,21 @@ final class MEView: NSView {
     }
 
     /// Draws the mark of a cell flagged ME_FRAMECHAR_CIRCLE over its circle as its
-    /// spacing form, drawn as it is with show white space off so it does not move
-    /// when that is toggled, clipped to at most clipCells cells
+    /// spacing form, else the mark itself centred, drawn as it is with show white
+    /// space off so it does not move when that is toggled, clipped to at most
+    /// clipCells cells
     private func drawCircleMark(_ ch: UInt32, attrs: UInt8, x: CGFloat, cellY: CGFloat, baseline: CGFloat,
                                 color: CGColor, clipCells: Int, in ctx: CGContext)
     {
         var nc: Int32 = 1
-        let sm = meNativeSpacingMark(ch & ~ME_FRAMECHAR_CIRCLE, &nc)
-        guard sm >= 0x20 else { return }
-        let gr = MEView.glyphRef(sm, attrs: attrs, cells: Int(nc))
+        let mc = ch & ~ME_FRAMECHAR_CIRCLE
+        let sm = meNativeSpacingMark(mc, &nc)
+        let gr = MEView.glyphRef((sm != 0) ? sm : mc, attrs: attrs, cells: Int(nc))
         guard gr.font >= 0 else { return }
         ctx.saveGState()
         ctx.clip(to: CGRect(x: x, y: cellY, width: CGFloat(min(gr.cells, clipCells) * MEView.cellW),
                             height: CGFloat(MEView.cellH)))
-        if (gr.font == 0) && (gr.cells == 1) {
+        if gr.inRun {
             if gr.glyph != 0 {
                 var glyph = gr.glyph
                 var pos = CGPoint(x: x, y: baseline)
@@ -499,7 +504,7 @@ final class MEView: NSView {
             ctx.setFillColor(bg)
             ctx.fill(rect)
             let gr = MEView.glyphRef(us.value, attrs: 0, cells: nc)
-            if (gr.font == 0) && (nc == 1) {
+            if gr.inRun {
                 var glyph = gr.glyph
                 var pos = CGPoint(x: rect.minX, y: baseline)
                 ctx.setFillColor(fg)
@@ -564,7 +569,7 @@ final class MEView: NSView {
                     let wide = (c + 1 < cols) && (cells[rowBase + c + 1].ch == ME_FRAMECHAR_CONT)
                     if cp >= 0x20 {
                         let gr = MEView.glyphRef(cp, attrs: attrs0, cells: wide ? 2 : 1)
-                        if (gr.font == 0) && !wide {
+                        if gr.inRun {
                             if gr.glyph != 0 {
                                 scratchGlyphs[runCount]    = gr.glyph
                                 scratchPositions[runCount] = CGPoint(x: CGFloat(c * MEView.cellW), y: baseline)
@@ -875,7 +880,7 @@ final class MEView: NSView {
                 let cellY    = CGFloat((rows - 1 - cursorRow) * MEView.cellH);
                 let baseline = cellY - CGFloat(MEView.font.descender);
                 let bgColor  = nsColor(index: Int(cell.bg)).cgColor
-                if (gr.font == 0) && !wide {
+                if gr.inRun {
                     if gr.glyph != 0 {
                         var glyph    = gr.glyph;
                         var position = CGPoint(x: rect.minX, y: baseline);

@@ -50,6 +50,7 @@ SPACING_HAND = {
     0x0302: 0x02C6,     # circumflex - modifier letter circumflex
     0x0309: 0x02C0,     # hook above - modifier letter glottal stop
     0x030C: 0x02C7,     # caron
+    0x030D: 0x02C8,     # vertical line above - modifier letter vertical line
     0x0313: 0x1FBF,     # comma above - Greek psili, not koronis
     0x0323: 0x002E,     # dot below - .
     0x0325: 0x02F3,     # ring below - modifier letter low ring
@@ -59,6 +60,25 @@ SPACING_HAND = {
     0x0330: 0x02F7,     # tilde below - modifier letter low tilde
     0x0331: 0x02CD,     # macron below - modifier letter low macron
     0x0332: 0x005F,     # low line - _
+}
+
+# Script marks with no spacing form whose shape a common spacing char matches closely, drawn as it
+# where the mark cannot be drawn on its own (a terminal); a window build which can draws the mark
+LOOKALIKE_HAND = {
+    0x0902: 0x02D9,     # Devanagari anusvara - dot above
+    0x094D: 0x02CF,     # Devanagari virama - modifier letter low acute
+    0x09CD: 0x02CF,     # Bengali virama - modifier letter low acute
+    0x0BCD: 0x02D9,     # Tamil virama (pulli) - dot above
+    0x05B4: 0x002E,     # Hebrew hiriq - .
+    0x05B7: 0x02CD,     # Hebrew patah - modifier letter low macron
+    0x05B9: 0x02D9,     # Hebrew holam - dot above
+    0x05BC: 0x00B7,     # Hebrew dagesh - middle dot
+    0x0E48: 0x02C8,     # Thai mai ek - modifier letter vertical line
+    0x0E4D: 0x02DA,     # Thai nikhahit - ring above
+    0x0EC8: 0x02C8,     # Lao mai ek - modifier letter vertical line
+    0x0ECD: 0x02DA,     # Lao niggahita - ring above
+    0x1037: 0x002E,     # Myanmar dot below - .
+    0x17C6: 0x02DA,     # Khmer nikahit - ring above
 }
 
 # A default ignorable char is drawn as a one cell stand-in of its kind (meUNIIGN_* in eunicode.h):
@@ -243,9 +263,17 @@ def spacingMarks(gc, spacing):
     return sorted(marks.items())
 
 
-def writeSpacingMarks(out, marks):
-    out.append('/* {combining mark, its spacing form}, by mark, a mark being drawn as the form in its own cell */')
-    out.append('static const meUShort meUniSpacingMarks[%d][2] =\n{' % len(marks))
+def lookalikeMarks(gc, marks):
+    """LOOKALIKE_HAND, which must be marks with no spacing form"""
+    spaced = dict(marks)
+    for mm, ff in LOOKALIKE_HAND.items():
+        assert GC_LIST[gc[mm]] == 'Mn' and mm not in spaced and ff < BMP_END, 'lookalike mark U+%04X' % mm
+    return sorted(LOOKALIKE_HAND.items())
+
+
+def writeMarkTable(out, comment, name, marks):
+    out.append(comment)
+    out.append('static const meUShort %s[%d][2] =\n{' % (name, len(marks)))
     for ii in range(0, len(marks), 6):
         out.append('    ' + ' '.join('{0x%04x,0x%04x},' % mm for mm in marks[ii:ii + 6]))
     out.append('};\n')
@@ -391,7 +419,11 @@ def main():
     writeCaseRuns(out, 'meUniUpperRuns', upperRuns)
     writeCaseRuns(out, 'meUniFoldRuns', foldRuns)
     marks = spacingMarks(gc, spacing)
-    writeSpacingMarks(out, marks)
+    writeMarkTable(out, '/* {combining mark, its spacing form}, by mark, a mark being drawn as the form in its own cell */',
+                   'meUniSpacingMarks', marks)
+    looks = lookalikeMarks(gc, marks)
+    writeMarkTable(out, '/* {combining mark, a spacing char like it}, by mark, for a mark with no spacing form where '
+                   'the mark cannot be drawn */', 'meUniLookalikeMarks', looks)
     ignRuns = ignorables(ign)
     writeIgnorables(out, ignRuns)
     cccRuns, decs, comp, longest = normalTables(ccc, decomp, excl)
@@ -406,9 +438,9 @@ def main():
                 fp.write(('%s %d\n' % (name, len(mapping))).encode('ascii'))
                 for src in sorted(mapping):
                     fp.write(('%x %x\n' % (src, mapping[src])).encode('ascii'))
-    sys.stderr.write('Unicode %s: %d property runs, %d lower, %d upper, %d fold case runs, %d spacing marks, %d ignorable runs, '
+    sys.stderr.write('Unicode %s: %d property runs, %d lower, %d upper, %d fold case runs, %d spacing marks, %d lookalike marks, %d ignorable runs, '
                      '%d combining class runs, %d decompositions, %d compositions\n'
-                     % (version, len(propRuns), len(lowerRuns), len(upperRuns), len(foldRuns), len(marks), len(ignRuns),
+                     % (version, len(propRuns), len(lowerRuns), len(upperRuns), len(foldRuns), len(marks), len(looks), len(ignRuns),
                         len(cccRuns), len(decs), len(comp)))
 
 

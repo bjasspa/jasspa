@@ -135,6 +135,8 @@ else ifneq "$(wildcard /opt/homebrew/opt/openssl/include/openssl/ssl.h)" ""
 OPENSSLP = /opt/homebrew/opt/openssl
 else ifneq "$(wildcard /usr/include/openssl/ssl.h)" ""
 OPENSSLP = /usr/include
+else ifneq "$(wildcard /System/Volumes/Data/opt/local/libexec/openssl3/include/openssl/ssl.h)" ""
+OPENSSLP = /System/Volumes/Data/opt/local/libexec/openssl3
 endif
 ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
@@ -182,7 +184,7 @@ WINDOW_LIBS = $(X11_LIBS)
 endif
 ifeq "$(shell echo '$(HASH)include <stdio.h>\n$(HASH)include <X11/Intrinsic.h>\n$(HASH)include <X11/Xft/Xft.h>\nint main(){return 0;}' | $(LD) -x c $(LDDEFS) $(X11_INCL) -o /dev/null $(X11_LIBS) -lXft > /dev/null 2> /dev/null - ; echo $$? )" "0"
 WINDOW_DEFS += -DMEOPT_XFT=1 
-WINDOW_LIBS += -lXft
+WINDOW_LIBS += -lXft -lfontconfig
 endif
 
 endif

@@ -42,10 +42,32 @@ def check(name, cond, detail=''):
         print('FAIL %s %s' % (name, detail))
 
 
+def readMarkTables():
+    # the mark and stand-in tables of src/eunitbl.h: {mark: spacing form} and the default
+    # ignorable ranges, which are drawn as a one cell stand-in
+    text = open(os.path.join(TDIR, '..', '..', 'src', 'eunitbl.h'), encoding='ascii').read()
+
+    def table(name):
+        body = re.search(name + r'\[\d+\]\[2\] =\s*\{(.*?)\};', text, re.S).group(1)
+        return [(int(aa, 16), int(bb, 16)) for aa, bb in re.findall(r'\{0x([0-9a-f]+),0x([0-9a-f]+)\}', body)]
+    forms = dict(table('meUniSpacingMarks'))
+    return forms, [(aa, bb & 0xffffff) for aa, bb in table('meUniIgnorables')]
+
+
+MARK_FORMS, IGNORABLES = readMarkTables()
+
+
 def meCells(ch):
-    # cells ME gives a char: a zero width char is shown as a \uXXXX escape
-    if unicodedata.category(ch) in ('Mn', 'Me', 'Cf'):
-        return 6
+    # cells ME gives a char: a combining mark is drawn as its spacing form, else the mark itself
+    # centred in one cell; a default ignorable as a one cell stand-in, another zero width char as
+    # an escape
+    cp = ord(ch)
+    if cp in MARK_FORMS:
+        ch = chr(MARK_FORMS[cp])
+    elif any(aa <= cp <= bb for aa, bb in IGNORABLES) or (unicodedata.category(ch) == 'Mn'):
+        return 1
+    elif unicodedata.category(ch) in ('Me', 'Cf'):
+        return 6 if cp <= 0xffff else 8
     return 2 if unicodedata.east_asian_width(ch) in ('W', 'F') else 1
 
 
@@ -254,6 +276,20 @@ GEOMETRY_STEPS = [['forward-line'], ['backward-line'], ['beginning-of-buffer'], 
 CURSOR_COLOR = b'\xff\xc0\x00'       # add-color 250 255 192 0 in the start-up macro
 
 
+def capturedColor(img, color, tol=4):
+    # the colour a capture holds for color, which a display's colour profile can shift a little
+    # (e.g. ff c0 02): the most common pixel within tol of it in each channel, color if none
+    counts = {}
+    raw = img.raw
+    for yy in range(img.hh):
+        oo = yy * img.stride
+        for xx in range(img.ww):
+            px = raw[oo + xx * 3:oo + xx * 3 + 3]
+            if (abs(px[0] - color[0]) <= tol) and (abs(px[1] - color[1]) <= tol) and (abs(px[2] - color[2]) <= tol):
+                counts[px] = counts.get(px, 0) + 1
+    return max(counts, key=counts.get) if counts else color
+
+
 class Geometry:
     """The text area from the GEOMETRY_STEPS captures: the cursor (CURSOR_COLOR) at the start of
     the first line (an ASCII char) then one line down"""
@@ -263,6 +299,7 @@ class Geometry:
         self.color = CURSOR_COLOR
         next(it), next(it)
         img, img2, self.home = next(it), next(it), next(it)
+        self.color = capturedColor(img, CURSOR_COLOR)
         box = cursorBox(img, self.color, 0, img.hh)
         box2 = cursorBox(img2, self.color, 0, img.hh)
         if (box is not None) and (box2 is not None) and (box2[1] > box[1]):
@@ -291,6 +328,12 @@ def walkCheck(it, geo, text, maxChars, shots, tag):
     rbox = cursorBox(ref, geo.color, geo.y0, geo.ymax)
     if rbox is None:
         return 'cursor not found'
+    # a glyph drawn in the cursor can cover its cell's bottom pixel rows (a mark below fitted to
+    # the cell), so a box found by colour is given the height of the cursor at the line start
+    hh = max(rbox[3] - rbox[1], geo.ch)
+
+    def cellBox(bb):
+        return None if (bb is None) else (bb[0], bb[1], bb[2], max(bb[3], bb[1] + hh))
 
     def inside(bb, xx, yy):
         return (bb[0] - 1 <= xx <= bb[2]) and (bb[1] - 1 <= yy <= bb[3])
@@ -300,7 +343,7 @@ def walkCheck(it, geo, text, maxChars, shots, tag):
         col += meCells(text[ii])
         if col >= geo.cols - 3:
             break
-        box = cursorBox(img, geo.color, geo.y0, geo.ymax)
+        box = cellBox(cursorBox(img, geo.color, geo.y0, geo.ymax))
         if (box is None) or (abs(box[1] - rbox[1]) > geo.ch // 2):
             break               # the cursor left the line
         for ry, xs in ref.diff(img, geo.y0, geo.ymax).items():

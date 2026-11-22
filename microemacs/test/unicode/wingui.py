@@ -73,8 +73,11 @@ def cellsDiffer(aa, bb, xs, ys):
 
 
 def meCells(ch):
-    # cells ME gives a char: a zero width char is shown as a \uXXXX escape
-    if unicodedata.category(ch) in ('Mn', 'Me', 'Cf'):
+    # cells ME gives a char: a combining mark is drawn in its own cell, as its spacing form (the kana
+    # voicing marks' are wide) or the mark itself centred; another zero width char as a \uXXXX escape
+    if unicodedata.category(ch) == 'Mn':
+        return 2 if ch in '\u3099\u309a' else 1
+    if unicodedata.category(ch) in ('Me', 'Cf'):
         return 6
     return 2 if unicodedata.east_asian_width(ch) in ('W', 'F') else 1
 

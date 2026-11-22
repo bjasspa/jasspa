@@ -380,10 +380,25 @@ renderUniChar(meFrameChar *dd, meUInt uc)
     }
     pp = meUniProps(uc);
     gc = meUniPropGC(pp);
-    if((gc == meUNIGC_Mn) && ((nn = meUniSpacingMark(uc)) != 0))
+    if(gc == meUNIGC_Mn)
     {
-        /* a combining mark is a char of its own, drawn as its spacing form in its own cell(s), with
-         * show white space as the mark on a dotted circle */
+        /* a combining mark is a char of its own, drawn in its own cell(s) as its spacing form, else
+         * as the mark itself where the window can draw it alone, else as a char like it; a default
+         * ignorable mark (a variation selector) keeps its stand-in */
+        if(!meFrameDrawsMark())
+            nn = meUniSpacingMark(uc);
+        else if(((nn = meUniSpacingMarkExact(uc)) == 0) && !meUniIgnorable(uc))
+        {
+            if(dd != NULL)
+                dd[0] = (meSystemCfg & meSYSTEM_SHOWWHITE) ? (uc|meFRAMECHAR_CIRCLE):uc;
+            return 1;
+        }
+    }
+    else
+        nn = 0;
+    if(nn != 0)
+    {
+        /* with show white space the mark is drawn on a dotted circle */
         if(!(meSystemCfg & meSYSTEM_SHOWWHITE))
             cc = nn;
         else
@@ -1160,6 +1175,17 @@ hideLineJump:
             if((len = ii-col) > 0)
                 meFrameXftDrawBackground(frameCur,colToClient(scol+col),row,len);
             col = cno = 0;
+#if MEOPT_UNICODE
+            /* the whole line is stored first, a block's drawing reads the cells either side */
+            do {
+                for(ii=blkp[cno].column ; col<ii ; col++)
+                {
+                    fstp[col] = s1[col];
+                    fssp[col] = blkp[cno].scheme;
+                }
+            } while(++cno < noColChng);
+            col = cno = 0;
+#endif
             do {
                 scheme = blkp->scheme;
                 meFrameXTermSetScheme(frameCur,scheme);
@@ -1167,11 +1193,6 @@ hideLineJump:
 #if MEOPT_UNICODE
                 if((len = ii-col) > 0)
                 {
-                    for(ll=0 ; ll<len ; ll++)
-                    {
-                        *fstp++ = s1[col+ll];
-                        *fssp++ = scheme;
-                    }
                     meFrameXDrawCells(frameCur,scol+col,row,s1+col,len);
                     col += len;
                 }

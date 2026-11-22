@@ -9,10 +9,15 @@ import re
 import select
 import signal
 import struct
+import sys
 import termios
 import fcntl
 import time
 import unicodedata
+
+# a UTF-8 locale the platform has: macOS has no C.UTF-8, without it mec takes the terminal to be
+# a code page one
+UTF8_LANG = 'en_US.UTF-8' if sys.platform == 'darwin' else 'C.UTF-8'
 
 CSI_RE = re.compile(rb'\x1b\[([0-9;?>]*)([@-~])')
 
@@ -239,7 +244,7 @@ class Mec:
         return (self.screen.row, self.screen.col)
 
 
-def mecEnv(home, macros, lang='C.UTF-8'):
+def mecEnv(home, macros, lang=UTF8_LANG):
     # home is first on the path so it is the user path (session files are kept out of macros) and
     # its newuser.erf is used, without the scroll bars some platforms default to (e.g. macOS
     # console) so every platform draws the same columns

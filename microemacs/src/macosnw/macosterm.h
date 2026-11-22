@@ -207,6 +207,8 @@ void meNativeViewChangeFont(void *viewPtr, int n, const char *name, float size);
  *                               Index with: scheme & 0x0fff
  *  meNativeSpacingMark(uc, &n) - the spacing form of combining mark uc, 0
  *                               if none, n set to the cells it takes
+ *  meNativeCharIsMark(uc)     - whether uc is a combining mark (Mn), only
+ *                               in a cell where it has no spacing form
  * ---------------------------------------------------------------------- */
 #define ME_FRAMECHAR_CONT 0x7fffffffu
 #define ME_FRAMECHAR_CIRCLE 0x40000000u
@@ -217,6 +219,7 @@ int             meNativeGetFrameCols(void);
 uint8_t         meNativeGetCursorColor(void *viewPtr);
 const uint32_t *meNativeGetStyleTable(void);
 uint32_t        meNativeSpacingMark(uint32_t uc, int32_t *cells);
+int             meNativeCharIsMark(uint32_t uc);
 
 /* -------------------------------------------------------------------------
  * C - Swift: flush view dirty rows to the render buffer.

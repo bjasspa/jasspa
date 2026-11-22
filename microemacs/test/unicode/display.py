@@ -12,7 +12,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from screen import Mec, mecEnv, charWidth  # noqa: E402
+from screen import Mec, mecEnv, charWidth, UTF8_LANG  # noqa: E402
 
 TDIR = os.path.dirname(os.path.abspath(__file__))
 CORPUS = os.path.join(TDIR, 'corpus')
@@ -41,7 +41,7 @@ def rowText(mm, row):
     return ''.join(mm.screen.cells[row]).rstrip()
 
 
-def run(mec, macros, args, lang='C.UTF-8', keys=()):
+def run(mec, macros, args, lang=UTF8_LANG, keys=()):
     home = tempfile.mkdtemp()
     mm = Mec(mec, args, env=mecEnv(home, macros, lang))
     for kk in keys:
@@ -89,14 +89,16 @@ def main():
     check('E7 mode line char column', mline and mline[0].startswith('MLCOL=%d=' % len(cjk)), repr(mline))
     finish(mm, home)
 
-    # D9 - a mark with no spacing form (a Hebrew point) stays an escape, and each mark is a cursor stop
+    # D9 - a mark with no spacing form is drawn as a char like it in a terminal (the Hebrew hiriq as '.'),
+    # else stays an escape (the tsere), and each mark is a cursor stop
     tdir = tempfile.mkdtemp()
     fname = os.path.join(tdir, 'marks.txt')
-    open(fname, 'w', encoding='utf-8').write('e' + chr(0x301) + chr(0x308) + 'x ' + chr(0x5d1) + chr(0x5b4) + 'y\n')
+    open(fname, 'w', encoding='utf-8').write('e' + chr(0x301) + chr(0x308) + 'x ' + chr(0x5d1) + chr(0x5b4) + 'y ' + chr(0x5d1) + chr(0x5b5) + 'z\n')
     mm, home = run(mec, macros, [fname])
     row = rowText(mm, 1)
     check('D9 marks in their own cells', row.startswith('e' + chr(0xb4) + chr(0xa8) + 'x '), repr(row))
-    check('D9 mark without a spacing form', (chr(0x5d1) + BS + 'u05B4y') in row, repr(row))
+    check('D9 mark drawn as a lookalike', (chr(0x5d1) + '.y') in row, repr(row))
+    check('D9 mark with neither', (chr(0x5d1) + BS + 'u05B5z') in row, repr(row))
     mm.keys(b'\x06\x06\x06')
     check('D9 a mark is a cursor stop', mm.cursor == (1, 3), 'cursor %r' % (mm.cursor,))
     finish(mm, home)
