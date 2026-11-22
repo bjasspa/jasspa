@@ -35,11 +35,16 @@ set-variable $time 0
 
 0 define-macro github-log
   set-variable #l0 @1
+  !iif &not &exi .lfn  set-variable .lfn $temp-name
   set-variable #l1 $buffer-bname
   find-buffer "*github-log*"
   !iif &band @# 2  end-of-buffer
+  set-mark
   insert-string #l0
   insert-newline
+  3 narrow-buffer
+  2 append-buffer .lfn
+  narrow-buffer
   find-buffer #l1
 !emacro
 
@@ -364,6 +369,9 @@ define-macro github-build-release
   0x404 pipe-shell-command &spr "%s push -n" &con &exi .git.com .git.com "git --no-pager" #l4
   !iif &not &seq &trb #l4 "Everything up-to-date"  -8 ml-write &spr "[Github Release Error: Commits to local repository need pushing back first]" #l1
   !force 0 delete-buffer "*ghmv"
+  github-log &spr "Release ready to build:"
+  github-log &spr "  1:  github-build \"\" %s%s" .git.hub-rtp #l1
+  github-log &spr "  2:  github-release %s %s %s %s" #l8 #l1 #l9 #l0
   github-log &spr "Running:  github-build \"\" %s%s" .git.hub-rtp #l1
   github-build "" &cat .git.hub-rtp #l1
   github-log &spr "Running:  github-release %s %s %s %s" #l8 #l1 #l9 #l0
