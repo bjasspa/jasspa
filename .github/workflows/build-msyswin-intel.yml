@@ -118,8 +118,8 @@ jobs:
         cd .\microemacs
         $env:MEVER=$(.\windows100-intel32\mec -p @dev/ver.emf)
         mkdir -Path tfs\bin\msyswin2-intel64
-        Copy-Item -Path C:\msys64\usr\bin\msys-ssl-3.dll -Destination tfs\bin\msyswin2-intel64
-        Copy-Item -Path C:\msys64\usr\bin\msys-crypto-3.dll -Destination tfs\bin\msyswin2-intel64
+        Copy-Item -Path C:\msys64\usr\bin\msys-ssl-4.dll -Destination tfs\bin\msyswin2-intel64
+        Copy-Item -Path C:\msys64\usr\bin\msys-crypto-4.dll -Destination tfs\bin\msyswin2-intel64
         cd tfs
         Compress-Archive -Path bin -DestinationPath ..\..\downloads\Jasspa_MicroEmacs_${env:MEVER}_bin_msyswin_intel_openssl.zip
         cd ..

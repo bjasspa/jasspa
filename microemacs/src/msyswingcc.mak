@@ -111,6 +111,9 @@ else ifneq (,$(OPENSSLPATH))
 OPENSSLP = 1 -I$(OPENSSLPATH)
 else ifneq (0,$(shell pkg-config --libs openssl > /dev/null 2> /dev/null; echo $$? ))
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
+else ifneq (,$(shell pkg-config --modversion openssl | grep "^4\..*"))
+OPENSSLP = 1
+OPENSSLV = -4
 else ifneq (,$(shell pkg-config --modversion openssl | grep "^3\..*"))
 OPENSSLP = 1
 OPENSSLV = -3
