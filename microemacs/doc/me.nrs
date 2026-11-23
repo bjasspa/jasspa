@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/11/23 18:21:18 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/11/23 18:40:32 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1975,8 +1975,8 @@ Release date specified as 2026-11-01.
 .BS
 Unicode / wide character support by default on all supported platforms.
 .BU
-Ht &opt 4
-includesthe new option \fCuni\fR indicating Unicode support. Text is held as
+.Ht &opt 4
+includes the new option \fCuni\fR indicating Unicode support. Text is held as
 Unicode and files may be \s-1UTF-8\s0, \s-1UTF-16\s0 or \s-1UTF-32\s0 encoded.
 See also
 .Hl "Locale Support" localeSupport 2 ,
