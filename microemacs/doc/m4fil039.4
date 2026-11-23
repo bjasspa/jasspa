@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil039.4,v 1.1 2026/10/10 00:00:00 steve Exp $
+.Id $Id: m4fil039.4,v 1.1 2026/11/23 18:23:27 steve Exp $
 .Im MicroEmacs macro;function;string
 .so me.tni
 .TH &blen 4
@@ -38,10 +38,10 @@
 .ad
 .SH DESCRIPTION
 The byte functions work on the bytes of a string, which are the bytes the string would be written to a file as: in a
-Unicode build the UTF-8 bytes of each character, an invalid byte being that byte and a Nul character the byte
+Unicode build the \s-1UTF-8\s0 bytes of each character, an invalid byte being that byte and a Nul character the byte
 \fC0\fR. In other builds a byte is a character.
 .PP
-Bytes made into a string are decoded as a whole, in a Unicode build valid UTF-8 becomes characters, any other byte
+Bytes made into a string are decoded as a whole, in a Unicode build valid \s-1UTF-8\s0 becomes characters, any other byte
 an invalid byte and \fC0\fR the Nul character.
 .IP "\fB&blen\fR \fIstr\fR"
 Returns the number of bytes in \fIstr\fR.
@@ -60,12 +60,12 @@ Unicode build.
 Returns the string of the bytes given in hexadecimal by \fIhex\fR, it fails if \fIhex\fR holds a non-hexadecimal
 character or half a byte.
 .SH NOTES
-As each result is decoded on its own, joining the results of \fB&bitoa\fR gives invalid bytes rather than a UTF-8
+As each result is decoded on its own, joining the results of \fB&bitoa\fR gives invalid bytes rather than a \s-1UTF-8\s0
 character, \fC&bmid\fR of the joined string decodes them together:
 .CS
 &bmid &cat &bitoa 0xc3 &bitoa 0xa9 0 2
 .CE
-returns an 'e' acute (U+00E9) in a Unicode build, as does \fC&hexb\ "c3a9"\fR.
+returns an 'e' acute (\s-1U+00E9\s0) in a Unicode build, as does \fC&hexb\ "c3a9"\fR.
 .PP
 \fC&blen\ &lef\ @wl\ $window-col\fR gives the byte offset of the cursor in the current line.
 .SH EXAMPLE
@@ -78,10 +78,10 @@ set-variable #l1 &hexb #l0
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
-.Ht &len 4 ,
-.Ht &mid 4 ,
 .Ht &atoi 4 ,
 .Ht &itoa 4 ,
+.Ht &len 4 ,
+.Ht &mid 4 ,
 .Ht &uni 4 .
 .ad
 .FH
