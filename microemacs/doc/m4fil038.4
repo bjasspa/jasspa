@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil038.4,v 2.6 2026/11/23 18:18:35 jon Exp $
+.Id $Id: m4fil038.4,v 2.6 2026/11/24 10:44:58 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &uni 4
@@ -31,7 +31,7 @@ Returns information regarding the Unicode character \fIint\fR.
 .IP "\fB&uci\fR \fIchar\fR"
 Returns information regarding the \*(mS character-set character \fIchar\fR.
 .IP "\fB&ufi\fR \fIstring\fR"
-Returns information regarding the UTF-8 encoded Unicode character \fIstring\fR.
+Returns information regarding the \s-1UTF-8\s0 encoded Unicode character \fIstring\fR.
 .PP
 All three functions return a \*(mS formatted list of information of the follow form:
 .IP
@@ -61,7 +61,7 @@ label \fCuni\fR)  \fIchar\fR is the character itself,  \fIutf8\fR is its \s-1UTF
 length of \fIutf8\fR is \fIutf8-len\fR) and bit 2 of \fIflags\fR is always set. \fB&uci\fR maps a raw byte through the
 current code page, and in the case of \fB&ufi\fR, \fIutf8-len\fR is the number of characters of \fIstring\fR used.
 .SH EXAMPLE
-In a version of \*(mS without Unicode support the following macro code can be used to convert the UTF-8 encoded
+In a version of \*(mS without Unicode support the following macro code can be used to convert the \s-1UTF-8\s0 encoded
 character string at the current location to the current display code page equivalent:
 .Me $emf-scheme
 .CS

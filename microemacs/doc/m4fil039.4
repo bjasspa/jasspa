@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil039.4,v 1.1 2026/11/23 18:23:27 steve Exp $
+.Id $Id: m4fil039.4,v 1.1 2026/11/24 10:48:44 steve Exp $
 .Im MicroEmacs macro;function;string
 .so me.tni
 .TH &blen 4
@@ -22,7 +22,9 @@
 .I str
 .br
 .B &bmid
-.I str index len
+.I str
+.I index
+.I len
 .br
 .B &batoi
 .I str
@@ -74,7 +76,7 @@ The following converts a string to its bytes in hexadecimal and back:
 .CS
 set-variable #l0 &bhex "Caf\\xe9"
 set-variable #l1 &hexb #l0
-.CE
+.CE 0
 .Me $ehf-scheme
 .SH "SEE ALSO"
 .na
