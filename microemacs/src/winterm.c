@@ -207,6 +207,9 @@ CellMetrics eCellMetrics;               /* Cell metrics */
 RECT   ttRect;                          /* Area of screen to update */
 static int ttshowState;                 /* Show state of the window */
 static HBRUSH ttBrush = NULL;           /* Current background brush */
+static HDC ttStripDC=NULL;              /* Memory DC a frame row is drawn in */
+static HBITMAP ttStripBmp=NULL;         /* Its bitmap, ttStripW x ttStripH */
+static int ttStripW=0, ttStripH=0;
 #endif /* _ME_WINDOW */
 
 #if MEOPT_CLIENTSERVER
@@ -1144,6 +1147,7 @@ meGetConsoleMessage(MSG *msg, int mode)
 /* WinSpecialChar; Draw a special character to the screen. x is the lefthand
  * edge of the character, y is the top of the character. The background is
  * assumed to be filled. A foreground pen is expected to be selected. */
+#define WIN_SHADE_MAX 64
 static void
 WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol)
 {
@@ -1422,20 +1426,50 @@ WinSpecialChar(HDC hdc, CharMetrics *cm, int x, int y, meUByte cc, COLORREF fcol
         break;
         
     case 0x1b:          /* Scroll box - vertical */
-        for(ii = (y+1) & ~1; ii < y + cm->sizeY; ii += 2)
+        /* a line on every other pixel row, in one call as a GDI call costs more than its drawing */
         {
-            MoveToEx (hdc, x, ii, NULL);
-            LineTo(hdc, x + cm->sizeX, ii);
+            POINT pl[2*WIN_SHADE_MAX];
+            DWORD pc[WIN_SHADE_MAX];
+            int nn=0;
+            for(ii = (y+1) & ~1; ii < y + cm->sizeY; ii += 2)
+            {
+                pl[2*nn].x = x;
+                pl[2*nn+1].x = x + cm->sizeX;
+                pl[2*nn].y = pl[2*nn+1].y = ii;
+                pc[nn] = 2;
+                if(++nn == WIN_SHADE_MAX)
+                {
+                    PolyPolyline(hdc,pl,pc,nn);
+                    nn = 0;
+                }
+            }
+            if(nn)
+                PolyPolyline(hdc,pl,pc,nn);
         }
         break;
         
         /* 0x1c is difficult to use as its the meCHAR_LEADER char - only use if value not used in variables such as $window-chars */ 
         
     case 0x1d:          /* Scroll box - horizontal */
-        for(ii = (x+1) & ~1; ii < x + cm->sizeX; ii += 2)
+        /* a line on every other pixel column, in one call */
         {
-            MoveToEx(hdc, ii, y, NULL);
-            LineTo(hdc, ii, y + cm->sizeY + 1);
+            POINT pl[2*WIN_SHADE_MAX];
+            DWORD pc[WIN_SHADE_MAX];
+            int nn=0;
+            for(ii = (x+1) & ~1; ii < x + cm->sizeX; ii += 2)
+            {
+                pl[2*nn].y = y;
+                pl[2*nn+1].y = y + cm->sizeY + 1;
+                pl[2*nn].x = pl[2*nn+1].x = ii;
+                pc[nn] = 2;
+                if(++nn == WIN_SHADE_MAX)
+                {
+                    PolyPolyline(hdc,pl,pc,nn);
+                    nn = 0;
+                }
+            }
+            if(nn)
+                PolyPolyline(hdc,pl,pc,nn);
         }
         break;
         
@@ -2197,6 +2231,34 @@ WinLoadFont(int font)
     }
 }
 
+/* WinStripDC; Returns the memory DC a frame row is drawn in, at least width by height, NULL if it
+ * cannot be made. A row is drawn there and copied to the window in one BitBlt: a GDI call drawing
+ * to a window costs many times one drawing to memory, and a row is a fraction of a whole window
+ * buffer's memory */
+static HDC
+WinStripDC(HDC hdc, int width, int height)
+{
+    HBITMAP bmp;
+    
+    if((ttStripDC != NULL) && (width <= ttStripW) && (height == ttStripH))
+        return ttStripDC;
+    if((ttStripDC == NULL) && ((ttStripDC = CreateCompatibleDC(hdc)) == NULL))
+        return NULL;
+    if(width < ttStripW)
+        width = ttStripW;
+    if((bmp = CreateCompatibleBitmap(hdc,width,height)) == NULL)
+        return NULL;
+    SelectObject(ttStripDC,bmp);
+    if(ttStripBmp != NULL)
+        DeleteObject(ttStripBmp);
+    ttStripBmp = bmp;
+    ttStripW = width;
+    ttStripH = height;
+    SetMapMode(ttStripDC,MM_TEXT);
+    SetMapperFlags(ttStripDC,1);
+    return ttStripDC;
+}
+
 /*
  * WinPaint Paint to the screen the updated region of text from the virtual
  * screen store. Note that we are only painting the regions of the screen that
@@ -2219,6 +2281,8 @@ static void
 meFrameDraw(meFrame *frame)
 {
     PAINTSTRUCT ps;                     /* Paint structure */
+    HDC winDC;                          /* The window's DC, ps.hdc is the row strip */
+    int stripRight;                     /* Right edge of the row's strip to copy */
     RECT rline;                         /* Rectangle of line */
     int col;                            /* Current column position */
     meStyle schm;                       /* Current style */
@@ -2261,10 +2325,25 @@ meFrameDraw(meFrame *frame)
         return;
     }
     
+    /* each row is drawn in a memory strip and copied to the window, else drawn to the window */
+    winDC = ps.hdc;
+    {
+        RECT cr;
+        GetClientRect(meFrameDataGetWinHandle(fd),&cr);
+        if(cr.right < eCellMetrics.cellColPos[frame->width])
+            cr.right = eCellMetrics.cellColPos[frame->width];
+        if((ps.hdc = WinStripDC(winDC,cr.right,eCellMetrics.cell.sizeY)) == NULL)
+            ps.hdc = winDC;
+    }
     if(eCellMetrics.pInfo.hPal != NULL)
     {
         SelectPalette(ps.hdc, eCellMetrics.pInfo.hPal, meFALSE);
         RealizePalette(ps.hdc);
+        if(ps.hdc != winDC)
+        {
+            SelectPalette(winDC, eCellMetrics.pInfo.hPal, meFALSE);
+            RealizePalette(winDC);
+        }
     }
     
     /* Initialise some variables now. */
@@ -2345,10 +2424,13 @@ meFrameDraw(meFrame *frame)
             col++;
 #endif
 
-        /* Set up the drawing borders. */
+        /* Set up the drawing borders, the strip's origin at the row */
+        if(ps.hdc != winDC)
+            SetViewportOrgEx(ps.hdc,0,-eCellMetrics.cellRowPos[srow],NULL);
         rline.top    = eCellMetrics.cellRowPos[srow];
         rline.bottom = eCellMetrics.cellRowPos[srow+1];
         rline.right  = eCellMetrics.cellColPos[col];
+        stripRight = rline.right;
         
         /* Set up text start position */
         clientRow = eCellMetrics.cellRowPos[srow];
@@ -2616,9 +2698,12 @@ meFrameDraw(meFrame *frame)
             
             rline.right = rline.left;
         }
+        if(ps.hdc != winDC)
+            BitBlt(winDC,rline.left,rline.top,stripRight-rline.left,rline.bottom-rline.top,
+                   ps.hdc,rline.left,rline.top,SRCCOPY);
     }
     if(drawCursor)
-        meFrameDrawCursor(frame,ps.hdc);
+        meFrameDrawCursor(frame,winDC);
     
     meFrameDataGetWinPaintAll(fd) = 0;
     
@@ -2632,6 +2717,13 @@ meFrameDraw(meFrame *frame)
     if(bbrush)
         DeleteObject(bbrush);
     
+    if(ps.hdc != winDC)
+    {
+        /* the strip is kept, so frees the font else it cannot be deleted on a font change */
+        SetViewportOrgEx(ps.hdc,0,0,NULL);
+        SelectObject(ps.hdc,GetStockObject(SYSTEM_FONT));
+        ps.hdc = winDC;
+    }
     EndPaint(meFrameDataGetWinHandle(fd),&ps);
 }
 
