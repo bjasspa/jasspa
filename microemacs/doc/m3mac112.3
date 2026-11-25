@@ -4,7 +4,7 @@
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m3mac112.3,v 1.1 2026/10/10 00:00:00 steve Exp $
+.Id $Id: m3mac112.3,v 1.1 2026/11/24 10:49:56 steve Exp $
 .Im MicroEmacs command|macrodevelop
 .so me.tni
 .TH code-page-define 3
@@ -38,12 +38,12 @@ The code page file is executed with the same argument, a new code page file must
 .CS
 0 set-char-mask "C"
 set-variable #l0 $result
-set-char-mask "C" "\fIname\fR"
-set-char-mask "c" "\fIunicode-table\fR"
+set-char-mask "C" "name"
+set-char-mask "c" "unicode-table"
 !if &not @#
   set-char-mask "C" #l0
 !elif &not &opt "uni"
-  set-char-mask "M" "\fImapping\fR"
+  set-char-mask "M" "mapping"
   .
   .
   set-variable .change-font.cp-box 1

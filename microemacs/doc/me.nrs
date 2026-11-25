@@ -12,7 +12,7 @@
 .\" Created By: Jon Green
 .\" Created   : Mon May 24 17:48:03 1999
 .\"
-.Id $Id: me.nrs,v 2.58 2026/09/23 17:43:51 jon Exp $
+.Id $Id: me.nrs,v 2.58 2026/11/24 10:46:32 jon Exp $
 .Im MicroEmacs
 .so me.tni
 .\" me is a link burnt into executable (bind.c)
@@ -1936,10 +1936,10 @@ This version of  MicroEmacs is based on an early  \fIMicroEmacs\fR  release of
 3.8 in 1988, the origins of which are unknown,  except to say it was delivered
 on a unmarked 5 1/2" floppy disk.
 .PP
-The  program  was  originally  ported  to a  Motorola  MVME147  UNIX box as an
-alternative to \fBvi\fR.  Reliability of the program proved to be a problem as
-it constantly  crashed. In an attempt to rectify the problems the  development
-of \*(mS commenced.
+The program was originally ported to a Motorola \s-1MVME147\s0 \s-1UNIX\s0 box
+as an  alternative  to  \fBvi\fR.  Reliability  of the program  proved to be a
+problem as it  constantly  crashed. In an attempt to rectify the  problems the
+development of \*(mS commenced.
 .PP
 Development  has continued from 1988 through to today, on the whole  oblivious
 to further developments of the existing \fBMicroEmacs\fR program. This was due
@@ -1949,16 +1949,16 @@ same  program) was  downloaded  from the  Internet and  compared. By this time
 \*(mS was  radically  different and we were not about to mesh the two together
 \- that would be a step backwards.
 .PP
-Development of \*(mS has been biased towards the UNIX platform, as most of the
-early  development  was performed in the \s-1UNIX\s0  domain. The first of the
-window servers was X-Windows, which in turn has shaped the  implementation  of
-the  Microsoft  Windows  port.  Latterly, we have seen the  resurgence  of the
-IBM-PC  platform  which is now  commonplace. For the return  port to the DOS
-environment,  and  subsequent  development  of the  Microsoft  Windows port, a
-\s-1UNIX\s0  like  interface was required. Most existing users could not abide
-the primitive editors found on these machines;  Microsoft Windows was an alien
-and hostile  environment  when compared with UNIX. Hence, the \*(mS  interface
-utilizes UNIX style cut and paste across all platforms.
+Development of \*(mS has been biased towards the \s-1UNIX\s0 platform, as most
+of the early development was performed in the \s-1UNIX\s0 domain. The first of
+the window servers was X-Windows, which in turn has shaped the  implementation
+of the Microsoft  Windows port.  Latterly, we have seen the  resurgence of the
+\s-1IBM-PC\s0  platform which is now  commonplace.  For the return port to the
+\s-1DOS\s0  environment, and subsequent  development of the Microsoft  Windows
+port, a \s-1UNIX\s0 like interface was required. Most existing users could not
+abide the primitive editors found on these machines;  Microsoft Windows was an
+alien and hostile environment when compared with \s-1UNIX\s0. Hence, the \*(mS
+interface utilizes \s-1UNIX\s0 style cut and paste across all platforms.
 .PP
 For  portability,  \*(mS  utilizes   character   rendering  on  all  platforms
 regardless of the window manager. Under  X-Windows and Microsoft  Windows, the
@@ -1968,6 +1968,65 @@ etc. are not as slick as they  could be,  certainly  under  Microsoft  Windows
 \*(mS  looks  positively  primitive!!  Regardless  of the  look, the goal of a
 common editor across all working platforms has been achieved!
 .SS "Development History"
+.\"
+.B "Release - 1st November 2026"
+.br
+Release date specified as 2026-11-01.
+.BS
+Unicode / wide character support by default on all supported platforms.
+.BU
+.Ht &opt 4
+includes the new option \fCuni\fR indicating Unicode support. Text is held as
+Unicode and files may be \s-1UTF-8\s0, \s-1UTF-16\s0 or \s-1UTF-32\s0 encoded.
+See also
+.Hl "Locale Support" localeSupport 2 ,
+.Ht buffer-is-utf8 3 ,
+.Ht change-buffer-encoding 3 ,
+.Ht code-page-define 3 ,
+.Ht &uni 4 ,
+.Ht &uci 4 
+and
+.Ht &ufi 4 .
+.BU
+New  byte  based  functions   
+.Ht &blen 4 ,   
+.Ht &bmid 4 ,
+.Ht &batoi 4 
+and
+.Ht &bitoa 4 .
+.BU
+Functions  
+.Ht &hexb 4 
+and
+.Ht &bhex 4
+may be used to convert byte strings to
+2-digit hexadecimal strings.
+.BU
+Support  for   \fB\\u####\fR  &   \fB\\U#######\fR   code  point  entry  (like
+\fB\\x##\fR only for unicode).
+.BU
+The 
+.Ht $buffer-encoding 5
+variable indicates the buffers full encoding.
+.BU
+Macro  internal  execution  has changed  from a line  interpreter  to internal
+compilation  followed by execution. This changes the macro debugging behaviour
+and to debug you must put a \fBset-variable $debug 1\fR line at the top, or or
+appropriate  place, in your macro file. If you do not the code is  compiled as
+normal and so will not be debug-able. See
+.Ht $debug 5 .
+.BE
+.\"
+.B "Release - 1st October 2026"
+.br
+Release date specified as 2026-10-01.
+.BS
+Fixed native window MacOS execution path to match shell environment (\fC$PATH\fR).
+.BU
+MacOS native window application launcher updated supporting file drag and drop.
+.BU
+Several other minor fixes and improvements.
+.BE
 .\"
 .B "Release - 1st September 2026"
 .br
@@ -2225,7 +2284,7 @@ Release date specified as 2009-09-26.
 .BU
 [090923] Fixed bad characters in Clearcase output window
 .BU
-[090917] Fixed Linux makefiles for GCC 4.3 for the detection of ncurses.
+[090917] Fixed Linux makefiles for \s-1GCC\s0 4.3 for the detection of ncurses.
 .BE
 .\"
 .B "10th Release - September 2009"
