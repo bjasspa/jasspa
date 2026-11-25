@@ -247,6 +247,11 @@ global-bind-key osd-close "C-w"
 global-bind-key cut "C-x"
 global-bind-key osd-redo "C-y"
 global-bind-key osd-undo "C-z"
+!if &not &band $system 0x01
+  global-bind-key change-font-size "C-="
+  1 global-bind-key change-font-size "C-+"
+  -1 global-bind-key change-font-size "C--"
+!endif
 global-bind-key delete-other-windows "C-j 1"
 global-bind-key split-window-vertically "C-j 2"
 global-bind-key split-window-horizontally "C-j 3"
