@@ -192,6 +192,7 @@ global-bind-key abort-command "esc"
 ; CUA emulation
 global-bind-key tab "tab"
 global-bind-key next-buffer "C-tab"
+global-bind-key set-mark "C-space"
 global-bind-key previous-buffer "S-C-tab"
 global-bind-key newline "return"
 global-bind-key backward-char "left"
@@ -299,6 +300,8 @@ global-bind-key describe-variable "C-j d"
 global-bind-key describe-word "C-j w"
 global-bind-key help-command "C-j C-c"
 global-bind-key help-variable "C-j C-v"
+global-bind-key expand-abbrev-handle "C-j esc"
+
 !force global-unbind-key "A-f4"
 
 ; reconfigure the buffer bindings
