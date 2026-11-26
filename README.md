@@ -179,14 +179,14 @@ PATH=`pwd`/../../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
 
 You should replace the LINUX-PLATFORM-GCC part with your kernel, platform and GCC versions you are using.
 
-## Compilation on MacOS
+## Compilation on macOS
 
-One  way to  compile  the  code  yourself  on a  MacOS  system  is to use  the
-[macports](https://ports.macports.org/)  package  manager  and to install  the
-[XQuartz](https://www.xquartz.org/)  system for MacOS to run X11  applications
-on MacOS.
+One  way to  compile  the  code  yourself  on a  macOS  system  is to use  the
+[MacPorts](https://ports.macports.org/)  package  manager  and to install  the
+[XQuartz](https://www.xquartz.org/)  system for macOS to run X11  applications
+on macOS. If you can compile as well the native macOS version using the -nw options for the build script, you even do not need XQuartz.
 
-Here are the required install commands after intalling MacPorts and XQuartz:
+Here are the required install commands after installing MacPorts and XQuartz:
 
 ```bash
 sudo port install git curl fontconfig pkgconfig gcc15 ncurses Xft2 openssl xorg-libX11
@@ -197,12 +197,12 @@ cd jasspa/microemacs/src
 ### within the jasspa/microemacs/bin folder
 bash build.sh -t c   ## Console version
 bash build.sh -t w   ## X11 version
-bash build.sh -t nw  ## Native MacOS version
-### for older MacOS systems like Catalina 
+bash build.sh -t nw  ## Native macOS version
+### for older macOS systems like Catalina 
 ### which do not support the -flto=auto option you might try:
 bash build.sh -t c  -v LDFLAGSR="-O3" ## Console version
 bash build.sh -t w  -v LDFLAGSR="-O3" ## X11 version
-bash build.sh -t nw -v LDFLAGSR="-O3" ## Native MacOS version
+bash build.sh -t nw -v LDFLAGSR="-O3" ## Native macOS version
 ### the executables are as well in a folder .macosVERSION-intel64-GCCVERSION-release-meX
 ### and in a folder bin in the parent directory
 ### create a standalone executable with embedded macro files Console and X11 version
