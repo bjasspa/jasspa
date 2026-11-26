@@ -198,6 +198,11 @@ cd jasspa/microemacs/src
 bash build.sh -t c   ## Console version
 bash build.sh -t w   ## X11 version
 bash build.sh -t nw  ## Native MacOS version
+### for older MacOS systems like Catalina 
+### which do not support the -flto=auto option you might try:
+bash build.sh -t c  -v LDFLAGSR="-O3" ## Console version
+bash build.sh -t w  -v LDFLAGSR="-O3" ## X11 version
+bash build.sh -t nw -v LDFLAGSR="-O3" ## Native MacOS version
 ### the executables are as well in a folder .macosVERSION-intel64-GCCVERSION-release-meX
 ### and in a folder bin in the parent directory
 ### create a standalone executable with embedded macro files Console and X11 version
