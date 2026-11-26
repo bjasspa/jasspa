@@ -462,6 +462,7 @@ extern int      createBackupName(meUByte *filename, meUByte *fn, meUByte backl, 
 /* meIOTYPE_PIPE is returned if url is NULL, meIOTYPE_NONE is returned if url does not start with a known URL, this is interpreted as a standard file name */ 
 extern meUByte ffUrlGetType(meUByte *url);
 extern void ffSUrlLogger(meIo *io, meUByte type, meUByte *txt);
+extern void ffCloseSockets(meIo *io, int force);
 #define ffUrlTypeIsSecure(ft)   ((ft) & meIOTYPE_SSL)
 #define ffUrlTypeIsPipe(ft)     ((ft) & meIOTYPE_PIPE)
 #define ffUrlTypeIsFile(ft)     ((ft) & meIOTYPE_FILE)
@@ -1048,11 +1049,8 @@ extern	int	searchBuffer(int f, int n);
 /* sock.c externals */
 #if MEOPT_SOCKET
 
-#define meSockFileInit(io) ((io)->urlFlags = 0)
-#define meSockIsInUse(io)  ((io)->urlFlags != 0)
-#define meSockIsFtp(io)    ((io)->urlFlags & meSOCKFLG_CTRL_INUSE)
-#define meSockDataIsInUse(io) ((io)->urlFlags & meSOCKFLG_INUSE)
-#define meSockControlIsInUse(io) ((io)->urlFlags & meSOCKFLG_CTRL_INUSE)
+#define meSockIsInUse(io)  (((io)->conn != NULL) && ((io)->conn->urlFlags != 0))
+#define meSockIsFtp(io)    ((io)->conn->urlFlags & meSOCKFLG_CTRL_INUSE)
 
 int
 meSockHttpOpen(meIo *io, meUShort flags, meUByte *host, meInt port, meUByte *user, meUByte *pass, meUByte *file, meCookie *cookie, 
@@ -1079,6 +1077,12 @@ int
 meSockWrite(meIo *io, int sz, meUByte *wbuff, int wOffset);
 int
 meSockClose(meIo *io, int force);
+void
+meSockConnectPark(meIo *io);
+void
+meSockConnectExpire(int all);
+void
+meSockConnectAdjust(meTime mstim);
 
 void
 meSockEnd();
@@ -1320,7 +1324,7 @@ extern	int	countWords(int f, int n);
 struct meTimeval
 {
     meTime tv_sec;                      /* Time in seconds from unix epoch */
-    int tv_usec;                        /* Time in milliseconds */
+    int tv_usec;                        /* Time in microseconds */
 };
 
 struct meTimezone 

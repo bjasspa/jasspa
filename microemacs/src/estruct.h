@@ -1649,6 +1649,26 @@ typedef struct meCookie {
 #endif
 #define meFileIsBad(ss)    ((ss) == meBadFile)
 
+#if MEOPT_SOCKET
+typedef struct meConnect {
+    struct meConnect *next;
+    meTime     expire;                  /* when idle in the pool, the time to close it */
+    meUShort   urlFlags;                /* Flags store connection type & state */
+    meUShort   logOpts;                 /* urlOpts of the last user, for logging the close */
+    meInt      urlPrt;
+    meUByte    urlHst[meSOCK_HOST_SIZE];
+    meUByte    urlUsr[meSOCK_USER_SIZE];
+    meUByte   *urlHome;
+    void      *ssl;
+    void      *ctrlSsl;
+    meSOCKET   sck;
+    meSOCKET   ctrlSck;
+    meInt      urlLen;
+    meInt      chkLen;
+    int        timeout;
+} meConnect;
+#endif
+
 /* Define a file pointer type. */
 typedef struct meIo {
     meUByte    type;                    /* Flags detailing type of file */
@@ -1679,21 +1699,10 @@ typedef struct meIo {
     meRegNode *passwdReg;
     meBuffer  *urlBp;
     time_t     startTime;
-    int        timeout;
     int        length;
 
     meUShort   urlOpts;                 /* Option flags such as logging etc */
-    meUShort   urlFlags;                /* Flags store connection type & state */
-    meInt      urlPrt;
-    meUByte    urlHst[meSOCK_HOST_SIZE];
-    meUByte    urlUsr[meSOCK_USER_SIZE];
-    meUByte   *urlHome;
-    void      *ssl;
-    void      *ctrlSsl;
-    meSOCKET   sck;
-    meSOCKET   ctrlSck;
-    meInt      urlLen;
-    meInt      chkLen;
+    meConnect *conn;
 #endif
 #ifdef MEOPT_TFS
     tfsFile   *tfsp;                    /* The tack-on file system handle */

@@ -494,7 +494,7 @@ ffUrlConsoleAddText(meIo *io, meUByte *str, int flags)
     }
 }
 
-static void
+void
 ffCloseSockets(meIo *io, int force)
 {
     if(meSockIsInUse(io))
@@ -508,10 +508,7 @@ ffCloseSockets(meIo *io, int force)
             io->urlOpts &= ~meSOCKOPT_SHOW_STATUS;
         
         if(meSockClose(io,force))
-            /* Note: If user is using socket comms for both read & write this can go wrong, most likely way is a
-             * http read with, say, a 5sec timeout, which sets the timeout to 4.5sec, followed by an ftp write with
-             * a default timeout, 115sec and the initial 4.5sec timeout is lost. Should check and choose lowest */
-            timerSet(SOCKET_TIMER_ID,-1,io->timeout);
+            meSockConnectPark(io);
     }
     ffremain = 0;
 }
@@ -658,9 +655,9 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
     
     if((fl[1] == '~') && (fl[2] == '/'))
     {
-        if(io->urlHome != NULL)
+        if(io->conn->urlHome != NULL)
         {
-            meStrcpy(urlBuff,io->urlHome);
+            meStrcpy(urlBuff,io->conn->urlHome);
             meStrcat(urlBuff,fl+2);
             fl = urlBuff;
         }
@@ -678,7 +675,7 @@ ffFtpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         dd = (meUByte *) "mkdir";
     else
         dd = (meUByte *) "stating";
-    if(io->urlFlags & meSOCKOPT_LOG_STATUS)
+    if(io->urlOpts & meSOCKOPT_LOG_STATUS)
     {
         sprintf((char *)buff,"Connected - %s %s",dd,fl);
         if(io->urlBp != NULL)
@@ -914,9 +911,9 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
     if(ii == 0)
     {
         meUByte cc;
-        /* printf("Got Location: [%s]\n",ss);*/
-        /* if this starts with http:// https:// etc. then start again */
-        meSockClose(io,0);
+        /* if this starts with http:// https:// etc. then start again, the body is not read so the connection is only
+         * reusable if there is none */
+        meSockClose(io,(io->conn->urlLen != 0));
         io->redirect++;
         if(io->redirect > 5)
         {
@@ -967,7 +964,7 @@ ffHttpFileOpen(meIo *io, meUInt rwflag, meUByte *url, meCookie *cookie, meUByte 
         return ffHttpFileOpen(io,rwflag,dd,cookie,hdr,0,NULL,NULL,bp);
     }
     meStrcpy(resultStr,meItoa(ii));
-    io->length = io->urlLen;
+    io->length = io->conn->urlLen;
     if(((rwflag & (meRWFLAG_READ|meRWFLAG_INSERT)) == meRWFLAG_READ) && (bp != NULL))
     {
         if(ups != NULL)
@@ -1032,7 +1029,7 @@ ffDictFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
         return meFALSE;
     
     meStrcpy(resultStr,meItoa(ii));
-    io->length = io->urlLen;
+    io->length = io->conn->urlLen;
     return meTRUE;
 }
 
@@ -1150,6 +1147,10 @@ ffUrlFileOpen(meIo *io, meUInt rwflag, meUByte *url, meBuffer *bp)
 static int
 ffUrlFileClose(meIo *io, meUInt rwflag)
 {
+    /* a kept http connection must have no unread response left */
+    if(ffUrlTypeIsHttp(io->type) && meSockIsInUse(io) &&
+       ((rwflag & meRWFLAG_READ) ? ((io->length == -1) || ((io->length >= 0) && (ffread < io->length))):(io->conn->urlLen != 0)))
+        io->conn->urlFlags |= meSOCKFLG_CLOSE;
     if(rwflag & (meRWFLAG_READ|meRWFLAG_WRITE))
     {
         meUByte buff[meBUF_SOCK_SIZE_MAX];
@@ -1363,6 +1364,7 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
         {
             meIo tio;
             int ii=0;
+            memset(&tio,0,sizeof(meIo));
             while(((t=meStrrchr(filename,DIR_CHAR)) != NULL) && (t != filename))
             {
                 *t = '\0';
@@ -1378,9 +1380,18 @@ createBackupName(meUByte *filename, meUByte *fn, meUByte backl, int flag)
             while(--ii >= 0)
             {
                 if(ffWriteFileOpen(&tio,filename,meRWFLAG_MKDIR|meRWFLAG_SILENT,NULL) <= 0)
-                    return 1;
+                    break;
                 filename[meStrlen(filename)] = DIR_CHAR;
             }
+#if MEOPT_SOCKET
+            if(tio.conn != NULL)
+            {
+                ffCloseSockets(&tio,1);
+                meFree(tio.conn);
+            }
+#endif
+            if(ii >= 0)
+                return 1;
         }
     }
     else
@@ -3531,9 +3542,9 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                 fn = sfname + ll;
                 if((fn[1] == '~') && (fn[2] == '/'))
                 {
-                    if(meior.urlHome != NULL)
+                    if(meior.conn->urlHome != NULL)
                     {
-                        meStrcpy(fnb,meior.urlHome);
+                        meStrcpy(fnb,meior.conn->urlHome);
                         r1 = (int) meStrlen(fnb);
                     }
                     else
@@ -3548,9 +3559,9 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                     fn = dfname + ll;
                     if((fn[1] == '~') && (fn[2] == '/'))
                     {
-                        if(meior.urlHome != NULL)
+                        if(meior.conn->urlHome != NULL)
                         {
-                            meStrcpy(buff,meior.urlHome);
+                            meStrcpy(buff,meior.conn->urlHome);
                             r1 = (int) meStrlen(fnb);
                         }
                         else
@@ -3563,6 +3574,7 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
                 }
                 if(rr == meFALSE)
                     rr = mlwrite(MWABORT,(meUByte *)"[Failed to rename ftp file]");
+                ffCloseSockets(&meior,0);
 #ifdef _UNIX
                 meSigRelease();
 #endif
@@ -3635,22 +3647,20 @@ ffFileOp(meUByte *sfname, meUByte *dfname, meUInt dFlags, meInt fileMode)
     if((rr > 0) && (dFlags & meRWFLAG_SOCKCLOSE))
     {
         timerClearExpired(SOCKET_TIMER_ID);
-        if(meSockIsInUse(&meior) || meSockIsInUse(&meiow))
+#ifdef _UNIX
+        meSigHold();
+#endif
+        if(dFlags & meRWFLAG_ATEXIT)
         {
-#ifdef _UNIX
-            meSigHold();
-#endif
-            if(dFlags & meRWFLAG_ATEXIT)
-            {
-                meior.urlBp = NULL;
-                meiow.urlBp = NULL;
-            }
-            ffCloseSockets(&meior,1);
-            ffCloseSockets(&meiow,1);
-#ifdef _UNIX
-            meSigRelease();
-#endif
+            meior.urlBp = NULL;
+            meiow.urlBp = NULL;
         }
+        ffCloseSockets(&meior,1);
+        ffCloseSockets(&meiow,1);
+        meSockConnectExpire(dFlags & meRWFLAG_ATEXIT);
+#ifdef _UNIX
+        meSigRelease();
+#endif
         if(dFlags & meRWFLAG_ATEXIT)
             meSockEnd();
     }

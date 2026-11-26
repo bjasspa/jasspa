@@ -259,10 +259,7 @@ bufferSetEdit(void)
        meModeTest(cbp->mode,MDAUTOSV) &&
        (cbp->name[0] != '*'))
     {
-        struct   meTimeval tp;
-        
-        gettimeofday(&tp,NULL);
-        cbp->autoTime = (int) (((tp.tv_sec-startTime+autoTime)*1000) + (tp.tv_usec/1000));
+        cbp->autoTime = (int) (meTimeOffsetNow() + (autoTime*1000));
         if(!isTimerExpired(AUTOS_TIMER_ID) &&
            (!isTimerSet(AUTOS_TIMER_ID) || 
             (meTimerTime[AUTOS_TIMER_ID] > cbp->autoTime)))

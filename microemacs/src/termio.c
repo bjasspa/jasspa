@@ -215,7 +215,16 @@ timerAlarm(int id)
 }
 #endif
 #endif
+
+/* Milliseconds since startTime, the base of the timer, auto-save and callback times, see adjustStartTime */
+meTime
+meTimeOffsetNow(void)
+{
+    struct meTimeval tp;
     
+    gettimeofday(&tp,NULL);
+    return ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
+}
 
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
 
@@ -263,12 +272,7 @@ timerCheck(meTime tim)
 
     /* Get the current time if not supplied */
     if(tim == 0)
-    {
-        struct meTimeval tp ;             /* Time interval for current time */
-
-        gettimeofday(&tp,NULL) ;
-        tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
-    }
+        tim = meTimeOffsetNow();
 
     /* Iterate down the list of timers looking for any that have
      * expired. 
@@ -352,12 +356,7 @@ timerSet(int id, meTime tim, meInt offset)
 #endif
         meSetMultiTimer(id,offset);
         if(tim == 0)
-        {
-            struct meTimeval tp;
-            /* Get the absolute time */
-            gettimeofday(&tp,NULL);
-            tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) + offset;
-        }
+            tim = meTimeOffsetNow() + offset;
     }
 #endif
 #if (defined _CONST_TIMER) || (defined _SINGLE_TIMER)
@@ -390,12 +389,7 @@ timerSet(int id, meTime tim, meInt offset)
         }
         
         if(tim <= 0)
-        {
-            struct meTimeval tp;
-            /* Get the absolute time */
-            gettimeofday(&tp,NULL);
-            tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) + offset;
-        }
+            tim = meTimeOffsetNow() + offset;
         tbp->abstime = tim;
         /*    fprintf(fplog,"Timer %d %d Set\n",tbp->id,tbp->abstime) ;*/
         /* Insertion sort the timer block into the list. */
@@ -589,6 +583,9 @@ adjustStartTime(meTime tim)
                 mac->callback -= mstim ;
         }
     }
+#endif
+#if MEOPT_SOCKET
+    meSockConnectAdjust(mstim);
 #endif
     ii = NUM_TIMERS-1 ;
     do
