@@ -29,6 +29,14 @@
 #include <winsock2.h>
 #endif
 #endif
+#if defined(_MACOS) && MEOPT_OPENSSL
+/* Security framework used to load the keychain trusted root certificates */
+#include <CoreFoundation/CoreFoundation.h>
+#include <Security/SecCertificate.h>
+#include <Security/SecPolicy.h>
+#include <Security/SecTrust.h>
+#include <Security/SecTrustSettings.h>
+#endif
 #endif
 
 #include "evers.h"
@@ -44,6 +52,10 @@
 #endif
 #define MESOCK_STRINGQUT(str) #str
 #define MESOCK_STRINGIFY(str) MESOCK_STRINGQUT(str)
+#if meSOCKFLG_USE_DLL && defined(_MACOS)
+/* macOS dlopen does not check bin directory, we need to explicitly check this first */
+#define meSOCK_LIB_EXEPATH "@executable_path/"
+#endif
 
 #include <ctype.h>
 #if MEOPT_OPENSSL
@@ -578,6 +590,162 @@ meSockInitSystemCaCert(meIo *io, SSL_CTX *sslCtx, char *rbuff)
         CertCloseStore(hStore,0);
     } while(--ii >= 0);
 }
+#elif (defined _MACOS)
+/* Returns the trust setting of a certificate in the given admin or user trust settings domain for
+ * use as an SSL server root, 1 if trusted as a root, -1 if denied ('Never Trust') or 0 if
+ * unspecified. Settings restricted to another policy (e.g. S/MIME), to a specific application or
+ * to a specific host name are ignored */
+static int
+meSockMacTrustSetting(SecCertificateRef cert, SecTrustSettingsDomain domain)
+{
+    CFArrayRef settings=NULL;
+    CFDictionaryRef dict, props;
+    SecPolicyRef policy;
+    CFNumberRef num;
+    CFStringRef oid;
+    SInt32 result;
+    CFIndex ii, cnt;
+    int ret=0, skip;
+
+    if((SecTrustSettingsCopyTrustSettings(cert,domain,&settings) != errSecSuccess) || (settings == NULL))
+        return 0;
+    /* an empty settings array means always trust this certificate as a root */
+    if((cnt = CFArrayGetCount(settings)) == 0)
+        ret = 1;
+    for(ii=0 ; ii<cnt ; ii++)
+    {
+        dict = (CFDictionaryRef) CFArrayGetValueAtIndex(settings,ii);
+        if(CFDictionaryContainsKey(dict,kSecTrustSettingsApplication) ||
+           CFDictionaryContainsKey(dict,kSecTrustSettingsPolicyString))
+            continue;
+        if((policy = (SecPolicyRef) CFDictionaryGetValue(dict,kSecTrustSettingsPolicy)) != NULL)
+        {
+            skip = 1;
+            if((props = SecPolicyCopyProperties(policy)) != NULL)
+            {
+                if(((oid = (CFStringRef) CFDictionaryGetValue(props,kSecPolicyOid)) != NULL) &&
+                   CFEqual(oid,kSecPolicyAppleSSL))
+                    skip = 0;
+                CFRelease(props);
+            }
+            if(skip)
+                continue;
+        }
+        /* the result defaults to trust root when not given */
+        result = kSecTrustSettingsResultTrustRoot;
+        if((num = (CFNumberRef) CFDictionaryGetValue(dict,kSecTrustSettingsResult)) != NULL)
+            CFNumberGetValue(num,kCFNumberSInt32Type,&result);
+        if(result == kSecTrustSettingsResultDeny)
+        {
+            ret = -1;
+            break;
+        }
+        if((result == kSecTrustSettingsResultTrustRoot) || (result == kSecTrustSettingsResultTrustAsRoot))
+            ret = 1;
+    }
+    CFRelease(settings);
+    return ret;
+}
+
+/* Add the macOS trusted root certificates to the OpenSSL cert store, these are the system root CAs
+ * and any certificates the admin or user has set to be trusted */
+void
+meSockInitSystemCaCert(meIo *io, SSL_CTX *sslCtx, char *rbuff)
+{
+    static const SecTrustSettingsDomain domains[2] = { kSecTrustSettingsDomainUser, kSecTrustSettingsDomainAdmin };
+    CFMutableArrayRef trusted, denied;
+    CFArrayRef certs;
+    SecCertificateRef cert;
+    CFDataRef data;
+    const unsigned char *ce;
+    X509 *x509;
+    X509_STORE *store;
+    CFIndex ii, cnt;
+    char buf[128];
+    int dd, ts, added=0;
+
+    if((store = OPENSSLFunc(SSL_CTX_get_cert_store)(sslCtx)) == NULL)
+    {
+        if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+            ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,(meUByte *) "OpenSSL: Failed to get SSL_CTX cert store");
+        return;
+    }
+    trusted = CFArrayCreateMutable(NULL,0,&kCFTypeArrayCallBacks);
+    denied = CFArrayCreateMutable(NULL,0,&kCFTypeArrayCallBacks);
+    if((trusted == NULL) || (denied == NULL))
+    {
+        if(trusted != NULL)
+            CFRelease(trusted);
+        if(denied != NULL)
+            CFRelease(denied);
+        return;
+    }
+    /* Get the user & admin set trust certificates, these may also deny a system root */
+    for(dd=0 ; dd<2 ; dd++)
+    {
+        if((SecTrustSettingsCopyCertificates(domains[dd],&certs) == errSecSuccess) && (certs != NULL))
+        {
+            cnt = CFArrayGetCount(certs);
+            for(ii=0 ; ii<cnt ; ii++)
+            {
+                cert = (SecCertificateRef) CFArrayGetValueAtIndex(certs,ii);
+                if((ts = meSockMacTrustSetting(cert,domains[dd])) > 0)
+                    CFArrayAppendValue(trusted,cert);
+                else if(ts < 0)
+                    CFArrayAppendValue(denied,cert);
+            }
+            CFRelease(certs);
+        }
+    }
+    /* Get the system root CAs */
+    if((SecTrustCopyAnchorCertificates(&certs) == errSecSuccess) && (certs != NULL))
+    {
+        CFArrayAppendArray(trusted,certs,CFRangeMake(0,CFArrayGetCount(certs)));
+        CFRelease(certs);
+    }
+    else if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+        ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,(meUByte *) "OpenSSL: Failed to get macOS system root certificates");
+
+    cnt = CFArrayGetCount(trusted);
+    for(ii=0 ; ii<cnt ; ii++)
+    {
+        cert = (SecCertificateRef) CFArrayGetValueAtIndex(trusted,ii);
+        if(CFArrayContainsValue(denied,CFRangeMake(0,CFArrayGetCount(denied)),cert) ||
+           ((data = SecCertificateCopyData(cert)) == NULL))
+            continue;
+        ce = CFDataGetBytePtr(data);
+        x509 = OPENSSLFunc(d2i_X509)(NULL,&ce,CFDataGetLength(data));
+        CFRelease(data);
+        if(x509)
+        {
+            OPENSSLFunc(X509_NAME_oneline)(OPENSSLFunc(X509_get_subject_name)(x509),buf,sizeof(buf));
+            if(OPENSSLFunc(X509_STORE_add_cert)(store,x509) == 1)
+            {
+                added++;
+                if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
+                {
+                    snprintf(rbuff,meSOCK_BUFF_SIZE,"OpenSSL: Loaded & added macOS root certificate for: subject='%s'",buf);
+                    ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,(meUByte *) rbuff);
+                }
+            }
+            else if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+            {
+                snprintf(rbuff,meSOCK_BUFF_SIZE,"OpenSSL: Loaded but failed to add macOS root certificate for: subject='%s'",buf);
+                ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,(meUByte *) rbuff);
+            }
+            OPENSSLFunc(X509_free)(x509);
+        }
+        else if(io->urlOpts & meSOCKOPT_LOG_WARNING)
+            ffSUrlLogger(io,meSOCKOPT_LOG_WARNING,(meUByte *) "OpenSSL: Failed to generate x509 for macOS root certificate");
+    }
+    if(io->urlOpts & meSOCKOPT_LOG_VERBOSE)
+    {
+        snprintf(rbuff,meSOCK_BUFF_SIZE,"OpenSSL: Added %d of %d macOS root certificates (%d denied)",added,(int) cnt,(int) CFArrayGetCount(denied));
+        ffSUrlLogger(io,meSOCKOPT_LOG_VERBOSE,(meUByte *) rbuff);
+    }
+    CFRelease(trusted);
+    CFRelease(denied);
+}
 #endif
 
 int
@@ -604,7 +772,10 @@ meSockInit(meIo *io, meUByte *buff)
 #ifdef _WIN32
     libHandle = LoadLibrary(MESOCK_STRINGIFY(_OPENSSLCNM));
 #else
-    libHandle = dlopen(MESOCK_STRINGIFY(_OPENSSLCNM),RTLD_LOCAL|RTLD_LAZY);
+#ifdef meSOCK_LIB_EXEPATH
+    if((libHandle = dlopen(meSOCK_LIB_EXEPATH MESOCK_STRINGIFY(_OPENSSLCNM),RTLD_LOCAL|RTLD_LAZY)) == NULL)
+#endif
+        libHandle = dlopen(MESOCK_STRINGIFY(_OPENSSLCNM),RTLD_LOCAL|RTLD_LAZY);
 #endif
     if(libHandle == NULL)
     {
@@ -683,7 +854,10 @@ meSockInit(meIo *io, meUByte *buff)
 #ifdef _WIN32
     libHandle = LoadLibrary(MESOCK_STRINGIFY(_OPENSSLLNM));
 #else
-    libHandle = dlopen(MESOCK_STRINGIFY(_OPENSSLLNM),RTLD_LOCAL|RTLD_LAZY);
+#ifdef meSOCK_LIB_EXEPATH
+    if((libHandle = dlopen(meSOCK_LIB_EXEPATH MESOCK_STRINGIFY(_OPENSSLLNM),RTLD_LOCAL|RTLD_LAZY)) == NULL)
+#endif
+        libHandle = dlopen(MESOCK_STRINGIFY(_OPENSSLLNM),RTLD_LOCAL|RTLD_LAZY);
 #endif
     if(libHandle == NULL)
     {
@@ -766,8 +940,8 @@ meSockInit(meIo *io, meUByte *buff)
 
     OPENSSLFunc(SSL_CTX_set_default_verify_paths)(meSockCtx);
     OPENSSLFunc(SSL_CTX_load_verify_locations)(meSockCtx, NULL,NULL);
-#ifdef _WIN32
-    // load windows system ca certs
+#if (defined _WIN32) || (defined _MACOS)
+    // load windows / macOS system ca certs
     meSockInitSystemCaCert(io,meSockCtx,(char *) buff);
 #endif
 
