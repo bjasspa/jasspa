@@ -119,9 +119,6 @@ mandatory, the rest can usually be omitted. e.g.:
 .CS
 find-file "http://www.jasspa.com/index.html"
 .CE
-See help page on
-.Ht %http-proxy-addr 5
-for information on HTTP proxy server support.
 .PP
 The progress of the HTTP transfer, and the HTTP commands  issued, may be viewed
 in the \fC*http-console*\fR  buffer. This is popped up depending on the setting
@@ -130,8 +127,26 @@ of the
 variable.
 .SS "HTTPS Support"
 \*(mS can be compiled to support https using OpenSSL, when  available the interface is the same as for http except the
-prefix is \fChttps://\fR. When loading https URLs the libcrypt and libssl OpenSSL dynamic  libraries must be available at
-runtime, if they are not available the function returns an error. The
+prefix is \fChttps://\fR. When loading https URLs the libcrypto and libssl OpenSSL dynamic libraries must be available at
+runtime, if they are not available the function returns an error. The library names are set when \*(mS is built (e.g.
+\fClibcrypto.3.dylib\fR and \fClibssl.3.dylib\fR on macOS) and the libraries are not loaded until the first https URL
+is loaded. Both libraries should come from the same OpenSSL installation. The libraries are searched for as follows:
+.BS
+Windows \- the standard Windows DLL search order is used, this starts with the directory containing the \*(mS
+executable, which is where the MicroEmacs OpenSSL package installs them.
+.BU
+macOS \- the directory containing the \*(mS executable is searched first (for the native application this is
+\fCMicroEmacs.app/Contents/MacOS\fR), which is where the MicroEmacs OpenSSL package installs them. If not found there the
+standard \fBdlopen\fR(3) search is used, this searches the directories in the \fBDYLD_LIBRARY_PATH\fR and
+\fBDYLD_FALLBACK_LIBRARY_PATH\fR environment variables, the latter defaults to \fC/usr/local/lib:/usr/lib\fR. Note that
+on Apple silicon Macs Homebrew installs into \fC/opt/homebrew/lib\fR which is not a default directory, so one of these
+variables must be set to use a Homebrew OpenSSL.
+.BU
+UNIX \- the standard \fBdlopen\fR(3) search is used, this searches the directories in the \fBLD_LIBRARY_PATH\fR
+environment variable and the system library directories, but not the directory containing the \*(mS executable.
+.BE
+On Windows and macOS the system's trusted root certificates are also added when the libraries are first loaded, so
+OpenSSL does not need its own certificate store to verify https sites. The
 .Ht %http-flags 5
 variable can be used to alter the behaviour, in particular the '\fBi\fR' flag which can be used to ignore  certificate
 errors.
@@ -213,7 +228,6 @@ to an appropriate size.
 .Ht $rcs-file 5 ,
 .Ht %ftp-flags 5 ,
 .Ht %http-flags 5 ,
-.Ht %http-proxy-addr 5 ,
 .Ht %sock-send-timeout 5 .
 .ad
 .rm C0

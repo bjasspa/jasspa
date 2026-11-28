@@ -1138,12 +1138,10 @@ meDie(void)
 void
 autoSaveHandler(void)
 {
-    struct meTimeval tp;
     register meBuffer *bp;
     register meTime tim, next=0x7fffffff;
     
-    gettimeofday(&tp,NULL);
-    tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
+    tim = meTimeOffsetNow();
     bp  = bheadp;
     while (bp != NULL)
     {
@@ -1161,7 +1159,7 @@ autoSaveHandler(void)
     else
         timerClearExpired(AUTOS_TIMER_ID);
     if(tim & 0x40000000)
-        adjustStartTime(tp.tv_sec-startTime);
+        adjustStartTime(tim/1000);
 }
 
 #ifdef _UNIX

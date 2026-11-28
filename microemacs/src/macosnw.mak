@@ -159,6 +159,7 @@ ifeq "$(OPENSSLP)" ""
 $(warning WARNING: No OpenSSL support found, https support will be disabled.)
 else
 OPENSSLDEFS = -DMEOPT_OPENSSL=1 -I$(OPENSSLP)/include -D_OPENSSLLNM=libssl$(OPENSSLV).dylib -D_OPENSSLCNM=libcrypto$(OPENSSLV).dylib
+LDLIBS  += -framework Security -framework CoreFoundation
 endif
 BCOR     = me
 BCOR_CDF = -D_SOCKET $(OPENSSLDEFS)

@@ -39,10 +39,36 @@ changes the text in the region to the single character form wherever there is on
 changes it to the letter and combining mark form, Normalization Form D (NFD), the form macOS file names use.
 .PP
 Both put a letter's combining marks in Unicode's standard order and change only the text which differs, so the rest of
-the region, and any mark in it, is left as it was. As well as accents they change a few other characters to their
-standard form, e.g. the Angstrom sign (U+212B) to the letter A with a ring above (U+00C5), the Ohm sign (U+2126) to
-the Greek capital Omega (U+03A9), and Korean letters to syllables (NFC) or syllables to letters (NFD). They do not apply
-the compatibility forms (NFKC and NFKD), e.g. a ligature is left as it is. A raw byte (see
+the region, and any mark in it, is left as it was. They also change Korean letters to syllables (NFC) or syllables to
+letters (NFD).
+.PP
+Both commands can also replace a single character with a different single character, which can look like a fault in a
+command that composes accents. Unicode defines some characters as \fIcanonically equivalent\fR to another single
+character, the two being the same text which happens to have two codes. For each such pair Unicode names one code as
+the standard (\fIcanonical\fR) form, and NFC and NFD both replace the other code with it. The other code is never
+produced by either command, so an existing one is changed even though it is already a single character with no
+combining mark. Examples are:
+.IP \(bu
+The Greek letters with an \fIoxia\fR accent in the Greek Extended block, e.g. upsilon with oxia (U+1F7B), are replaced
+by the same letter with a \fItonos\fR accent, upsilon with tonos (U+03CD), as Unicode treats oxia and tonos as the same
+accent. This affects most polytonic Greek text.
+.IP \(bu
+The Angstrom sign (U+212B) is replaced by the letter A with a ring above (U+00C5), the Ohm sign (U+2126) by the Greek
+capital Omega (U+03A9) and the Kelvin sign (U+212A) by the letter \fCK\fR.
+.IP \(bu
+The Greek question mark (U+037E) is replaced by a semicolon and the Greek ano teleia (U+0387) by a middle dot (U+00B7).
+.IP \(bu
+The CJK compatibility ideographs (U+F900 to U+FAFF and U+2F800 to U+2FA1F) are replaced by the matching unified
+ideographs, which some fonts draw differently.
+.PP
+This is what all software which follows the Unicode standard does, so the result matches what other programs produce
+when searching or comparing text. It does mean the original codes cannot be got back by running the other command,
+e.g. decomposing U+1F7B gives upsilon (U+03C5) followed by a combining acute accent (U+0301), which composes to U+03CD;
+use
+.Ht undo 2
+instead. When the original codes must be kept, do not run either command on that text.
+.PP
+Neither command applies the compatibility forms (NFKC and NFKD), e.g. a ligature is left as it is. A raw byte (see
 .Ht $buffer-encoding 5 )
 is left as it is.
 .PP

@@ -3496,7 +3496,6 @@ cmpBuffers(int f, int n)
 int
 createCallback(int f, int n)
 {
-    struct meTimeval tp;
     meMacro *mac;
     meUByte buf[meBUF_SIZE_MAX];
 
@@ -3506,8 +3505,7 @@ createCallback(int f, int n)
         mac->callback = -1;
     else
     {
-        gettimeofday(&tp,NULL);
-        mac->callback = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000) + n;
+        mac->callback = meTimeOffsetNow() + n;
         if(!isTimerExpired(CALLB_TIMER_ID) &&
            (!isTimerSet(CALLB_TIMER_ID) ||
             (meTimerTime[CALLB_TIMER_ID] > mac->callback)))
@@ -3519,14 +3517,12 @@ createCallback(int f, int n)
 void
 callBackHandler(void)
 {
-    struct meTimeval tp;
     register meMacro *mac;
     register time_t tim, next;
     register int ii;
 
     do {
-        gettimeofday(&tp,NULL);
-        tim = ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
+        tim = meTimeOffsetNow();
         next = 0x7fffffff;
 
         /* Loop through all the macros executing them or getting the time of the next */
@@ -3585,7 +3581,7 @@ callBackHandler(void)
     else
         timerClearExpired(CALLB_TIMER_ID);
     if(tim & 0x40000000)
-        adjustStartTime(tp.tv_sec-startTime);
+        adjustStartTime(tim/1000);
 }
 #endif
 

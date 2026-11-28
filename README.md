@@ -30,26 +30,28 @@ experienced programmers and as well beginners.
 In contrast to other editors it offers a set of unique features:
 
 - small size 1-2MB on your disk
-- single file binaries available - easy to install 
+- single file binaries available - no install 
 - low memory footprint - 1-2 MB (yes MB)
 - terminal and GUI version working the same way with full menu support
 - hypertext help system within your editor for MicroEmacs help but as well man
   pages or R help pages
 - alternative key bindings available (Emacs, CUA, nedit)
+- Unicode support - UTF-8, UTF-16 and UTF-32 files, and files in the ISO and
+  Windows code pages, are read and written back unchanged
 
 As other editors it has obviously:
 
 - session management (pro: parallel sessions for every project - 
   due to low memory footprint are no problem)
 - extensible by a macro language (as well a macro recorder)
-- syntax highlighting for many languages - even nested highlighting (R, Python etc in Markdown documents )
+- syntax highlighting for many languages - even nested highlighting (R, Python etc in Markdown documents)
 - spell checking for many languages
 - and much more ...
 
 Cons (because it is a __Micro__-Emacs):
 
-- no Unicode  support - but all the ISO and  extended  Windows  encodings  are
-  usable, even on UTF-8 terminals
+- no right to left text or shaping of complex scripts (e.g. Arabic, Devanagari),
+  each character is drawn on its own in one or two cells
 - no  soft  (visual)  wrap - what  you  see is what  you  get (you can let ME
   autowrap for you the text during writing)
 
@@ -88,7 +90,7 @@ As of June 2026 there is a new native MacOS app version which does not require X
 
 ### Windows 
 
-There is an MSI installer available for Windows [here](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_installer_windows_intel.msi)
+There is an MSI installer available for Windows [here](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_installer_windows_intel.msi)
 or you can run the `microemacs-install.ps1` PowerShell installer script, run the following in a PowerShell:
 
 ```
@@ -126,16 +128,16 @@ the executables into a folder belonging to your PATH variable.
 
 | Platform      | Console/Terminal | GUI (X11 on Linux/Mac) |
 |:-------------:|:----------------:|:----------------------:|
-| Linux intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_linux_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_linux_intel_mesw.zip)   |
-| Linux aarch   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_linux_aarch_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_linux_aarch_mesw.zip)   |
-| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_macos_apple_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_macos_apple_mesw.zip)   |
-| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_macos_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_macos_intel_mesw.zip)   |
-| Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_windows_intel_mesw.zip) |
-| Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_windows_arm_mesw.zip)   |
-| Cygwin intel  | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_cygwin_intel_mesc.zip)  | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_cygwin_intel_mesw.zip)   |
-| MSYS2 intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001_abin_msyswin_intel_mesc.zip) | N/A  |
+| Linux intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_linux_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_linux_intel_mesw.zip)   |
+| Linux aarch   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_linux_aarch_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_linux_aarch_mesw.zip)   |
+| MacOS apple   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_macos_apple_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_macos_apple_mesw.zip)   |
+| MacOS intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_macos_intel_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_macos_intel_mesw.zip)   |
+| Windows intel | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_windows_intel_mesc.zip) | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_windows_intel_mesw.zip) |
+| Windows arm   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_windows_arm_mesc.zip)   | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_windows_arm_mesw.zip)   |
+| Cygwin intel  | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_cygwin_intel_mesc.zip)  | [mesw](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_cygwin_intel_mesw.zip)   |
+| MSYS2 intel   | [mesc](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101_abin_msyswin_intel_mesc.zip) | N/A  |
 
-To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20261001/Jasspa_MicroEmacs_20261001-sha256.txt)
+To test the integrity of the downloads you can use the [sha256 hash keys](https://github.com/bjasspa/jasspa/releases/download/me_20261101/Jasspa_MicroEmacs_20261101-sha256.txt)
 
 Then test the executable in your terminal:
 
@@ -149,20 +151,21 @@ This should printout the version and exit MicroEmacs.
 
 On a Linux system you can compile the code yourself using the build scripts in
 _microemacs/src_.  You need the _ncurses_  library for the terminal version and
-the  _libxt_  and the  __libxft__  libraries for  the  X-Windows  version.   Optionally  for
-supporting  the https protocol you might as well  install the _libssl_  library.  Here the
+the  _x11_ and _libxft_ libraries for  the  X-Windows  version.   Optionally  for
+https support you will need _libssl_  library.  Here the
 procedure for a Debian based system like Ubuntu or MX Linux:
 
 ```bash
 ### install required packages
-sudo apt install libssl-dev libz-dev libncurses-dev libxt-dev libxft-dev git
+sudo apt install libncurses-dev libx11-dev libxft-dev libssl-dev git
 ### download the current source code
 git clone https://github.com/bjasspa/jasspa.git
 cd jasspa/microemacs/src
 ### compile the barebone executables
 bash build.sh -t c
 bash build.sh -t w
-### the executables are now in a folder .linux-PLATFORM-GCCVERSION-release-meX
+### these are Unicode builds, add -ec for an 8-bit code page build (not installed)
+### the executables are now in a folder .linux-PLATFORM-GCCVERSION-release-utf8-meX
 ### and in a folder bin in the parent directory
 ### create a standalone executable with embedded macro files
 cd ../dev/mesingle
@@ -176,14 +179,14 @@ PATH=`pwd`/../../bin/linux6-intel64-gcc14:$PATH bash mesgen.sh \
 
 You should replace the LINUX-PLATFORM-GCC part with your kernel, platform and GCC versions you are using.
 
-## Compilation on MacOS
+## Compilation on macOS
 
-One  way to  compile  the  code  yourself  on a  MacOS  system  is to use  the
-[macports](https://ports.macports.org/)  package  manager  and to install  the
-[XQuartz](https://www.xquartz.org/)  system for MacOS to run X11  applications
-on MacOS.
+One  way to  compile  the  code  yourself  on a  macOS  system  is to use  the
+[MacPorts](https://ports.macports.org/)  package  manager  and to install  the
+[XQuartz](https://www.xquartz.org/)  system for macOS to run X11  applications
+on macOS. If you can compile as well the native macOS version using the -nw options for the build script, you even do not need XQuartz.
 
-Here are the required install commands after intalling MacPorts and XQuartz:
+Here are the required install commands after installing MacPorts and XQuartz:
 
 ```bash
 sudo port install git curl fontconfig pkgconfig gcc15 ncurses Xft2 openssl xorg-libX11
@@ -194,7 +197,12 @@ cd jasspa/microemacs/src
 ### within the jasspa/microemacs/bin folder
 bash build.sh -t c   ## Console version
 bash build.sh -t w   ## X11 version
-bash build.sh -t nw  ## Native MacOS version
+bash build.sh -t nw  ## Native macOS version
+### for older macOS systems like Catalina 
+### which do not support the -flto=auto option you might try:
+bash build.sh -t c  -v LDFLAGSR="-O3" ## Console version
+bash build.sh -t w  -v LDFLAGSR="-O3" ## X11 version
+bash build.sh -t nw -v LDFLAGSR="-O3" ## Native macOS version
 ### the executables are as well in a folder .macosVERSION-intel64-GCCVERSION-release-meX
 ### and in a folder bin in the parent directory
 ### create a standalone executable with embedded macro files Console and X11 version
@@ -243,8 +251,8 @@ session should start with these saved settings.
 
 ## Tools to improve your editing on Linux and MacOS
 
-- Fixing ISO / UTF-8 issues
-    - _iconv_ - encoding converter
+- Legacy multi-byte encodings (Shift-JIS, EUC, GBK, Big5), which ME does not decode
+    - _iconv_ - encoding converter, e.g. to UTF-8
 - X11 (macOS, Linux):
     - _xclip_ - importing text from the primary selection to the clipboard
 - X11 (macOS, Linux) if you like to use the old legacy X11 fonts, optional since version  20251001 as ME now can use directly  TrueType ond
@@ -293,6 +301,5 @@ GPL - see the file [LICENSE](microemacs/LICENSE)
 - Dave Conroy         1985-1986
 - Daniel M. Lawrence  1986-1988  
 - John Green          1990-2026
-- Steven Phillips     1990-2026
+- Steven Phillips     1993-2026
 - Detlef Groth        2021-2026
-

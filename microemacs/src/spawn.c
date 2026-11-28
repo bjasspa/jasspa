@@ -707,8 +707,6 @@ ipipeRemove(meIPipe *ipipe)
 #ifdef IPIPE_DEBUG
 static FILE *logFp=NULL;
 
-static meTime ipipeTimeNow(void);
-
 /* meIPipeLog; write a marker to ./ipipe.log, opening the file on first use. The launch and
  * child-activity code runs before the ipipe buffer exists so it cannot rely on the open in
  * doIpipeCommand, and it lives in another file so it cannot see logFp. Each marker is stamped
@@ -721,7 +719,7 @@ meIPipeLog(const char *fmt, ...)
 
     if((logFp == NULL) && ((logFp = fopen("./ipipe.log","wb+")) == NULL))
         return;
-    fprintf(logFp,"[%ld]",(long) ipipeTimeNow());
+    fprintf(logFp,"[%ld]",(long) meTimeOffsetNow());
     va_start(args,fmt);
     vfprintf(logFp,fmt,args);
     va_end(args);
@@ -1026,15 +1024,6 @@ do {                                                                         \
 #define ipipeLogClampPos(what,want,got)
 #define ipipeCheckBreak()
 #endif
-
-static meTime
-ipipeTimeNow(void)
-{
-    struct meTimeval tp;
-
-    gettimeofday(&tp,NULL);
-    return ((tp.tv_sec-startTime)*1000) + (tp.tv_usec/1000);
-}
 
 #define ipipeGetNextChar(ipipe,cc,rbuff,curROff,curRRead,doSleep)            \
 ((curROff < curRRead) ?                                                      \
@@ -1644,7 +1633,7 @@ ipipeRead(meIPipe *ipipe)
     noLines = 0;
     if(ipipe->oscSplit != 0)
     {
-        if((ipipeTimeNow() - ipipe->oscSplit) <= meIPIPE_OSC_TIMEOUT)
+        if((meTimeOffsetNow() - ipipe->oscSplit) <= meIPIPE_OSC_TIMEOUT)
             goto osc_consume;
         ipipe->oscSplit = 0;
         ipipeLogDrop("OSC-EXPIRED");
@@ -2348,7 +2337,7 @@ osc_consume:
                              * a continuously writing child hold the resume open for ever. */
                             if(ipipe->oscSplit == 0)
                             {
-                                ipipe->oscSplit = ipipeTimeNow();
+                                ipipe->oscSplit = meTimeOffsetNow();
                                 ipipeLogDrop("OSC");
                             }
                             break;
@@ -2456,10 +2445,10 @@ osc_consume:
                         /* the rest has not arrived, unless it has waited too long keep the start
                          * for the next read and stop, so nothing which follows overtakes it */
                         if((ipipe->pid >= 0) &&
-                           ((ipipe->utfSplit == 0) || ((ipipeTimeNow() - ipipe->utfSplit) <= meIPIPE_OSC_TIMEOUT)))
+                           ((ipipe->utfSplit == 0) || ((meTimeOffsetNow() - ipipe->utfSplit) <= meIPIPE_OSC_TIMEOUT)))
                         {
                             if(ipipe->utfSplit == 0)
-                                ipipe->utfSplit = ipipeTimeNow();
+                                ipipe->utfSplit = meTimeOffsetNow();
                             memcpy(ipipe->utfPend,ub,un);
                             ipipe->utfPendLen = (meUByte) un;
                             goto ipipe_read_end;

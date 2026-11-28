@@ -710,6 +710,7 @@ extern int  _timerKill(int id);
 #define timerKill(id) (isTimerSet(id)?_timerKill(id):timerClearExpired(id))
 extern void handleTimerExpired(void);
 extern void adjustStartTime(meTime tim);
+extern meTime meTimeOffsetNow(void);
 
 #ifdef _MULTI_NOID_TIMER
 extern void timerAlarm(int id);

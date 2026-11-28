@@ -1,10 +1,10 @@
-.\" -*- nroff -*-
+.\" -*- nroff; fill-column:118 -*-
 .\" Copyright (C) 1998-2009 JASSPA (www.jasspa.com)
 .\"
 .\" This is part of JASSPA's MicroEmacs, see the LICENSE file for licensing and
 .\" copying information.
 .\"
-.Id $Id: m4fil038.4,v 2.6 2024/05/09 17:14:02 jon Exp $
+.Id $Id: m4fil038.4,v 2.6 2026/11/24 10:44:58 jon Exp $
 .Im MicroEmacs macro;function;miscellaneous
 .so me.tni
 .TH &uni 4
@@ -31,7 +31,7 @@ Returns information regarding the Unicode character \fIint\fR.
 .IP "\fB&uci\fR \fIchar\fR"
 Returns information regarding the \*(mS character-set character \fIchar\fR.
 .IP "\fB&ufi\fR \fIstring\fR"
-Returns information regarding the UTF-8 encoded Unicode character \fIstring\fR.
+Returns information regarding the \s-1UTF-8\s0 encoded Unicode character \fIstring\fR.
 .PP
 All three functions return a \*(mS formatted list of information of the follow form:
 .IP
@@ -51,17 +51,17 @@ In the case of \fB&ufi\fR, \fIutf8-len\fR is set to the length of \fIstring\fR p
 length of \fIstring\fP, otherwise  \fIutf8-len\fR is the string length of \fIutf8\fP. Note that if the input character
 is 0x00 (the Nul character) the \fIutf8\fP  string is "" (the empty string and 0 in length) but the  \fIutf8-len\fR is
 .PP
-\fIutf8\fR is the UTF-8  equivalent  of the input or the  character string 0xEF 0xBF 0xBD (U+FFFD - replacement  char)
-if the input to \fB&uni\fP or \fB&uci\fP cannot be mapped to a valid Unicode character.
+\fIutf8\fR is the \s-1UTF-8\s0  equivalent of the input or the character string  \s-10xEF\s0  \s-10xBF\s0  \s-10xBD\s0
+(\s-1U+FFFD\s0  - replacement  char) if the input to  \fB&uni\fP  or  \fB&uci\fP  cannot be mapped to a valid  Unicode
+character.
 .PP
 In a version of \*(mS with Unicode support (see
 .Ht &opt 4 ,
-label \fCuni\fR) \fIchar\fR is the character itself, \fIutf8\fR is its UTF-8 bytes held as raw bytes (so the
-length of \fIutf8\fR is \fIutf8-len\fR) and bit 2 of \fIflags\fR is always set. \fB&uci\fR maps a raw byte through
-the current code page, and in the case of \fB&ufi\fR, \fIutf8-len\fR is the number of characters of \fIstring\fR
-used.
+label \fCuni\fR)  \fIchar\fR is the character itself,  \fIutf8\fR is its \s-1UTF-8\s0  bytes held as raw bytes (so the
+length of \fIutf8\fR is \fIutf8-len\fR) and bit 2 of \fIflags\fR is always set. \fB&uci\fR maps a raw byte through the
+current code page, and in the case of \fB&ufi\fR, \fIutf8-len\fR is the number of characters of \fIstring\fR used.
 .SH EXAMPLE
-In a version of \*(mS without Unicode support the following macro code can be used to convert the UTF-8 encoded
+In a version of \*(mS without Unicode support the following macro code can be used to convert the \s-1UTF-8\s0 encoded
 character string at the current location to the current display code page equivalent:
 .Me $emf-scheme
 .CS
@@ -77,10 +77,11 @@ set-variable #l0 &ufi &mid @wl $window-col 4
 .CE 0
 .Me $ehf-scheme
 .SH NOTES
-In 2003 the Unicode character range was officially  restricted to 0x0000-0x10ffff  (see RFC 3629) which means that a 6
-digit  hexadecimal  number can be used to represent all possible Unicode  characters and the longest UTF-8 string is 4
-bytes (0xF4 0x8F 0xBF 0xBD is the highest  assigned  char which is for private use).  Currently  the highest  assigned
-non-private character is U+E01EF so 5 digits will cover all publicly used characters.
+In 2003 the Unicode  character range was officially  restricted to  \fC0x0000-0x10ffff\fR  (see \s-1RFC\s0 3629) which
+means that a 6 digit  hexadecimal  number may be used to represent  all possible  Unicode  characters  and the longest
+\s-1UTF-8\s0 string is 4 bytes (\s-10xF4\s0  \s-10x8F\s0 \s-10xBF\s0 \s-10xBD\s0 is the highest assigned char which is
+for private use).  Currently  the highest  assigned  non-private  character is  \s-1U+E01EF\s0  so 5 digits covers all
+publicly used characters.
 .PP
 The mapping to and from the current \*(mS display character-set is configured by flag \fBc\fP of command
 .Ht set-char-mask 2 .
